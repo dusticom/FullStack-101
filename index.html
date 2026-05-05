@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ศูนย์รวมสื่อการสอนโปรแกรมมิ่ง</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-1: #3b82f6; /* Blue */
+            --accent-2: #8b5cf6; /* Purple */
+            --accent-3: #10b981; /* Green */
+            --accent-4: #f59e0b; /* Yellow */
+            --accent-5: #ec4899; /* Pink */
+            --accent-6: #0ea5e9; /* Light Blue */
+            --accent-7: #6366f1; /* Indigo */
+            --accent-8: #f43f5e; /* Rose */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Prompt', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(139, 92, 246, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.15) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, rgba(245, 158, 11, 0.15) 0px, transparent 50%);
+            background-attachment: fixed;
+            padding: 3rem 1.5rem;
+            line-height: 1.6;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 4rem;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #60a5fa, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        p.subtitle {
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            padding-bottom: 3rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 2rem;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            animation: fadeInUp 0.6s ease-out backwards;
+        }
+
+        /* Staggered animation delays for cards */
+        .card:nth-child(1) { animation-delay: 0.1s; }
+        .card:nth-child(2) { animation-delay: 0.2s; }
+        .card:nth-child(3) { animation-delay: 0.3s; }
+        .card:nth-child(4) { animation-delay: 0.4s; }
+        .card:nth-child(5) { animation-delay: 0.5s; }
+        .card:nth-child(6) { animation-delay: 0.6s; }
+        .card:nth-child(7) { animation-delay: 0.7s; }
+        .card:nth-child(8) { animation-delay: 0.8s; }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: currentColor;
+            opacity: 0.8;
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.2);
+            background: rgba(40, 53, 75, 0.8);
+        }
+
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .icon-container {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+            color: white;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+        }
+
+        .card-desc {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            flex-grow: 1;
+        }
+
+        .card-arrow {
+            margin-top: 1.5rem;
+            display: inline-flex;
+            align-items: center;
+            font-size: 0.9rem;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover .card-arrow {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .card-arrow svg {
+            margin-left: 0.5rem;
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Specific Card Styling */
+        .card.css { color: var(--accent-1); }
+        .card.css .icon-container { background: linear-gradient(135deg, #2563eb, #60a5fa); }
+        
+        .card.express { color: var(--accent-3); }
+        .card.express .icon-container { background: linear-gradient(135deg, #059669, #34d399); }
+        
+        .card.git { color: var(--accent-8); }
+        .card.git .icon-container { background: linear-gradient(135deg, #e11d48, #fb7185); }
+        
+        .card.js { color: var(--accent-4); }
+        .card.js .icon-container { background: linear-gradient(135deg, #d97706, #fbbf24); }
+        
+        .card.linux { color: var(--accent-2); }
+        .card.linux .icon-container { background: linear-gradient(135deg, #7c3aed, #a78bfa); }
+        
+        .card.mysql { color: var(--accent-6); }
+        .card.mysql .icon-container { background: linear-gradient(135deg, #0284c7, #38bdf8); }
+        
+        .card.nextjs { color: var(--text-primary); }
+        .card.nextjs .icon-container { background: linear-gradient(135deg, #334155, #94a3b8); }
+        
+        .card.sql { color: var(--accent-7); }
+        .card.sql .icon-container { background: linear-gradient(135deg, #4f46e5, #818cf8); }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.25rem;
+            }
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Learning Hub</h1>
+        <p class="subtitle">ศูนย์รวมบทเรียนและคู่มือสำหรับการพัฒนาโปรแกรม เลือกหัวข้อที่คุณต้องการศึกษาจากรายการด้านล่าง</p>
+    </header>
+
+    <div class="container">
+        
+        <a href="html-teaching.html" class="card css" style="display: none;"></a> <!-- Placeholder -->
+
+        <a href="javascript-es6-teaching.html" class="card js">
+            <div class="icon-container">JS</div>
+            <h2 class="card-title">JavaScript ES6+</h2>
+            <p class="card-desc">เรียนรู้พื้นฐานและฟีเจอร์ใหม่ๆ ของ JavaScript ตั้งแต่ตัวแปรไปจนถึง Asynchronous programming</p>
+            <div class="card-arrow">เริ่มเรียน <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></div>
+        </a>
+
+        <a href="css-teaching.html" class="card css">
+            <div class="icon-container">CSS</div>
+            <h2 class="card-title">CSS Styling</h2>
+            <p class="card-desc">เจาะลึกการตกแต่งเว็บไซต์ด้วย CSS ทั้ง Layout, Flexbox, Grid และ Responsive Design</p>
+            <div class="card-arrow">เริ่มเรียน <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></div>
+        </a>
+
+        <a href="nextjs-redux-typescript-teaching.html" class="card nextjs">
+            <div class="icon-container">Nx</div>
+            <h2 class="card-title">Next.js & Redux</h2>
+            <p class="card-desc">การพัฒนา Web Application ด้วย Next.js ร่วมกับ TypeScript และระบบ State Management ด้วย Redux</p>
+            <div class="card-arrow">เริ่มเรียน <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></div>
+        </a>
+
+        <a href="express-typescript-teaching.html" class="card express">
+            <div class="icon-container">Ex</div>
+            <h2 class="card-title">Express & TypeScript</h2>
+            <p class="card-desc">สร้าง Backend API อย่างมีประสิทธิภาพด้วย Express.js และเพิ่มความปลอดภัยของโค้ดด้วย TypeScript</p>
+            <div class="card-arrow">เริ่มเรียน <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></div>
+        </a>
+
+        <a href="sql-teaching.html" class="card sql">
+            <div class="icon-container">SQL</div>
+            <h2 class="card-title">SQL Fundamentals</h2>
+            <p class="card-desc">ปูพื้นฐานภาษา SQL สำหรับการจัดการฐานข้อมูล การคิวรี่ การจอยตาราง และฟังก์ชันต่างๆ</p>
+            <div class="card-arrow">เริ่มเรียน <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></div>
+        </a>
+
+        <a href="mysql-teaching.html" class="card mysql">
+            <div class="icon-container">My</div>
+            <h2 class="card-title">MySQL Database</h2>
+            <p class="card-desc">เรียนรู้ระบบจัดการฐานข้อมูล MySQL การออกแบบตาราง และเทคนิคการใช้งานในระดับที่ลึกขึ้น</p>
+            <div class="card-arrow">เริ่มเรียน <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></div>
+        </a>
+
+        <a href="git-teaching.html" class="card git">
+            <div class="icon-container">Git</div>
+            <h2 class="card-title">Git Version Control</h2>
+            <p class="card-desc">จัดการ Source Code อย่างมืออาชีพด้วย Git เรียนรู้คำสั่งที่จำเป็นและการทำงานร่วมกันเป็นทีม</p>
+            <div class="card-arrow">เริ่มเรียน <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></div>
+        </a>
+
+        <a href="linux-teaching.html" class="card linux">
+            <div class="icon-container">Lx</div>
+            <h2 class="card-title">Linux Basics</h2>
+            <p class="card-desc">ทำความรู้จักกับระบบปฏิบัติการ Linux และคำสั่ง Command Line ที่โปรแกรมเมอร์ต้องรู้</p>
+            <div class="card-arrow">เริ่มเรียน <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></div>
+        </a>
+
+    </div>
+
+</body>
+</html>

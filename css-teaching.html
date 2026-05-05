@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>สื่อการสอน CSS ฉบับสมบูรณ์</title>
+<style>
+  /* ===== RESET & BASE ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blue:   #3b82f6;
+    --indigo: #6366f1;
+    --green:  #10b981;
+    --orange: #f59e0b;
+    --red:    #ef4444;
+    --pink:   #ec4899;
+    --gray:   #64748b;
+    --dark:   #0f172a;
+    --light:  #f8fafc;
+    --card:   #ffffff;
+    --border: #e2e8f0;
+    --code-bg:#1e293b;
+    --radius: 12px;
+    --shadow: 0 4px 24px rgba(0,0,0,.08);
+  }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--light);
+    color: var(--dark);
+    line-height: 1.7;
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    text-align: center;
+    padding: 64px 24px;
+  }
+  .hero h1 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; margin-bottom: 12px; }
+  .hero p  { font-size: 1.2rem; opacity: .85; }
+  .badge-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 24px; }
+  .badge { background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3);
+           padding: 6px 18px; border-radius: 999px; font-size: .85rem; font-weight: 600; }
+
+  /* ===== NAV ===== */
+  .nav-sticky {
+    position: sticky; top: 0; z-index: 100;
+    background: white; border-bottom: 1px solid var(--border);
+    padding: 0 24px; overflow-x: auto;
+    display: flex; gap: 4px;
+  }
+  .nav-sticky a {
+    display: inline-block; padding: 14px 16px;
+    text-decoration: none; color: var(--gray);
+    font-size: .85rem; font-weight: 600; white-space: nowrap;
+    border-bottom: 3px solid transparent;
+    transition: all .2s;
+  }
+  .nav-sticky a:hover { color: var(--indigo); border-bottom-color: var(--indigo); }
+
+  /* ===== LAYOUT ===== */
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+  .section { padding: 56px 0; }
+  .section-title {
+    font-size: 1.8rem; font-weight: 800; margin-bottom: 8px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-title .icon { font-size: 2rem; }
+  .section-sub { color: var(--gray); margin-bottom: 36px; font-size: 1rem; }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 56px 0; }
+
+  /* ===== CARD ===== */
+  .card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 28px;
+    box-shadow: var(--shadow);
+  }
+  .card-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 16px; }
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+
+  /* ===== CODE BLOCK ===== */
+  .code-block {
+    background: var(--code-bg); color: #e2e8f0;
+    border-radius: 10px; padding: 20px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: .87rem; line-height: 1.8;
+    overflow-x: auto; margin: 12px 0;
+  }
+  .c-prop  { color: #93c5fd; }
+  .c-val   { color: #86efac; }
+  .c-sel   { color: #f9a8d4; }
+  .c-com   { color: #64748b; font-style: italic; }
+  .c-unit  { color: #fde68a; }
+  .c-num   { color: #fb923c; }
+
+  /* ===== COMPARE ===== */
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .compare-box { padding: 20px; border-radius: 10px; }
+  .compare-bad  { background: #fef2f2; border: 1px solid #fecaca; }
+  .compare-good { background: #f0fdf4; border: 1px solid #bbf7d0; }
+  .compare-label { font-size: .8rem; font-weight: 700; text-transform: uppercase;
+                   letter-spacing: .05em; margin-bottom: 10px; }
+  .compare-bad  .compare-label { color: var(--red); }
+  .compare-good .compare-label { color: var(--green); }
+
+  /* ===== DEMO BOXES (inline live demos) ===== */
+  .demo-area {
+    background: #f1f5f9; border: 1px dashed #94a3b8;
+    border-radius: 10px; padding: 24px; margin-top: 16px;
+    min-height: 80px;
+  }
+
+  /* ===== SELECTOR DEMO ===== */
+  .sel-demo p   { color: var(--gray); font-size: .9rem; padding: 4px 0; }
+  .sel-demo p.highlight { color: var(--blue); font-weight: 700; }
+  .sel-demo p:first-child { font-style: italic; }
+  .sel-demo p:last-child  { text-decoration: underline; }
+  .sel-demo p:nth-child(2){ background: #fffbeb; padding: 4px 8px; border-radius: 4px; }
+  .sel-demo p:hover { color: var(--pink); cursor: pointer; }
+  .sel-demo input:focus  { outline: 3px solid var(--blue); border-radius: 4px; }
+
+  /* ===== BOX MODEL VIZ ===== */
+  .boxmodel-wrap { display: flex; justify-content: center; padding: 16px; }
+  .bm-margin  { background: #fef9c3; border: 2px dashed #ca8a04; padding: 20px;
+                border-radius: 8px; text-align: center; position: relative; }
+  .bm-border  { background: #fee2e2; border: 4px solid #dc2626; padding: 16px;
+                border-radius: 4px; }
+  .bm-padding { background: #dbeafe; padding: 16px; }
+  .bm-content { background: #bfdbfe; padding: 16px; font-weight: 700; font-size: .9rem; border-radius: 4px; }
+  .bm-label   { font-size: .72rem; font-weight: 700; color: #64748b; margin-bottom: 4px; }
+
+  /* ===== COLOR SWATCHES ===== */
+  .swatch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px,1fr)); gap: 10px; }
+  .swatch { border-radius: 8px; height: 60px; display: flex; align-items: center;
+            justify-content: center; font-size: .7rem; font-weight: 700; color: white;
+            text-shadow: 0 1px 2px rgba(0,0,0,.5); }
+
+  /* ===== TYPOGRAPHY SCALE ===== */
+  .type-row { display: flex; align-items: baseline; gap: 16px; padding: 10px 0;
+              border-bottom: 1px solid var(--border); }
+  .type-label { font-size: .75rem; color: var(--gray); width: 90px; flex-shrink: 0; }
+
+  /* ===== FLEXBOX DEMO ===== */
+  .flex-demo { display: flex; gap: 8px; padding: 12px;
+               background: #f1f5f9; border-radius: 8px; min-height: 80px; }
+  .flex-item { background: var(--indigo); color: white; border-radius: 6px;
+               padding: 10px 16px; font-weight: 700; font-size: .85rem; }
+  .flex-item.big { flex: 2; }
+  .flex-jc-start   { justify-content: flex-start; }
+  .flex-jc-center  { justify-content: center; }
+  .flex-jc-end     { justify-content: flex-end; }
+  .flex-jc-between { justify-content: space-between; }
+  .flex-jc-around  { justify-content: space-around; }
+  .flex-al-start   { align-items: flex-start; min-height: 100px; }
+  .flex-al-center  { align-items: center;     min-height: 100px; }
+  .flex-al-end     { align-items: flex-end;   min-height: 100px; }
+  .flex-wrap       { flex-wrap: wrap; }
+
+  /* ===== GRID DEMO ===== */
+  .grid-demo { display: grid; gap: 8px; background: #f1f5f9;
+               padding: 12px; border-radius: 8px; }
+  .grid-item { background: var(--blue); color: white; border-radius: 6px;
+               padding: 12px; font-weight: 700; font-size: .85rem; text-align: center; }
+  .gi-span2 { grid-column: span 2; }
+  .gi-span3 { grid-column: span 3; }
+
+  /* ===== POSITION DEMO ===== */
+  .pos-container {
+    position: relative; background: #f1f5f9; border-radius: 10px;
+    height: 160px; overflow: hidden;
+  }
+  .pos-box {
+    width: 80px; height: 50px; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .75rem; font-weight: 700; color: white;
+  }
+  .pos-static   { background: var(--gray);   position: static;   margin: 12px; }
+  .pos-relative { background: var(--blue);   position: relative; top: 10px; left: 20px; }
+  .pos-absolute { background: var(--green);  position: absolute; bottom: 8px; right: 8px; }
+  .pos-fixed-demo { background: var(--orange); /* just visual */ margin: 8px; }
+
+  /* ===== TRANSITIONS ===== */
+  .btn-demo {
+    display: inline-block; padding: 10px 24px; border-radius: 8px;
+    font-weight: 700; cursor: pointer; font-size: .9rem; margin: 6px;
+    border: none; transition: all .3s ease;
+  }
+  .btn-blue  { background: var(--blue);   color: white; }
+  .btn-blue:hover  { background: #1d4ed8; transform: translateY(-2px);
+                     box-shadow: 0 8px 20px rgba(59,130,246,.4); }
+  .btn-green { background: var(--green);  color: white; }
+  .btn-green:hover { background: #059669; transform: scale(1.05); }
+  .btn-outline { background: transparent; color: var(--indigo);
+                 border: 2px solid var(--indigo); }
+  .btn-outline:hover { background: var(--indigo); color: white; }
+
+  /* ===== ANIMATION ===== */
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: .4; }
+  }
+  @keyframes slideIn {
+    from { transform: translateX(-40px); opacity: 0; }
+    to   { transform: translateX(0);     opacity: 1; }
+  }
+  .anim-bounce { animation: bounce 1s ease infinite; }
+  .anim-spin   { animation: spin   2s linear infinite; display: inline-block; font-size: 2rem; }
+  .anim-pulse  { animation: pulse  1.5s ease infinite; }
+  .anim-slide  { animation: slideIn .8s ease forwards; }
+  .anim-box {
+    width: 50px; height: 50px; border-radius: 8px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; margin: 8px;
+  }
+
+  /* ===== PSEUDO-ELEMENTS ===== */
+  .pseudo-demo p { position: relative; padding-left: 20px; margin: 8px 0; }
+  .pseudo-demo p::before {
+    content: "▶"; position: absolute; left: 0; color: var(--blue); font-size: .8rem;
+  }
+  .pseudo-demo h4::after {
+    content: " ✨"; color: var(--orange);
+  }
+  .pseudo-demo .highlight-text { position: relative; display: inline-block; }
+  .pseudo-demo .highlight-text::after {
+    content: ""; position: absolute; bottom: 0; left: 0;
+    width: 100%; height: 3px; background: var(--pink);
+    transform: scaleX(0); transition: transform .3s;
+  }
+  .pseudo-demo .highlight-text:hover::after { transform: scaleX(1); }
+
+  /* ===== RESPONSIVE ===== */
+  .responsive-demo-box {
+    background: var(--blue); color: white; padding: 16px; border-radius: 8px;
+    text-align: center; font-weight: 700; font-size: .9rem;
+  }
+  @media (max-width: 768px) {
+    .responsive-demo-box { background: var(--green); }
+    .responsive-demo-box::after { content: " (< 768px)"; }
+  }
+
+  /* ===== VARIABLES DEMO ===== */
+  .var-demo {
+    --theme: #8b5cf6;
+    background: var(--theme); color: white; padding: 16px; border-radius: 8px;
+    font-weight: 700; text-align: center;
+  }
+  .var-demo.alt { --theme: #f59e0b; }
+
+  /* ===== SPECIFICITY VIZ ===== */
+  .spec-row { display: flex; align-items: center; gap: 12px; padding: 8px 0;
+              border-bottom: 1px solid var(--border); }
+  .spec-score {
+    display: flex; gap: 4px; align-items: center;
+  }
+  .spec-num { width: 32px; height: 32px; border-radius: 6px;
+              display: flex; align-items: center; justify-content: center;
+              font-weight: 800; font-size: .9rem; color: white; }
+  .sn-a { background: var(--red); }
+  .sn-b { background: var(--orange); }
+  .sn-c { background: var(--blue); }
+  .spec-code { font-family: monospace; font-size: .85rem; background: #f1f5f9;
+               padding: 4px 10px; border-radius: 4px; color: var(--dark); }
+  .spec-desc { font-size: .8rem; color: var(--gray); }
+
+  /* ===== UNITS DEMO ===== */
+  .unit-bar-wrap { margin: 6px 0; }
+  .unit-bar { height: 32px; border-radius: 6px; display: flex; align-items: center;
+              padding-left: 12px; color: white; font-weight: 700; font-size: .8rem; margin: 4px 0; }
+
+  /* ===== CHEATSHEET TABLE ===== */
+  table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+  thead tr { background: var(--dark); color: white; }
+  thead th { padding: 12px 14px; text-align: left; }
+  tbody tr:nth-child(even) { background: #f8fafc; }
+  tbody td { padding: 10px 14px; border-bottom: 1px solid var(--border); }
+  tbody td:first-child { font-family: monospace; color: var(--blue); font-weight: 700; }
+  tbody td code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px;
+                  font-size: .82rem; color: var(--indigo); }
+
+  /* ===== FOOTER ===== */
+  footer { background: var(--dark); color: #94a3b8; text-align: center;
+           padding: 32px 24px; margin-top: 60px; }
+  footer strong { color: white; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════
+     HERO
+══════════════════════════════════════════════════ -->
+<div class="hero">
+  <h1>🎨 CSS ฉบับสมบูรณ์</h1>
+  <p>สื่อการสอนแบบ Interactive — เห็นโค้ด เห็นผลลัพธ์ ทันที</p>
+  <div class="badge-row">
+    <span class="badge">🎯 Selectors</span>
+    <span class="badge">📦 Box Model</span>
+    <span class="badge">🎨 Colors</span>
+    <span class="badge">📝 Typography</span>
+    <span class="badge">📐 Flexbox</span>
+    <span class="badge">🔲 Grid</span>
+    <span class="badge">📍 Position</span>
+    <span class="badge">✨ Animation</span>
+    <span class="badge">📱 Responsive</span>
+    <span class="badge">🔧 Variables</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     NAV
+══════════════════════════════════════════════════ -->
+<nav class="nav-sticky">
+  <a href="#basics">พื้นฐาน</a>
+  <a href="#selectors">Selectors</a>
+  <a href="#boxmodel">Box Model</a>
+  <a href="#colors">Colors</a>
+  <a href="#typography">Typography</a>
+  <a href="#flexbox">Flexbox</a>
+  <a href="#grid">Grid</a>
+  <a href="#position">Position</a>
+  <a href="#transitions">Transitions</a>
+  <a href="#animations">Animations</a>
+  <a href="#pseudo">Pseudo</a>
+  <a href="#responsive">Responsive</a>
+  <a href="#variables">Variables</a>
+  <a href="#specificity">Specificity</a>
+  <a href="#cheatsheet">Cheat Sheet</a>
+</nav>
+
+<!-- ══════════════════════════════════════════════════
+     1. BASICS
+══════════════════════════════════════════════════ -->
+<section id="basics" class="section">
+<div class="container">
+  <div class="section-title"><span class="icon">🏗️</span> CSS คืออะไร?</div>
+  <p class="section-sub">CSS (Cascading Style Sheets) ใช้ตกแต่งหน้าเว็บ — กำหนดสี, ขนาด, ตำแหน่ง, และทุกอย่างที่มองเห็น</p>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">🧱 โครงสร้างพื้นฐาน</div>
+      <div class="code-block">
+<span class="c-sel">selector</span> {<br>
+&nbsp;&nbsp;<span class="c-prop">property</span>: <span class="c-val">value</span>;<br>
+}<br><br>
+<span class="c-com">/* ตัวอย่างจริง */</span><br>
+<span class="c-sel">h1</span> {<br>
+&nbsp;&nbsp;<span class="c-prop">color</span>: <span class="c-val">red</span>;<br>
+&nbsp;&nbsp;<span class="c-prop">font-size</span>: <span class="c-num">24</span><span class="c-unit">px</span>;<br>
+&nbsp;&nbsp;<span class="c-prop">text-align</span>: <span class="c-val">center</span>;<br>
+}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📎 วิธีเชื่อม CSS กับ HTML</div>
+      <div class="code-block">
+<span class="c-com">/* 1. Internal — ใน &lt;style&gt; */</span><br>
+<span class="c-sel">&lt;style&gt;</span><br>
+&nbsp;&nbsp;<span class="c-prop">body</span> { <span class="c-prop">color</span>: <span class="c-val">black</span>; }<br>
+<span class="c-sel">&lt;/style&gt;</span><br><br>
+<span class="c-com">/* 2. External — ไฟล์ .css */</span><br>
+<span class="c-sel">&lt;link</span> <span class="c-prop">rel</span>="stylesheet"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-prop">href</span>="style.css"<span class="c-sel">&gt;</span><br><br>
+<span class="c-com">/* 3. Inline — ใน attribute */</span><br>
+<span class="c-sel">&lt;p</span> <span class="c-prop">style</span>="<span class="c-val">color:red</span>"<span class="c-sel">&gt;</span>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr class="divider">
+
+<!-- ══════════════════════════════════════════════════
+     2. SELECTORS
+══════════════════════════════════════════════════ -->
+<section id="selectors" class="section">
+<div class="container">
+  <div class="section-title"><span class="icon">🎯</span> Selectors</div>
+  <p class="section-sub">Selector คือตัวเลือกว่า CSS จะไปตกแต่ง element ไหน</p>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">📌 ประเภท Selector พื้นฐาน</div>
+      <table>
+        <thead><tr><th>Selector</th><th>ความหมาย</th><th>ตัวอย่าง</th></tr></thead>
+        <tbody>
+          <tr><td>*</td><td>ทุก element</td><td><code>* { margin:0 }</code></td></tr>
+          <tr><td>tag</td><td>แท็ก HTML</td><td><code>p { color:red }</code></td></tr>
+          <tr><td>.class</td><td>class attribute</td><td><code>.btn { ... }</code></td></tr>
+          <tr><td>#id</td><td>id attribute</td><td><code>#header { ... }</code></td></tr>
+          <tr><td>a, b</td><td>ทั้ง a และ b</td><td><code>h1, h2 { ... }</code></td></tr>
+          <tr><td>a b</td><td>b ภายใน a</td><td><code>div p { ... }</code></td></tr>
+          <tr><td>a > b</td><td>b ลูกตรงของ a</td><td><code>ul > li { ... }</code></td></tr>
+          <tr><td>a + b</td><td>b ถัดจาก a ทันที</td><td><code>h1 + p { ... }</code></td></tr>
+          <tr><td>a ~ b</td><td>b พี่น้องหลัง a</td><td><code>h1 ~ p { ... }</code></td></tr>
+          <tr><td>[attr]</td><td>มี attribute นี้</td><td><code>[type="text"]</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🔬 Pseudo-class Selectors</div>
+      <div class="code-block">
+<span class="c-sel">a:hover</span>   { <span class="c-prop">color</span>: <span class="c-val">blue</span>; }       <span class="c-com">/* เมาส์ชี้ */</span><br>
+<span class="c-sel">a:active</span>  { <span class="c-prop">color</span>: <span class="c-val">red</span>; }        <span class="c-com">/* กำลังกด */</span><br>
+<span class="c-sel">a:visited</span> { <span class="c-prop">color</span>: <span class="c-val">purple</span>; }     <span class="c-com">/* เคยคลิก */</span><br>
+<span class="c-sel">:focus</span>    { <span class="c-prop">outline</span>: <span class="c-val">2px solid blue</span>; }<br><br>
+<span class="c-sel">li:first-child</span>     { <span class="c-prop">font-weight</span>: <span class="c-val">bold</span>; }<br>
+<span class="c-sel">li:last-child</span>      { <span class="c-prop">border</span>: <span class="c-val">none</span>; }<br>
+<span class="c-sel">li:nth-child(2)</span>    { <span class="c-prop">color</span>: <span class="c-val">red</span>; }<br>
+<span class="c-sel">li:nth-child(odd)</span>  { <span class="c-prop">background</span>: <span class="c-val">#f0f0f0</span>; }<br>
+<span class="c-sel">li:nth-child(even)</span> { <span class="c-prop">background</span>: <span class="c-val">white</span>; }<br>
+<span class="c-sel">:not(.disabled)</span>   { <span class="c-prop">cursor</span>: <span class="c-val">pointer</span>; }
+      </div>
+
+      <div class="demo-area sel-demo">
+        <p>ย่อหน้าแรก → <em>italic (first-child)</em></p>
+        <p>ย่อหน้าที่สอง → พื้นเหลือง (nth-child(2))</p>
+        <p class="highlight">มี class .highlight → สีน้ำเงิน</p>
+        <p>ย่อหน้าสุดท้าย → underline (last-child)</p>
+        <p style="margin-top:8px;font-size:.8rem;color:var(--gray)">ลองเอาเมาส์ชี้บรรทัดต่างๆ 👆</p>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr class="divider">
+
+<!-- ══════════════════════════════════════════════════
+     3. BOX MODEL
+══════════════════════════════════════════════════ -->
+<section id="boxmodel" class="section">
+<div class="container">
+  <div class="section-title"><span class="icon">📦</span> Box Model</div>
+  <p class="section-sub">ทุก element ใน HTML คือกล่องสี่เหลี่ยม ประกอบด้วย 4 ชั้น</p>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">🗂️ ภาพ Box Model</div>
+      <div class="boxmodel-wrap">
+        <div class="bm-margin">
+          <div class="bm-label">margin (ระยะห่างนอก)</div>
+          <div class="bm-border">
+            <div class="bm-label">border (เส้นขอบ)</div>
+            <div class="bm-padding">
+              <div class="bm-label">padding (ระยะห่างใน)</div>
+              <div class="bm-content">content<br><small>ข้อความ/รูป</small></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📐 Properties ที่ใช้บ่อย</div>
+      <div class="code-block">
+<span class="c-sel">.box</span> {<br>
+&nbsp;&nbsp;<span class="c-com">/* ขนาด */</span><br>
+&nbsp;&nbsp;<span class="c-prop">width</span>: <span class="c-num">200</span><span class="c-unit">px</span>;<br>
+&nbsp;&nbsp;<span class="c-prop">height</span>: <span class="c-num">100</span><span class="c-unit">px</span>;<br>
+&nbsp;&nbsp;<span class="c-prop">max-width</span>: <span class="c-num">600</span><span class="c-unit">px</span>;<br><br>
+&nbsp;&nbsp;<span class="c-com">/* padding */</span><br>
+&nbsp;&nbsp;<span class="c-prop">padding</span>: <span class="c-num">16</span><span class="c-unit">px</span>;         <span class="c-com">/* ทุกด้าน */</span><br>
+&nbsp;&nbsp;<span class="c-prop">padding</span>: <span class="c-num">10</span><span class="c-unit">px</span> <span class="c-num">20</span><span class="c-unit">px</span>;   <span class="c-com">/* บน/ล่าง ซ้าย/ขวา */</span><br>
+&nbsp;&nbsp;<span class="c-prop">padding-top</span>: <span class="c-num">8</span><span class="c-unit">px</span>;<br><br>
+&nbsp;&nbsp;<span class="c-com">/* border */</span><br>
+&nbsp;&nbsp;<span class="c-prop">border</span>: <span class="c-num">2</span><span class="c-unit">px</span> <span class="c-val">solid</span> <span class="c-val">#333</span>;<br>
+&nbsp;&nbsp;<span class="c-prop">border-radius</span>: <span class="c-num">8</span><span class="c-unit">px</span>;<br><br>
+&nbsp;&nbsp;<span class="c-com">/* margin */</span><br>
+&nbsp;&nbsp;<span class="c-prop">margin</span>: <span class="c-num">0</span> <span class="c-val">auto</span>;   <span class="c-com">/* จัดกึ่งกลาง */</span><br><br>
+&nbsp;&nbsp;<span class="c-com">/* สำคัญมาก! */</span><br>
+&nbsp;&nbsp;<span class="c-prop">box-sizing</span>: <span class="c-val">border-box</span>;<br>
+}
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <div class="card-title">⚡ box-sizing: border-box คืออะไร?</div>
+    <div class="compare">
+      <div class="compare-box compare-bad">
+        <div class="compare-label">❌ content-box (default)</div>
+        <div class="code-block" style="font-size:.8rem">
+width: 200px + padding: 20px<br>
+= ขนาดจริง <strong style="color:#ef4444">240px</strong> 😱
+        </div>
+        <p style="font-size:.82rem;color:#dc2626;margin-top:8px">padding บวกเพิ่มเข้าไป ทำให้กล่องใหญ่กว่าที่กำหนด</p>
+      </div>
+      <div class="compare-box compare-good">
+        <div class="compare-label">✅ border-box (แนะนำ)</div>
+        <div class="code-block" style="font-size:.8rem">
+width: 200px + padding: 20px<br>
+= ขนาดจริง <strong style="color:#10b981">200px</strong> ✓
+        </div>
+        <p style="font-size:.82rem;color:#059669;margin-top:8px">padding อยู่ภายใน — ขนาดคือที่กำหนดเสมอ</p>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr class="divider">
+
+<!-- ══════════════════════════════════════════════════
+     4. COLORS
+══════════════════════════════════════════════════ -->
+<section id="colors" class="section">
+<div class="container">
+  <div class="section-title"><span class="icon">🎨</span> Colors</div>
+  <p class="section-sub">CSS รองรับรูปแบบสีหลายแบบ — เลือกใช้ตามความเหมาะสม</p>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">🖍️ รูปแบบสี</div>
+      <div class="code-block">
+<span class="c-com">/* ชื่อสี */</span><br>
+<span class="c-prop">color</span>: <span class="c-val">red</span>;  <span class="c-prop">color</span>: <span class="c-val">cornflowerblue</span>;<br><br>
+<span class="c-com">/* HEX */</span><br>
+<span class="c-prop">color</span>: <span class="c-val">#ff0000</span>;    <span class="c-com">/* แดง */</span><br>
+<span class="c-prop">color</span>: <span class="c-val">#ff0000aa</span>;   <span class="c-com">/* แดง + โปร่งใส */</span><br><br>
+<span class="c-com">/* RGB */</span><br>
+<span class="c-prop">color</span>: <span class="c-val">rgb(255, 0, 0)</span>;<br>
+<span class="c-prop">color</span>: <span class="c-val">rgba(255, 0, 0, 0.5)</span>;<br><br>
+<span class="c-com">/* HSL — เข้าใจง่ายที่สุด */</span><br>
+<span class="c-prop">color</span>: <span class="c-val">hsl(0, 100%, 50%)</span>;    <span class="c-com">/* แดง */</span><br>
+<span class="c-prop">color</span>: <span class="c-val">hsl(120, 100%, 50%)</span>;  <span class="c-com">/* เขียว */</span><br>
+<span class="c-prop">color</span>: <span class="c-val">hsl(240, 100%, 50%)</span>;  <span class="c-com">/* น้ำเงิน */</span><br><br>
+<span class="c-com">/* Gradient */</span><br>
+<span class="c-prop">background</span>: <span class="c-val">linear-gradient(135deg, #667eea, #764ba2)</span>;<br>
+<span class="c-prop">background</span>: <span class="c-val">radial-gradient(circle, #fff, #000)</span>;
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">🌈 ตัวอย่างสี</div>
+      <div class="swatch-grid">
+        <div class="swatch" style="background:#ef4444">#ef4444</div>
+        <div class="swatch" style="background:#f97316">#f97316</div>
+        <div class="swatch" style="background:#f59e0b">#f59e0b</div>
+        <div class="swatch" style="background:#84cc16">#84cc16</div>
+        <div class="swatch" style="background:#10b981">#10b981</div>
+        <div class="swatch" style="background:#06b6d4">#06b6d4</div>
+        <div class="swatch" style="background:#3b82f6">#3b82f6</div>
+        <div class="swatch" style="background:#6366f1">#6366f1</div>
+        <div class="swatch" style="background:#8b5cf6">#8b5cf6</div>
+        <div class="swatch" style="background:#ec4899">#ec4899</div>
+        <div class="swatch" style="background:#64748b">#64748b</div>
+        <div class="swatch" style="background:#1e293b">#1e293b</div>
+      </div>
+      <div style="margin-top:16px">
+        <div style="background:linear-gradient(90deg,#667eea,#764ba2,#ec4899);height:40px;border-radius:8px;margin-bottom:8px"></div>
+        <div style="background:linear-gradient(90deg,#f59e0b,#ef4444);height:40px;border-radius:8px;margin-bottom:8px"></div>
+        <div style="background:linear-gradient(90deg,#10b981,#3b82f6);height:40px;border-radius:8px"></div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr class="divider">
+
+<!-- ══════════════════════════════════════════════════
+     5. TYPOGRAPHY
+══════════════════════════════════════════════════ -->
+<section id="typography" class="section">
+<div class="container">
+  <div class="section-title"><span class="icon">📝</span> Typography</div>
+  <p class="section-sub">การจัดการตัวอักษร — font, ขนาด, ระยะห่าง, การจัดวาง</p>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">🔤 Font Properties</div>
+      <div class="code-block">
+<span class="c-prop">font-family</span>: <span class="c-val">'Sarabun', sans-serif</span>;<br>
+<span class="c-prop">font-size</span>:   <span class="c-num">16</span><span class="c-unit">px</span>;   <span class="c-com">/* หรือ 1rem */</span><br>
+<span class="c-prop">font-weight</span>: <span class="c-num">400</span>;     <span class="c-com">/* 100–900 */</span><br>
+<span class="c-prop">font-style</span>:  <span class="c-val">italic</span>;<br>
+<span class="c-prop">line-height</span>: <span class="c-num">1.6</span>;    <span class="c-com">/* ระยะห่างบรรทัด */</span><br>
+<span class="c-prop">letter-spacing</span>: <span class="c-num">0.05</span><span class="c-unit">em</span>; <span class="c-com">/* ระยะตัวอักษร */</span><br>
+<span class="c-prop">text-align</span>: <span class="c-val">center</span>; <span class="c-com">/* left|right|justify */</span><br>
+<span class="c-prop">text-decoration</span>: <span class="c-val">underline</span>;<br>
+<span class="c-prop">text-transform</span>: <span class="c-val">uppercase</span>;<br>
+<span class="c-prop">text-shadow</span>: <span class="c-num">2</span><span class="c-unit">px</span> <span class="c-num">2</span><span class="c-unit">px</span> <span class="c-num">4</span><span class="c-unit">px</span> <span class="c-val">rgba(0,0,0,.3)</span>;<br>
+<span class="c-prop">white-space</span>: <span class="c-val">nowrap</span>; <span class="c-com">/* ไม่ตัดบรรทัด */</span><br>
+<span class="c-prop">overflow</span>: <span class="c-val">hidden</span>;<br>
+<span class="c-prop">text-overflow</span>: <span class="c-val">ellipsis</span>; <span class="c-com">/* ตัดด้วย ... */</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📏 Type Scale</div>
+      <div style="border-top:1px solid var(--border)">
+        <div class="type-row"><span class="type-label">12px / .75rem</span><span style="font-size:12px">ข้อความขนาดเล็กมาก</span></div>
+        <div class="type-row"><span class="type-label">14px / .875rem</span><span style="font-size:14px">ข้อความขนาดเล็ก</span></div>
+        <div class="type-row"><span class="type-label">16px / 1rem</span><span style="font-size:16px">ข้อความปกติ (base)</span></div>
+        <div class="type-row"><span class="type-label">18px / 1.125rem</span><span style="font-size:18px">ข้อความขนาดกลาง</span></div>
+        <div class="type-row"><span class="type-label">20px / 1.25rem</span><span style="font-size:20px">ข้อความใหญ่ขึ้น</span></div>
+        <div class="type-row"><span class="type-label">24px / 1.5rem</span><span style="font-size:24px">หัวข้อย่อย</span></div>
+        <div class="type-row"><span class="type-label">32px / 2rem</span><span style="font-size:32px">หัวข้อหลัก</span></div>
+        <div class="type-row"><span class="type-label">48px / 3rem</span><span style="font-size:48px;line-height:1">Hero</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr class="divider">
+
+<!-- ══════════════════════════════════════════════════
+     6. FLEXBOX
+══════════════════════════════════════════════════ -->
+<section id="flexbox" class="section">
+<div class="container">
+  <div class="section-title"><span class="icon">📐</span> Flexbox</div>
+  <p class="section-sub">จัดวาง element ใน 1 มิติ (แถวหรือคอลัมน์) — ใช้บ่อยที่สุดใน CSS</p>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">🔧 Properties ของ Container</div>
+      <div class="code-block">
+<span class="c-sel">.container</span> {<br>
+&nbsp;&nbsp;<span class="c-prop">display</span>: <span class="c-val">flex</span>;<br>
+&nbsp;&nbsp;<span class="c-prop">flex-direction</span>: <span class="c-val">row</span>;       <span class="c-com">/* row|column */</span><br>
+&nbsp;&nbsp;<span class="c-prop">justify-content</span>: <span class="c-val">center</span>;    <span class="c-com">/* แกนหลัก */</span><br>
+&nbsp;&nbsp;<span class="c-prop">align-items</span>: <span class="c-val">center</span>;       <span class="c-com">/* แกนรอง */</span><br>
+&nbsp;&nbsp;<span class="c-prop">flex-wrap</span>: <span class="c-val">wrap</span>;          <span class="c-com">/* ตัดบรรทัด */</span><br>
+&nbsp;&nbsp;<span class="c-prop">gap</span>: <span class="c-num">16</span><span class="c-unit">px</span>;               <span class="c-com">/* ระยะห่างระหว่าง item */</span><br>
+}
+      </div>
+      <div class="code-block">
+<span class="c-sel">.item</span> {<br>
+&nbsp;&nbsp;<span class="c-prop">flex</span>: <span class="c-num">1</span>;             <span class="c-com">/* ขยายเต็มพื้นที่ */</span><br>
+&nbsp;&nbsp;<span class="c-prop">flex</span>: <span class="c-val">0 0 200px</span>;   <span class="c-com">/* grow shrink basis */</span><br>
+&nbsp;&nbsp;<span class="c-prop">align-self</span>: <span class="c-val">flex-end</span>; <span class="c-com">/* override align */</span><br>
+&nbsp;&nbsp;<span class="c-prop">order</span>: <span class="c-num">2</span>;           <span class="c-com">/* เรียงลำดับ */</span><br>
+}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🎮 ตัวอย่าง justify-content</div>
+      <p style="font-size:.8rem;color:var(--gray);margin-bottom:8px">flex-start</p>
+      <div class="flex-demo flex-jc-start">
+        <div class="flex-item">A</div><div class="flex-item">B</div><div class="flex-item">C</div>
+      </div>
+      <p style="font-size:.8rem;color:var(--gray);margin:8px 0">center</p>
+      <div class="flex-demo flex-jc-center">
+        <div class="flex-item">A</div><div class="flex-item">B</div><div class="flex-item">C</div>
+      </div>
+      <p style="font-size:.8rem;color:var(--gray);margin:8px 0">space-between</p>
+      <div class="flex-demo flex-jc-between">
+        <div class="flex-item">A</div><div class="flex-item">B</div><div class="flex-item">C</div>
+      </div>
+      <p style="font-size:.8rem;color:var(--gray);margin:8px 0">space-around</p>
+      <div class="flex-demo flex-jc-around">
+        <div class="flex-item">A</div><div class="flex-item">B</div><div class="flex-item">C</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <div class="card-title">🎯 ตัวอย่าง align-items + flex:1</div>
+    <div class="grid-3">
+      <div>
+        <p style="font-size:.8rem;color:var(--gray);margin-bottom:6px">align-items: flex-start</p>
+        <div class="flex-demo flex-al-start">
+          <div class="flex-item">สั้น</div>
+          <div class="flex-item" style="padding:20px 16px">ยาว<br>มาก</div>
+          <div class="flex-item">A</div>
+        </div>
+      </div>
+      <div>
+        <p style="font-size:.8rem;color:var(--gray);margin-bottom:6px">align-items: center</p>
+        <div class="flex-demo flex-al-center">
+          <div class="flex-item">สั้น</div>
+          <div class="flex-item" style="padding:20px 16px">ยาว<br>มาก</div>
+          <div class="flex-item">A</div>
+        </div>
+      </div>
+      <div>
+        <p style="font-size:.8rem;color:var(--gray);margin-bottom:6px">flex:1 (แต่ละ item ขยายเท่ากัน)</p>
+        <div class="flex-demo">
+          <div class="flex-item" style="flex:1">flex:1</div>
+          <div class="flex-item" style="flex:2">flex:2</div>
+          <div class="flex-item" style="flex:1">flex:1</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr class="divider">
+
+<!-- ══════════════════════════════════════════════════
+     7. GRID
+══════════════════════════════════════════════════ -->
+<section id="grid" class="section">
+<div class="container">
+  <div class="section-title"><span class="icon">🔲</span> CSS Grid</div>
+  <p class="section-sub">จัดวาง element ใน 2 มิติ (แถว + คอลัมน์) — สำหรับ layout ซับซ้อน</p>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">🔧 Properties</div>
+      <div class="code-block">
+<span class="c-sel">.grid</span> {<br>
+&nbsp;&nbsp;<span class="c-prop">display</span>: <span class="c-val">grid</span>;<br>
+&nbsp;&nbsp;<span class="c-prop">grid-template-columns</span>: <span class="c-val">1fr 1fr 1fr</span>;<br>
+&nbsp;&nbsp;<span class="c-com">/* หรือย่อ: repeat(3, 1fr) */</span><br>
+&nbsp;&nbsp;<span class="c-prop">grid-template-rows</span>: <span class="c-val">auto</span>;<br>
+&nbsp;&nbsp;<span class="c-prop">gap</span>: <span class="c-num">16</span><span class="c-unit">px</span>;<br>
+}<br><br>
+<span class="c-com">/* Responsive อัตโนมัติ */</span><br>
+<span class="c-sel">.auto-grid</span> {<br>
+&nbsp;&nbsp;<span class="c-prop">grid-template-columns</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-val">repeat(auto-fit, minmax(200px, 1fr))</span>;<br>
+}<br><br>
+<span class="c-com">/* Item ยืดข้ามคอลัมน์ */</span><br>
+<span class="c-sel">.wide</span> { <span class="c-prop">grid-column</span>: <span class="c-val">span 2</span>; }<br>
+<span class="c-sel">.full</span> { <span class="c-prop">grid-column</span>: <span class="c-val">1 / -1</span>; }
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🎮 ตัวอย่าง Grid Layout</div>
+      <p style="font-size:.8rem;color:var(--gray);margin-bottom:6px">grid-template-columns: repeat(3, 1fr)</p>
+      <div class="grid-demo" style="grid-template-columns:repeat(3,1fr)">
+        <div class="grid-item">1</div>
+        <div class="grid-item">2</div>
+        <div class="grid-item">3</div>
+        <div class="grid-item gi-span2">span 2</div>
+        <div class="grid-item">5</div>
+        <div class="grid-item gi-span3">span 3 (เต็มแถว)</div>
+      </div>
+
+      <p style="font-size:.8rem;color:var(--gray);margin:14px 0 6px">auto-fit + minmax</p>
+      <div class="grid-demo" style="grid-template-columns:repeat(auto-fit,minmax(70px,1fr))">
+        <div class="grid-item" style="background:var(--green)">A</div>
+        <div class="grid-item" style="background:var(--green)">B</div>
+        <div class="grid-item" style="background:var(--green)">C</div>
+        <div class="grid-item" style="background:var(--green)">D</div>
+        <div class="grid-item" style="background:var(--green)">E</div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr class="divider">
+
+<!-- ══════════════════════════════════════════════════
+     8. POSITION
+══════════════════════════════════════════════════ -->
+<section id="position" class="section">
+<div class="container">
+  <div class="section-title"><span class="icon">📍</span> Position</div>
+  <p class="section-sub">ควบคุมตำแหน่งของ element นอกเหนือจาก flow ปกติ</p>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">📋 ประเภท Position</div>
+      <table>
+        <thead><tr><th>ค่า</th><th>ความหมาย</th></tr></thead>
+        <tbody>
+          <tr><td>static</td><td>ค่าเริ่มต้น — ตาม flow ปกติ, top/left ไม่มีผล</td></tr>
+          <tr><td>relative</td><td>เลื่อนจากตำแหน่งปกติตัวเอง</td></tr>
+          <tr><td>absolute</td><td>ยึดกับ parent ที่มี position ≠ static</td></tr>
+          <tr><td>fixed</td><td>ยึดกับ viewport — ไม่เลื่อนตาม scroll</td></tr>
+          <tr><td>sticky</td><td>ตาม scroll จนถึงจุดที่กำหนด แล้วค้าง</td></tr>
+        </tbody>
+      </table>
+      <div class="code-block" style="margin-top:14px">
+<span class="c-sel">.parent</span> { <span class="c-prop">position</span>: <span class="c-val">relative</span>; }<br>
+<span class="c-sel">.child</span>  {<br>
+&nbsp;&nbsp;<span class="c-prop">position</span>: <span class="c-val">absolute</span>;<br>
+&nbsp;&nbsp;<span class="c-prop">top</span>: <span class="c-num">0</span>; <span class="c-prop">right</span>: <span class="c-num">0</span>;<br>
+&nbsp;&nbsp;<span class="c-prop">z-index</span>: <span class="c-num">10</span>; <span class="c-com">/* ชั้นซ้อน */</span><br>
+}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🎮 ตัวอย่าง position: absolute</div>
+      <div class="pos-container">
+        <div class="pos-box pos-relative">relative<br><small>top:10 left:20</small></div>
+        <div class="pos-box pos-absolute">absolute<br><small>bottom:8 right:8</small></div>
+      </div>
+      <p style="font-size:.8rem;color:var(--gray);margin-top:10px">
+        🟦 relative: เลื่อนจากตำแหน่งปกติ &nbsp;|&nbsp; 🟩 absolute: ยึดมุม parent
+      </p>
+
+      <div class="code-block" style="margin-top:14px">
+<span class="c-com">/* จัดกึ่งกลางด้วย absolute */</span><br>
+<span class="c-sel">.center</span> {<br>
+&nbsp;&nbsp;<span class="c-prop">position</span>: <span class="c-val">absolute</span>;<br>
+&nbsp;&nbsp;<span class="c-prop">top</span>: <span class="c-num">50</span><span class="c-unit">%</span>; <span class="c-prop">left</span>: <span class="c-num">50</span><span class="c-unit">%</span>;<br>
+&nbsp;&nbsp;<span class="c-prop">transform</span>: <span class="c-val">translate(-50%, -50%)</span>;<br>
+}
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr class="divider">
+
+<!-- ══════════════════════════════════════════════════
+     9. TRANSITIONS
+══════════════════════════════════════════════════ -->
+<section id="transitions" class="section">
+<div class="container">
+  <div class="section-title"><span class="icon">🌊</span> Transitions</div>
+  <p class="section-sub">เพิ่ม animation ให้กับการเปลี่ยนแปลง state เช่น hover</p>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">🔧 Syntax</div>
+      <div class="code-block">
+<span class="c-prop">transition</span>: <span class="c-val">property duration timing-function delay</span>;<br><br>
+<span class="c-com">/* ตัวอย่าง */</span><br>
+<span class="c-prop">transition</span>: <span class="c-val">all .3s ease</span>;<br>
+<span class="c-prop">transition</span>: <span class="c-val">color .2s, background .5s</span>;<br><br>
+<span class="c-com">/* timing functions */</span><br>
+<span class="c-prop">transition-timing-function</span>: <span class="c-val">ease</span>;        <span class="c-com">/* เริ่มช้า-เร็ว-ช้า */</span><br>
+<span class="c-prop">transition-timing-function</span>: <span class="c-val">linear</span>;      <span class="c-com">/* สม่ำเสมอ */</span><br>
+<span class="c-prop">transition-timing-function</span>: <span class="c-val">ease-in</span>;    <span class="c-com">/* เริ่มช้า */</span><br>
+<span class="c-prop">transition-timing-function</span>: <span class="c-val">ease-out</span>;   <span class="c-com">/* จบช้า */</span><br>
+<span class="c-prop">transition-timing-function</span>: <span class="c-val">cubic-bezier(.17,.67,.83,.67)</span>;
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🎮 ลองชี้เมาส์ที่ปุ่ม</div>
+      <div style="padding:16px;display:flex;flex-wrap:wrap;gap:8px">
+        <button class="btn-demo btn-blue">Hover → ลอยขึ้น</button>
+        <button class="btn-demo btn-green">Hover → ขยาย</button>
+        <button class="btn-demo btn-outline">Hover → Fill</button>
+      </div>
+      <div class="code-block">
+<span class="c-sel">.btn</span> {<br>
+&nbsp;&nbsp;<span class="c-prop">transition</span>: <span class="c-val">all .3s ease</span>;<br>
+}<br>
+<span class="c-sel">.btn:hover</span> {<br>
+&nbsp;&nbsp;<span class="c-prop">transform</span>: <span class="c-val">translateY(-2px)</span>;<br>
+&nbsp;&nbsp;<span class="c-prop">box-shadow</span>: <span class="c-val">0 8px 20px rgba(0,0,0,.2)</span>;<br>
+}
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr class="divider">
+
+<!-- ══════════════════════════════════════════════════
+     10. ANIMATIONS
+══════════════════════════════════════════════════ -->
+<section id="animations" class="section">
+<div class="container">
+  <div class="section-title"><span class="icon">✨</span> Animations (@keyframes)</div>
+  <p class="section-sub">สร้าง animation ที่ทำงานอัตโนมัติโดยไม่ต้องมีการโต้ตอบ</p>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">🔧 Syntax</div>
+      <div class="code-block">
+<span class="c-com">/* 1. สร้าง keyframes */</span><br>
+<span class="c-sel">@keyframes</span> <span class="c-val">bounce</span> {<br>
+&nbsp;&nbsp;<span class="c-num">0</span><span class="c-unit">%</span>,&nbsp;<span class="c-num">100</span><span class="c-unit">%</span> { <span class="c-prop">transform</span>: <span class="c-val">translateY(0)</span>; }<br>
+&nbsp;&nbsp;<span class="c-num">50</span><span class="c-unit">%</span>       { <span class="c-prop">transform</span>: <span class="c-val">translateY(-20px)</span>; }<br>
+}<br><br>
+<span class="c-com">/* 2. ใช้กับ element */</span><br>
+<span class="c-sel">.bouncing</span> {<br>
+&nbsp;&nbsp;<span class="c-prop">animation-name</span>: <span class="c-val">bounce</span>;<br>
+&nbsp;&nbsp;<span class="c-prop">animation-duration</span>: <span class="c-num">1</span><span class="c-unit">s</span>;<br>
+&nbsp;&nbsp;<span class="c-prop">animation-iteration-count</span>: <span class="c-val">infinite</span>;<br>
+&nbsp;&nbsp;<span class="c-prop">animation-timing-function</span>: <span class="c-val">ease</span>;<br>
+&nbsp;&nbsp;<span class="c-com">/* ย่อ: */</span><br>
+&nbsp;&nbsp;<span class="c-prop">animation</span>: <span class="c-val">bounce 1s ease infinite</span>;<br>
+}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🎮 ตัวอย่าง Animations</div>
+      <div class="demo-area" style="display:flex;align-items:center;gap:20px;flex-wrap:wrap">
+        <div>
+          <div class="anim-box" style="background:var(--blue)"><span class="anim-bounce">⬆️</span></div>
+          <p style="font-size:.75rem;text-align:center;color:var(--gray)">bounce</p>
+        </div>
+        <div>
+          <div class="anim-spin" style="font-size:2.5rem">⚙️</div>
+          <p style="font-size:.75rem;text-align:center;color:var(--gray)">spin</p>
+        </div>
+        <div>
+          <div class="anim-box" style="background:var(--pink)"><span class="anim-pulse">💗</span></div>
+          <p style="font-size:.75rem;text-align:center;color:var(--gray)">pulse</p>
+        </div>
+        <div>
+          <div class="anim-box anim-slide" style="background:var(--green)">▶</div>
+          <p style="font-size:.75rem;text-align:center;color:var(--gray)">slideIn</p>
+        </div>
+      </div>
+      <div class="code-block" style="margin-top:12px">
+<span class="c-sel">@keyframes</span> spin {<br>
+&nbsp;&nbsp;<span class="c-val">to</span> { <span class="c-prop">transform</span>: <span class="c-val">rotate(360deg)</span>; }<br>
+}<br>
+<span class="c-sel">@keyframes</span> pulse {<br>
+&nbsp;&nbsp;<span class="c-num">0</span><span class="c-unit">%</span>,<span class="c-num">100</span><span class="c-unit">%</span> { <span class="c-prop">opacity</span>: <span class="c-num">1</span>; }<br>
+&nbsp;&nbsp;<span class="c-num">50</span><span class="c-unit">%</span>       { <span class="c-prop">opacity</span>: <span class="c-num">.4</span>; }<br>
+}
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr class="divider">
+
+<!-- ══════════════════════════════════════════════════
+     11. PSEUDO-ELEMENTS
+══════════════════════════════════════════════════ -->
+<section id="pseudo" class="section">
+<div class="container">
+  <div class="section-title"><span class="icon">🔮</span> Pseudo-elements</div>
+  <p class="section-sub">::before และ ::after เพิ่ม element เสมือนโดยไม่ต้องเขียน HTML</p>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">🔧 Syntax</div>
+      <div class="code-block">
+<span class="c-sel">.element::before</span> {<br>
+&nbsp;&nbsp;<span class="c-prop">content</span>: <span class="c-val">"🔥"</span>; <span class="c-com">/* จำเป็นต้องมี! */</span><br>
+&nbsp;&nbsp;<span class="c-prop">display</span>: <span class="c-val">block</span>;<br>
+&nbsp;&nbsp;<span class="c-prop">position</span>: <span class="c-val">absolute</span>;<br>
+}<br><br>
+<span class="c-sel">.element::after</span> {<br>
+&nbsp;&nbsp;<span class="c-prop">content</span>: <span class="c-val">""</span>;<br>
+&nbsp;&nbsp;<span class="c-prop">width</span>: <span class="c-num">100</span><span class="c-unit">%</span>;<br>
+&nbsp;&nbsp;<span class="c-prop">height</span>: <span class="c-num">2</span><span class="c-unit">px</span>;<br>
+&nbsp;&nbsp;<span class="c-prop">background</span>: <span class="c-val">currentColor</span>;<br>
+}<br><br>
+<span class="c-com">/* ::first-line, ::first-letter, ::selection */</span><br>
+<span class="c-sel">::selection</span> {<br>
+&nbsp;&nbsp;<span class="c-prop">background</span>: <span class="c-val">#6366f1</span>;<br>
+&nbsp;&nbsp;<span class="c-prop">color</span>: <span class="c-val">white</span>;<br>
+}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🎮 ตัวอย่าง</div>
+      <div class="demo-area pseudo-demo">
+        <h4>หัวข้อนี้มี after ✨</h4>
+        <p>รายการที่ 1</p>
+        <p>รายการที่ 2</p>
+        <p>รายการที่ 3</p>
+        <p style="margin-top:12px">
+          เอาเมาส์ชี้: <span class="highlight-text">เส้นใต้ slide-in</span>
+        </p>
+        <p style="font-size:.8rem;color:var(--gray);margin-top:8px">ลองเลือก (select) ข้อความนี้ดู 🎨</p>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr class="divider">
+
+<!-- ══════════════════════════════════════════════════
+     12. RESPONSIVE
+══════════════════════════════════════════════════ -->
+<section id="responsive" class="section">
+<div class="container">
+  <div class="section-title"><span class="icon">📱</span> Responsive Design</div>
+  <p class="section-sub">ทำให้หน้าเว็บแสดงผลได้ดีทุกขนาดหน้าจอ</p>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">📏 Media Queries</div>
+      <div class="code-block">
+<span class="c-com">/* Mobile First (แนะนำ) */</span><br>
+<span class="c-sel">.card</span> { <span class="c-prop">width</span>: <span class="c-num">100</span><span class="c-unit">%</span>; }<br><br>
+<span class="c-sel">@media</span> (<span class="c-prop">min-width</span>: <span class="c-num">640</span><span class="c-unit">px</span>) {<br>
+&nbsp;&nbsp;<span class="c-sel">.card</span> { <span class="c-prop">width</span>: <span class="c-num">50</span><span class="c-unit">%</span>; }<br>
+}<br>
+<span class="c-sel">@media</span> (<span class="c-prop">min-width</span>: <span class="c-num">1024</span><span class="c-unit">px</span>) {<br>
+&nbsp;&nbsp;<span class="c-sel">.card</span> { <span class="c-prop">width</span>: <span class="c-num">33.33</span><span class="c-unit">%</span>; }<br>
+}<br><br>
+<span class="c-com">/* Breakpoints ที่ใช้บ่อย */</span><br>
+sm:  <span class="c-num">640</span><span class="c-unit">px</span><br>
+md:  <span class="c-num">768</span><span class="c-unit">px</span><br>
+lg: <span class="c-num">1024</span><span class="c-unit">px</span><br>
+xl: <span class="c-num">1280</span><span class="c-unit">px</span><br><br>
+<span class="c-com">/* หน้าจอแนวนอน */</span><br>
+<span class="c-sel">@media</span> (<span class="c-prop">orientation</span>: <span class="c-val">landscape</span>) { ... }<br><br>
+<span class="c-com">/* dark mode */</span><br>
+<span class="c-sel">@media</span> (<span class="c-prop">prefers-color-scheme</span>: <span class="c-val">dark</span>) { ... }
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📐 Units ที่ใช้กับ Responsive</div>
+      <div class="unit-bar-wrap">
+        <p style="font-size:.8rem;color:var(--gray);margin-bottom:6px">หน่วยต่างๆ เทียบกัน:</p>
+        <div class="unit-bar" style="width:100%;background:#6366f1">100% — เต็มพื้นที่ parent</div>
+        <div class="unit-bar" style="width:60%;background:#3b82f6">60vw — 60% ของ viewport</div>
+        <div class="unit-bar" style="width:50%;background:#10b981">2rem = 32px (ถ้า root 16px)</div>
+        <div class="unit-bar" style="width:40%;background:#f59e0b">1em = font-size ปัจจุบัน</div>
+        <div class="unit-bar" style="width:clamp(120px,30%,300px);background:#ef4444">clamp(120px, 30%, 300px)</div>
+      </div>
+      <div class="code-block" style="margin-top:12px">
+<span class="c-com">/* clamp(min, preferred, max) */</span><br>
+<span class="c-prop">font-size</span>: <span class="c-val">clamp(1rem, 2.5vw, 2rem)</span>;<br>
+<span class="c-prop">width</span>: <span class="c-val">clamp(200px, 50%, 800px)</span>;<br><br>
+<span class="c-com">/* อย่าลืม meta viewport ใน HTML! */</span><br>
+&lt;<span class="c-sel">meta</span> <span class="c-prop">name</span>="viewport"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-prop">content</span>="<span class="c-val">width=device-width, initial-scale=1</span>"&gt;
+      </div>
+      <div class="responsive-demo-box" style="margin-top:12px">
+        กล่องนี้เปลี่ยนสีตาม breakpoint
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr class="divider">
+
+<!-- ══════════════════════════════════════════════════
+     13. CSS VARIABLES
+══════════════════════════════════════════════════ -->
+<section id="variables" class="section">
+<div class="container">
+  <div class="section-title"><span class="icon">🔧</span> CSS Variables (Custom Properties)</div>
+  <p class="section-sub">เก็บค่าที่ใช้ซ้ำ — เปลี่ยนที่เดียว ส่งผลทุกที่</p>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">📝 วิธีใช้</div>
+      <div class="code-block">
+<span class="c-com">/* ประกาศใน :root (global) */</span><br>
+<span class="c-sel">:root</span> {<br>
+&nbsp;&nbsp;<span class="c-prop">--primary</span>: <span class="c-val">#6366f1</span>;<br>
+&nbsp;&nbsp;<span class="c-prop">--spacing</span>: <span class="c-num">16</span><span class="c-unit">px</span>;<br>
+&nbsp;&nbsp;<span class="c-prop">--radius</span>: <span class="c-num">8</span><span class="c-unit">px</span>;<br>
+&nbsp;&nbsp;<span class="c-prop">--shadow</span>: <span class="c-val">0 4px 12px rgba(0,0,0,.1)</span>;<br>
+}<br><br>
+<span class="c-com">/* ใช้งาน */</span><br>
+<span class="c-sel">.btn</span> {<br>
+&nbsp;&nbsp;<span class="c-prop">background</span>: <span class="c-val">var(--primary)</span>;<br>
+&nbsp;&nbsp;<span class="c-prop">padding</span>: <span class="c-val">var(--spacing)</span>;<br>
+&nbsp;&nbsp;<span class="c-prop">border-radius</span>: <span class="c-val">var(--radius)</span>;<br>
+&nbsp;&nbsp;<span class="c-prop">box-shadow</span>: <span class="c-val">var(--shadow)</span>;<br>
+}<br><br>
+<span class="c-com">/* Override ใน component */</span><br>
+<span class="c-sel">.danger</span> { <span class="c-prop">--primary</span>: <span class="c-val">#ef4444</span>; }<br><br>
+<span class="c-com">/* fallback value */</span><br>
+<span class="c-prop">color</span>: <span class="c-val">var(--text, black)</span>;
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🎨 ตัวอย่าง Theme</div>
+      <div class="var-demo">ธีม Purple: var(--theme) = #8b5cf6</div>
+      <div class="var-demo alt" style="margin-top:10px">ธีม Orange: var(--theme) = #f59e0b</div>
+
+      <div class="code-block" style="margin-top:14px">
+<span class="c-sel">.card</span> {<br>
+&nbsp;&nbsp;<span class="c-prop">--theme</span>: <span class="c-val">#8b5cf6</span>;<br>
+&nbsp;&nbsp;<span class="c-prop">background</span>: <span class="c-val">var(--theme)</span>;<br>
+}<br>
+<span class="c-sel">.card.orange</span> {<br>
+&nbsp;&nbsp;<span class="c-prop">--theme</span>: <span class="c-val">#f59e0b</span>; <span class="c-com">/* override! */</span><br>
+}
+      </div>
+
+      <div style="margin-top:16px;padding:14px;background:#f0f9ff;border-radius:8px;border:1px solid #bae6fd">
+        <p style="font-size:.85rem;color:#0369a1;font-weight:600">💡 ทำไมต้องใช้ CSS Variables?</p>
+        <ul style="font-size:.82rem;color:#0c4a6e;padding-left:16px;margin-top:6px;line-height:1.8">
+          <li>เปลี่ยน theme ได้ทั้งไซต์ด้วยโค้ดบรรทัดเดียว</li>
+          <li>JavaScript สามารถอ่านและเปลี่ยนค่าได้</li>
+          <li>Scope ได้ — ต่างจาก Sass variables</li>
+          <li>Dynamic — คำนวณใหม่เมื่อค่าเปลี่ยน</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr class="divider">
+
+<!-- ══════════════════════════════════════════════════
+     14. SPECIFICITY
+══════════════════════════════════════════════════ -->
+<section id="specificity" class="section">
+<div class="container">
+  <div class="section-title"><span class="icon">⚖️</span> Specificity & Cascade</div>
+  <p class="section-sub">เมื่อ CSS หลายตัวชนกัน — ใครชนะ?</p>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">🏆 คะแนน Specificity</div>
+      <div style="display:flex;gap:8px;margin-bottom:16px;justify-content:center">
+        <div style="text-align:center">
+          <div class="spec-num sn-a" style="width:48px;height:48px;font-size:1.2rem;border-radius:8px;display:flex;align-items:center;justify-content:center;margin:auto">A</div>
+          <p style="font-size:.75rem;color:var(--gray);margin-top:4px">Inline<br>style</p>
+        </div>
+        <div style="display:flex;align-items:center;font-size:1.5rem;color:var(--gray)">-</div>
+        <div style="text-align:center">
+          <div class="spec-num sn-b" style="width:48px;height:48px;font-size:1.2rem;border-radius:8px;display:flex;align-items:center;justify-content:center;margin:auto">B</div>
+          <p style="font-size:.75rem;color:var(--gray);margin-top:4px">ID<br>#id</p>
+        </div>
+        <div style="display:flex;align-items:center;font-size:1.5rem;color:var(--gray)">-</div>
+        <div style="text-align:center">
+          <div class="spec-num sn-c" style="width:48px;height:48px;font-size:1.2rem;border-radius:8px;display:flex;align-items:center;justify-content:center;margin:auto">C</div>
+          <p style="font-size:.75rem;color:var(--gray);margin-top:4px">Class/Attr<br>Pseudo</p>
+        </div>
+        <div style="display:flex;align-items:center;font-size:1.5rem;color:var(--gray)">-</div>
+        <div style="text-align:center">
+          <div style="width:48px;height:48px;background:#94a3b8;font-size:1.2rem;border-radius:8px;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;margin:auto">D</div>
+          <p style="font-size:.75rem;color:var(--gray);margin-top:4px">Element<br>tag</p>
+        </div>
+      </div>
+
+      <div>
+        <div class="spec-row">
+          <div class="spec-score">
+            <div class="spec-num sn-a">1</div>
+            <div class="spec-num sn-b">0</div>
+            <div class="spec-num sn-c">0</div>
+          </div>
+          <code class="spec-code">style="color:red"</code>
+          <span class="spec-desc">inline style</span>
+        </div>
+        <div class="spec-row">
+          <div class="spec-score">
+            <div class="spec-num sn-b">1</div>
+            <div class="spec-num sn-c">0</div>
+          </div>
+          <code class="spec-code">#header</code>
+          <span class="spec-desc">ID selector</span>
+        </div>
+        <div class="spec-row">
+          <div class="spec-score">
+            <div class="spec-num sn-c">2</div>
+          </div>
+          <code class="spec-code">.nav .link</code>
+          <span class="spec-desc">2 class</span>
+        </div>
+        <div class="spec-row">
+          <div class="spec-score">
+            <div class="spec-num sn-c">1</div>
+          </div>
+          <code class="spec-code">.btn</code>
+          <span class="spec-desc">1 class</span>
+        </div>
+        <div class="spec-row">
+          <div class="spec-score">
+            <div style="background:#94a3b8" class="spec-num">2</div>
+          </div>
+          <code class="spec-code">div p</code>
+          <span class="spec-desc">2 elements</span>
+        </div>
+        <div class="spec-row">
+          <div class="spec-score">
+            <div style="background:#94a3b8" class="spec-num">0</div>
+          </div>
+          <code class="spec-code">*</code>
+          <span class="spec-desc">universal (0)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">⚡ Cascade Order & !important</div>
+      <div class="code-block">
+<span class="c-com">/* ลำดับ CSS ที่ "ชนะ" */</span><br>
+<span class="c-num">1</span>. <span class="c-val">!important</span> (หลีกเลี่ยงถ้าทำได้)<br>
+<span class="c-num">2</span>. Inline style<br>
+<span class="c-num">3</span>. Specificity สูงกว่า<br>
+<span class="c-num">4</span>. ลำดับล่าสุดใน CSS<br><br>
+<span class="c-com">/* ตัวอย่างที่สับสนบ่อย */</span><br>
+<span class="c-sel">p</span>           { <span class="c-prop">color</span>: <span class="c-val">red</span>; }   <span class="c-com">/* 0-0-1 */</span><br>
+<span class="c-sel">.text</span>       { <span class="c-prop">color</span>: <span class="c-val">blue</span>; }  <span class="c-com">/* 0-1-0 ← ชนะ */</span><br>
+<span class="c-sel">p.text</span>      { <span class="c-prop">color</span>: <span class="c-val">green</span>; } <span class="c-com">/* 0-1-1 ← ชนะกว่า */</span><br>
+<span class="c-sel">#main p</span>    { <span class="c-prop">color</span>: <span class="c-val">pink</span>; }  <span class="c-com">/* 1-0-1 ← ชนะสุด */</span><br>
+      </div>
+
+      <div style="background:#fef9c3;border:1px solid #fde68a;border-radius:8px;padding:14px;margin-top:12px">
+        <p style="font-weight:700;font-size:.9rem;color:#92400e">⚠️ เคล็ดลับ</p>
+        <ul style="font-size:.82rem;color:#78350f;padding-left:16px;margin-top:6px;line-height:1.8">
+          <li>หลีกเลี่ยง <code>!important</code> — มันทำให้ debug ยาก</li>
+          <li>ใช้ class แทน ID ใน CSS</li>
+          <li>อย่าทำ selector ซับซ้อนเกินไป</li>
+          <li>ใช้ CSS Variables และ BEM เพื่อจัดการได้ง่าย</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr class="divider">
+
+<!-- ══════════════════════════════════════════════════
+     15. CHEAT SHEET
+══════════════════════════════════════════════════ -->
+<section id="cheatsheet" class="section">
+<div class="container">
+  <div class="section-title"><span class="icon">📋</span> Cheat Sheet รวม Properties</div>
+  <p class="section-sub">รวม properties ที่ใช้บ่อยที่สุดในที่เดียว</p>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">📐 Layout</div>
+      <table>
+        <thead><tr><th>Property</th><th>ตัวอย่าง</th><th>ความหมาย</th></tr></thead>
+        <tbody>
+          <tr><td>display</td><td><code>flex | grid | block | inline | none</code></td><td>วิธีแสดงผล</td></tr>
+          <tr><td>width/height</td><td><code>100px | 50% | auto | 100vw</code></td><td>ขนาด</td></tr>
+          <tr><td>max/min-width</td><td><code>max-width: 1200px</code></td><td>จำกัดขนาด</td></tr>
+          <tr><td>margin</td><td><code>0 auto | 16px | 10px 20px</code></td><td>ระยะนอก</td></tr>
+          <tr><td>padding</td><td><code>16px | 8px 16px</code></td><td>ระยะใน</td></tr>
+          <tr><td>overflow</td><td><code>hidden | scroll | auto</code></td><td>เนื้อหาล้น</td></tr>
+          <tr><td>visibility</td><td><code>hidden | visible</code></td><td>ซ่อน (ยังครอง space)</td></tr>
+          <tr><td>z-index</td><td><code>10 | -1 | auto</code></td><td>ลำดับชั้น</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🎨 Visual</div>
+      <table>
+        <thead><tr><th>Property</th><th>ตัวอย่าง</th><th>ความหมาย</th></tr></thead>
+        <tbody>
+          <tr><td>background</td><td><code>#fff | url() | gradient</code></td><td>พื้นหลัง</td></tr>
+          <tr><td>border</td><td><code>1px solid #ccc</code></td><td>เส้นขอบ</td></tr>
+          <tr><td>border-radius</td><td><code>8px | 50%</code></td><td>มุมโค้ง</td></tr>
+          <tr><td>box-shadow</td><td><code>0 4px 12px rgba(0,0,0,.1)</code></td><td>เงา</td></tr>
+          <tr><td>opacity</td><td><code>0 → 1</code></td><td>ความโปร่งใส</td></tr>
+          <tr><td>filter</td><td><code>blur(4px) | grayscale(100%)</code></td><td>ฟิลเตอร์</td></tr>
+          <tr><td>transform</td><td><code>scale(1.1) rotate(45deg)</code></td><td>แปลงรูป</td></tr>
+          <tr><td>cursor</td><td><code>pointer | not-allowed</code></td><td>รูปเมาส์</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-top:20px">
+    <div class="card">
+      <div class="card-title">📝 Text & Font</div>
+      <table>
+        <thead><tr><th>Property</th><th>ตัวอย่าง</th><th>ความหมาย</th></tr></thead>
+        <tbody>
+          <tr><td>color</td><td><code>#333 | rgb() | hsl()</code></td><td>สีตัวอักษร</td></tr>
+          <tr><td>font-family</td><td><code>'Sarabun', sans-serif</code></td><td>ฟอนต์</td></tr>
+          <tr><td>font-size</td><td><code>16px | 1rem | 1.2em</code></td><td>ขนาดฟอนต์</td></tr>
+          <tr><td>font-weight</td><td><code>400 | 700 | bold</code></td><td>ความหนา</td></tr>
+          <tr><td>line-height</td><td><code>1.5 | 24px</code></td><td>ความสูงบรรทัด</td></tr>
+          <tr><td>text-align</td><td><code>left | center | right</code></td><td>การจัดวาง</td></tr>
+          <tr><td>text-overflow</td><td><code>ellipsis</code></td><td>ตัดด้วย ...</td></tr>
+          <tr><td>word-break</td><td><code>break-all | keep-all</code></td><td>ตัดคำ</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title">⚡ Shorthand ที่ใช้บ่อย</div>
+      <div class="code-block">
+<span class="c-com">/* background */</span><br>
+<span class="c-prop">background</span>: <span class="c-val">url(bg.png) center/cover no-repeat</span>;<br><br>
+<span class="c-com">/* border */</span><br>
+<span class="c-prop">border</span>: <span class="c-num">2</span><span class="c-unit">px</span> <span class="c-val">solid</span> <span class="c-val">#333</span>;<br><br>
+<span class="c-com">/* transition */</span><br>
+<span class="c-prop">transition</span>: <span class="c-val">all .3s ease</span>;<br><br>
+<span class="c-com">/* animation */</span><br>
+<span class="c-prop">animation</span>: <span class="c-val">name 1s ease infinite</span>;<br><br>
+<span class="c-com">/* flex */</span><br>
+<span class="c-prop">flex</span>: <span class="c-val">1 0 auto</span>; <span class="c-com">/* grow shrink basis */</span><br><br>
+<span class="c-com">/* grid */</span><br>
+<span class="c-prop">grid</span>: <span class="c-val">auto / repeat(3, 1fr)</span>;<br><br>
+<span class="c-com">/* margin/padding ย่อ */</span><br>
+<span class="c-prop">margin</span>: <span class="c-val">top right bottom left</span>; <span class="c-com">/* ↑→↓← */</span><br>
+<span class="c-prop">margin</span>: <span class="c-val">top-bottom left-right</span>;
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════════════ -->
+<footer>
+  <p><strong>🎨 สื่อการสอน CSS ฉบับสมบูรณ์</strong></p>
+  <p style="margin-top:8px;font-size:.85rem">
+    ครอบคลุม: Selectors • Box Model • Colors • Typography • Flexbox • Grid • Position •
+    Transitions • Animations • Pseudo-elements • Responsive • Variables • Specificity
+  </p>
+  <p style="margin-top:16px;font-size:.8rem;opacity:.6">
+    เปิดใน Browser ได้เลย — ไม่ต้องพึ่ง framework หรือ library ใดๆ
+  </p>
+</footer>
+
+</body>
+</html>

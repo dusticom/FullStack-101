@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>สื่อการสอน Git ฉบับสมบูรณ์</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --orange:#f05033;--dark-orange:#e44d26;
+  --blue:#3b82f6;--green:#10b981;--yellow:#f59e0b;
+  --purple:#8b5cf6;--cyan:#06b6d4;--red:#ef4444;
+  --dark:#0d1117;--card:#161b22;--border:#30363d;
+  --radius:12px;--shadow:0 4px 20px rgba(0,0,0,.35);
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#0d1117;color:#c9d1d9;line-height:1.75}
+
+/* ─── HERO ─────────────────────────────────────────── */
+.hero{background:linear-gradient(135deg,#0d1117 0%,#1a0a00 60%,#2d1000 100%);border-bottom:2px solid #f0503322;text-align:center;padding:68px 24px 52px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% -10%,rgba(240,80,51,.14),transparent 65%)}
+.hero-logo{font-size:5rem;margin-bottom:8px;position:relative}
+.hero h1{font-size:clamp(2.2rem,5vw,3.6rem);font-weight:900;color:#fff;margin-bottom:10px;position:relative;letter-spacing:-1px}
+.hero h1 span{color:#f05033}
+.hero p{font-size:1.1rem;color:#8b949e;max-width:600px;margin:0 auto;position:relative}
+.badge-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:20px;position:relative}
+.badge{background:rgba(240,80,51,.12);border:1px solid rgba(240,80,51,.3);color:#fca5a5;padding:4px 14px;border-radius:999px;font-size:.8rem;font-weight:700}
+
+/* ─── NAV ──────────────────────────────────────────── */
+.nav-sticky{position:sticky;top:0;z-index:100;background:#161b22;border-bottom:1px solid #30363d;padding:0 10px;overflow-x:auto;white-space:nowrap}
+.nav-sticky a{display:inline-block;padding:11px 12px;font-size:.79rem;font-weight:600;color:#8b949e;text-decoration:none;border-bottom:2px solid transparent;transition:.2s}
+.nav-sticky a:hover,.nav-sticky a.active{color:#f05033;border-color:#f05033}
+
+/* ─── LAYOUT ───────────────────────────────────────── */
+.container{max-width:1150px;margin:0 auto;padding:40px 20px}
+section{margin-bottom:64px}
+
+/* ─── CHAPTER HEADER ───────────────────────────────── */
+.chapter-header{border-radius:var(--radius);padding:22px 28px;margin-bottom:22px;display:flex;align-items:center;gap:18px;border:1px solid #30363d;position:relative;overflow:hidden}
+.chapter-header::after{content:'';position:absolute;right:-30px;top:50%;transform:translateY(-50%);width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.02);pointer-events:none}
+.ch-num{font-size:3rem;font-weight:900;opacity:.18;line-height:1;min-width:60px;color:#fff;font-family:monospace}
+.chapter-header h2{font-size:1.38rem;font-weight:800;color:#fff;margin:0}
+.chapter-header p{font-size:.87rem;color:#8b949e;margin-top:5px}
+.ch-git  {background:linear-gradient(135deg,#1a0800,#2d1500);border-color:#f0503333}
+.ch-blue {background:linear-gradient(135deg,#0c1445,#1e3a8a)}
+.ch-green{background:linear-gradient(135deg,#052e16,#064e3b)}
+.ch-purp {background:linear-gradient(135deg,#2e1065,#4c1d95)}
+.ch-cyan {background:linear-gradient(135deg,#0a2540,#155e75)}
+.ch-red  {background:linear-gradient(135deg,#450a0a,#7f1d1d)}
+.ch-yell {background:linear-gradient(135deg,#1c1400,#78350f)}
+.ch-teal {background:linear-gradient(135deg,#042f2e,#134e4a)}
+.ch-pink {background:linear-gradient(135deg,#2d0a1e,#831843)}
+.ch-slate{background:linear-gradient(135deg,#0f172a,#1e293b)}
+
+/* ─── CARDS ────────────────────────────────────────── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px 24px;margin-bottom:18px;box-shadow:var(--shadow)}
+.card h3{font-size:1.05rem;font-weight:700;color:#e6edf3;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.card p,.card li{font-size:.91rem;color:#8b949e;line-height:1.7}
+.card ul,.card ol{padding-left:18px;display:flex;flex-direction:column;gap:5px}
+
+/* ─── TERMINAL / CODE ──────────────────────────────── */
+pre{background:#000;color:#c9d1d9;border-radius:8px;padding:18px 20px;overflow-x:auto;font-size:.84rem;line-height:1.8;margin:10px 0;font-family:'Cascadia Code','Fira Code','Consolas',monospace;border:1px solid #21262d}
+.terminal{background:#000;border-radius:10px;overflow:hidden;margin:12px 0;border:1px solid #2d2d2d;box-shadow:0 8px 32px rgba(0,0,0,.5)}
+.t-bar{background:#1c1c1e;padding:10px 16px;display:flex;align-items:center;gap:7px;border-bottom:1px solid #2d2d2d}
+.t-bar span{width:12px;height:12px;border-radius:50%}
+.t-r{background:#ff5f57}.t-y{background:#febc2e}.t-g{background:#28c840}
+.t-title{color:#555;font-size:.79rem;margin-left:6px;font-family:monospace}
+.terminal pre{border:none;border-radius:0;margin:0;padding:16px 20px;background:#000}
+
+/* Syntax colors */
+.p{color:#10b981;font-weight:700}   /* prompt */
+.c{color:#484f58;font-style:italic} /* comment */
+.s{color:#a5d6ff}                   /* string/arg */
+.kw{color:#ff7b72}                  /* keyword */
+.br{color:#ffa657}                  /* branch name */
+.hash{color:#79c0ff}                /* commit hash */
+.ok{color:#3fb950}                  /* success */
+.warn{color:#d29922}                /* warning */
+.err2{color:#f85149}                /* error */
+.out{color:#8b949e}                 /* output */
+.ic{background:#21262d;color:#79c0ff;padding:2px 7px;border-radius:5px;font-family:'Cascadia Code','Fira Code',monospace;font-size:.85em}
+
+/* ─── GRIDS ────────────────────────────────────────── */
+.grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
+.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+
+/* ─── CALLOUT ──────────────────────────────────────── */
+.callout{border-radius:8px;padding:13px 17px;margin:12px 0;display:flex;gap:10px;font-size:.9rem;line-height:1.6}
+.callout.info  {background:rgba(59,130,246,.08);border-left:3px solid #3b82f6;color:#93c5fd}
+.callout.tip   {background:rgba(16,185,129,.08);border-left:3px solid #10b981;color:#6ee7b7}
+.callout.warn  {background:rgba(245,158,11,.08);border-left:3px solid #f59e0b;color:#fde68a}
+.callout.danger{background:rgba(239,68,68,.08) ;border-left:3px solid #ef4444;color:#fca5a5}
+.callout .ci{font-size:1.05rem;flex-shrink:0;margin-top:1px}
+
+/* ─── TABLE ────────────────────────────────────────── */
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:12px 0}
+th{background:#1c2128;padding:9px 14px;text-align:left;font-weight:700;color:#8b949e;border:1px solid #30363d}
+td{padding:9px 14px;border:1px solid #30363d;vertical-align:top;color:#c9d1d9}
+tr:nth-child(even) td{background:#161b22}
+td code{color:#79c0ff;font-family:'Cascadia Code','Fira Code',monospace;font-size:.84em}
+
+/* ─── GIT FLOW DIAGRAM ─────────────────────────────── */
+.git-flow{padding:20px;background:#000;border:1px solid #21262d;border-radius:10px;margin:12px 0;overflow-x:auto}
+.gf-row{display:flex;align-items:center;gap:0;margin:8px 0;position:relative}
+.gf-label{width:100px;font-size:.78rem;color:#8b949e;font-family:monospace;text-align:right;padding-right:12px;flex-shrink:0}
+.gf-line{display:flex;align-items:center;gap:0;flex:1}
+.commit{width:28px;height:28px;border-radius:50%;border:2px solid;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800;flex-shrink:0;position:relative;z-index:2}
+.c-main  {border-color:#f05033;background:#1a0800;color:#f05033}
+.c-dev   {border-color:#3b82f6;background:#0c1445;color:#3b82f6}
+.c-feat  {border-color:#10b981;background:#052e16;color:#10b981}
+.c-hotfix{border-color:#f59e0b;background:#1c1400;color:#f59e0b}
+.c-tag   {border-color:#8b5cf6;background:#2e1065;color:#8b5cf6}
+.line-h{height:2px;background:#333;flex:1;min-width:12px}
+.line-h.main  {background:#f05033}
+.line-h.dev   {background:#3b82f6}
+.line-h.feat  {background:#10b981}
+.line-h.hotfix{background:#f59e0b}
+.gf-space{width:28px;flex-shrink:0}
+.gf-spacer{height:2px;background:transparent;flex:1;min-width:12px}
+
+/* ─── FLOW BOX ─────────────────────────────────────── */
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:6px;padding:14px 18px;background:#000;border:1px solid #21262d;border-radius:8px;margin:10px 0;font-size:.85rem}
+.fb{padding:8px 14px;border-radius:8px;font-weight:700;text-align:center;font-family:monospace;font-size:.83rem}
+.fb-r{background:#1a0800;color:#f05033;border:1px solid #f0503344}
+.fb-g{background:#052e16;color:#3fb950;border:1px solid #3fb95044}
+.fb-b{background:#0c1445;color:#79c0ff;border:1px solid #79c0ff44}
+.fb-y{background:#1c1400;color:#ffa657;border:1px solid #ffa65744}
+.fb-p{background:#2e1065;color:#ddd6fe;border:1px solid #ddd6fe44}
+.fa{color:#8b949e;font-size:1.1rem;padding:0 2px}
+
+/* ─── AREA BOX ─────────────────────────────────────── */
+.area-box{border:1px solid #30363d;border-radius:10px;overflow:hidden;margin:12px 0}
+.area-head{padding:10px 16px;font-size:.85rem;font-weight:700;font-family:monospace;border-bottom:1px solid #30363d}
+.area-head.wd  {background:#0c1400;color:#3fb950}
+.area-head.stage{background:#0c0c28;color:#79c0ff}
+.area-head.repo {background:#1a0800;color:#f05033}
+.area-head.remote{background:#1c1400;color:#ffa657}
+.area-body{padding:12px 16px;font-size:.84rem;font-family:monospace;color:#8b949e}
+
+/* ─── BRANCH BADGE ─────────────────────────────────── */
+.bbadge{display:inline-flex;align-items:center;gap:5px;background:#161b22;border:1px solid #30363d;border-radius:6px;padding:3px 10px;font-family:monospace;font-size:.82rem;margin:2px}
+.bbadge::before{content:'⎇';color:#8b949e;font-size:.7rem}
+.bbadge.main  {color:#f05033;border-color:#f0503344}
+.bbadge.dev   {color:#79c0ff;border-color:#79c0ff44}
+.bbadge.feat  {color:#3fb950;border-color:#3fb95044}
+.bbadge.hotfix{color:#ffa657;border-color:#ffa65744}
+
+/* ─── COMMAND CARD ─────────────────────────────────── */
+.cmd-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin:14px 0}
+.cmd-card{background:#0d1117;border:1px solid #21262d;border-radius:8px;padding:14px 16px}
+.cmd-card .cmd-name{font-family:monospace;font-size:.88rem;color:#f05033;font-weight:700;margin-bottom:6px}
+.cmd-card .cmd-desc{font-size:.82rem;color:#8b949e;line-height:1.5}
+.cmd-card pre{margin:6px 0 0;font-size:.8rem;padding:10px 12px}
+
+/* ─── COMPARE ──────────────────────────────────────── */
+.compare{display:grid;grid-template-columns:1fr 1fr;border:1px solid #30363d;border-radius:var(--radius);overflow:hidden;margin:12px 0}
+.compare-col:first-child{border-right:1px solid #30363d}
+.compare-head{padding:8px 16px;font-size:.82rem;font-weight:700;text-align:center}
+.compare-head.old{background:rgba(239,68,68,.15);color:#fca5a5}
+.compare-head.new{background:rgba(16,185,129,.15);color:#6ee7b7}
+.compare-col pre{margin:0;border-radius:0;border:none;border-top:1px solid #30363d;font-size:.81rem}
+
+/* ─── FOOTER ───────────────────────────────────────── */
+footer{background:#0d1117;border-top:1px solid #21262d;color:#484f58;text-align:center;padding:32px;font-size:.85rem}
+footer strong{color:#8b949e}
+
+@media(max-width:640px){
+  .grid-2,.grid-3{grid-template-columns:1fr}
+  .compare{grid-template-columns:1fr}
+  .compare-col:first-child{border-right:none;border-bottom:1px solid #30363d}
+  .gf-label{width:70px}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════ HERO -->
+<div class="hero">
+  <div class="hero-logo">🦊</div>
+  <h1><span>Git</span> Version Control</h1>
+  <p>สื่อการสอนฉบับสมบูรณ์ — ตั้งแต่ commit แรกจนถึง Git Flow และ GitHub</p>
+  <div class="badge-row">
+    <span class="badge">Commit</span>
+    <span class="badge">Branch</span>
+    <span class="badge">Merge</span>
+    <span class="badge">Rebase</span>
+    <span class="badge">Remote</span>
+    <span class="badge">GitHub</span>
+    <span class="badge">Git Flow</span>
+    <span class="badge">Stash</span>
+    <span class="badge">Reset</span>
+    <span class="badge">Cherry-pick</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav-sticky" id="main-nav">
+  <a href="#concept">แนวคิด Git</a>
+  <a href="#setup">ติดตั้ง</a>
+  <a href="#basics">คำสั่งพื้นฐาน</a>
+  <a href="#branch">Branch</a>
+  <a href="#merge">Merge &amp; Rebase</a>
+  <a href="#remote">Remote</a>
+  <a href="#undo">Undo &amp; Reset</a>
+  <a href="#stash">Stash</a>
+  <a href="#advanced">Advanced</a>
+  <a href="#gitflow">Git Flow</a>
+  <a href="#github">GitHub</a>
+  <a href="#cheatsheet">Cheatsheet</a>
+</nav>
+
+<div class="container">
+
+<!-- ═══════════════════════════════════════════════════ 01 CONCEPT -->
+<section id="concept">
+  <div class="chapter-header ch-git">
+    <div class="ch-num">01</div>
+    <div>
+      <h2>Git คืออะไร? — แนวคิดหลัก</h2>
+      <p>Version Control System ที่ track การเปลี่ยนแปลงโค้ด</p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>📸 Git คือกล้องถ่ายรูปโค้ด</h3>
+      <p style="margin-bottom:10px">Git เก็บ <strong style="color:#f05033">snapshot</strong> ของโปรเจกต์ในทุกครั้งที่ commit — สามารถย้อนกลับไปดูหรือกู้คืนไฟล์ได้ทุกช่วงเวลา</p>
+      <div class="flow">
+        <div class="fb fb-g">Working<br>Directory</div>
+        <div class="fa">→ git add →</div>
+        <div class="fb fb-b">Staging<br>Area (Index)</div>
+        <div class="fa">→ git commit →</div>
+        <div class="fb fb-r">Repository<br>(.git)</div>
+        <div class="fa">→ git push →</div>
+        <div class="fb fb-y">Remote<br>(GitHub)</div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🗂️ 4 พื้นที่ของ Git</h3>
+      <div class="area-box">
+        <div class="area-head wd">📁 Working Directory</div>
+        <div class="area-body">ไฟล์ที่กำลังแก้ไขอยู่ — ยังไม่ได้บันทึกใน Git</div>
+      </div>
+      <div class="area-box">
+        <div class="area-head stage">📋 Staging Area (Index)</div>
+        <div class="area-body">ไฟล์ที่เตรียมพร้อมสำหรับ commit — ผ่าน <span class="ic">git add</span></div>
+      </div>
+      <div class="area-box">
+        <div class="area-head repo">🗃️ Local Repository (.git)</div>
+        <div class="area-body">ประวัติ commit ทั้งหมดในเครื่อง — ผ่าน <span class="ic">git commit</span></div>
+      </div>
+      <div class="area-box">
+        <div class="area-head remote">☁️ Remote Repository</div>
+        <div class="area-body">Server กลาง (GitHub/GitLab) — ผ่าน <span class="ic">git push</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📊 สถานะของไฟล์ใน Git</h3>
+    <div class="flow" style="flex-direction:column;align-items:flex-start;gap:12px">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <div class="fb fb-g" style="min-width:100px">Untracked</div>
+        <span style="color:#8b949e;font-size:.85rem">ไฟล์ใหม่ที่ Git ยังไม่รู้จัก</span>
+        <code style="color:#3fb950;font-size:.8rem;background:#0d1117;padding:2px 8px;border-radius:4px">→ git add</code>
+        <div class="fb fb-b" style="min-width:100px">Staged</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <div class="fb fb-y" style="min-width:100px">Modified</div>
+        <span style="color:#8b949e;font-size:.85rem">ไฟล์ที่แก้ไขแล้วแต่ยังไม่ stage</span>
+        <code style="color:#3fb950;font-size:.8rem;background:#0d1117;padding:2px 8px;border-radius:4px">→ git add</code>
+        <div class="fb fb-b" style="min-width:100px">Staged</div>
+        <code style="color:#f05033;font-size:.8rem;background:#0d1117;padding:2px 8px;border-radius:4px">→ git commit</code>
+        <div class="fb fb-r" style="min-width:100px">Committed</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <div class="fb fb-r" style="min-width:100px">Committed</div>
+        <span style="color:#8b949e;font-size:.85rem">บันทึกลง repository แล้ว — Unmodified จนกว่าจะแก้</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ 02 SETUP -->
+<section id="setup">
+  <div class="chapter-header ch-blue">
+    <div class="ch-num">02</div>
+    <div>
+      <h2>ติดตั้งและตั้งค่า Git</h2>
+      <p>ติดตั้ง, config identity และสร้าง SSH key</p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>📦 ติดตั้ง Git</h3>
+      <div class="terminal">
+        <div class="t-bar"><span class="t-r"></span><span class="t-y"></span><span class="t-g"></span><span class="t-title">terminal</span></div>
+        <pre><span class="c"># Ubuntu / Debian</span>
+sudo apt update && sudo apt install git
+
+<span class="c"># macOS (Homebrew)</span>
+brew install git
+
+<span class="c"># Windows — ดาวน์โหลดจาก git-scm.com</span>
+winget install Git.Git
+
+<span class="c"># ตรวจสอบ version</span>
+git --version
+<span class="out">git version 2.43.0</span></pre>
+      </div>
+    </div>
+    <div class="card">
+      <h3>⚙️ ตั้งค่า Identity</h3>
+      <div class="terminal">
+        <div class="t-bar"><span class="t-r"></span><span class="t-y"></span><span class="t-g"></span></div>
+        <pre><span class="c"># ─── ต้องทำทุกเครื่อง (global) ──────</span>
+git config <span class="s">--global</span> user.name <span class="s">"ชื่อของคุณ"</span>
+git config <span class="s">--global</span> user.email <span class="s">"email@example.com"</span>
+
+<span class="c"># ตั้ง default editor</span>
+git config <span class="s">--global</span> core.editor <span class="s">"code --wait"</span>
+
+<span class="c"># ตั้ง default branch เป็น main</span>
+git config <span class="s">--global</span> init.defaultBranch main
+
+<span class="c"># ดูการตั้งค่าทั้งหมด</span>
+git config <span class="s">--list</span>
+git config <span class="s">--list --show-origin</span>   <span class="c"># ดูว่ามาจากไฟล์ไหน</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔐 ตั้งค่า SSH Key สำหรับ GitHub</h3>
+    <div class="terminal">
+      <div class="t-bar"><span class="t-r"></span><span class="t-y"></span><span class="t-g"></span></div>
+      <pre><span class="c"># สร้าง SSH key (แนะนำ ed25519)</span>
+ssh-keygen -t ed25519 -C <span class="s">"email@example.com"</span>
+<span class="c"># กด Enter ทุกขั้นตอน หรือตั้ง passphrase</span>
+
+<span class="c"># เพิ่ม key เข้า ssh-agent</span>
+eval <span class="s">"$(ssh-agent -s)"</span>
+ssh-add ~/.ssh/id_ed25519
+
+<span class="c"># คัดลอก public key</span>
+cat ~/.ssh/id_ed25519.pub
+<span class="c"># นำ key ไปเพิ่มใน GitHub → Settings → SSH keys</span>
+
+<span class="c"># ทดสอบการเชื่อมต่อ</span>
+ssh -T git@github.com
+<span class="out">Hi username! You've successfully authenticated. 🎉</span></pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📄 .gitignore — ไฟล์ที่ไม่ต้อง track</h3>
+    <div class="grid-2">
+<pre><span class="c"># ─── .gitignore ───────────────────────</span>
+<span class="c"># Node.js</span>
+node_modules/
+dist/
+.env
+.env.local
+
+<span class="c"># Python</span>
+__pycache__/
+*.pyc
+venv/
+.venv/
+
+<span class="c"># OS files</span>
+.DS_Store          <span class="c"># macOS</span>
+Thumbs.db          <span class="c"># Windows</span>
+.idea/             <span class="c"># JetBrains</span>
+.vscode/           <span class="c"># VS Code (optional)</span>
+
+<span class="c"># Logs & temp</span>
+*.log
+*.tmp
+coverage/</pre>
+<pre><span class="c"># ─── Pattern ที่ควรรู้ ─────────────────</span>
+*.log          <span class="c"># ทุกไฟล์ .log</span>
+!important.log <span class="c"># ยกเว้น important.log</span>
+/dist          <span class="c"># เฉพาะ root/dist</span>
+build/         <span class="c"># ทุก dir ชื่อ build</span>
+doc/*.txt      <span class="c"># .txt ใน doc/ เท่านั้น</span>
+doc/**/*.txt   <span class="c"># .txt ใน doc/ ทุก level</span>
+
+<span class="c"># สร้าง .gitignore อัตโนมัติ</span>
+<span class="c"># https://gitignore.io</span>
+<span class="c"># หรือใช้ GitHub template ตอน create repo</span>
+
+<span class="c"># ลบ tracked file ออกจาก Git แต่เก็บไฟล์ไว้</span>
+git rm --cached .env
+git rm --cached -r node_modules/</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ 03 BASICS -->
+<section id="basics">
+  <div class="chapter-header ch-green">
+    <div class="ch-num">03</div>
+    <div>
+      <h2>คำสั่งพื้นฐาน</h2>
+      <p>init, add, commit, status, log — วงจรชีวิตของ commit</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔄 วงจรการทำงานพื้นฐาน (Daily Workflow)</h3>
+    <div class="terminal">
+      <div class="t-bar"><span class="t-r"></span><span class="t-y"></span><span class="t-g"></span></div>
+      <pre><span class="c"># 1. สร้าง repository ใหม่</span>
+mkdir my-project && cd my-project
+git init
+<span class="out">Initialized empty Git repository in .git/</span>
+
+<span class="c"># 2. ดูสถานะ</span>
+git status
+<span class="out">On branch main
+nothing to commit, working tree clean</span>
+
+<span class="c"># 3. เพิ่มไฟล์เข้า staging</span>
+git add index.html          <span class="c"># เฉพาะไฟล์</span>
+git add src/                <span class="c"># ทั้ง directory</span>
+git add *.js                <span class="c"># glob pattern</span>
+git add .                   <span class="c"># ทุกไฟล์ใน dir นี้</span>
+git add -A                  <span class="c"># ทุกไฟล์ทั้งโปรเจกต์</span>
+git add -p                  <span class="c"># เลือก staging ทีละส่วน</span>
+
+<span class="c"># 4. Commit</span>
+git commit -m <span class="s">"feat: add login page"</span>
+git commit -am <span class="s">"fix: typo in README"</span>  <span class="c"># add + commit (tracked files)</span>
+
+<span class="c"># 5. ดูประวัติ</span>
+git log                     <span class="c"># ดูทั้งหมด</span>
+git log --oneline           <span class="c"># แบบย่อ</span>
+git log --oneline --graph   <span class="c"># แสดง branch graph</span></pre>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>📋 git status รายละเอียด</h3>
+      <div class="terminal">
+        <div class="t-bar"><span class="t-r"></span><span class="t-y"></span><span class="t-g"></span></div>
+        <pre>git status
+<span class="out">On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes to be committed:
+  (use "git restore --staged ..." to unstage)
+        <span class="ok">modified:   src/app.js</span>    ← staged
+
+Changes not staged for commit:
+        <span class="warn">modified:   README.md</span>     ← modified
+
+Untracked files:
+        <span class="err2">config.local.js</span>           ← new</span>
+
+<span class="c"># แบบย่อ</span>
+git status -s
+<span class="out"><span class="ok">M</span>  src/app.js    ← staged
+ <span class="warn">M</span> README.md     ← modified
+<span class="err2">??</span> config.js      ← untracked</span></pre>
+      </div>
+    </div>
+    <div class="card">
+      <h3>📜 git log options</h3>
+      <div class="terminal">
+        <div class="t-bar"><span class="t-r"></span><span class="t-y"></span><span class="t-g"></span></div>
+        <pre>git log <span class="s">--oneline</span>
+<span class="out"><span class="hash">a3f9c12</span> feat: add dark mode
+<span class="hash">b1e4d89</span> fix: login bug
+<span class="hash">c2a5f01</span> init: project setup</span>
+
+git log <span class="s">--oneline --graph --all</span>
+<span class="out">* <span class="hash">a3f9c12</span> <span class="ok">(HEAD -> main)</span> feat: dark mode
+* <span class="hash">b1e4d89</span> fix: login bug
+| * <span class="hash">d4e2f11</span> <span class="warn">(feature/ui)</span> add button
+|/
+* <span class="hash">c2a5f01</span> init: project</span>
+
+git log <span class="s">--since="2 weeks ago"</span>
+git log <span class="s">--author="สมชาย"</span>
+git log <span class="s">-5</span>               <span class="c"># 5 commits ล่าสุด</span>
+git log <span class="s">-p</span>               <span class="c"># แสดง diff ด้วย</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>✏️ Commit Message ที่ดี (Conventional Commits)</h3>
+    <div class="grid-2">
+      <div>
+        <p style="color:#c9d1d9;margin-bottom:10px">รูปแบบ: <span class="ic">type(scope): description</span></p>
+        <table>
+          <tr><th>Type</th><th>ใช้เมื่อ</th></tr>
+          <tr><td><code>feat</code></td><td>เพิ่ม feature ใหม่</td></tr>
+          <tr><td><code>fix</code></td><td>แก้ bug</td></tr>
+          <tr><td><code>docs</code></td><td>แก้ documentation</td></tr>
+          <tr><td><code>style</code></td><td>จัดรูปแบบ ไม่แก้ logic</td></tr>
+          <tr><td><code>refactor</code></td><td>ปรับโค้ด ไม่เพิ่ม/แก้ bug</td></tr>
+          <tr><td><code>test</code></td><td>เพิ่ม/แก้ tests</td></tr>
+          <tr><td><code>chore</code></td><td>งานเบ็ดเตล็ด (build, deps)</td></tr>
+          <tr><td><code>perf</code></td><td>ปรับปรุง performance</td></tr>
+          <tr><td><code>ci</code></td><td>CI/CD configuration</td></tr>
+        </table>
+      </div>
+<pre><span class="c"># ✅ ดี — บอกว่าทำอะไรและทำไม</span>
+feat(auth): add JWT refresh token
+
+<span class="c"># ✅ ดี</span>
+fix(cart): calculate total including VAT
+
+<span class="c"># ✅ ดี — breaking change</span>
+feat(api)!: change user endpoint to /v2/users
+
+BREAKING CHANGE: /v1/users is deprecated
+
+<span class="c"># ❌ ไม่ดี — บอกว่าทำอะไรไม่ได้</span>
+fix bug
+update stuff
+asdfgh
+WIP</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ 04 BRANCH -->
+<section id="branch">
+  <div class="chapter-header ch-purp">
+    <div class="ch-num">04</div>
+    <div>
+      <h2>Branch — สาขาการทำงาน</h2>
+      <p>สร้าง, เปลี่ยน, และจัดการ branches</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🌿 Branch คืออะไร</h3>
+    <p style="margin-bottom:14px">Branch คือ pointer ที่ชี้ไปยัง commit หนึ่ง — การสร้าง branch ใหม่ไม่ copy โค้ด แค่สร้าง pointer ใหม่ ทำให้เร็วมาก</p>
+    <div class="git-flow">
+      <div class="gf-row">
+        <div class="gf-label" style="color:#f05033">main</div>
+        <div class="gf-line">
+          <div class="commit c-main">C1</div><div class="line-h main"></div>
+          <div class="commit c-main">C2</div><div class="line-h main"></div>
+          <div class="commit c-main">C3</div><div class="line-h main"></div>
+          <div class="commit c-main">C6</div><div class="line-h main"></div>
+          <div class="commit c-main">C7</div>
+          <span style="margin-left:8px;font-size:.75rem;color:#f05033">← HEAD</span>
+        </div>
+      </div>
+      <div class="gf-row">
+        <div class="gf-label" style="color:#10b981">feature</div>
+        <div class="gf-line">
+          <div class="gf-space"></div><div class="gf-spacer"></div>
+          <div class="gf-space"></div><div class="gf-spacer"></div>
+          <div class="commit c-feat" style="opacity:.3">C3</div><div class="line-h feat"></div>
+          <div class="commit c-feat">C4</div><div class="line-h feat"></div>
+          <div class="commit c-feat">C5</div>
+          <span style="margin-left:8px;font-size:.75rem;color:#10b981">← merged to main</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>🌿 จัดการ Branch</h3>
+      <div class="terminal">
+        <div class="t-bar"><span class="t-r"></span><span class="t-y"></span><span class="t-g"></span></div>
+        <pre><span class="c"># ดู branches ทั้งหมด</span>
+git branch              <span class="c"># local</span>
+git branch -r           <span class="c"># remote</span>
+git branch -a           <span class="c"># ทั้งหมด</span>
+
+<span class="c"># สร้าง branch</span>
+git branch <span class="br">feature/login</span>
+
+<span class="c"># สร้างและเปลี่ยนไปเลย (แนะนำ)</span>
+git checkout -b <span class="br">feature/login</span>
+git switch -c <span class="br">feature/login</span>    <span class="c"># ใหม่กว่า</span>
+
+<span class="c"># เปลี่ยน branch</span>
+git checkout <span class="br">main</span>
+git switch <span class="br">main</span>              <span class="c"># ใหม่กว่า</span>
+
+<span class="c"># เปลี่ยนชื่อ branch</span>
+git branch -m <span class="br">old-name</span> <span class="br">new-name</span>
+
+<span class="c"># ลบ branch</span>
+git branch -d <span class="br">feature/login</span>   <span class="c"># merged แล้ว</span>
+git branch -D <span class="br">feature/login</span>   <span class="c"># บังคับลบ</span></pre>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🔍 ดูความแตกต่าง (diff)</h3>
+      <div class="terminal">
+        <div class="t-bar"><span class="t-r"></span><span class="t-y"></span><span class="t-g"></span></div>
+        <pre><span class="c"># working dir vs staging</span>
+git diff
+
+<span class="c"># staging vs last commit</span>
+git diff --staged
+git diff --cached
+
+<span class="c"># ระหว่าง branches</span>
+git diff <span class="br">main</span>..<span class="br">feature/login</span>
+git diff <span class="br">main feature/login</span> -- src/
+
+<span class="c"># ระหว่าง commits</span>
+git diff <span class="hash">abc123</span>..<span class="hash">def456</span>
+
+<span class="c"># ดูไฟล์ที่เปลี่ยนไป</span>
+git diff --name-only <span class="br">main</span>
+
+<span class="c"># ดูไฟล์ใน commit</span>
+git show <span class="hash">abc123</span>
+git show <span class="hash">abc123</span>:src/app.js  <span class="c"># ดูไฟล์ใน commit</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ 05 MERGE & REBASE -->
+<section id="merge">
+  <div class="chapter-header ch-cyan">
+    <div class="ch-num">05</div>
+    <div>
+      <h2>Merge &amp; Rebase</h2>
+      <p>รวมโค้ดจาก branches ต่างๆ และจัดการ conflicts</p>
+    </div>
+  </div>
+
+  <div class="compare">
+    <div class="compare-col">
+      <div class="compare-head" style="background:#0c1445;color:#93c5fd">🔀 Merge (เก็บ history)</div>
+<pre><span class="c"># อยู่บน main</span>
+git switch <span class="br">main</span>
+git merge <span class="br">feature/login</span>
+
+<span class="c"># สร้าง merge commit</span>
+<span class="out">Merge branch 'feature/login'</span>
+
+<span class="c">─ ผลลัพธ์ ─
+main:  C1─C2─C3─C5(merge)
+                ↗
+feat:  C1─C2─C4</span></pre>
+    </div>
+    <div class="compare-col">
+      <div class="compare-head" style="background:#052e16;color:#6ee7b7">⛓️ Rebase (history สะอาด)</div>
+<pre><span class="c"># อยู่บน feature</span>
+git switch <span class="br">feature/login</span>
+git rebase <span class="br">main</span>
+
+<span class="c"># ย้าย commits ต่อจาก main</span>
+<span class="out">Successfully rebased and updated refs/heads/feature</span>
+
+<span class="c">─ ผลลัพธ์ ─
+main:  C1─C2─C3
+feat:  C1─C2─C3─C4' (rebased)
+       ← เส้นตรง ไม่มี merge commit</span></pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>⚠️ Merge Conflict — วิธีแก้</h3>
+    <div class="terminal">
+      <div class="t-bar"><span class="t-r"></span><span class="t-y"></span><span class="t-g"></span></div>
+      <pre><span class="c"># เกิด conflict ตอน merge</span>
+git merge <span class="br">feature/login</span>
+<span class="err2">CONFLICT (content): Merge conflict in src/app.js
+Automatic merge failed; fix conflicts and then commit.</span>
+
+<span class="c"># ดูไฟล์ที่ conflict</span>
+git status
+<span class="out">both modified: src/app.js</span>
+
+<span class="c"># ใน src/app.js จะมี conflict markers:</span>
+<span class="out"><<<<<<< HEAD (main branch)
+const PORT = 3000
+=======
+const PORT = 8080
+>>>>>>> feature/login</span>
+
+<span class="c"># แก้ไขไฟล์ → ลบ markers เลือกโค้ดที่ถูก:</span>
+<span class="out">const PORT = 8080</span>
+
+<span class="c"># หลังแก้ conflict ทุกไฟล์</span>
+git add src/app.js
+git commit -m <span class="s">"merge: resolve conflict in app.js"</span>
+
+<span class="c"># หรือยกเลิก merge</span>
+git merge --abort</pre>
+    </div>
+    <div class="callout tip">
+      <span class="ci">💡</span>
+      <div>ใช้ VS Code, IntelliJ หรือ <span class="ic">git mergetool</span> เปิด visual conflict editor ได้สะดวกกว่าแก้ manual</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>⛓️ Rebase Interactive — จัดการ commits</h3>
+    <div class="terminal">
+      <div class="t-bar"><span class="t-r"></span><span class="t-y"></span><span class="t-g"></span></div>
+      <pre><span class="c"># rebase 3 commits ล่าสุด</span>
+git rebase -i HEAD~3
+
+<span class="c"># เปิด editor แสดง:</span>
+<span class="out">pick <span class="hash">a1b2c3</span> feat: add login
+pick <span class="hash">d4e5f6</span> fix: typo
+pick <span class="hash">g7h8i9</span> fix: another typo</span>
+
+<span class="c"># เปลี่ยน pick เป็น command ต่างๆ:</span>
+<span class="c"># pick   = ใช้ commit นี้</span>
+<span class="c"># reword = แก้ commit message</span>
+<span class="c"># squash = รวมกับ commit ก่อนหน้า (เก็บ msg)</span>
+<span class="c"># fixup  = รวมกับ commit ก่อนหน้า (ทิ้ง msg)</span>
+<span class="c"># drop   = ลบ commit นี้ทิ้ง</span>
+<span class="c"># edit   = หยุดเพื่อแก้ไข</span>
+
+<span class="c"># รวม 2 fix เข้ากับ feat:</span>
+<span class="out">pick <span class="hash">a1b2c3</span> feat: add login
+fixup <span class="hash">d4e5f6</span> fix: typo
+fixup <span class="hash">g7h8i9</span> fix: another typo</span></pre>
+    </div>
+    <div class="callout warn">
+      <span class="ci">⚠️</span>
+      <div><strong>Golden Rule:</strong> อย่า rebase commits ที่ push ไป remote แล้ว — จะทำให้ history ของคนอื่นเสีย</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ 06 REMOTE -->
+<section id="remote">
+  <div class="chapter-header ch-yell">
+    <div class="ch-num">06</div>
+    <div>
+      <h2>Remote — ทำงานกับ GitHub</h2>
+      <p>clone, push, pull, fetch — เชื่อมต่อ remote repository</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>☁️ Remote Commands</h3>
+    <div class="terminal">
+      <div class="t-bar"><span class="t-r"></span><span class="t-y"></span><span class="t-g"></span></div>
+      <pre><span class="c"># ─── Clone ───────────────────────────────────────────</span>
+git clone https://github.com/user/repo.git
+git clone git@github.com:user/repo.git       <span class="c"># SSH</span>
+git clone https://... myapp                  <span class="c"># ตั้งชื่อ dir</span>
+git clone --depth 1 https://...              <span class="c"># shallow clone</span>
+
+<span class="c"># ─── Remote ──────────────────────────────────────────</span>
+git remote -v                                <span class="c"># ดู remotes</span>
+<span class="out">origin  git@github.com:user/repo.git (fetch)
+origin  git@github.com:user/repo.git (push)</span>
+
+git remote add origin git@github.com:u/r.git <span class="c"># เพิ่ม remote</span>
+git remote rename origin upstream             <span class="c"># เปลี่ยนชื่อ</span>
+git remote remove upstream                    <span class="c"># ลบ remote</span>
+git remote set-url origin git@github.com:...  <span class="c"># เปลี่ยน URL</span>
+
+<span class="c"># ─── Push ────────────────────────────────────────────</span>
+git push origin <span class="br">main</span>               <span class="c"># push branch นี้</span>
+git push -u origin <span class="br">main</span>            <span class="c"># -u = set upstream (ครั้งแรก)</span>
+git push                             <span class="c"># หลังจาก -u ก็ใช้ git push ได้เลย</span>
+git push origin <span class="br">feature/login</span>      <span class="c"># push feature branch</span>
+git push --tags                      <span class="c"># push tags</span>
+git push origin --delete <span class="br">old-branch</span> <span class="c"># ลบ remote branch</span></pre>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>⬇️ fetch vs pull</h3>
+      <div class="terminal">
+        <div class="t-bar"><span class="t-r"></span><span class="t-y"></span><span class="t-g"></span></div>
+        <pre><span class="c"># fetch — ดึงมาแต่ไม่ merge</span>
+git fetch origin          <span class="c"># ดึงทุก branch</span>
+git fetch origin <span class="br">main</span>    <span class="c"># เฉพาะ main</span>
+git fetch --all           <span class="c"># ทุก remote</span>
+
+<span class="c"># หลัง fetch ดูความต่าง</span>
+git diff <span class="br">main</span> origin/<span class="br">main</span>
+git log <span class="br">main</span>..origin/<span class="br">main</span>
+
+<span class="c"># pull = fetch + merge</span>
+git pull                  <span class="c"># merge (default)</span>
+git pull --rebase         <span class="c"># rebase แทน merge (สะอาดกว่า)</span>
+git pull origin <span class="br">main</span>
+
+<span class="c"># ตั้งค่า pull เป็น rebase เสมอ</span>
+git config <span class="s">--global</span> pull.rebase true</pre>
+      </div>
+    </div>
+    <div class="card">
+      <h3>📋 Tracking Branches</h3>
+      <div class="terminal">
+        <div class="t-bar"><span class="t-r"></span><span class="t-y"></span><span class="t-g"></span></div>
+        <pre><span class="c"># ดู tracking relationship</span>
+git branch -vv
+<span class="out">* <span class="br">main</span>       <span class="hash">a3f9c12</span> [origin/main] fix: bug
+  <span class="br">feature</span>    <span class="hash">b1e4d89</span> [origin/feature: ahead 2]</span>
+
+<span class="c"># ตั้ง upstream ให้ branch</span>
+git branch --set-upstream-to=origin/<span class="br">main</span> <span class="br">main</span>
+
+<span class="c"># pull ด้วย strategy</span>
+git pull --ff-only   <span class="c"># fast-forward เท่านั้น</span>
+
+<span class="c"># ดู remote branches</span>
+git branch -r
+<span class="out">origin/main
+origin/develop
+origin/feature/auth</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ 07 UNDO -->
+<section id="undo">
+  <div class="chapter-header ch-red">
+    <div class="ch-num">07</div>
+    <div>
+      <h2>Undo &amp; Reset — ย้อนกลับ</h2>
+      <p>restore, reset, revert — เลือกให้ถูกสถานการณ์</p>
+    </div>
+  </div>
+
+  <div class="callout danger">
+    <span class="ci">🚨</span>
+    <div><strong>ระวัง!</strong> — <span class="ic">git reset --hard</span> และ <span class="ic">git clean -fd</span> ทำลายข้อมูลโดยไม่มี undo ตรวจสอบก่อนรันเสมอ</div>
+  </div>
+
+  <div class="card">
+    <h3>🔄 git restore — แก้ Working Directory &amp; Staging</h3>
+    <div class="terminal">
+      <div class="t-bar"><span class="t-r"></span><span class="t-y"></span><span class="t-g"></span></div>
+      <pre><span class="c"># ─── ทิ้งการแก้ไขใน Working Directory ─────────────────</span>
+git restore index.html        <span class="c"># คืนค่าจาก last commit</span>
+git restore .                  <span class="c"># คืนทั้งหมด</span>
+git restore *.js               <span class="c"># pattern</span>
+
+<span class="c"># ─── เอาออกจาก Staging Area ────────────────────────────</span>
+git restore --staged index.html
+git restore --staged .
+
+<span class="c"># ─── คืนค่าจาก commit อื่น ──────────────────────────────</span>
+git restore --source <span class="hash">HEAD~2</span> index.html  <span class="c"># จาก 2 commits ก่อน</span>
+git restore --source <span class="hash">abc123</span> src/       <span class="c"># จาก commit hash</span></pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>⏪ git reset — ย้าย HEAD</h3>
+    <div class="grid-2">
+      <div class="terminal">
+        <div class="t-bar"><span class="t-r"></span><span class="t-y"></span><span class="t-g"></span></div>
+        <pre><span class="c"># git reset [mode] [commit]</span>
+
+<span class="c">──── --soft ────────────────────────
+ย้าย HEAD เท่านั้น
+Working Dir: ไม่เปลี่ยน
+Staging:     ไม่เปลี่ยน</span>
+git reset <span class="s">--soft</span> HEAD~1
+<span class="c"># commit หายแต่ไฟล์ยังอยู่ใน staging
+# ✅ ใช้เมื่อ: แก้ commit message หรือรวม commits</span>
+
+<span class="c">──── --mixed (default) ─────────────
+ย้าย HEAD + unstage
+Working Dir: ไม่เปลี่ยน
+Staging:     reset</span>
+git reset HEAD~1
+git reset <span class="s">--mixed</span> HEAD~1
+<span class="c"># ✅ ใช้เมื่อ: staged ผิดไฟล์</span></pre>
+      </div>
+      <div class="terminal">
+        <div class="t-bar"><span class="t-r"></span><span class="t-y"></span><span class="t-g"></span></div>
+        <pre><span class="c">──── --hard ────────────────────────
+ย้าย HEAD + reset ทุกอย่าง
+Working Dir: <span class="err2">ลบทิ้ง!</span>
+Staging:     <span class="err2">ลบทิ้ง!</span></span>
+git reset <span class="s">--hard</span> HEAD~1
+git reset <span class="s">--hard</span> <span class="hash">abc123</span>
+<span class="c"># ⚠️ ข้อมูลหายถาวร (ยกเว้น reflog)
+# ✅ ใช้เมื่อ: ล้างทุกอย่างแน่ๆ</span>
+
+<span class="c">──── กู้คืนด้วย reflog ─────────────</span>
+git reflog
+<span class="out"><span class="hash">a3f9c12</span> HEAD@{0}: reset: moving to HEAD~1
+<span class="hash">b1e4d89</span> HEAD@{1}: commit: feat: login</span>
+
+<span class="c"># กู้คืน</span>
+git reset <span class="s">--hard</span> <span class="hash">b1e4d89</span>
+<span class="c"># ✅ ย้อนกลับได้ภายใน 90 วัน</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>↩️ git revert — ปลอดภัยกว่า reset</h3>
+    <div class="terminal">
+      <div class="t-bar"><span class="t-r"></span><span class="t-y"></span><span class="t-g"></span></div>
+      <pre><span class="c"># revert สร้าง commit ใหม่ที่ "undo" commit เก่า
+# ✅ ปลอดภัย — ไม่ลบ history ใช้ได้กับ shared branches</span>
+
+git revert <span class="hash">abc123</span>           <span class="c"># revert commit นั้น</span>
+git revert HEAD              <span class="c"># revert commit ล่าสุด</span>
+git revert HEAD~3..HEAD      <span class="c"># revert 3 commits</span>
+git revert --no-commit <span class="hash">abc123</span>  <span class="c"># revert ไม่ต้อง commit ทันที</span>
+
+<span class="c"># ต่างจาก reset อย่างไร:</span>
+<span class="out">reset:  A─B─C  →  A─B       (C หาย)
+revert: A─B─C  →  A─B─C─C'  (C' undo C)</span></pre>
+    </div>
+    <table>
+      <tr><th>Command</th><th>เปลี่ยน History</th><th>ปลอดภัยบน Shared Branch</th><th>ใช้เมื่อ</th></tr>
+      <tr><td><code>git restore</code></td><td>❌</td><td>✅</td><td>ทิ้งการแก้ไขที่ยังไม่ commit</td></tr>
+      <tr><td><code>git reset --soft</code></td><td>✅</td><td>⚠️ local only</td><td>แก้ commit ล่าสุด</td></tr>
+      <tr><td><code>git reset --hard</code></td><td>✅</td><td>❌</td><td>ทิ้งทุกอย่างแน่ๆ</td></tr>
+      <tr><td><code>git revert</code></td><td>❌ (เพิ่ม commit)</td><td>✅</td><td>undo บน branch ที่ share แล้ว</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ 08 STASH -->
+<section id="stash">
+  <div class="chapter-header ch-teal">
+    <div class="ch-num">08</div>
+    <div>
+      <h2>Stash — เก็บงานชั่วคราว</h2>
+      <p>เมื่อต้องเปลี่ยน branch แต่งานยังไม่เสร็จ</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📦 git stash</h3>
+    <div class="terminal">
+      <div class="t-bar"><span class="t-r"></span><span class="t-y"></span><span class="t-g"></span></div>
+      <pre><span class="c"># บันทึกงานปัจจุบันลง stash</span>
+git stash                          <span class="c"># stash tracked files</span>
+git stash push -m <span class="s">"WIP: login form"</span>  <span class="c"># ตั้งชื่อ stash</span>
+git stash -u                       <span class="c"># รวม untracked files</span>
+git stash --all                    <span class="c"># รวม ignored files ด้วย</span>
+
+<span class="c"># ─── ดู stash list ───────────────────────────────────</span>
+git stash list
+<span class="out">stash@{0}: On main: WIP: login form
+stash@{1}: On feature: WIP: cart</span>
+
+<span class="c"># ─── นำ stash กลับมา ────────────────────────────────</span>
+git stash pop               <span class="c"># apply stash ล่าสุด + ลบออก</span>
+git stash apply             <span class="c"># apply ล่าสุด แต่ไม่ลบ</span>
+git stash apply stash@{1}   <span class="c"># apply stash ที่ระบุ</span>
+git stash pop stash@{1}     <span class="c"># pop stash ที่ระบุ</span>
+
+<span class="c"># ─── จัดการ stash ───────────────────────────────────</span>
+git stash drop stash@{0}    <span class="c"># ลบ stash</span>
+git stash clear             <span class="c"># ลบทั้งหมด</span>
+git stash show -p           <span class="c"># ดู diff ของ stash</span>
+git stash branch <span class="br">feature/new</span> <span class="c"># สร้าง branch จาก stash</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ 09 ADVANCED -->
+<section id="advanced">
+  <div class="chapter-header ch-pink">
+    <div class="ch-num">09</div>
+    <div>
+      <h2>Advanced Commands</h2>
+      <p>cherry-pick, tag, bisect, worktree — คำสั่งขั้นสูง</p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>🍒 Cherry-pick — เลือก commit</h3>
+      <div class="terminal">
+        <div class="t-bar"><span class="t-r"></span><span class="t-y"></span><span class="t-g"></span></div>
+        <pre><span class="c"># นำ commit จาก branch อื่นมาใช้</span>
+git cherry-pick <span class="hash">abc123</span>
+git cherry-pick <span class="hash">abc123</span> <span class="hash">def456</span>   <span class="c"># หลาย commits</span>
+git cherry-pick <span class="hash">abc123</span>..<span class="hash">def456</span> <span class="c"># range</span>
+git cherry-pick --no-commit <span class="hash">abc123</span>  <span class="c"># ไม่ commit</span>
+
+<span class="c"># เมื่อ conflict:</span>
+<span class="c"># 1. แก้ conflict</span>
+<span class="c"># 2. git add .</span>
+<span class="c"># 3. git cherry-pick --continue</span>
+<span class="c"># หรือ git cherry-pick --abort</span></pre>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🏷️ Tag — เวอร์ชัน</h3>
+      <div class="terminal">
+        <div class="t-bar"><span class="t-r"></span><span class="t-y"></span><span class="t-g"></span></div>
+        <pre><span class="c"># สร้าง tag</span>
+git tag v1.0.0                    <span class="c"># lightweight</span>
+git tag -a v1.0.0 -m <span class="s">"Release 1.0"</span>  <span class="c"># annotated</span>
+git tag -a v1.0.0 <span class="hash">abc123</span>         <span class="c"># tag เก่า</span>
+
+<span class="c"># ดู tags</span>
+git tag
+git tag -l <span class="s">"v1.*"</span>
+git show v1.0.0
+
+<span class="c"># push tags</span>
+git push origin v1.0.0
+git push origin --tags
+
+<span class="c"># ลบ tag</span>
+git tag -d v1.0.0
+git push origin --delete v1.0.0</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔍 git bisect — หา commit ที่ทำให้ bug เกิด</h3>
+    <div class="terminal">
+      <div class="t-bar"><span class="t-r"></span><span class="t-y"></span><span class="t-g"></span></div>
+      <pre><span class="c"># Binary search หา commit ที่ทำให้เกิด bug</span>
+git bisect start
+git bisect bad                 <span class="c"># HEAD ปัจจุบันมี bug</span>
+git bisect good v1.0.0         <span class="c"># เวอร์ชันนี้ยังดีอยู่</span>
+
+<span class="c"># Git จะ checkout commit กลาง → ทดสอบ → บอกว่าดีหรือไม่</span>
+git bisect good                <span class="c"># commit นี้ยังดี</span>
+git bisect bad                 <span class="c"># commit นี้มี bug</span>
+
+<span class="c"># ทำซ้ำจนกว่า Git จะหาเจอ</span>
+<span class="out"><span class="hash">abc1234</span> is the first bad commit
+Author: สมชาย  Date: Mon Jan 1</span>
+
+git bisect reset               <span class="c"># กลับมาที่ HEAD</span></pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🎨 git aliases — คำสั่งลัด</h3>
+    <div class="terminal">
+      <div class="t-bar"><span class="t-r"></span><span class="t-y"></span><span class="t-g"></span></div>
+      <pre><span class="c"># ตั้งค่า aliases ใน ~/.gitconfig</span>
+git config <span class="s">--global</span> alias.st status
+git config <span class="s">--global</span> alias.co checkout
+git config <span class="s">--global</span> alias.br branch
+git config <span class="s">--global</span> alias.ci commit
+
+<span class="c"># Aliases ที่มีประโยชน์</span>
+git config <span class="s">--global</span> alias.lg <span class="s">"log --oneline --graph --all --decorate"</span>
+git config <span class="s">--global</span> alias.last <span class="s">"log -1 HEAD --stat"</span>
+git config <span class="s">--global</span> alias.undo <span class="s">"reset --soft HEAD~1"</span>
+git config <span class="s">--global</span> alias.unstage <span class="s">"restore --staged"</span>
+git config <span class="s">--global</span> alias.amend <span class="s">"commit --amend --no-edit"</span>
+
+<span class="c"># ใช้งาน</span>
+git lg             <span class="c"># แสดง graph สวย</span>
+git undo           <span class="c"># ย้อน commit ล่าสุด</span>
+git unstage .      <span class="c"># unstage ทั้งหมด</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ 10 GIT FLOW -->
+<section id="gitflow">
+  <div class="chapter-header ch-green">
+    <div class="ch-num">10</div>
+    <div>
+      <h2>Git Flow — Branching Strategy</h2>
+      <p>แนวทางการแบ่ง branches สำหรับทีม</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🌊 Git Flow Diagram</h3>
+    <div class="git-flow">
+      <div class="gf-row">
+        <div class="gf-label" style="color:#8b5cf6">🏷️ tags</div>
+        <div class="gf-line">
+          <div class="gf-space"></div><div class="gf-spacer" style="flex:2"></div>
+          <div class="commit c-tag" title="v1.0">1.0</div>
+          <div class="gf-spacer" style="flex:5"></div>
+          <div class="commit c-tag" title="v1.1">1.1</div>
+          <div class="gf-spacer" style="flex:3"></div>
+          <div class="commit c-tag" title="v2.0">2.0</div>
+        </div>
+      </div>
+      <div class="gf-row">
+        <div class="gf-label" style="color:#f05033">main</div>
+        <div class="gf-line">
+          <div class="commit c-main"></div><div class="line-h main"></div>
+          <div class="commit c-main"></div><div class="line-h main"></div>
+          <div class="commit c-main">R</div><div class="line-h main"></div>
+          <div class="commit c-main"></div><div class="line-h main"></div>
+          <div class="commit c-main"></div><div class="line-h main"></div>
+          <div class="commit c-main">R</div><div class="line-h main"></div>
+          <div class="commit c-main"></div><div class="line-h main"></div>
+          <div class="commit c-main">R</div>
+        </div>
+      </div>
+      <div class="gf-row">
+        <div class="gf-label" style="color:#3b82f6">develop</div>
+        <div class="gf-line">
+          <div class="commit c-dev"></div><div class="line-h dev"></div>
+          <div class="commit c-dev"></div><div class="line-h dev"></div>
+          <div class="commit c-dev"></div><div class="line-h dev"></div>
+          <div class="commit c-dev"></div><div class="line-h dev"></div>
+          <div class="commit c-dev"></div><div class="line-h dev"></div>
+          <div class="commit c-dev"></div><div class="line-h dev"></div>
+          <div class="commit c-dev"></div><div class="line-h dev"></div>
+          <div class="commit c-dev"></div>
+        </div>
+      </div>
+      <div class="gf-row">
+        <div class="gf-label" style="color:#10b981">feature</div>
+        <div class="gf-line">
+          <div class="gf-space"></div><div class="gf-spacer"></div>
+          <div class="commit c-feat"></div><div class="line-h feat"></div>
+          <div class="commit c-feat"></div><div class="line-h feat"></div>
+          <div class="commit c-feat"></div><div class="gf-spacer" style="flex:4"></div>
+          <div class="commit c-feat" style="opacity:.4"></div><div class="line-h feat"></div>
+          <div class="commit c-feat"></div>
+        </div>
+      </div>
+      <div class="gf-row">
+        <div class="gf-label" style="color:#f59e0b">hotfix</div>
+        <div class="gf-line">
+          <div class="gf-space"></div><div class="gf-spacer" style="flex:6"></div>
+          <div class="commit c-hotfix"></div><div class="line-h hotfix"></div>
+          <div class="commit c-hotfix"></div>
+          <span style="margin-left:8px;font-size:.72rem;color:#f59e0b">→ merge main+develop</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🏷️ Git Flow Branches</h3>
+    <table>
+      <tr><th>Branch</th><th>ชีวิตการทำงาน</th><th>Merge เข้า</th><th>หน้าที่</th></tr>
+      <tr>
+        <td><span class="bbadge main">main</span></td>
+        <td>ถาวร</td><td>—</td>
+        <td>โค้ด production พร้อม deploy เสมอ</td>
+      </tr>
+      <tr>
+        <td><span class="bbadge dev">develop</span></td>
+        <td>ถาวร</td><td>—</td>
+        <td>รวม features ที่เสร็จแล้ว รอ release</td>
+      </tr>
+      <tr>
+        <td><span class="bbadge feat">feature/xxx</span></td>
+        <td>ชั่วคราว</td><td>develop</td>
+        <td>พัฒนา feature ใหม่</td>
+      </tr>
+      <tr>
+        <td><span class="bbadge" style="color:#a78bfa;border-color:#a78bfa44">release/x.x</span></td>
+        <td>ชั่วคราว</td><td>main + develop</td>
+        <td>เตรียม release — bug fix เท่านั้น</td>
+      </tr>
+      <tr>
+        <td><span class="bbadge hotfix">hotfix/xxx</span></td>
+        <td>ชั่วคราว</td><td>main + develop</td>
+        <td>แก้ critical bug บน production ด่วน</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>⚙️ Git Flow Commands</h3>
+    <div class="terminal">
+      <div class="t-bar"><span class="t-r"></span><span class="t-y"></span><span class="t-g"></span></div>
+      <pre><span class="c"># ─── Feature ──────────────────────────────────────────</span>
+git switch develop
+git switch -c <span class="br">feature/user-auth</span>
+
+<span class="c"># ... พัฒนา feature ...</span>
+
+git switch develop
+git merge --no-ff <span class="br">feature/user-auth</span>  <span class="c"># --no-ff = เก็บ merge commit</span>
+git branch -d <span class="br">feature/user-auth</span>
+
+<span class="c"># ─── Release ──────────────────────────────────────────</span>
+git switch develop
+git switch -c <span class="br">release/1.2.0</span>
+
+<span class="c"># ... แก้ bug เล็กน้อย / อัปเดต version ...</span>
+
+git switch main
+git merge --no-ff <span class="br">release/1.2.0</span>
+git tag -a v1.2.0 -m <span class="s">"Version 1.2.0"</span>
+git switch develop
+git merge --no-ff <span class="br">release/1.2.0</span>
+git branch -d <span class="br">release/1.2.0</span>
+
+<span class="c"># ─── Hotfix ───────────────────────────────────────────</span>
+git switch main
+git switch -c <span class="br">hotfix/critical-bug</span>
+
+<span class="c"># ... แก้ bug ...</span>
+
+git switch main
+git merge --no-ff <span class="br">hotfix/critical-bug</span>
+git tag -a v1.2.1 -m <span class="s">"Hotfix 1.2.1"</span>
+git switch develop
+git merge --no-ff <span class="br">hotfix/critical-bug</span>
+git branch -d <span class="br">hotfix/critical-bug</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ 11 GITHUB -->
+<section id="github">
+  <div class="chapter-header ch-slate">
+    <div class="ch-num">11</div>
+    <div>
+      <h2>GitHub Workflow</h2>
+      <p>Fork, Pull Request, Code Review และ GitHub Actions</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🍴 Fork &amp; Pull Request Workflow</h3>
+    <div class="flow" style="flex-direction:column;align-items:flex-start;gap:10px">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span style="color:#8b949e;font-size:.82rem;width:28px;text-align:center">1</span>
+        <div class="fb fb-y" style="font-size:.8rem">Fork repo</div>
+        <span style="color:#8b949e;font-size:.82rem">→ สร้าง copy ของ repo ใน account ตัวเอง</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span style="color:#8b949e;font-size:.82rem;width:28px;text-align:center">2</span>
+        <div class="fb fb-b" style="font-size:.8rem">git clone fork</div>
+        <span style="color:#8b949e;font-size:.82rem">→ clone fork มายังเครื่องตัวเอง</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span style="color:#8b949e;font-size:.82rem;width:28px;text-align:center">3</span>
+        <div class="fb fb-g" style="font-size:.8rem">branch + commit</div>
+        <span style="color:#8b949e;font-size:.82rem">→ สร้าง feature branch ทำงาน + commit</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span style="color:#8b949e;font-size:.82rem;width:28px;text-align:center">4</span>
+        <div class="fb fb-r" style="font-size:.8rem">git push</div>
+        <span style="color:#8b949e;font-size:.82rem">→ push branch ขึ้น fork</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span style="color:#8b949e;font-size:.82rem;width:28px;text-align:center">5</span>
+        <div class="fb fb-p" style="font-size:.8rem">Pull Request</div>
+        <span style="color:#8b949e;font-size:.82rem">→ เปิด PR บน GitHub ขอ merge เข้า upstream</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span style="color:#8b949e;font-size:.82rem;width:28px;text-align:center">6</span>
+        <div class="fb fb-y" style="font-size:.8rem">Code Review</div>
+        <span style="color:#8b949e;font-size:.82rem">→ ทีม review → approve / request changes</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span style="color:#8b949e;font-size:.82rem;width:28px;text-align:center">7</span>
+        <div class="fb fb-g" style="font-size:.8rem">Merge PR</div>
+        <span style="color:#8b949e;font-size:.82rem">→ merge เข้า main/develop ✅</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>🔄 Sync Fork กับ Upstream</h3>
+      <div class="terminal">
+        <div class="t-bar"><span class="t-r"></span><span class="t-y"></span><span class="t-g"></span></div>
+        <pre><span class="c"># เพิ่ม upstream remote</span>
+git remote add upstream https://github.com/original/repo.git
+
+<span class="c"># ดู remotes</span>
+git remote -v
+<span class="out">origin    git@github.com:you/repo.git
+upstream  git@github.com:original/repo.git</span>
+
+<span class="c"># sync กับ upstream</span>
+git fetch upstream
+git switch main
+git merge upstream/main
+
+<span class="c"># หรือ rebase</span>
+git rebase upstream/main
+
+<span class="c"># push sync ขึ้น fork</span>
+git push origin main</pre>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🔁 GitHub Actions (CI/CD)</h3>
+      <div class="terminal">
+        <div class="t-bar"><span class="t-r"></span><span class="t-y"></span><span class="t-g"></span></div>
+        <pre><span class="c"># .github/workflows/ci.yml</span>
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm ci
+      - run: npm test
+      - run: npm run build</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════ 12 CHEATSHEET -->
+<section id="cheatsheet">
+  <div class="chapter-header ch-git">
+    <div class="ch-num">12</div>
+    <div>
+      <h2>Cheatsheet — คำสั่งทั้งหมด</h2>
+      <p>สรุปคำสั่ง Git ที่ใช้บ่อยในที่เดียว</p>
+    </div>
+  </div>
+
+  <div class="cmd-grid">
+    <div class="cmd-card">
+      <div class="cmd-name">📁 Setup & Init</div>
+      <pre><span class="c"># ตั้งค่า</span>
+git config --global user.name "name"
+git config --global user.email "email"
+
+<span class="c"># สร้าง / clone</span>
+git init
+git clone &lt;url&gt;</pre>
+    </div>
+    <div class="cmd-card">
+      <div class="cmd-name">📸 Stage & Commit</div>
+      <pre>git status             <span class="c"># ดูสถานะ</span>
+git add .              <span class="c"># stage ทั้งหมด</span>
+git add -p             <span class="c"># stage เลือกส่วน</span>
+git commit -m "msg"
+git commit --amend     <span class="c"># แก้ commit ล่าสุด</span>
+git diff --staged</pre>
+    </div>
+    <div class="cmd-card">
+      <div class="cmd-name">🌿 Branch</div>
+      <pre>git branch             <span class="c"># ดู branches</span>
+git switch -c &lt;name&gt;   <span class="c"># สร้าง+เปลี่ยน</span>
+git switch &lt;name&gt;      <span class="c"># เปลี่ยน</span>
+git branch -d &lt;name&gt;   <span class="c"># ลบ (merged)</span>
+git branch -D &lt;name&gt;   <span class="c"># บังคับลบ</span></pre>
+    </div>
+    <div class="cmd-card">
+      <div class="cmd-name">🔀 Merge & Rebase</div>
+      <pre>git merge &lt;branch&gt;
+git merge --no-ff &lt;branch&gt;
+git rebase &lt;branch&gt;
+git rebase -i HEAD~3
+git merge --abort
+git rebase --abort</pre>
+    </div>
+    <div class="cmd-card">
+      <div class="cmd-name">☁️ Remote</div>
+      <pre>git remote -v
+git remote add origin &lt;url&gt;
+git push -u origin main
+git push
+git fetch
+git pull --rebase</pre>
+    </div>
+    <div class="cmd-card">
+      <div class="cmd-name">⏪ Undo</div>
+      <pre>git restore &lt;file&gt;       <span class="c"># ทิ้ง changes</span>
+git restore --staged &lt;f&gt; <span class="c"># unstage</span>
+git reset --soft HEAD~1  <span class="c"># undo commit</span>
+git reset --hard HEAD~1  <span class="c"># ⚠️ ลบทิ้ง</span>
+git revert &lt;hash&gt;        <span class="c"># ปลอดภัย</span>
+git reflog               <span class="c"># กู้คืน</span></pre>
+    </div>
+    <div class="cmd-card">
+      <div class="cmd-name">📦 Stash</div>
+      <pre>git stash
+git stash push -m "WIP"
+git stash list
+git stash pop
+git stash apply stash@{1}
+git stash drop stash@{0}</pre>
+    </div>
+    <div class="cmd-card">
+      <div class="cmd-name">🔍 Log & Search</div>
+      <pre>git log --oneline --graph
+git log --author="name"
+git log -p &lt;file&gt;
+git blame &lt;file&gt;
+git grep "text"
+git log -S "text"       <span class="c"># pickaxe</span></pre>
+    </div>
+    <div class="cmd-card">
+      <div class="cmd-name">🍒 Advanced</div>
+      <pre>git cherry-pick &lt;hash&gt;
+git tag -a v1.0 -m "msg"
+git bisect start
+git bisect good/bad
+git worktree add &lt;path&gt;
+git submodule add &lt;url&gt;</pre>
+    </div>
+  </div>
+
+  <div class="callout tip">
+    <span class="ci">💡</span>
+    <div>
+      <strong>Workflow แนะนำทุกวัน:</strong><br>
+      <span class="ic">git pull --rebase</span> →
+      <span class="ic">git switch -c feature/xxx</span> →
+      ทำงาน →
+      <span class="ic">git add -p</span> →
+      <span class="ic">git commit -m "feat: ..."</span> →
+      <span class="ic">git push -u origin feature/xxx</span> →
+      เปิด Pull Request
+    </div>
+  </div>
+</section>
+
+</div><!-- end .container -->
+
+<footer>
+  <strong>สื่อการสอน Git Version Control ฉบับสมบูรณ์</strong><br>
+  ครอบคลุม แนวคิด · Setup · Basics · Branch · Merge/Rebase · Remote · Undo · Stash · Advanced · Git Flow · GitHub · Cheatsheet
+</footer>
+
+<script>
+const sections = document.querySelectorAll('section[id]')
+const navLinks  = document.querySelectorAll('.nav-sticky a')
+window.addEventListener('scroll',()=>{
+  let cur=''
+  sections.forEach(s=>{if(window.scrollY>=s.offsetTop-110)cur=s.id})
+  navLinks.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+cur))
+},{passive:true})
+</script>
+</body>
+</html>

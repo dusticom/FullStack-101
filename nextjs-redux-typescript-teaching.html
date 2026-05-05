@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>สื่อการสอน Next.js + Redux + TypeScript</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#3b82f6;--indigo:#6366f1;--green:#10b981;--orange:#f59e0b;
+  --red:#ef4444;--pink:#ec4899;--purple:#8b5cf6;--cyan:#06b6d4;
+  --dark:#0f172a;--light:#f8fafc;--card:#ffffff;--border:#e2e8f0;
+  --code-bg:#1e293b;--radius:12px;--shadow:0 4px 24px rgba(0,0,0,.08);
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--light);color:var(--dark);line-height:1.7}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#0ea5e9 0%,#6366f1 50%,#8b5cf6 100%);color:#fff;text-align:center;padding:64px 24px}
+.hero h1{font-size:clamp(1.8rem,5vw,3.2rem);font-weight:900;margin-bottom:12px;text-shadow:0 2px 8px rgba(0,0,0,.2)}
+.hero p{font-size:1.15rem;opacity:.9}
+.badge-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px}
+.badge{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);padding:5px 16px;border-radius:999px;font-size:.82rem;font-weight:700}
+
+/* NAV */
+.nav-sticky{position:sticky;top:0;z-index:100;background:#fff;border-bottom:1px solid var(--border);padding:0 16px;overflow-x:auto;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.nav-sticky a{display:inline-block;padding:14px 16px;font-size:.85rem;font-weight:600;color:var(--gray,#64748b);text-decoration:none;border-bottom:3px solid transparent;transition:.2s}
+.nav-sticky a:hover,.nav-sticky a.active{color:var(--indigo);border-color:var(--indigo)}
+
+/* LAYOUT */
+.container{max-width:1100px;margin:0 auto;padding:40px 20px}
+section{margin-bottom:60px}
+h2.section-title{font-size:1.7rem;font-weight:800;margin-bottom:24px;display:flex;align-items:center;gap:10px}
+h2.section-title .icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;margin-bottom:20px;box-shadow:var(--shadow)}
+.card h3{font-size:1.15rem;font-weight:700;margin-bottom:12px}
+.card p,.card li{font-size:.95rem;color:#334155}
+.card ul{padding-left:20px;display:flex;flex-direction:column;gap:6px}
+
+/* CODE */
+pre{background:var(--code-bg);color:#e2e8f0;border-radius:10px;padding:20px 22px;overflow-x:auto;font-size:.85rem;line-height:1.65;margin:14px 0;font-family:'Cascadia Code','Fira Code',monospace}
+code{font-family:'Cascadia Code','Fira Code',monospace;font-size:.88em}
+.inline-code{background:#f1f5f9;color:#be185d;padding:2px 7px;border-radius:5px;font-family:monospace;font-size:.88em}
+
+/* HIGHLIGHT COLORS */
+.kw{color:#c084fc}.str{color:#86efac}.fn{color:#67e8f9}.cm{color:#94a3b8;font-style:italic}
+.type{color:#fbbf24}.num{color:#f87171}.op{color:#e2e8f0}.tag{color:#f87171}
+.attr{color:#67e8f9}.var{color:#e2e8f0}.imp{color:#818cf8}
+
+/* GRID */
+.grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+
+/* STEP */
+.step-list{display:flex;flex-direction:column;gap:16px}
+.step{display:flex;gap:16px;align-items:flex-start}
+.step-num{min-width:36px;height:36px;border-radius:50%;background:var(--indigo);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem}
+.step-body h4{font-weight:700;margin-bottom:4px}
+.step-body p{font-size:.93rem;color:#475569}
+
+/* CALLOUT */
+.callout{border-radius:10px;padding:16px 20px;margin:14px 0;display:flex;gap:12px;align-items:flex-start;font-size:.93rem}
+.callout.info{background:#eff6ff;border-left:4px solid var(--blue);color:#1e40af}
+.callout.tip{background:#f0fdf4;border-left:4px solid var(--green);color:#166534}
+.callout.warn{background:#fffbeb;border-left:4px solid var(--orange);color:#92400e}
+.callout.danger{background:#fef2f2;border-left:4px solid var(--red);color:#991b1b}
+.callout .icon{font-size:1.1rem;margin-top:2px}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:14px 0}
+th{background:#f1f5f9;padding:10px 14px;text-align:left;font-weight:700;color:#475569;border:1px solid var(--border)}
+td{padding:10px 14px;border:1px solid var(--border);vertical-align:top}
+tr:nth-child(even) td{background:#f8fafc}
+
+/* FLOW DIAGRAM */
+.flow{display:flex;align-items:center;gap:0;flex-wrap:wrap;margin:16px 0}
+.flow-box{background:var(--indigo);color:#fff;padding:10px 18px;border-radius:8px;font-weight:700;font-size:.88rem;text-align:center}
+.flow-arr{padding:0 10px;color:#94a3b8;font-size:1.3rem}
+.flow-box.green{background:var(--green)}
+.flow-box.orange{background:var(--orange);color:#fff}
+.flow-box.red{background:var(--red)}
+.flow-box.cyan{background:var(--cyan)}
+.flow-box.purple{background:var(--purple)}
+
+/* CHAPTER HEADER */
+.chapter-header{background:linear-gradient(135deg,#1e293b,#334155);color:#fff;border-radius:var(--radius);padding:24px 28px;margin-bottom:24px;display:flex;align-items:center;gap:16px}
+.chapter-header .ch-num{font-size:2.5rem;font-weight:900;opacity:.3;line-height:1}
+.chapter-header h2{font-size:1.4rem;font-weight:800;margin:0}
+.chapter-header p{font-size:.9rem;opacity:.7;margin-top:4px}
+
+/* TABS */
+.tab-wrap{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin:14px 0}
+.tab-btns{display:flex;background:#f8fafc;border-bottom:1px solid var(--border)}
+.tab-btn{padding:10px 20px;font-size:.85rem;font-weight:700;border:none;background:none;cursor:pointer;color:#64748b;border-bottom:3px solid transparent}
+.tab-btn.active{color:var(--indigo);border-color:var(--indigo);background:#fff}
+.tab-content{padding:20px}
+.tab-pane{display:none}.tab-pane.active{display:block}
+
+/* COMPARE */
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin:14px 0}
+.compare-col{padding:0}
+.compare-col:first-child{border-right:1px solid var(--border)}
+.compare-head{padding:10px 16px;font-weight:700;font-size:.85rem;text-align:center}
+.compare-head.bad{background:#fef2f2;color:#991b1b}
+.compare-head.good{background:#f0fdf4;color:#166534}
+.compare-col pre{margin:0;border-radius:0}
+
+/* FOOTER */
+footer{background:var(--dark);color:#94a3b8;text-align:center;padding:32px;font-size:.88rem}
+footer strong{color:#fff}
+
+@media(max-width:600px){
+  .compare{grid-template-columns:1fr}
+  .compare-col:first-child{border-right:none;border-bottom:1px solid var(--border)}
+  .flow{flex-direction:column;align-items:flex-start}
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>⚡ Next.js + Redux + TypeScript</h1>
+  <p>สื่อการสอนฉบับสมบูรณ์ — ตั้งแต่พื้นฐานถึง Production</p>
+  <div class="badge-row">
+    <span class="badge">Next.js 14+</span>
+    <span class="badge">Redux Toolkit</span>
+    <span class="badge">TypeScript 5</span>
+    <span class="badge">React 18</span>
+    <span class="badge">App Router</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav-sticky" id="main-nav">
+  <a href="#ts-basics">TypeScript พื้นฐาน</a>
+  <a href="#ts-react">TS + React</a>
+  <a href="#nextjs-intro">Next.js เบื้องต้น</a>
+  <a href="#nextjs-routing">Routing</a>
+  <a href="#nextjs-data">Data Fetching</a>
+  <a href="#redux-basics">Redux พื้นฐาน</a>
+  <a href="#redux-toolkit">Redux Toolkit</a>
+  <a href="#redux-nextjs">Redux + Next.js</a>
+  <a href="#patterns">Best Practices</a>
+</nav>
+
+<div class="container">
+
+<!-- ============================================================ -->
+<!-- SECTION 1: TypeScript พื้นฐาน -->
+<!-- ============================================================ -->
+<section id="ts-basics">
+  <div class="chapter-header">
+    <div class="ch-num">01</div>
+    <div>
+      <h2>TypeScript พื้นฐาน</h2>
+      <p>ระบบ Type ที่ทำให้โค้ด React/Next.js แข็งแกร่งขึ้น</p>
+    </div>
+  </div>
+
+  <div class="callout info">
+    <span class="icon">💡</span>
+    <div><strong>TypeScript คืออะไร?</strong> — JavaScript ที่เพิ่มระบบ Type เข้ามา คอมไพเลอร์จะตรวจโค้ดก่อน run จริง ทำให้จับ bug ได้ตั้งแต่ตอนเขียน</div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>🔤 Types พื้นฐาน</h3>
+<pre><span class="cm">// Primitive types</span>
+<span class="kw">let</span> <span class="var">name</span>: <span class="type">string</span> = <span class="str">"สมชาย"</span>
+<span class="kw">let</span> <span class="var">age</span>: <span class="type">number</span> = <span class="num">25</span>
+<span class="kw">let</span> <span class="var">isActive</span>: <span class="type">boolean</span> = <span class="kw">true</span>
+<span class="kw">let</span> <span class="var">data</span>: <span class="type">null</span> = <span class="kw">null</span>
+<span class="kw">let</span> <span class="var">value</span>: <span class="type">undefined</span> = <span class="kw">undefined</span>
+
+<span class="cm">// Array</span>
+<span class="kw">let</span> <span class="var">nums</span>: <span class="type">number</span>[] = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]
+<span class="kw">let</span> <span class="var">names</span>: <span class="type">Array</span>&lt;<span class="type">string</span>&gt; = [<span class="str">"a"</span>, <span class="str">"b"</span>]
+
+<span class="cm">// Tuple — กำหนดตำแหน่ง</span>
+<span class="kw">let</span> <span class="var">coord</span>: [<span class="type">number</span>, <span class="type">number</span>] = [<span class="num">13.7</span>, <span class="num">100.5</span>]
+
+<span class="cm">// Union — ได้หลาย type</span>
+<span class="kw">let</span> <span class="var">id</span>: <span class="type">string</span> | <span class="type">number</span> = <span class="str">"abc-123"</span>
+<span class="var">id</span> = <span class="num">42</span> <span class="cm">// ✅ ได้ทั้งคู่</span></pre>
+    </div>
+    <div class="card">
+      <h3>🏗️ Interface vs Type Alias</h3>
+<pre><span class="cm">// Interface — สำหรับ Object shapes</span>
+<span class="kw">interface</span> <span class="type">User</span> {
+  id: <span class="type">number</span>
+  name: <span class="type">string</span>
+  email?: <span class="type">string</span>   <span class="cm">// ? = optional</span>
+  readonly role: <span class="type">string</span>  <span class="cm">// readonly</span>
+}
+
+<span class="cm">// Type Alias — ยืดหยุ่นกว่า</span>
+<span class="kw">type</span> <span class="type">Status</span> = <span class="str">"active"</span> | <span class="str">"inactive"</span> | <span class="str">"pending"</span>
+<span class="kw">type</span> <span class="type">ID</span> = <span class="type">string</span> | <span class="type">number</span>
+
+<span class="cm">// Intersection — รวม types</span>
+<span class="kw">type</span> <span class="type">AdminUser</span> = <span class="type">User</span> & {
+  permissions: <span class="type">string</span>[]
+}
+
+<span class="cm">// ใช้งาน</span>
+<span class="kw">const</span> <span class="var">user</span>: <span class="type">User</span> = {
+  id: <span class="num">1</span>, name: <span class="str">"สมชาย"</span>, role: <span class="str">"admin"</span>
+}</pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>⚙️ Functions กับ TypeScript</h3>
+    <div class="grid-2">
+<pre><span class="cm">// กำหนด parameter และ return type</span>
+<span class="kw">function</span> <span class="fn">greet</span>(<span class="var">name</span>: <span class="type">string</span>): <span class="type">string</span> {
+  <span class="kw">return</span> <span class="str">`สวัสดี <span class="kw">${name}</span>`</span>
+}
+
+<span class="cm">// Arrow function</span>
+<span class="kw">const</span> <span class="fn">add</span> = (<span class="var">a</span>: <span class="type">number</span>, <span class="var">b</span>: <span class="type">number</span>): <span class="type">number</span> => <span class="var">a</span> + <span class="var">b</span>
+
+<span class="cm">// Optional parameter</span>
+<span class="kw">function</span> <span class="fn">log</span>(<span class="var">msg</span>: <span class="type">string</span>, <span class="var">level</span>?: <span class="type">string</span>): <span class="type">void</span> {
+  console.log(<span class="var">level</span> ?? <span class="str">"info"</span>, <span class="var">msg</span>)
+}
+
+<span class="cm">// Default parameter</span>
+<span class="kw">function</span> <span class="fn">repeat</span>(<span class="var">s</span>: <span class="type">string</span>, <span class="var">n</span>: <span class="type">number</span> = <span class="num">1</span>): <span class="type">string</span> {
+  <span class="kw">return</span> <span class="var">s</span>.repeat(<span class="var">n</span>)
+}</pre>
+<pre><span class="cm">// Generic function</span>
+<span class="kw">function</span> <span class="fn">identity</span>&lt;<span class="type">T</span>&gt;(<span class="var">value</span>: <span class="type">T</span>): <span class="type">T</span> {
+  <span class="kw">return</span> <span class="var">value</span>
+}
+
+<span class="kw">const</span> <span class="var">num</span> = <span class="fn">identity</span>&lt;<span class="type">number</span>&gt;(<span class="num">42</span>)   <span class="cm">// 42</span>
+<span class="kw">const</span> <span class="var">str</span> = <span class="fn">identity</span>(<span class="str">"hello"</span>)     <span class="cm">// infer อัตโนมัติ</span>
+
+<span class="cm">// Function type signature</span>
+<span class="kw">type</span> <span class="type">Handler</span> = (<span class="var">event</span>: <span class="type">MouseEvent</span>) => <span class="type">void</span>
+
+<span class="cm">// Overloads</span>
+<span class="kw">function</span> <span class="fn">parse</span>(<span class="var">x</span>: <span class="type">string</span>): <span class="type">number</span>
+<span class="kw">function</span> <span class="fn">parse</span>(<span class="var">x</span>: <span class="type">number</span>): <span class="type">string</span>
+<span class="kw">function</span> <span class="fn">parse</span>(<span class="var">x</span>: <span class="kw">any</span>) { <span class="kw">return</span> <span class="var">x</span> }</pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🧰 Utility Types ที่ใช้บ่อย</h3>
+    <table>
+      <tr><th>Utility Type</th><th>ความหมาย</th><th>ตัวอย่าง</th></tr>
+      <tr><td><span class="inline-code">Partial&lt;T&gt;</span></td><td>ทุก property เป็น optional</td><td><span class="inline-code">Partial&lt;User&gt;</span></td></tr>
+      <tr><td><span class="inline-code">Required&lt;T&gt;</span></td><td>ทุก property เป็น required</td><td><span class="inline-code">Required&lt;User&gt;</span></td></tr>
+      <tr><td><span class="inline-code">Readonly&lt;T&gt;</span></td><td>ทุก property เป็น readonly</td><td><span class="inline-code">Readonly&lt;User&gt;</span></td></tr>
+      <tr><td><span class="inline-code">Pick&lt;T,K&gt;</span></td><td>เลือกแค่บาง property</td><td><span class="inline-code">Pick&lt;User,"id"|"name"&gt;</span></td></tr>
+      <tr><td><span class="inline-code">Omit&lt;T,K&gt;</span></td><td>ลบบาง property ออก</td><td><span class="inline-code">Omit&lt;User,"password"&gt;</span></td></tr>
+      <tr><td><span class="inline-code">Record&lt;K,V&gt;</span></td><td>สร้าง object type</td><td><span class="inline-code">Record&lt;string,number&gt;</span></td></tr>
+      <tr><td><span class="inline-code">ReturnType&lt;T&gt;</span></td><td>ดึง type จาก return ของ fn</td><td><span class="inline-code">ReturnType&lt;typeof greet&gt;</span></td></tr>
+    </table>
+<pre><span class="cm">// ตัวอย่างการใช้ Utility Types</span>
+<span class="kw">interface</span> <span class="type">Product</span> {
+  id: <span class="type">number</span>; name: <span class="type">string</span>; price: <span class="type">number</span>; stock: <span class="type">number</span>
+}
+
+<span class="kw">type</span> <span class="type">UpdateProduct</span> = <span class="type">Partial</span>&lt;<span class="type">Product</span>&gt;     <span class="cm">// ทุกช่อง optional</span>
+<span class="kw">type</span> <span class="type">ProductCard</span>  = <span class="type">Pick</span>&lt;<span class="type">Product</span>, <span class="str">"id"</span> | <span class="str">"name"</span> | <span class="str">"price"</span>&gt;
+<span class="kw">type</span> <span class="type">PublicProduct</span> = <span class="type">Omit</span>&lt;<span class="type">Product</span>, <span class="str">"stock"</span>&gt;  <span class="cm">// ไม่แสดง stock</span>
+<span class="kw">type</span> <span class="type">PriceMap</span>     = <span class="type">Record</span>&lt;<span class="type">string</span>, <span class="type">number</span>&gt; <span class="cm">// { [key: string]: number }</span></pre>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 2: TypeScript + React -->
+<!-- ============================================================ -->
+<section id="ts-react">
+  <div class="chapter-header">
+    <div class="ch-num">02</div>
+    <div>
+      <h2>TypeScript กับ React</h2>
+      <p>Typing Components, Props, Hooks และ Events</p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>📦 Typing Props</h3>
+<pre><span class="imp">import</span> <span class="type">React</span> <span class="kw">from</span> <span class="str">'react'</span>
+
+<span class="cm">// วิธีที่ 1: interface</span>
+<span class="kw">interface</span> <span class="type">ButtonProps</span> {
+  label: <span class="type">string</span>
+  variant?: <span class="str">"primary"</span> | <span class="str">"secondary"</span>
+  disabled?: <span class="type">boolean</span>
+  onClick: () => <span class="type">void</span>
+}
+
+<span class="kw">const</span> <span class="fn">Button</span> = ({
+  label, variant = <span class="str">"primary"</span>, disabled, onClick
+}: <span class="type">ButtonProps</span>) => (
+  &lt;<span class="tag">button</span>
+    <span class="attr">className</span>={<span class="var">variant</span>}
+    <span class="attr">disabled</span>={<span class="var">disabled</span>}
+    <span class="attr">onClick</span>={<span class="var">onClick</span>}
+  &gt;
+    {<span class="var">label</span>}
+  &lt;/<span class="tag">button</span>&gt;
+)
+
+<span class="cm">// วิธีที่ 2: React.FC (เก่ากว่า)</span>
+<span class="kw">const</span> <span class="fn">Card</span>: <span class="type">React.FC</span>&lt;<span class="type">ButtonProps</span>&gt; = (props) => {
+  <span class="kw">return</span> &lt;<span class="tag">div</span>&gt;{props.label}&lt;/<span class="tag">div</span>&gt;
+}</pre>
+    </div>
+    <div class="card">
+      <h3>👶 Children Props</h3>
+<pre><span class="imp">import</span> { <span class="type">ReactNode</span>, <span class="type">PropsWithChildren</span> } <span class="kw">from</span> <span class="str">'react'</span>
+
+<span class="cm">// วิธีที่ 1: ใช้ ReactNode</span>
+<span class="kw">interface</span> <span class="type">LayoutProps</span> {
+  children: <span class="type">ReactNode</span>
+  title: <span class="type">string</span>
+}
+
+<span class="kw">const</span> <span class="fn">Layout</span> = ({ children, title }: <span class="type">LayoutProps</span>) => (
+  &lt;<span class="tag">div</span>&gt;
+    &lt;<span class="tag">h1</span>&gt;{title}&lt;/<span class="tag">h1</span>&gt;
+    {children}
+  &lt;/<span class="tag">div</span>&gt;
+)
+
+<span class="cm">// วิธีที่ 2: PropsWithChildren helper</span>
+<span class="kw">const</span> <span class="fn">Box</span> = ({ children }: <span class="type">PropsWithChildren</span>) => (
+  &lt;<span class="tag">div</span> <span class="attr">className</span>=<span class="str">"box"</span>&gt;{children}&lt;/<span class="tag">div</span>&gt;
+)
+
+<span class="cm">// ใช้ generic PropsWithChildren</span>
+<span class="kw">type</span> <span class="type">CardProps</span> = <span class="type">PropsWithChildren</span>&lt;{
+  title: <span class="type">string</span>
+  color?: <span class="type">string</span>
+}&gt;</pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🪝 Typing Hooks</h3>
+    <div class="grid-2">
+<pre><span class="cm">// useState — TypeScript infer อัตโนมัติ</span>
+<span class="kw">const</span> [<span class="var">count</span>, <span class="var">setCount</span>] = useState(<span class="num">0</span>)
+<span class="cm">// count: number ✅</span>
+
+<span class="cm">// ถ้า initial เป็น null ต้องกำหนด type</span>
+<span class="kw">const</span> [<span class="var">user</span>, <span class="var">setUser</span>] = useState&lt;<span class="type">User</span> | <span class="kw">null</span>&gt;(<span class="kw">null</span>)
+
+<span class="cm">// useRef</span>
+<span class="kw">const</span> <span class="var">inputRef</span> = useRef&lt;<span class="type">HTMLInputElement</span>&gt;(<span class="kw">null</span>)
+
+<span class="cm">// useReducer</span>
+<span class="kw">type</span> <span class="type">Action</span> =
+  | { type: <span class="str">"increment"</span> }
+  | { type: <span class="str">"decrement"</span> }
+  | { type: <span class="str">"reset"</span>; payload: <span class="type">number</span> }
+
+<span class="kw">function</span> <span class="fn">reducer</span>(<span class="var">state</span>: <span class="type">number</span>, <span class="var">action</span>: <span class="type">Action</span>): <span class="type">number</span> {
+  <span class="kw">switch</span> (<span class="var">action</span>.type) {
+    <span class="kw">case</span> <span class="str">"increment"</span>: <span class="kw">return</span> <span class="var">state</span> + <span class="num">1</span>
+    <span class="kw">case</span> <span class="str">"decrement"</span>: <span class="kw">return</span> <span class="var">state</span> - <span class="num">1</span>
+    <span class="kw">case</span> <span class="str">"reset"</span>: <span class="kw">return</span> <span class="var">action</span>.payload
+  }
+}</pre>
+<pre><span class="cm">// Event handlers</span>
+<span class="kw">const</span> <span class="fn">handleClick</span> = (
+  <span class="var">e</span>: <span class="type">React.MouseEvent</span>&lt;<span class="type">HTMLButtonElement</span>&gt;
+) => {
+  console.log(<span class="var">e</span>.currentTarget.name)
+}
+
+<span class="kw">const</span> <span class="fn">handleChange</span> = (
+  <span class="var">e</span>: <span class="type">React.ChangeEvent</span>&lt;<span class="type">HTMLInputElement</span>&gt;
+) => {
+  console.log(<span class="var">e</span>.target.value)
+}
+
+<span class="kw">const</span> <span class="fn">handleSubmit</span> = (
+  <span class="var">e</span>: <span class="type">React.FormEvent</span>&lt;<span class="type">HTMLFormElement</span>&gt;
+) => {
+  <span class="var">e</span>.preventDefault()
+}
+
+<span class="cm">// useContext</span>
+<span class="kw">interface</span> <span class="type">ThemeCtx</span> { theme: <span class="type">string</span>; toggle: () => <span class="type">void</span> }
+<span class="kw">const</span> <span class="var">ThemeContext</span> = createContext&lt;<span class="type">ThemeCtx</span>&gt;({
+  theme: <span class="str">"light"</span>, toggle: () => {}
+})
+<span class="kw">const</span> { theme } = useContext(<span class="var">ThemeContext</span>)</pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔀 Generic Components</h3>
+<pre><span class="cm">// List component ที่รับ data ชนิดใดก็ได้</span>
+<span class="kw">interface</span> <span class="type">ListProps</span>&lt;<span class="type">T</span>&gt; {
+  items: <span class="type">T</span>[]
+  renderItem: (<span class="var">item</span>: <span class="type">T</span>, <span class="var">index</span>: <span class="type">number</span>) => <span class="type">React.ReactNode</span>
+  keyExtractor: (<span class="var">item</span>: <span class="type">T</span>) => <span class="type">string</span>
+}
+
+<span class="kw">function</span> <span class="fn">List</span>&lt;<span class="type">T</span>&gt;({ items, renderItem, keyExtractor }: <span class="type">ListProps</span>&lt;<span class="type">T</span>&gt;) {
+  <span class="kw">return</span> (
+    &lt;<span class="tag">ul</span>&gt;
+      {items.map((<span class="var">item</span>, <span class="var">i</span>) => (
+        &lt;<span class="tag">li</span> key={keyExtractor(<span class="var">item</span>)}&gt;{renderItem(<span class="var">item</span>, <span class="var">i</span>)}&lt;/<span class="tag">li</span>&gt;
+      ))}
+    &lt;/<span class="tag">ul</span>&gt;
+  )
+}
+
+<span class="cm">// ใช้งาน — TypeScript infer type อัตโนมัติ</span>
+<span class="fn">List</span>({
+  items: [{ id: <span class="num">1</span>, name: <span class="str">"สมชาย"</span> }],
+  keyExtractor: (<span class="var">u</span>) => <span class="var">u</span>.id.toString(),
+  renderItem: (<span class="var">u</span>) => &lt;<span class="tag">span</span>&gt;{<span class="var">u</span>.name}&lt;/<span class="tag">span</span>&gt;
+})</pre>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 3: Next.js เบื้องต้น -->
+<!-- ============================================================ -->
+<section id="nextjs-intro">
+  <div class="chapter-header">
+    <div class="ch-num">03</div>
+    <div>
+      <h2>Next.js เบื้องต้น</h2>
+      <p>Framework React ที่ทำ SSR, SSG, API Routes และอื่นๆ ได้ในตัว</p>
+    </div>
+  </div>
+
+  <div class="callout info">
+    <span class="icon">🏗️</span>
+    <div><strong>Next.js App Router (v13+)</strong> — ใช้โฟลเดอร์ <span class="inline-code">app/</span> แทน <span class="inline-code">pages/</span> รองรับ Server Components, Streaming และ Layouts ที่ซ้อนกันได้</div>
+  </div>
+
+  <div class="card">
+    <h3>🚀 สร้างโปรเจกต์</h3>
+<pre><span class="cm"># สร้างโปรเจกต์ Next.js + TypeScript</span>
+npx create-next-app@latest my-app \
+  --typescript \
+  --tailwind \
+  --app \
+  --src-dir \
+  --import-alias <span class="str">"@/*"</span>
+
+<span class="cm"># โครงสร้างไฟล์</span>
+my-app/
+├── src/
+│   ├── app/
+│   │   ├── layout.tsx      <span class="cm"># Root layout</span>
+│   │   ├── page.tsx        <span class="cm"># หน้าแรก /</span>
+│   │   ├── globals.css
+│   │   └── (routes)/
+│   ├── components/
+│   └── lib/
+├── public/
+├── next.config.ts
+└── tsconfig.json</pre>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>📄 Root Layout</h3>
+<pre><span class="cm">// src/app/layout.tsx</span>
+<span class="imp">import</span> <span class="kw">type</span> { <span class="type">Metadata</span> } <span class="kw">from</span> <span class="str">'next'</span>
+
+<span class="kw">export const</span> <span class="var">metadata</span>: <span class="type">Metadata</span> = {
+  title: <span class="str">'My App'</span>,
+  description: <span class="str">'สร้างด้วย Next.js'</span>,
+}
+
+<span class="kw">export default function</span> <span class="fn">RootLayout</span>({
+  children,
+}: {
+  children: <span class="type">React.ReactNode</span>
+}) {
+  <span class="kw">return</span> (
+    &lt;<span class="tag">html</span> <span class="attr">lang</span>=<span class="str">"th"</span>&gt;
+      &lt;<span class="tag">body</span>&gt;{children}&lt;/<span class="tag">body</span>&gt;
+    &lt;/<span class="tag">html</span>&gt;
+  )
+}</pre>
+    </div>
+    <div class="card">
+      <h3>📄 Page Component</h3>
+<pre><span class="cm">// src/app/page.tsx</span>
+<span class="cm">// Server Component โดย default</span>
+<span class="kw">export default function</span> <span class="fn">HomePage</span>() {
+  <span class="kw">return</span> (
+    &lt;<span class="tag">main</span>&gt;
+      &lt;<span class="tag">h1</span>&gt;สวัสดี Next.js!&lt;/<span class="tag">h1</span>&gt;
+    &lt;/<span class="tag">main</span>&gt;
+  )
+}
+
+<span class="cm">// Client Component — ต้องใส่ "use client"</span>
+<span class="str">"use client"</span>
+
+<span class="imp">import</span> { useState } <span class="kw">from</span> <span class="str">'react'</span>
+
+<span class="kw">export default function</span> <span class="fn">Counter</span>() {
+  <span class="kw">const</span> [<span class="var">n</span>, <span class="var">setN</span>] = useState(<span class="num">0</span>)
+  <span class="kw">return</span> &lt;<span class="tag">button</span> <span class="attr">onClick</span>={() => <span class="fn">setN</span>(<span class="var">n</span>+<span class="num">1</span>)}&gt;{<span class="var">n</span>}&lt;/<span class="tag">button</span>&gt;
+}</pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🆚 Server Component vs Client Component</h3>
+    <table>
+      <tr><th>คุณสมบัติ</th><th>Server Component</th><th>Client Component</th></tr>
+      <tr><td>Hooks (useState, useEffect)</td><td>❌</td><td>✅</td></tr>
+      <tr><td>Event handlers</td><td>❌</td><td>✅</td></tr>
+      <tr><td>Browser APIs</td><td>❌</td><td>✅</td></tr>
+      <tr><td>async/await โดยตรง</td><td>✅</td><td>❌</td></tr>
+      <tr><td>Database / Server APIs</td><td>✅</td><td>❌</td></tr>
+      <tr><td>Render ที่ไหน</td><td>Server เท่านั้น</td><td>Server + Client (hydration)</td></tr>
+      <tr><td>Bundle size</td><td>ไม่เพิ่ม JS ที่ client</td><td>เพิ่ม JS ที่ client</td></tr>
+    </table>
+    <div class="callout tip">
+      <span class="icon">✅</span>
+      <div><strong>กฎง่ายๆ:</strong> ใช้ Server Component ก่อนเสมอ เปลี่ยนเป็น Client เมื่อต้องการ interactivity หรือ browser APIs เท่านั้น</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 4: Routing -->
+<!-- ============================================================ -->
+<section id="nextjs-routing">
+  <div class="chapter-header">
+    <div class="ch-num">04</div>
+    <div>
+      <h2>Next.js Routing (App Router)</h2>
+      <p>File-based routing ด้วย app/ directory</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📁 โครงสร้าง Routing</h3>
+<pre><span class="cm">app/
+├── page.tsx              →  /
+├── about/
+│   └── page.tsx          →  /about
+├── blog/
+│   ├── page.tsx          →  /blog
+│   └── [slug]/
+│       └── page.tsx      →  /blog/:slug   (dynamic)
+├── shop/
+│   └── [...categories]/
+│       └── page.tsx      →  /shop/a/b/c  (catch-all)
+├── (auth)/               →  Route Group (ไม่เป็น URL)
+│   ├── login/page.tsx    →  /login
+│   └── register/page.tsx →  /register
+└── @modal/               →  Parallel Routes
+    └── page.tsx</span></pre>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>🔀 Dynamic Routes</h3>
+<pre><span class="cm">// app/blog/[slug]/page.tsx</span>
+<span class="kw">interface</span> <span class="type">PageProps</span> {
+  params: { slug: <span class="type">string</span> }
+  searchParams: { [key: <span class="type">string</span>]: <span class="type">string</span> | <span class="type">string</span>[] }
+}
+
+<span class="kw">export default function</span> <span class="fn">BlogPost</span>({ params }: <span class="type">PageProps</span>) {
+  <span class="kw">return</span> &lt;<span class="tag">h1</span>&gt;บทความ: {params.slug}&lt;/<span class="tag">h1</span>&gt;
+}
+
+<span class="cm">// generateStaticParams — pre-render</span>
+<span class="kw">export async function</span> <span class="fn">generateStaticParams</span>() {
+  <span class="kw">const</span> <span class="var">posts</span> = <span class="kw">await</span> <span class="fn">fetchPosts</span>()
+  <span class="kw">return</span> <span class="var">posts</span>.map((<span class="var">p</span>) => ({ slug: <span class="var">p</span>.slug }))
+}</pre>
+    </div>
+    <div class="card">
+      <h3>🔗 Link และ Navigation</h3>
+<pre><span class="imp">import</span> <span class="type">Link</span> <span class="kw">from</span> <span class="str">'next/link'</span>
+<span class="imp">import</span> { useRouter, usePathname } <span class="kw">from</span> <span class="str">'next/navigation'</span>
+
+<span class="str">"use client"</span>
+
+<span class="kw">export default function</span> <span class="fn">Nav</span>() {
+  <span class="kw">const</span> <span class="var">router</span> = <span class="fn">useRouter</span>()
+  <span class="kw">const</span> <span class="var">path</span> = <span class="fn">usePathname</span>()
+
+  <span class="kw">return</span> (
+    &lt;<span class="tag">nav</span>&gt;
+      &lt;<span class="tag">Link</span> <span class="attr">href</span>=<span class="str">"/"</span>&gt;หน้าแรก&lt;/<span class="tag">Link</span>&gt;
+      &lt;<span class="tag">Link</span> <span class="attr">href</span>=<span class="str">"/blog"</span>&gt;บล็อก&lt;/<span class="tag">Link</span>&gt;
+      &lt;<span class="tag">button</span> <span class="attr">onClick</span>={() => <span class="var">router</span>.push(<span class="str">'/about'</span>)}&gt;
+        เกี่ยวกับ
+      &lt;/<span class="tag">button</span>&gt;
+    &lt;/<span class="tag">nav</span>&gt;
+  )
+}</pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📁 Special Files</h3>
+    <table>
+      <tr><th>ไฟล์</th><th>หน้าที่</th></tr>
+      <tr><td><span class="inline-code">layout.tsx</span></td><td>Shared UI ที่ครอบ children — ไม่ re-render เมื่อ navigate</td></tr>
+      <tr><td><span class="inline-code">page.tsx</span></td><td>UI ของ route นั้น — ทำให้ route accessible</td></tr>
+      <tr><td><span class="inline-code">loading.tsx</span></td><td>Loading UI ระหว่างโหลด (Suspense fallback)</td></tr>
+      <tr><td><span class="inline-code">error.tsx</span></td><td>Error UI — Client Component เท่านั้น</td></tr>
+      <tr><td><span class="inline-code">not-found.tsx</span></td><td>404 Page</td></tr>
+      <tr><td><span class="inline-code">route.ts</span></td><td>API Endpoint (แทน pages/api)</td></tr>
+      <tr><td><span class="inline-code">middleware.ts</span></td><td>รันก่อน request ทุกอัน</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>🌐 API Routes (Route Handlers)</h3>
+<pre><span class="cm">// app/api/users/route.ts</span>
+<span class="imp">import</span> { <span class="type">NextRequest</span>, <span class="type">NextResponse</span> } <span class="kw">from</span> <span class="str">'next/server'</span>
+
+<span class="kw">export async function</span> <span class="fn">GET</span>(<span class="var">req</span>: <span class="type">NextRequest</span>) {
+  <span class="kw">const</span> <span class="var">users</span> = <span class="kw">await</span> <span class="fn">db</span>.user.findMany()
+  <span class="kw">return</span> <span class="type">NextResponse</span>.json(<span class="var">users</span>)
+}
+
+<span class="kw">export async function</span> <span class="fn">POST</span>(<span class="var">req</span>: <span class="type">NextRequest</span>) {
+  <span class="kw">const</span> <span class="var">body</span> = <span class="kw">await</span> <span class="var">req</span>.json()
+  <span class="kw">const</span> <span class="var">user</span> = <span class="kw">await</span> <span class="fn">db</span>.user.create({ data: <span class="var">body</span> })
+  <span class="kw">return</span> <span class="type">NextResponse</span>.json(<span class="var">user</span>, { status: <span class="num">201</span> })
+}
+
+<span class="cm">// app/api/users/[id]/route.ts — Dynamic API</span>
+<span class="kw">export async function</span> <span class="fn">DELETE</span>(
+  <span class="var">req</span>: <span class="type">NextRequest</span>,
+  { params }: { params: { id: <span class="type">string</span> } }
+) {
+  <span class="kw">await</span> <span class="fn">db</span>.user.delete({ where: { id: +<span class="var">params</span>.id } })
+  <span class="kw">return</span> <span class="type">NextResponse</span>.json({ success: <span class="kw">true</span> })
+}</pre>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 5: Data Fetching -->
+<!-- ============================================================ -->
+<section id="nextjs-data">
+  <div class="chapter-header">
+    <div class="ch-num">05</div>
+    <div>
+      <h2>Data Fetching ใน Next.js</h2>
+      <p>SSR, SSG, ISR และ Client-side Fetching</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔄 วิธีการ Fetch ข้อมูล</h3>
+    <div class="flow">
+      <div class="flow-box">SSG<br><small>Static</small></div>
+      <div class="flow-arr">→</div>
+      <div class="flow-box green">ISR<br><small>Revalidate</small></div>
+      <div class="flow-arr">→</div>
+      <div class="flow-box orange">SSR<br><small>Every Request</small></div>
+      <div class="flow-arr">→</div>
+      <div class="flow-box cyan">CSR<br><small>Client Only</small></div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>🏗️ Server Component Fetch (SSR/SSG)</h3>
+<pre><span class="cm">// app/products/page.tsx — Server Component</span>
+<span class="kw">interface</span> <span class="type">Product</span> {
+  id: <span class="type">number</span>; title: <span class="type">string</span>; price: <span class="type">number</span>
+}
+
+<span class="cm">// SSG: build time (default)</span>
+<span class="kw">async function</span> <span class="fn">getProducts</span>(): <span class="type">Promise</span>&lt;<span class="type">Product</span>[]&gt; {
+  <span class="kw">const</span> <span class="var">res</span> = <span class="kw">await</span> fetch(<span class="str">'https://api.example.com/products'</span>)
+  <span class="kw">if</span> (!<span class="var">res</span>.ok) <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="str">'Failed'</span>)
+  <span class="kw">return</span> <span class="var">res</span>.json()
+}
+
+<span class="cm">// ISR: revalidate ทุก 60 วินาที</span>
+<span class="kw">const</span> <span class="var">res</span> = <span class="kw">await</span> fetch(<span class="str">'...'</span>, {
+  next: { revalidate: <span class="num">60</span> }
+})
+
+<span class="cm">// SSR: ทุก request</span>
+<span class="kw">const</span> <span class="var">res</span> = <span class="kw">await</span> fetch(<span class="str">'...'</span>, {
+  cache: <span class="str">'no-store'</span>
+})
+
+<span class="kw">export default async function</span> <span class="fn">ProductsPage</span>() {
+  <span class="kw">const</span> <span class="var">products</span> = <span class="kw">await</span> <span class="fn">getProducts</span>()
+  <span class="kw">return</span> (
+    &lt;<span class="tag">ul</span>&gt;
+      {products.map(<span class="var">p</span> => &lt;<span class="tag">li</span> key={<span class="var">p</span>.id}&gt;{<span class="var">p</span>.title}&lt;/<span class="tag">li</span>&gt;)}
+    &lt;/<span class="tag">ul</span>&gt;
+  )
+}</pre>
+    </div>
+    <div class="card">
+      <h3>💻 Client-side Fetch</h3>
+<pre><span class="str">"use client"</span>
+<span class="imp">import</span> { useState, useEffect } <span class="kw">from</span> <span class="str">'react'</span>
+
+<span class="kw">interface</span> <span class="type">Post</span> { id: <span class="type">number</span>; title: <span class="type">string</span> }
+
+<span class="kw">export default function</span> <span class="fn">PostList</span>() {
+  <span class="kw">const</span> [<span class="var">posts</span>, <span class="var">setPosts</span>] = useState&lt;<span class="type">Post</span>[]&gt;([])
+  <span class="kw">const</span> [<span class="var">loading</span>, <span class="var">setLoading</span>] = useState(<span class="kw">true</span>)
+  <span class="kw">const</span> [<span class="var">error</span>, <span class="var">setError</span>] = useState&lt;<span class="type">string</span> | <span class="kw">null</span>&gt;(<span class="kw">null</span>)
+
+  useEffect(() => {
+    fetch(<span class="str">'/api/posts'</span>)
+      .then(<span class="var">r</span> => <span class="var">r</span>.json())
+      .then(<span class="var">data</span> => <span class="fn">setPosts</span>(<span class="var">data</span>))
+      .catch(<span class="var">e</span> => <span class="fn">setError</span>(<span class="var">e</span>.message))
+      .finally(() => <span class="fn">setLoading</span>(<span class="kw">false</span>))
+  }, [])
+
+  <span class="kw">if</span> (<span class="var">loading</span>) <span class="kw">return</span> &lt;<span class="tag">p</span>&gt;กำลังโหลด...&lt;/<span class="tag">p</span>&gt;
+  <span class="kw">if</span> (<span class="var">error</span>) <span class="kw">return</span> &lt;<span class="tag">p</span>&gt;Error: {<span class="var">error</span>}&lt;/<span class="tag">p</span>&gt;
+
+  <span class="kw">return</span> &lt;<span class="tag">ul</span>&gt;{posts.map(<span class="var">p</span> => &lt;<span class="tag">li</span> key={<span class="var">p</span>.id}&gt;{<span class="var">p</span>.title}&lt;/<span class="tag">li</span>&gt;)}&lt;/<span class="tag">ul</span>&gt;
+}</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 6: Redux พื้นฐาน -->
+<!-- ============================================================ -->
+<section id="redux-basics">
+  <div class="chapter-header">
+    <div class="ch-num">06</div>
+    <div>
+      <h2>Redux พื้นฐาน</h2>
+      <p>แนวคิด State Management แบบ Predictable</p>
+    </div>
+  </div>
+
+  <div class="callout info">
+    <span class="icon">🧠</span>
+    <div><strong>Redux คืออะไร?</strong> — ที่เก็บ state กลาง (Single Source of Truth) ที่ทำให้ทุก Component เข้าถึง state ได้ โดยเปลี่ยน state ได้แค่ผ่าน Action เท่านั้น</div>
+  </div>
+
+  <div class="card">
+    <h3>🔄 แนวคิดหลัก Redux</h3>
+    <div class="flow">
+      <div class="flow-box cyan">Component<br><small>UI</small></div>
+      <div class="flow-arr">dispatch →</div>
+      <div class="flow-box purple">Action<br><small>{ type, payload }</small></div>
+      <div class="flow-arr">→</div>
+      <div class="flow-box orange">Reducer<br><small>Pure Function</small></div>
+      <div class="flow-arr">→ newState</div>
+      <div class="flow-box green">Store<br><small>State</small></div>
+      <div class="flow-arr">← subscribe</div>
+      <div class="flow-box cyan">Component</div>
+    </div>
+    <table>
+      <tr><th>ส่วนประกอบ</th><th>ความหมาย</th></tr>
+      <tr><td><strong>Store</strong></td><td>ที่เก็บ state ทั้งหมด มีแค่อันเดียวในแอป</td></tr>
+      <tr><td><strong>Action</strong></td><td>Object ที่บอกว่าจะเกิดอะไรขึ้น มี <span class="inline-code">type</span> เสมอ</td></tr>
+      <tr><td><strong>Reducer</strong></td><td>Pure function รับ state + action คืน state ใหม่</td></tr>
+      <tr><td><strong>Dispatch</strong></td><td>ส่ง action ไปยัง reducer</td></tr>
+      <tr><td><strong>Selector</strong></td><td>ฟังก์ชันดึงข้อมูลจาก state</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 7: Redux Toolkit -->
+<!-- ============================================================ -->
+<section id="redux-toolkit">
+  <div class="chapter-header">
+    <div class="ch-num">07</div>
+    <div>
+      <h2>Redux Toolkit (RTK)</h2>
+      <p>วิธีมาตรฐานสมัยใหม่ — เขียนน้อย ทำได้มากกว่า</p>
+    </div>
+  </div>
+
+  <div class="callout tip">
+    <span class="icon">✅</span>
+    <div>Redux Toolkit คือ <strong>วิธีที่แนะนำ</strong> ในการเขียน Redux ปัจจุบัน ลดโค้ด boilerplate ลงมาก ใช้ Immer สำหรับ immutable updates และ createAsyncThunk สำหรับ async</div>
+  </div>
+
+  <div class="card">
+    <h3>📦 ติดตั้ง</h3>
+<pre>npm install @reduxjs/toolkit react-redux
+npm install --save-dev @types/react-redux</pre>
+  </div>
+
+  <div class="card">
+    <h3>🗂️ createSlice — หัวใจของ RTK</h3>
+<pre><span class="cm">// src/store/features/counterSlice.ts</span>
+<span class="imp">import</span> { createSlice, <span class="type">PayloadAction</span> } <span class="kw">from</span> <span class="str">'@reduxjs/toolkit'</span>
+
+<span class="kw">interface</span> <span class="type">CounterState</span> {
+  value: <span class="type">number</span>
+  status: <span class="str">'idle'</span> | <span class="str">'loading'</span> | <span class="str">'failed'</span>
+}
+
+<span class="kw">const</span> <span class="var">initialState</span>: <span class="type">CounterState</span> = {
+  value: <span class="num">0</span>,
+  status: <span class="str">'idle'</span>,
+}
+
+<span class="kw">export const</span> <span class="var">counterSlice</span> = createSlice({
+  name: <span class="str">'counter'</span>,
+  initialState,
+  reducers: {
+    <span class="cm">// Immer ทำให้เขียน "mutate" ได้ แต่จริงๆ immutable</span>
+    increment: (<span class="var">state</span>) => {
+      <span class="var">state</span>.value += <span class="num">1</span>
+    },
+    decrement: (<span class="var">state</span>) => {
+      <span class="var">state</span>.value -= <span class="num">1</span>
+    },
+    incrementByAmount: (<span class="var">state</span>, <span class="var">action</span>: <span class="type">PayloadAction</span>&lt;<span class="type">number</span>&gt;) => {
+      <span class="var">state</span>.value += <span class="var">action</span>.payload
+    },
+    reset: (<span class="var">state</span>) => {
+      <span class="var">state</span>.value = <span class="num">0</span>
+    },
+  },
+})
+
+<span class="cm">// Export actions</span>
+<span class="kw">export const</span> { increment, decrement, incrementByAmount, reset } =
+  <span class="var">counterSlice</span>.actions
+
+<span class="cm">// Export reducer</span>
+<span class="kw">export default</span> <span class="var">counterSlice</span>.reducer
+
+<span class="cm">// Selectors</span>
+<span class="kw">export const</span> <span class="fn">selectCount</span> = (<span class="var">state</span>: <span class="type">RootState</span>) => <span class="var">state</span>.counter.value</pre>
+  </div>
+
+  <div class="card">
+    <h3>🏪 configureStore — สร้าง Store</h3>
+<pre><span class="cm">// src/store/index.ts</span>
+<span class="imp">import</span> { configureStore } <span class="kw">from</span> <span class="str">'@reduxjs/toolkit'</span>
+<span class="imp">import</span> { <span class="type">TypedUseSelectorHook</span>, useDispatch, useSelector } <span class="kw">from</span> <span class="str">'react-redux'</span>
+<span class="imp">import</span> <span class="var">counterReducer</span> <span class="kw">from</span> <span class="str">'./features/counterSlice'</span>
+<span class="imp">import</span> <span class="var">cartReducer</span> <span class="kw">from</span> <span class="str">'./features/cartSlice'</span>
+<span class="imp">import</span> <span class="var">userReducer</span> <span class="kw">from</span> <span class="str">'./features/userSlice'</span>
+
+<span class="kw">export const</span> <span class="var">store</span> = <span class="fn">configureStore</span>({
+  reducer: {
+    counter: <span class="var">counterReducer</span>,
+    cart: <span class="var">cartReducer</span>,
+    user: <span class="var">userReducer</span>,
+  },
+})
+
+<span class="cm">// TypeScript types สำหรับ Store</span>
+<span class="kw">export type</span> <span class="type">RootState</span> = ReturnType&lt;<span class="kw">typeof</span> <span class="var">store</span>.getState&gt;
+<span class="kw">export type</span> <span class="type">AppDispatch</span> = <span class="kw">typeof</span> <span class="var">store</span>.dispatch
+
+<span class="cm">// Typed hooks — ใช้แทน useSelector/useDispatch ทั่วไป</span>
+<span class="kw">export const</span> useAppDispatch = () => useDispatch&lt;<span class="type">AppDispatch</span>&gt;()
+<span class="kw">export const</span> useAppSelector: <span class="type">TypedUseSelectorHook</span>&lt;<span class="type">RootState</span>&gt; = useSelector</pre>
+  </div>
+
+  <div class="card">
+    <h3>⚡ createAsyncThunk — Async Actions</h3>
+<pre><span class="cm">// src/store/features/userSlice.ts</span>
+<span class="imp">import</span> { createSlice, createAsyncThunk } <span class="kw">from</span> <span class="str">'@reduxjs/toolkit'</span>
+
+<span class="kw">interface</span> <span class="type">User</span> { id: <span class="type">number</span>; name: <span class="type">string</span>; email: <span class="type">string</span> }
+<span class="kw">interface</span> <span class="type">UserState</span> {
+  users: <span class="type">User</span>[]
+  loading: <span class="type">boolean</span>
+  error: <span class="type">string</span> | <span class="kw">null</span>
+}
+
+<span class="cm">// Async thunk — fetch users จาก API</span>
+<span class="kw">export const</span> <span class="var">fetchUsers</span> = createAsyncThunk(
+  <span class="str">'users/fetchAll'</span>,
+  <span class="kw">async</span> (_, { rejectWithValue }) => {
+    <span class="kw">try</span> {
+      <span class="kw">const</span> <span class="var">res</span> = <span class="kw">await</span> fetch(<span class="str">'/api/users'</span>)
+      <span class="kw">if</span> (!<span class="var">res</span>.ok) <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="str">'Network error'</span>)
+      <span class="kw">return</span> (<span class="kw">await</span> <span class="var">res</span>.json()) <span class="kw">as</span> <span class="type">User</span>[]
+    } <span class="kw">catch</span> (<span class="var">err</span>) {
+      <span class="kw">return</span> <span class="fn">rejectWithValue</span>((<span class="var">err</span> <span class="kw">as</span> Error).message)
+    }
+  }
+)
+
+<span class="kw">const</span> <span class="var">userSlice</span> = createSlice({
+  name: <span class="str">'users'</span>,
+  initialState: { users: [], loading: <span class="kw">false</span>, error: <span class="kw">null</span> } <span class="kw">as</span> <span class="type">UserState</span>,
+  reducers: {},
+  extraReducers: (<span class="var">builder</span>) => {
+    <span class="var">builder</span>
+      .addCase(<span class="var">fetchUsers</span>.pending, (<span class="var">state</span>) => {
+        <span class="var">state</span>.loading = <span class="kw">true</span>; <span class="var">state</span>.error = <span class="kw">null</span>
+      })
+      .addCase(<span class="var">fetchUsers</span>.fulfilled, (<span class="var">state</span>, { payload }) => {
+        <span class="var">state</span>.loading = <span class="kw">false</span>; <span class="var">state</span>.users = payload
+      })
+      .addCase(<span class="var">fetchUsers</span>.rejected, (<span class="var">state</span>, { payload }) => {
+        <span class="var">state</span>.loading = <span class="kw">false</span>
+        <span class="var">state</span>.error = payload <span class="kw">as</span> <span class="type">string</span>
+      })
+  },
+})
+
+<span class="kw">export default</span> <span class="var">userSlice</span>.reducer</pre>
+  </div>
+
+  <div class="card">
+    <h3>🛒 ตัวอย่างจริง: Cart Slice</h3>
+<pre><span class="cm">// src/store/features/cartSlice.ts</span>
+<span class="imp">import</span> { createSlice, <span class="type">PayloadAction</span> } <span class="kw">from</span> <span class="str">'@reduxjs/toolkit'</span>
+
+<span class="kw">interface</span> <span class="type">CartItem</span> {
+  id: <span class="type">number</span>; name: <span class="type">string</span>; price: <span class="type">number</span>; qty: <span class="type">number</span>
+}
+<span class="kw">interface</span> <span class="type">CartState</span> { items: <span class="type">CartItem</span>[] }
+
+<span class="kw">const</span> <span class="var">cartSlice</span> = createSlice({
+  name: <span class="str">'cart'</span>,
+  initialState: { items: [] } <span class="kw">as</span> <span class="type">CartState</span>,
+  reducers: {
+    addItem: (<span class="var">state</span>, { payload }: <span class="type">PayloadAction</span>&lt;<span class="type">CartItem</span>&gt;) => {
+      <span class="kw">const</span> <span class="var">existing</span> = <span class="var">state</span>.items.find((<span class="var">i</span>) => <span class="var">i</span>.id === payload.id)
+      <span class="kw">if</span> (<span class="var">existing</span>) <span class="var">existing</span>.qty += <span class="num">1</span>
+      <span class="kw">else</span> <span class="var">state</span>.items.push({ ...payload, qty: <span class="num">1</span> })
+    },
+    removeItem: (<span class="var">state</span>, { payload }: <span class="type">PayloadAction</span>&lt;<span class="type">number</span>&gt;) => {
+      <span class="var">state</span>.items = <span class="var">state</span>.items.filter((<span class="var">i</span>) => <span class="var">i</span>.id !== payload)
+    },
+    updateQty: (<span class="var">state</span>, { payload }: <span class="type">PayloadAction</span>&lt;{ id: <span class="type">number</span>; qty: <span class="type">number</span> }&gt;) => {
+      <span class="kw">const</span> <span class="var">item</span> = <span class="var">state</span>.items.find((<span class="var">i</span>) => <span class="var">i</span>.id === payload.id)
+      <span class="kw">if</span> (<span class="var">item</span>) <span class="var">item</span>.qty = payload.qty
+    },
+    clearCart: (<span class="var">state</span>) => { <span class="var">state</span>.items = [] },
+  },
+})
+
+<span class="kw">export const</span> { addItem, removeItem, updateQty, clearCart } = <span class="var">cartSlice</span>.actions
+<span class="kw">export const</span> <span class="fn">selectCartTotal</span> = (<span class="var">state</span>: <span class="type">RootState</span>) =>
+  <span class="var">state</span>.cart.items.reduce((<span class="var">sum</span>, <span class="var">i</span>) => <span class="var">sum</span> + <span class="var">i</span>.price * <span class="var">i</span>.qty, <span class="num">0</span>)
+<span class="kw">export default</span> <span class="var">cartSlice</span>.reducer</pre>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 8: Redux + Next.js -->
+<!-- ============================================================ -->
+<section id="redux-nextjs">
+  <div class="chapter-header">
+    <div class="ch-num">08</div>
+    <div>
+      <h2>Redux กับ Next.js App Router</h2>
+      <p>ตั้งค่า Provider, RTK Query และ Server/Client integration</p>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <span class="icon">⚠️</span>
+    <div>Next.js App Router ใช้ Server Components เป็น default — <strong>Redux Provider ต้องเป็น Client Component</strong> และ wrap ที่ layout</div>
+  </div>
+
+  <div class="card">
+    <h3>🔧 ตั้งค่า Redux Provider</h3>
+<pre><span class="cm">// src/store/StoreProvider.tsx</span>
+<span class="str">"use client"</span>
+
+<span class="imp">import</span> { <span class="type">ReactNode</span>, useRef } <span class="kw">from</span> <span class="str">'react'</span>
+<span class="imp">import</span> { <span class="type">Provider</span> } <span class="kw">from</span> <span class="str">'react-redux'</span>
+<span class="imp">import</span> { store } <span class="kw">from</span> <span class="str">'./index'</span>
+
+<span class="kw">export default function</span> <span class="fn">StoreProvider</span>({ children }: { children: <span class="type">ReactNode</span> }) {
+  <span class="kw">return</span> &lt;<span class="type">Provider</span> store={store}&gt;{children}&lt;/<span class="type">Provider</span>&gt;
+}
+
+<span class="cm">// src/app/layout.tsx</span>
+<span class="imp">import</span> <span class="var">StoreProvider</span> <span class="kw">from</span> <span class="str">'@/store/StoreProvider'</span>
+
+<span class="kw">export default function</span> <span class="fn">RootLayout</span>({ children }: { children: <span class="type">ReactNode</span> }) {
+  <span class="kw">return</span> (
+    &lt;<span class="tag">html</span> lang=<span class="str">"th"</span>&gt;
+      &lt;<span class="tag">body</span>&gt;
+        &lt;<span class="tag">StoreProvider</span>&gt;
+          {children}
+        &lt;/<span class="tag">StoreProvider</span>&gt;
+      &lt;/<span class="tag">body</span>&gt;
+    &lt;/<span class="tag">html</span>&gt;
+  )
+}</pre>
+  </div>
+
+  <div class="card">
+    <h3>🛒 ใช้ Redux ใน Client Component</h3>
+<pre><span class="str">"use client"</span>
+<span class="imp">import</span> { useAppDispatch, useAppSelector } <span class="kw">from</span> <span class="str">'@/store'</span>
+<span class="imp">import</span> { addItem, removeItem, selectCartTotal } <span class="kw">from</span> <span class="str">'@/store/features/cartSlice'</span>
+
+<span class="kw">export default function</span> <span class="fn">CartWidget</span>() {
+  <span class="kw">const</span> <span class="var">dispatch</span> = <span class="fn">useAppDispatch</span>()
+  <span class="kw">const</span> <span class="var">items</span>   = <span class="fn">useAppSelector</span>(<span class="var">s</span> => <span class="var">s</span>.cart.items)
+  <span class="kw">const</span> <span class="var">total</span>   = <span class="fn">useAppSelector</span>(<span class="fn">selectCartTotal</span>)
+
+  <span class="kw">return</span> (
+    &lt;<span class="tag">div</span>&gt;
+      &lt;<span class="tag">h2</span>&gt;ตะกร้า ({items.length} รายการ)&lt;/<span class="tag">h2</span>&gt;
+      {items.map(<span class="var">item</span> => (
+        &lt;<span class="tag">div</span> key={item.id}&gt;
+          &lt;<span class="tag">span</span>&gt;{item.name} x{item.qty}&lt;/<span class="tag">span</span>&gt;
+          &lt;<span class="tag">button</span> onClick={() => dispatch(removeItem(item.id))}&gt;
+            ลบ
+          &lt;/<span class="tag">button</span>&gt;
+        &lt;/<span class="tag">div</span>&gt;
+      ))}
+      &lt;<span class="tag">p</span>&gt;รวม: ฿{total.toLocaleString()}&lt;/<span class="tag">p</span>&gt;
+    &lt;/<span class="tag">div</span>&gt;
+  )
+}</pre>
+  </div>
+
+  <div class="card">
+    <h3>🚀 RTK Query — Data Fetching + Caching</h3>
+<pre><span class="cm">// src/store/services/apiSlice.ts</span>
+<span class="imp">import</span> { createApi, fetchBaseQuery } <span class="kw">from</span> <span class="str">'@reduxjs/toolkit/query/react'</span>
+
+<span class="kw">interface</span> <span class="type">Post</span> { id: <span class="type">number</span>; title: <span class="type">string</span>; body: <span class="type">string</span> }
+
+<span class="kw">export const</span> <span class="var">apiSlice</span> = createApi({
+  reducerPath: <span class="str">'api'</span>,
+  baseQuery: <span class="fn">fetchBaseQuery</span>({ baseUrl: <span class="str">'/api'</span> }),
+  tagTypes: [<span class="str">'Post'</span>, <span class="str">'User'</span>],
+  endpoints: (<span class="var">builder</span>) => ({
+    <span class="cm">// GET /api/posts</span>
+    getPosts: <span class="var">builder</span>.query&lt;<span class="type">Post</span>[], <span class="type">void</span>&gt;({
+      query: () => <span class="str">'/posts'</span>,
+      providesTags: [<span class="str">'Post'</span>],
+    }),
+    <span class="cm">// GET /api/posts/:id</span>
+    getPost: <span class="var">builder</span>.query&lt;<span class="type">Post</span>, <span class="type">number</span>&gt;({
+      query: (<span class="var">id</span>) => <span class="str">`/posts/<span class="kw">${id}</span>`</span>,
+    }),
+    <span class="cm">// POST /api/posts</span>
+    createPost: <span class="var">builder</span>.mutation&lt;<span class="type">Post</span>, <span class="type">Omit</span>&lt;<span class="type">Post</span>, <span class="str">'id'</span>&gt;&gt;({
+      query: (<span class="var">body</span>) => ({ url: <span class="str">'/posts'</span>, method: <span class="str">'POST'</span>, body }),
+      invalidatesTags: [<span class="str">'Post'</span>],  <span class="cm">// auto refetch</span>
+    }),
+    <span class="cm">// DELETE /api/posts/:id</span>
+    deletePost: <span class="var">builder</span>.mutation&lt;<span class="type">void</span>, <span class="type">number</span>&gt;({
+      query: (<span class="var">id</span>) => ({ url: <span class="str">`/posts/<span class="kw">${id}</span>`</span>, method: <span class="str">'DELETE'</span> }),
+      invalidatesTags: [<span class="str">'Post'</span>],
+    }),
+  }),
+})
+
+<span class="kw">export const</span> {
+  useGetPostsQuery,
+  useGetPostQuery,
+  useCreatePostMutation,
+  useDeletePostMutation,
+} = <span class="var">apiSlice</span>
+
+<span class="cm">// เพิ่ม api reducer ใน store</span>
+<span class="cm">// reducer: { ..., [apiSlice.reducerPath]: apiSlice.reducer }</span>
+<span class="cm">// middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(apiSlice.middleware)</span></pre>
+  </div>
+
+  <div class="card">
+    <h3>💡 ใช้ RTK Query ใน Component</h3>
+<pre><span class="str">"use client"</span>
+<span class="imp">import</span> { useGetPostsQuery, useDeletePostMutation } <span class="kw">from</span> <span class="str">'@/store/services/apiSlice'</span>
+
+<span class="kw">export default function</span> <span class="fn">PostList</span>() {
+  <span class="cm">// Auto fetch, cache, loading/error states</span>
+  <span class="kw">const</span> { data: posts, isLoading, isError, refetch } = <span class="fn">useGetPostsQuery</span>()
+  <span class="kw">const</span> [<span class="var">deletePost</span>, { isLoading: isDeleting }] = <span class="fn">useDeletePostMutation</span>()
+
+  <span class="kw">if</span> (<span class="var">isLoading</span>) <span class="kw">return</span> &lt;<span class="tag">p</span>&gt;กำลังโหลด...&lt;/<span class="tag">p</span>&gt;
+  <span class="kw">if</span> (<span class="var">isError</span>)   <span class="kw">return</span> &lt;<span class="tag">p</span>&gt;เกิดข้อผิดพลาด &lt;<span class="tag">button</span> onClick={refetch}&gt;ลองใหม่&lt;/<span class="tag">button</span>&gt;&lt;/<span class="tag">p</span>&gt;
+
+  <span class="kw">return</span> (
+    &lt;<span class="tag">ul</span>&gt;
+      {posts?.map((<span class="var">post</span>) => (
+        &lt;<span class="tag">li</span> key={post.id}&gt;
+          {post.title}
+          &lt;<span class="tag">button</span>
+            onClick={() => deletePost(post.id)}
+            disabled={isDeleting}
+          &gt;
+            ลบ
+          &lt;/<span class="tag">button</span>&gt;
+        &lt;/<span class="tag">li</span>&gt;
+      ))}
+    &lt;/<span class="tag">ul</span>&gt;
+  )
+}</pre>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 9: Best Practices -->
+<!-- ============================================================ -->
+<section id="patterns">
+  <div class="chapter-header">
+    <div class="ch-num">09</div>
+    <div>
+      <h2>Best Practices &amp; Patterns</h2>
+      <p>โครงสร้างโปรเจกต์ที่ดี และแนวทางที่ควรทำ</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📁 โครงสร้างโปรเจกต์แนะนำ</h3>
+<pre>src/
+├── app/                    <span class="cm"># Next.js App Router</span>
+│   ├── (auth)/
+│   │   ├── login/page.tsx
+│   │   └── register/page.tsx
+│   ├── dashboard/
+│   │   ├── layout.tsx
+│   │   └── page.tsx
+│   ├── api/
+│   │   └── [...route]/route.ts
+│   ├── layout.tsx
+│   └── page.tsx
+│
+├── components/             <span class="cm"># UI Components</span>
+│   ├── ui/                 <span class="cm"># ส่วนประกอบพื้นฐาน (Button, Input)</span>
+│   ├── layout/             <span class="cm"># Header, Footer, Sidebar</span>
+│   └── features/           <span class="cm"># Business logic components</span>
+│       ├── cart/
+│       └── user/
+│
+├── store/                  <span class="cm"># Redux</span>
+│   ├── index.ts            <span class="cm"># Store + typed hooks</span>
+│   ├── StoreProvider.tsx
+│   ├── features/
+│   │   ├── cartSlice.ts
+│   │   └── userSlice.ts
+│   └── services/
+│       └── apiSlice.ts     <span class="cm"># RTK Query</span>
+│
+├── hooks/                  <span class="cm"># Custom hooks</span>
+├── lib/                    <span class="cm"># Utilities, helpers</span>
+├── types/                  <span class="cm"># Global TypeScript types</span>
+│   └── index.ts
+└── constants/</pre>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>✅ ทำ</h3>
+      <ul>
+        <li>ใช้ <span class="inline-code">useAppDispatch</span> / <span class="inline-code">useAppSelector</span> แทน hooks ทั่วไป</li>
+        <li>แยก selector ออกมาเป็น function ต่างหาก</li>
+        <li>ใช้ RTK Query แทนการ fetch เองเสมอเมื่อทำได้</li>
+        <li>กำหนด TypeScript types ทุกที่</li>
+        <li>ใช้ Server Components สำหรับ static data</li>
+        <li>เก็บ <span class="inline-code">RootState</span> type ไว้ที่เดียว</li>
+        <li>ใช้ <span class="inline-code">createEntityAdapter</span> สำหรับ list data</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>❌ หลีกเลี่ยง</h3>
+      <ul>
+        <li>ไม่เก็บ derived state ที่คำนวณได้จาก state อื่น</li>
+        <li>ไม่ dispatch action ใน reducer</li>
+        <li>ไม่ทำ async ใน reducer (ใช้ thunk แทน)</li>
+        <li>ไม่ mutate state โดยตรง (นอก createSlice)</li>
+        <li>ไม่ใส่ non-serializable values ใน store</li>
+        <li>ไม่ fetch ข้อมูลใน Server Component แล้วส่งผ่าน Redux</li>
+        <li>ไม่ใช้ <span class="inline-code">any</span> type ใน TypeScript</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔐 Custom Hook Pattern</h3>
+<pre><span class="cm">// hooks/useCart.ts — ห่อ logic ไว้ที่เดียว</span>
+<span class="str">"use client"</span>
+<span class="imp">import</span> { useAppDispatch, useAppSelector } <span class="kw">from</span> <span class="str">'@/store'</span>
+<span class="imp">import</span> { addItem, removeItem, clearCart, selectCartTotal } <span class="kw">from</span> <span class="str">'@/store/features/cartSlice'</span>
+<span class="imp">import</span> <span class="kw">type</span> { <span class="type">CartItem</span> } <span class="kw">from</span> <span class="str">'@/types'</span>
+
+<span class="kw">export function</span> <span class="fn">useCart</span>() {
+  <span class="kw">const</span> <span class="var">dispatch</span> = <span class="fn">useAppDispatch</span>()
+  <span class="kw">const</span> <span class="var">items</span>    = <span class="fn">useAppSelector</span>(<span class="var">s</span> => <span class="var">s</span>.cart.items)
+  <span class="kw">const</span> <span class="var">total</span>    = <span class="fn">useAppSelector</span>(<span class="fn">selectCartTotal</span>)
+
+  <span class="kw">return</span> {
+    items,
+    total,
+    itemCount: <span class="var">items</span>.length,
+    <span class="fn">addItem</span>:   (<span class="var">item</span>: <span class="type">CartItem</span>) => <span class="fn">dispatch</span>(<span class="fn">addItem</span>(<span class="var">item</span>)),
+    <span class="fn">removeItem</span>:(<span class="var">id</span>: <span class="type">number</span>)    => <span class="fn">dispatch</span>(<span class="fn">removeItem</span>(<span class="var">id</span>)),
+    <span class="fn">clearCart</span>: ()               => <span class="fn">dispatch</span>(<span class="fn">clearCart</span>()),
+  }
+}
+
+<span class="cm">// ใช้งาน — สะอาดกว่ามาก</span>
+<span class="kw">const</span> { items, total, addItem } = <span class="fn">useCart</span>()</pre>
+  </div>
+
+  <div class="card">
+    <h3>📊 Summary: เลือก State Management อย่างไร?</h3>
+    <table>
+      <tr><th>สถานการณ์</th><th>แนะนำ</th></tr>
+      <tr><td>Server data (fetch, cache, sync)</td><td>RTK Query หรือ React Query</td></tr>
+      <tr><td>Global UI state (modal, theme, auth)</td><td>Redux Toolkit slice</td></tr>
+      <tr><td>Form state</td><td>React Hook Form + local state</td></tr>
+      <tr><td>Component-local state</td><td><span class="inline-code">useState</span> / <span class="inline-code">useReducer</span></td></tr>
+      <tr><td>URL state (filters, pagination)</td><td><span class="inline-code">useSearchParams</span></td></tr>
+      <tr><td>Static content</td><td>Server Component + fetch</td></tr>
+    </table>
+  </div>
+
+  <div class="callout tip">
+    <span class="icon">🎯</span>
+    <div>
+      <strong>สูตรสำเร็จ Next.js + RTK:</strong><br>
+      Server Component fetch static/initial data → pass เป็น props → Client Component ใช้ Redux เฉพาะ interactive state — ไม่ต้องใส่ทุกอย่างลง Redux
+    </div>
+  </div>
+</section>
+
+</div><!-- end .container -->
+
+<footer>
+  <strong>สื่อการสอน Next.js + Redux Toolkit + TypeScript</strong><br>
+  ครอบคลุม TypeScript Types · React Components · Next.js App Router · Redux Toolkit · RTK Query · Best Practices
+</footer>
+
+<script>
+// Nav highlight
+const sections = document.querySelectorAll('section[id]')
+const navLinks = document.querySelectorAll('.nav-sticky a')
+window.addEventListener('scroll', () => {
+  let current = ''
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 100) current = s.id })
+  navLinks.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current)
+  })
+}, { passive: true })
+</script>
+</body>
+</html>

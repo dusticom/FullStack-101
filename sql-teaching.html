@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SQL - สื่อการสอน</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --card: #161b22;
+    --border: #30363d;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --accent: #336791;
+    --accent2: #4a9eda;
+    --green: #3fb950;
+    --yellow: #d29922;
+    --red: #f85149;
+    --orange: #e3703a;
+    --purple: #a371f7;
+    --pink: #f778ba;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; font-size: 15px; line-height: 1.7; }
+
+  /* NAV */
+  nav { position: sticky; top: 0; z-index: 100; background: rgba(13,17,23,.95); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); padding: 0 1rem; display: flex; align-items: center; gap: .5rem; overflow-x: auto; height: 52px; }
+  nav a { color: var(--muted); text-decoration: none; font-size: 13px; white-space: nowrap; padding: .3rem .6rem; border-radius: 6px; transition: all .2s; }
+  nav a:hover, nav a.active { color: var(--accent2); background: rgba(74,158,218,.12); }
+  nav .logo { color: var(--accent2); font-weight: 700; font-size: 15px; margin-right: .5rem; }
+
+  /* HERO */
+  .hero { text-align: center; padding: 4rem 1rem 3rem; background: linear-gradient(160deg, #0d1117 0%, #0f1a2e 50%, #0d1117 100%); border-bottom: 1px solid var(--border); }
+  .hero h1 { font-size: clamp(2rem,5vw,3.2rem); font-weight: 800; background: linear-gradient(135deg, var(--accent2), #7cb9e8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero p { color: var(--muted); margin-top: .8rem; font-size: 1.05rem; }
+  .badge-row { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center; margin-top: 1.2rem; }
+  .badge { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: .25rem .8rem; font-size: 12px; color: var(--muted); }
+
+  /* LAYOUT */
+  .container { max-width: 960px; margin: 0 auto; padding: 2rem 1rem; }
+  section { margin-bottom: 3.5rem; scroll-margin-top: 60px; }
+
+  /* CHAPTER HEADER */
+  .chapter-header { border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; border-left: 4px solid var(--accent2); background: linear-gradient(135deg, #0f1a2e, #161b22); }
+  .chapter-header h2 { font-size: 1.4rem; color: var(--accent2); }
+  .chapter-header p { color: var(--muted); margin-top: .3rem; font-size: .9rem; }
+
+  /* CARD */
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; margin-bottom: 1rem; }
+  .card h3 { color: var(--accent2); margin-bottom: .6rem; font-size: 1rem; }
+
+  /* GRID */
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+
+  /* CODE BLOCK */
+  .code-block { background: #0d1117; border: 1px solid var(--border); border-radius: 8px; margin: .8rem 0; overflow: hidden; }
+  .code-header { background: #1c2128; padding: .4rem .8rem; font-size: 11px; color: var(--muted); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+  .code-body { padding: 1rem; overflow-x: auto; font-family: 'Consolas', 'Courier New', monospace; font-size: 13.5px; line-height: 1.8; }
+  .kw { color: #ff7b72; } /* keyword */
+  .fn { color: #d2a8ff; } /* function/type */
+  .str { color: #a5d6ff; } /* string */
+  .num { color: #79c0ff; } /* number */
+  .cmt { color: #8b949e; font-style: italic; } /* comment */
+  .tbl { color: #ffa657; } /* table/column name */
+  .op { color: #ff7b72; } /* operator */
+  .val { color: #3fb950; } /* value/result */
+
+  /* CALLOUT */
+  .callout { border-radius: 8px; padding: 1rem 1.2rem; margin: .8rem 0; border-left: 4px solid; }
+  .callout.info { border-color: var(--accent2); background: rgba(74,158,218,.08); }
+  .callout.tip { border-color: var(--green); background: rgba(63,185,80,.08); }
+  .callout.warn { border-color: var(--yellow); background: rgba(210,153,34,.08); }
+  .callout.danger { border-color: var(--red); background: rgba(248,81,73,.08); }
+  .callout-title { font-weight: 700; font-size: .8rem; letter-spacing: .05em; text-transform: uppercase; margin-bottom: .3rem; }
+  .callout.info .callout-title { color: var(--accent2); }
+  .callout.tip .callout-title { color: var(--green); }
+  .callout.warn .callout-title { color: var(--yellow); }
+  .callout.danger .callout-title { color: var(--red); }
+
+  /* TABLE */
+  .tbl-wrap { overflow-x: auto; margin: .8rem 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th { background: #1c2128; color: var(--accent2); padding: .6rem .9rem; text-align: left; border: 1px solid var(--border); }
+  td { padding: .55rem .9rem; border: 1px solid var(--border); color: var(--text); vertical-align: top; }
+  tr:hover td { background: rgba(255,255,255,.03); }
+
+  /* SQL TYPE BADGES */
+  .sql-badge { display: inline-block; border-radius: 4px; padding: 1px 7px; font-size: 11px; font-weight: 700; margin: 0 2px; font-family: monospace; }
+  .sql-select { background: #1f4068; color: #7cb9e8; border: 1px solid #336791; }
+  .sql-insert { background: #1a3a1a; color: #7ee787; border: 1px solid #3fb950; }
+  .sql-update { background: #3a2a00; color: #ffc; border: 1px solid #d29922; }
+  .sql-delete { background: #3a1a1a; color: #ff9999; border: 1px solid #f85149; }
+  .sql-ddl { background: #2a1a3a; color: #d2a8ff; border: 1px solid #a371f7; }
+  .sql-join { background: #1a2a3a; color: #a5d6ff; border: 1px solid #4a9eda; }
+  .sql-agg { background: #2a1a2a; color: #f778ba; border: 1px solid #e06fa6; }
+
+  /* COMPARE */
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: .8rem 0; }
+  .compare-box { border-radius: 8px; padding: 1rem; border: 1px solid var(--border); }
+  .compare-box.bad { border-top: 3px solid var(--red); }
+  .compare-box.good { border-top: 3px solid var(--green); }
+  .compare-label { font-size: 11px; font-weight: 700; margin-bottom: .5rem; text-transform: uppercase; }
+  .compare-box.bad .compare-label { color: var(--red); }
+  .compare-box.good .compare-label { color: var(--green); }
+
+  /* JOIN DIAGRAM */
+  .join-diagram { display: flex; align-items: center; justify-content: center; gap: .5rem; padding: 1.2rem; flex-wrap: wrap; }
+  .circle { width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; border: 2px solid; }
+  .circle-a { background: rgba(74,158,218,.2); border-color: var(--accent2); color: var(--accent2); }
+  .circle-b { background: rgba(247,120,186,.2); border-color: var(--pink); color: var(--pink); }
+  .overlap { width: 40px; height: 80px; background: rgba(163,113,247,.3); border: 1px solid var(--purple); display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--purple); text-align: center; }
+  .join-label { font-size: 11px; color: var(--muted); text-align: center; }
+
+  /* FLOW */
+  .flow { display: flex; flex-direction: column; gap: .4rem; }
+  .flow-step { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: .7rem 1rem; display: flex; align-items: center; gap: .8rem; font-size: 13px; }
+  .flow-step .num { background: var(--accent2); color: #000; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+  .flow-arrow { text-align: center; color: var(--muted); font-size: 11px; }
+
+  /* QUERY ORDER */
+  .order-box { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: .5rem; margin: .8rem 0; }
+  .order-item { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: .7rem; text-align: center; font-size: 12px; }
+  .order-item .step { font-size: 18px; font-weight: 700; color: var(--accent2); }
+  .order-item .name { font-family: monospace; color: var(--orange); margin-top: .2rem; }
+  .order-item .desc { color: var(--muted); font-size: 11px; margin-top: .2rem; }
+
+  footer { text-align: center; padding: 2rem; color: var(--muted); font-size: 13px; border-top: 1px solid var(--border); }
+  @media(max-width:600px) { .compare { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="logo">🗄️ SQL</span>
+  <a href="#intro">บทนำ</a>
+  <a href="#basics">SELECT</a>
+  <a href="#filter">WHERE</a>
+  <a href="#ddl">DDL</a>
+  <a href="#dml">DML</a>
+  <a href="#joins">JOINs</a>
+  <a href="#aggregate">Aggregate</a>
+  <a href="#subquery">Subquery & CTE</a>
+  <a href="#window">Window Fn</a>
+  <a href="#index">Index</a>
+  <a href="#transaction">Transaction</a>
+  <a href="#design">DB Design</a>
+</nav>
+
+<div class="hero">
+  <h1>SQL — Structured Query Language</h1>
+  <p>ภาษาสำหรับจัดการฐานข้อมูลเชิงสัมพันธ์ ตั้งแต่พื้นฐานจนถึง Advanced</p>
+  <div class="badge-row">
+    <span class="badge">SELECT</span>
+    <span class="badge">JOINs</span>
+    <span class="badge">Aggregate</span>
+    <span class="badge">CTE</span>
+    <span class="badge">Window Functions</span>
+    <span class="badge">Indexes</span>
+    <span class="badge">Transactions</span>
+    <span class="badge">DB Design</span>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ==================== CHAPTER 1: INTRO ==================== -->
+<section id="intro">
+  <div class="chapter-header">
+    <h2>บทที่ 1 — บทนำ SQL และ RDBMS</h2>
+    <p>ทำความรู้จัก SQL, ประเภทคำสั่ง, และชนิดข้อมูลพื้นฐาน</p>
+  </div>
+
+  <div class="card">
+    <h3>SQL คืออะไร?</h3>
+    <p>SQL (Structured Query Language) คือภาษามาตรฐานสำหรับจัดการ <strong>Relational Database</strong> เช่น MySQL, PostgreSQL, SQLite, Microsoft SQL Server, Oracle ล้วนใช้ SQL ทั้งสิ้น</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>ประเภทคำสั่ง SQL</h3>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>ประเภท</th><th>ย่อ</th><th>คำสั่ง</th></tr>
+          <tr><td>Data Query</td><td><span class="sql-badge sql-select">DQL</span></td><td>SELECT</td></tr>
+          <tr><td>Data Definition</td><td><span class="sql-badge sql-ddl">DDL</span></td><td>CREATE, ALTER, DROP</td></tr>
+          <tr><td>Data Manipulation</td><td><span class="sql-badge sql-insert">DML</span></td><td>INSERT, UPDATE, DELETE</td></tr>
+          <tr><td>Data Control</td><td><span class="sql-badge sql-agg">DCL</span></td><td>GRANT, REVOKE</td></tr>
+          <tr><td>Transaction Control</td><td><span class="sql-badge sql-join">TCL</span></td><td>COMMIT, ROLLBACK</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <h3>ชนิดข้อมูลพื้นฐาน</h3>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>ชนิด</th><th>ตัวอย่าง</th><th>ใช้กับ</th></tr>
+          <tr><td><code>INT</code></td><td>1, 42, -10</td><td>ตัวเลขจำนวนเต็ม</td></tr>
+          <tr><td><code>DECIMAL(p,s)</code></td><td>99.99</td><td>ราคา, ทศนิยม</td></tr>
+          <tr><td><code>VARCHAR(n)</code></td><td>'Hello'</td><td>ข้อความยืดหยุ่น</td></tr>
+          <tr><td><code>TEXT</code></td><td>'Long text...'</td><td>ข้อความยาว</td></tr>
+          <tr><td><code>DATE</code></td><td>'2024-01-15'</td><td>วันที่</td></tr>
+          <tr><td><code>DATETIME</code></td><td>'2024-01-15 10:30:00'</td><td>วันที่+เวลา</td></tr>
+          <tr><td><code>BOOLEAN</code></td><td>TRUE/FALSE</td><td>เงื่อนไข</td></tr>
+          <tr><td><code>JSON</code></td><td>'{"key":"val"}'</td><td>ข้อมูล JSON</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>โครงสร้างฐานข้อมูลตัวอย่าง (ใช้ตลอดไฟล์นี้)</h3>
+    <div class="code-block">
+      <div class="code-header"><span>schema.sql</span></div>
+      <div class="code-body">
+<span class="cmt">-- ตาราง customers (ลูกค้า)</span>
+<span class="kw">CREATE TABLE</span> <span class="tbl">customers</span> (
+  <span class="tbl">id</span>         <span class="fn">INT</span> <span class="kw">PRIMARY KEY AUTO_INCREMENT</span>,
+  <span class="tbl">name</span>       <span class="fn">VARCHAR</span>(<span class="num">100</span>) <span class="kw">NOT NULL</span>,
+  <span class="tbl">email</span>      <span class="fn">VARCHAR</span>(<span class="num">150</span>) <span class="kw">UNIQUE</span>,
+  <span class="tbl">city</span>       <span class="fn">VARCHAR</span>(<span class="num">60</span>),
+  <span class="tbl">created_at</span> <span class="fn">DATETIME</span> <span class="kw">DEFAULT</span> <span class="fn">CURRENT_TIMESTAMP</span>
+);
+
+<span class="cmt">-- ตาราง products (สินค้า)</span>
+<span class="kw">CREATE TABLE</span> <span class="tbl">products</span> (
+  <span class="tbl">id</span>         <span class="fn">INT</span> <span class="kw">PRIMARY KEY AUTO_INCREMENT</span>,
+  <span class="tbl">name</span>       <span class="fn">VARCHAR</span>(<span class="num">200</span>) <span class="kw">NOT NULL</span>,
+  <span class="tbl">price</span>      <span class="fn">DECIMAL</span>(<span class="num">10</span>,<span class="num">2</span>) <span class="kw">NOT NULL</span>,
+  <span class="tbl">category</span>   <span class="fn">VARCHAR</span>(<span class="num">60</span>),
+  <span class="tbl">stock</span>      <span class="fn">INT</span> <span class="kw">DEFAULT</span> <span class="num">0</span>
+);
+
+<span class="cmt">-- ตาราง orders (คำสั่งซื้อ)</span>
+<span class="kw">CREATE TABLE</span> <span class="tbl">orders</span> (
+  <span class="tbl">id</span>          <span class="fn">INT</span> <span class="kw">PRIMARY KEY AUTO_INCREMENT</span>,
+  <span class="tbl">customer_id</span> <span class="fn">INT</span> <span class="kw">NOT NULL</span>,
+  <span class="tbl">order_date</span>  <span class="fn">DATE</span> <span class="kw">NOT NULL</span>,
+  <span class="tbl">total</span>       <span class="fn">DECIMAL</span>(<span class="num">12</span>,<span class="num">2</span>),
+  <span class="tbl">status</span>      <span class="fn">ENUM</span>(<span class="str">'pending'</span>,<span class="str">'paid'</span>,<span class="str">'shipped'</span>,<span class="str">'cancelled'</span>),
+  <span class="kw">FOREIGN KEY</span> (<span class="tbl">customer_id</span>) <span class="kw">REFERENCES</span> <span class="tbl">customers</span>(<span class="tbl">id</span>)
+);
+
+<span class="cmt">-- ตาราง order_items (รายการในคำสั่งซื้อ)</span>
+<span class="kw">CREATE TABLE</span> <span class="tbl">order_items</span> (
+  <span class="tbl">id</span>         <span class="fn">INT</span> <span class="kw">PRIMARY KEY AUTO_INCREMENT</span>,
+  <span class="tbl">order_id</span>   <span class="fn">INT</span>,
+  <span class="tbl">product_id</span> <span class="fn">INT</span>,
+  <span class="tbl">quantity</span>   <span class="fn">INT</span>,
+  <span class="tbl">unit_price</span> <span class="fn">DECIMAL</span>(<span class="num">10</span>,<span class="num">2</span>),
+  <span class="kw">FOREIGN KEY</span> (<span class="tbl">order_id</span>) <span class="kw">REFERENCES</span> <span class="tbl">orders</span>(<span class="tbl">id</span>),
+  <span class="kw">FOREIGN KEY</span> (<span class="tbl">product_id</span>) <span class="kw">REFERENCES</span> <span class="tbl">products</span>(<span class="tbl">id</span>)
+);</div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CHAPTER 2: SELECT ==================== -->
+<section id="basics">
+  <div class="chapter-header">
+    <h2>บทที่ 2 — SELECT พื้นฐาน</h2>
+    <p>คำสั่งดึงข้อมูล, ORDER BY, LIMIT, DISTINCT, และ Aliases</p>
+  </div>
+
+  <div class="card">
+    <h3>โครงสร้างคำสั่ง SELECT</h3>
+    <div class="code-block">
+      <div class="code-header"><span>syntax</span></div>
+      <div class="code-body">
+<span class="kw">SELECT</span>   <span class="cmt">-- 5. เลือก columns ที่ต้องการ</span>
+<span class="kw">FROM</span>     <span class="cmt">-- 1. ระบุตาราง</span>
+<span class="kw">JOIN</span>     <span class="cmt">-- 2. เชื่อมตาราง</span>
+<span class="kw">WHERE</span>    <span class="cmt">-- 3. กรองแถว</span>
+<span class="kw">GROUP BY</span> <span class="cmt">-- 4. จัดกลุ่ม</span>
+<span class="kw">HAVING</span>   <span class="cmt">-- 5. กรองกลุ่ม</span>
+<span class="kw">ORDER BY</span> <span class="cmt">-- 6. เรียงลำดับ</span>
+<span class="kw">LIMIT</span>    <span class="cmt">-- 7. จำกัดจำนวน</span></div>
+    </div>
+    <div class="callout info">
+      <div class="callout-title">Logical Query Processing Order</div>
+      ลำดับที่ SQL ประมวลผลจริง (ซ้าย→ขวา) คือ FROM → JOIN → WHERE → GROUP BY → HAVING → SELECT → ORDER BY → LIMIT ซึ่ง<strong>ต่างจากลำดับที่เขียน</strong> — นี่คือสาเหตุที่ alias ใน SELECT ใช้ใน ORDER BY ได้ แต่ใช้ใน WHERE ไม่ได้
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>SELECT ทั่วไป</h3>
+      <div class="code-block">
+        <div class="code-body">
+<span class="cmt">-- ดูทุก column</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">customers</span>;
+
+<span class="cmt">-- เลือก column ที่ต้องการ</span>
+<span class="kw">SELECT</span> <span class="tbl">name</span>, <span class="tbl">email</span>, <span class="tbl">city</span>
+<span class="kw">FROM</span> <span class="tbl">customers</span>;
+
+<span class="cmt">-- ตั้งชื่อ Alias</span>
+<span class="kw">SELECT</span>
+  <span class="tbl">name</span> <span class="kw">AS</span> <span class="str">customer_name</span>,
+  <span class="tbl">email</span> <span class="kw">AS</span> <span class="str">contact_email</span>
+<span class="kw">FROM</span> <span class="tbl">customers</span>;
+
+<span class="cmt">-- คำนวณใน SELECT</span>
+<span class="kw">SELECT</span>
+  <span class="tbl">name</span>,
+  <span class="tbl">price</span>,
+  <span class="tbl">price</span> * <span class="num">1.07</span> <span class="kw">AS</span> price_with_vat
+<span class="kw">FROM</span> <span class="tbl">products</span>;</div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>ORDER BY, LIMIT, DISTINCT</h3>
+      <div class="code-block">
+        <div class="code-body">
+<span class="cmt">-- เรียงจากน้อยไปมาก (default)</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">products</span>
+<span class="kw">ORDER BY</span> <span class="tbl">price</span> <span class="kw">ASC</span>;
+
+<span class="cmt">-- เรียงจากมากไปน้อย</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">products</span>
+<span class="kw">ORDER BY</span> <span class="tbl">price</span> <span class="kw">DESC</span>;
+
+<span class="cmt">-- เรียงหลาย column</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">products</span>
+<span class="kw">ORDER BY</span> <span class="tbl">category</span> <span class="kw">ASC</span>, <span class="tbl">price</span> <span class="kw">DESC</span>;
+
+<span class="cmt">-- จำกัดจำนวนผลลัพธ์</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">products</span>
+<span class="kw">ORDER BY</span> <span class="tbl">price</span> <span class="kw">DESC</span>
+<span class="kw">LIMIT</span> <span class="num">10</span>;
+
+<span class="cmt">-- OFFSET (Pagination)</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">products</span>
+<span class="kw">ORDER BY</span> <span class="tbl">id</span>
+<span class="kw">LIMIT</span> <span class="num">10</span> <span class="kw">OFFSET</span> <span class="num">20</span>; <span class="cmt">-- หน้า 3</span>
+
+<span class="cmt">-- ค่าไม่ซ้ำ</span>
+<span class="kw">SELECT DISTINCT</span> <span class="tbl">city</span>
+<span class="kw">FROM</span> <span class="tbl">customers</span>;</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>ลำดับการประมวลผล (Execution Order)</h3>
+    <div class="order-box">
+      <div class="order-item"><div class="step">①</div><div class="name">FROM</div><div class="desc">เลือกตาราง</div></div>
+      <div class="order-item"><div class="step">②</div><div class="name">JOIN</div><div class="desc">เชื่อมตาราง</div></div>
+      <div class="order-item"><div class="step">③</div><div class="name">WHERE</div><div class="desc">กรองแถว</div></div>
+      <div class="order-item"><div class="step">④</div><div class="name">GROUP BY</div><div class="desc">จัดกลุ่ม</div></div>
+      <div class="order-item"><div class="step">⑤</div><div class="name">HAVING</div><div class="desc">กรองกลุ่ม</div></div>
+      <div class="order-item"><div class="step">⑥</div><div class="name">SELECT</div><div class="desc">เลือก cols</div></div>
+      <div class="order-item"><div class="step">⑦</div><div class="name">ORDER BY</div><div class="desc">เรียงลำดับ</div></div>
+      <div class="order-item"><div class="step">⑧</div><div class="name">LIMIT</div><div class="desc">จำกัดแถว</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CHAPTER 3: WHERE ==================== -->
+<section id="filter">
+  <div class="chapter-header">
+    <h2>บทที่ 3 — WHERE และการกรองข้อมูล</h2>
+    <p>Operators, LIKE, IN, BETWEEN, NULL handling</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Comparison Operators</h3>
+      <div class="code-block">
+        <div class="code-body">
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">products</span>
+<span class="kw">WHERE</span> <span class="tbl">price</span> <span class="op">></span> <span class="num">100</span>;
+
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">products</span>
+<span class="kw">WHERE</span> <span class="tbl">price</span> <span class="op">>=</span> <span class="num">100</span> <span class="kw">AND</span> <span class="tbl">price</span> <span class="op"><=</span> <span class="num">500</span>;
+
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">orders</span>
+<span class="kw">WHERE</span> <span class="tbl">status</span> <span class="op">=</span> <span class="str">'paid'</span>;
+
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">orders</span>
+<span class="kw">WHERE</span> <span class="tbl">status</span> <span class="op">!=</span> <span class="str">'cancelled'</span>;
+<span class="cmt">-- หรือ &lt;&gt;</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Logical Operators</h3>
+      <div class="code-block">
+        <div class="code-body">
+<span class="cmt">-- AND ต้องเป็นจริงทั้งคู่</span>
+<span class="kw">WHERE</span> <span class="tbl">category</span> = <span class="str">'Electronics'</span>
+  <span class="kw">AND</span> <span class="tbl">price</span> < <span class="num">5000</span>;
+
+<span class="cmt">-- OR เป็นจริงอย่างน้อยหนึ่ง</span>
+<span class="kw">WHERE</span> <span class="tbl">city</span> = <span class="str">'Bangkok'</span>
+  <span class="kw">OR</span> <span class="tbl">city</span> = <span class="str">'Chiang Mai'</span>;
+
+<span class="cmt">-- NOT ตรงข้าม</span>
+<span class="kw">WHERE NOT</span> <span class="tbl">status</span> = <span class="str">'cancelled'</span>;
+
+<span class="cmt">-- การใช้วงเล็บ</span>
+<span class="kw">WHERE</span> (<span class="tbl">city</span> = <span class="str">'Bangkok'</span> <span class="kw">OR</span> <span class="tbl">city</span> = <span class="str">'Phuket'</span>)
+  <span class="kw">AND</span> <span class="tbl">total</span> > <span class="num">1000</span>;</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>BETWEEN, IN, LIKE</h3>
+      <div class="code-block">
+        <div class="code-body">
+<span class="cmt">-- BETWEEN (inclusive)</span>
+<span class="kw">WHERE</span> <span class="tbl">price</span> <span class="kw">BETWEEN</span> <span class="num">100</span> <span class="kw">AND</span> <span class="num">500</span>;
+
+<span class="kw">WHERE</span> <span class="tbl">order_date</span> <span class="kw">BETWEEN</span>
+  <span class="str">'2024-01-01'</span> <span class="kw">AND</span> <span class="str">'2024-12-31'</span>;
+
+<span class="cmt">-- IN (เช็คหลายค่า)</span>
+<span class="kw">WHERE</span> <span class="tbl">city</span> <span class="kw">IN</span> (<span class="str">'Bangkok'</span>, <span class="str">'Phuket'</span>, <span class="str">'CM'</span>);
+
+<span class="kw">WHERE</span> <span class="tbl">status</span> <span class="kw">NOT IN</span> (<span class="str">'cancelled'</span>, <span class="str">'pending'</span>);
+
+<span class="cmt">-- LIKE (Pattern matching)</span>
+<span class="kw">WHERE</span> <span class="tbl">name</span> <span class="kw">LIKE</span> <span class="str">'%phone%'</span>;  <span class="cmt">-- มี phone</span>
+<span class="kw">WHERE</span> <span class="tbl">email</span> <span class="kw">LIKE</span> <span class="str">'%@gmail.com'</span>;
+<span class="kw">WHERE</span> <span class="tbl">name</span> <span class="kw">LIKE</span> <span class="str">'A%'</span>;  <span class="cmt">-- ขึ้นต้นด้วย A</span>
+<span class="kw">WHERE</span> <span class="tbl">code</span> <span class="kw">LIKE</span> <span class="str">'A__'</span>; <span class="cmt">-- A + 2 ตัวใดก็ได้</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>NULL Handling</h3>
+      <div class="code-block">
+        <div class="code-body">
+<span class="cmt">-- ตรวจสอบ NULL ต้องใช้ IS NULL</span>
+<span class="kw">WHERE</span> <span class="tbl">email</span> <span class="kw">IS NULL</span>;
+<span class="kw">WHERE</span> <span class="tbl">email</span> <span class="kw">IS NOT NULL</span>;
+
+<span class="cmt">-- ❌ ผิด! = NULL ไม่ทำงาน</span>
+<span class="kw">WHERE</span> <span class="tbl">email</span> = <span class="kw">NULL</span>; <span class="cmt">-- always FALSE</span>
+
+<span class="cmt">-- COALESCE: คืนค่าแรกที่ไม่ใช่ NULL</span>
+<span class="kw">SELECT</span> <span class="fn">COALESCE</span>(<span class="tbl">phone</span>, <span class="tbl">email</span>, <span class="str">'N/A'</span>)
+  <span class="kw">AS</span> contact
+<span class="kw">FROM</span> <span class="tbl">customers</span>;
+
+<span class="cmt">-- NULLIF: คืน NULL ถ้าสองค่าเท่ากัน</span>
+<span class="kw">SELECT</span> <span class="fn">NULLIF</span>(<span class="tbl">score</span>, <span class="num">0</span>) <span class="kw">FROM</span> <span class="tbl">results</span>;
+<span class="cmt">-- ป้องกัน division by zero</span>
+<span class="kw">SELECT</span> <span class="tbl">total</span> / <span class="fn">NULLIF</span>(<span class="tbl">qty</span>, <span class="num">0</span>) <span class="kw">FROM</span> <span class="tbl">sales</span>;</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>CASE WHEN — เงื่อนไขใน SELECT</h3>
+    <div class="code-block">
+      <div class="code-body">
+<span class="kw">SELECT</span>
+  <span class="tbl">name</span>,
+  <span class="tbl">price</span>,
+  <span class="kw">CASE</span>
+    <span class="kw">WHEN</span> <span class="tbl">price</span> < <span class="num">100</span>  <span class="kw">THEN</span> <span class="str">'ราคาถูก'</span>
+    <span class="kw">WHEN</span> <span class="tbl">price</span> < <span class="num">1000</span> <span class="kw">THEN</span> <span class="str">'ราคากลาง'</span>
+    <span class="kw">ELSE</span>                     <span class="str">'ราคาแพง'</span>
+  <span class="kw">END</span> <span class="kw">AS</span> price_range,
+  <span class="kw">CASE</span> <span class="tbl">status</span>
+    <span class="kw">WHEN</span> <span class="str">'paid'</span>     <span class="kw">THEN</span> <span class="str">'✅ ชำระแล้ว'</span>
+    <span class="kw">WHEN</span> <span class="str">'pending'</span>  <span class="kw">THEN</span> <span class="str">'⏳ รอชำระ'</span>
+    <span class="kw">ELSE</span>                  <span class="str">'❌ ยกเลิก'</span>
+  <span class="kw">END</span> <span class="kw">AS</span> status_th
+<span class="kw">FROM</span> <span class="tbl">products</span>;</div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CHAPTER 4: DDL ==================== -->
+<section id="ddl">
+  <div class="chapter-header">
+    <h2>บทที่ 4 — DDL (Data Definition Language)</h2>
+    <p>CREATE TABLE, ALTER TABLE, DROP, Constraints</p>
+  </div>
+
+  <div class="card">
+    <h3>Constraints (ข้อจำกัดข้อมูล)</h3>
+    <div class="tbl-wrap">
+      <table>
+        <tr><th>Constraint</th><th>ความหมาย</th><th>ตัวอย่าง</th></tr>
+        <tr><td><code>PRIMARY KEY</code></td><td>ระบุแถวไม่ซ้ำ</td><td>id INT PRIMARY KEY</td></tr>
+        <tr><td><code>UNIQUE</code></td><td>ห้ามซ้ำ</td><td>email VARCHAR UNIQUE</td></tr>
+        <tr><td><code>NOT NULL</code></td><td>ห้าม NULL</td><td>name VARCHAR NOT NULL</td></tr>
+        <tr><td><code>DEFAULT</code></td><td>ค่าเริ่มต้น</td><td>stock INT DEFAULT 0</td></tr>
+        <tr><td><code>CHECK</code></td><td>เงื่อนไขค่า</td><td>CHECK (price > 0)</td></tr>
+        <tr><td><code>FOREIGN KEY</code></td><td>เชื่อมตาราง</td><td>REFERENCES table(col)</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>CREATE TABLE</h3>
+      <div class="code-block">
+        <div class="code-body">
+<span class="kw">CREATE TABLE</span> <span class="tbl">employees</span> (
+  <span class="tbl">id</span>         <span class="fn">INT</span> <span class="kw">PRIMARY KEY AUTO_INCREMENT</span>,
+  <span class="tbl">first_name</span> <span class="fn">VARCHAR</span>(<span class="num">60</span>) <span class="kw">NOT NULL</span>,
+  <span class="tbl">last_name</span>  <span class="fn">VARCHAR</span>(<span class="num">60</span>) <span class="kw">NOT NULL</span>,
+  <span class="tbl">salary</span>     <span class="fn">DECIMAL</span>(<span class="num">10</span>,<span class="num">2</span>) <span class="kw">CHECK</span> (<span class="tbl">salary</span> > <span class="num">0</span>),
+  <span class="tbl">dept_id</span>    <span class="fn">INT</span>,
+  <span class="tbl">hire_date</span>  <span class="fn">DATE</span> <span class="kw">DEFAULT</span> (<span class="fn">CURRENT_DATE</span>),
+  <span class="kw">FOREIGN KEY</span> (<span class="tbl">dept_id</span>)
+    <span class="kw">REFERENCES</span> <span class="tbl">departments</span>(<span class="tbl">id</span>)
+    <span class="kw">ON DELETE SET NULL</span>
+    <span class="kw">ON UPDATE CASCADE</span>
+);
+
+<span class="cmt">-- สร้างเฉพาะถ้ายังไม่มี</span>
+<span class="kw">CREATE TABLE IF NOT EXISTS</span> <span class="tbl">logs</span> (
+  <span class="tbl">id</span>      <span class="fn">INT</span> <span class="kw">PRIMARY KEY AUTO_INCREMENT</span>,
+  <span class="tbl">message</span> <span class="fn">TEXT</span>,
+  <span class="tbl">ts</span>      <span class="fn">TIMESTAMP</span> <span class="kw">DEFAULT</span> <span class="fn">CURRENT_TIMESTAMP</span>
+);</div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>ALTER TABLE</h3>
+      <div class="code-block">
+        <div class="code-body">
+<span class="cmt">-- เพิ่ม column</span>
+<span class="kw">ALTER TABLE</span> <span class="tbl">customers</span>
+<span class="kw">ADD COLUMN</span> <span class="tbl">phone</span> <span class="fn">VARCHAR</span>(<span class="num">20</span>);
+
+<span class="cmt">-- แก้ไขชนิดข้อมูล</span>
+<span class="kw">ALTER TABLE</span> <span class="tbl">customers</span>
+<span class="kw">MODIFY COLUMN</span> <span class="tbl">phone</span> <span class="fn">VARCHAR</span>(<span class="num">30</span>) <span class="kw">NOT NULL</span>;
+
+<span class="cmt">-- เปลี่ยนชื่อ column</span>
+<span class="kw">ALTER TABLE</span> <span class="tbl">customers</span>
+<span class="kw">RENAME COLUMN</span> <span class="tbl">phone</span> <span class="kw">TO</span> <span class="tbl">mobile</span>;
+
+<span class="cmt">-- ลบ column</span>
+<span class="kw">ALTER TABLE</span> <span class="tbl">customers</span>
+<span class="kw">DROP COLUMN</span> <span class="tbl">mobile</span>;
+
+<span class="cmt">-- เพิ่ม index</span>
+<span class="kw">ALTER TABLE</span> <span class="tbl">orders</span>
+<span class="kw">ADD INDEX</span> <span class="tbl">idx_customer</span> (<span class="tbl">customer_id</span>);
+
+<span class="cmt">-- ลบตาราง</span>
+<span class="kw">DROP TABLE IF EXISTS</span> <span class="tbl">old_logs</span>;
+
+<span class="cmt">-- ล้างข้อมูลแต่เก็บโครงสร้าง</span>
+<span class="kw">TRUNCATE TABLE</span> <span class="tbl">logs</span>;</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CHAPTER 5: DML ==================== -->
+<section id="dml">
+  <div class="chapter-header">
+    <h2>บทที่ 5 — DML (Data Manipulation Language)</h2>
+    <p>INSERT, UPDATE, DELETE และ Upsert</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>INSERT</h3>
+      <div class="code-block">
+        <div class="code-body">
+<span class="cmt">-- แทรกแถวเดียว</span>
+<span class="kw">INSERT INTO</span> <span class="tbl">customers</span> (<span class="tbl">name</span>, <span class="tbl">email</span>, <span class="tbl">city</span>)
+<span class="kw">VALUES</span> (<span class="str">'สมชาย ใจดี'</span>, <span class="str">'somchai@email.com'</span>, <span class="str">'Bangkok'</span>);
+
+<span class="cmt">-- แทรกหลายแถวพร้อมกัน</span>
+<span class="kw">INSERT INTO</span> <span class="tbl">products</span> (<span class="tbl">name</span>, <span class="tbl">price</span>, <span class="tbl">category</span>)
+<span class="kw">VALUES</span>
+  (<span class="str">'iPhone 15'</span>, <span class="num">35990</span>, <span class="str">'Electronics'</span>),
+  (<span class="str">'AirPods Pro'</span>, <span class="num">9990</span>, <span class="str">'Electronics'</span>),
+  (<span class="str">'MacBook Air'</span>, <span class="num">44900</span>, <span class="str">'Electronics'</span>);
+
+<span class="cmt">-- INSERT จาก SELECT</span>
+<span class="kw">INSERT INTO</span> <span class="tbl">archive_orders</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">orders</span>
+<span class="kw">WHERE</span> <span class="tbl">order_date</span> < <span class="str">'2023-01-01'</span>;</div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>UPDATE และ DELETE</h3>
+      <div class="code-block">
+        <div class="code-body">
+<span class="cmt">-- UPDATE แถวเดียว</span>
+<span class="kw">UPDATE</span> <span class="tbl">customers</span>
+<span class="kw">SET</span> <span class="tbl">city</span> = <span class="str">'Chiang Mai'</span>
+<span class="kw">WHERE</span> <span class="tbl">id</span> = <span class="num">5</span>;
+
+<span class="cmt">-- UPDATE หลาย column</span>
+<span class="kw">UPDATE</span> <span class="tbl">products</span>
+<span class="kw">SET</span>
+  <span class="tbl">price</span> = <span class="tbl">price</span> * <span class="num">0.9</span>,  <span class="cmt">-- ลด 10%</span>
+  <span class="tbl">stock</span> = <span class="tbl">stock</span> - <span class="num">1</span>
+<span class="kw">WHERE</span> <span class="tbl">category</span> = <span class="str">'Electronics'</span>;
+
+<span class="cmt">-- DELETE แถวที่ต้องการ</span>
+<span class="kw">DELETE FROM</span> <span class="tbl">orders</span>
+<span class="kw">WHERE</span> <span class="tbl">status</span> = <span class="str">'cancelled'</span>
+  <span class="kw">AND</span> <span class="tbl">order_date</span> < <span class="str">'2023-01-01'</span>;</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>UPSERT — INSERT or UPDATE</h3>
+    <div class="code-block">
+      <div class="code-body">
+<span class="cmt">-- MySQL: ON DUPLICATE KEY UPDATE</span>
+<span class="kw">INSERT INTO</span> <span class="tbl">product_stats</span> (<span class="tbl">product_id</span>, <span class="tbl">views</span>)
+<span class="kw">VALUES</span> (<span class="num">101</span>, <span class="num">1</span>)
+<span class="kw">ON DUPLICATE KEY UPDATE</span>
+  <span class="tbl">views</span> = <span class="tbl">views</span> + <span class="num">1</span>;
+
+<span class="cmt">-- PostgreSQL: ON CONFLICT DO UPDATE</span>
+<span class="kw">INSERT INTO</span> <span class="tbl">product_stats</span> (<span class="tbl">product_id</span>, <span class="tbl">views</span>)
+<span class="kw">VALUES</span> (<span class="num">101</span>, <span class="num">1</span>)
+<span class="kw">ON CONFLICT</span> (<span class="tbl">product_id</span>) <span class="kw">DO UPDATE</span>
+  <span class="kw">SET</span> <span class="tbl">views</span> = <span class="tbl">product_stats</span>.<span class="tbl">views</span> + <span class="num">1</span>;</div>
+    </div>
+    <div class="callout danger">
+      <div class="callout-title">ระวัง!</div>
+      <code>DELETE FROM table</code> โดยไม่มี WHERE จะลบ<strong>ทุกแถว</strong>! ควรทดสอบด้วย SELECT ก่อน แล้วค่อยเปลี่ยนเป็น DELETE
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CHAPTER 6: JOINS ==================== -->
+<section id="joins">
+  <div class="chapter-header">
+    <h2>บทที่ 6 — JOINs การเชื่อมตาราง</h2>
+    <p>INNER JOIN, LEFT/RIGHT JOIN, FULL OUTER JOIN, SELF JOIN, CROSS JOIN</p>
+  </div>
+
+  <div class="card">
+    <h3>ประเภท JOIN</h3>
+    <div class="tbl-wrap">
+      <table>
+        <tr><th>JOIN</th><th>ผลลัพธ์</th></tr>
+        <tr><td><span class="sql-badge sql-join">INNER JOIN</span></td><td>แถวที่มีคู่ match ในทั้งสองตาราง</td></tr>
+        <tr><td><span class="sql-badge sql-join">LEFT JOIN</span></td><td>ทุกแถวของตารางซ้าย + ข้อมูลตารางขวาที่ match (NULL ถ้าไม่มี)</td></tr>
+        <tr><td><span class="sql-badge sql-join">RIGHT JOIN</span></td><td>ทุกแถวของตารางขวา + ข้อมูลตารางซ้ายที่ match</td></tr>
+        <tr><td><span class="sql-badge sql-join">FULL OUTER JOIN</span></td><td>ทุกแถวจากทั้งสองตาราง (NULL ในส่วนที่ไม่มีคู่)</td></tr>
+        <tr><td><span class="sql-badge sql-join">CROSS JOIN</span></td><td>Cartesian Product — ทุก combination</td></tr>
+        <tr><td><span class="sql-badge sql-join">SELF JOIN</span></td><td>JOIN ตารางเดิมกับตัวเอง</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>INNER JOIN</h3>
+    <div class="code-block">
+      <div class="code-body">
+<span class="cmt">-- ดูคำสั่งซื้อพร้อมชื่อลูกค้า</span>
+<span class="kw">SELECT</span>
+  <span class="tbl">o</span>.<span class="tbl">id</span>         <span class="kw">AS</span> order_id,
+  <span class="tbl">c</span>.<span class="tbl">name</span>      <span class="kw">AS</span> customer,
+  <span class="tbl">o</span>.<span class="tbl">order_date</span>,
+  <span class="tbl">o</span>.<span class="tbl">total</span>
+<span class="kw">FROM</span> <span class="tbl">orders</span> <span class="tbl">o</span>
+<span class="kw">INNER JOIN</span> <span class="tbl">customers</span> <span class="tbl">c</span>
+  <span class="kw">ON</span> <span class="tbl">o</span>.<span class="tbl">customer_id</span> = <span class="tbl">c</span>.<span class="tbl">id</span>
+<span class="kw">WHERE</span> <span class="tbl">o</span>.<span class="tbl">status</span> = <span class="str">'paid'</span>
+<span class="kw">ORDER BY</span> <span class="tbl">o</span>.<span class="tbl">order_date</span> <span class="kw">DESC</span>;</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>LEFT JOIN — ค้นหาข้อมูลที่ขาดหาย</h3>
+    <div class="code-block">
+      <div class="code-body">
+<span class="cmt">-- ลูกค้าทุกคน รวมถึงผู้ที่ยังไม่เคยสั่งซื้อ</span>
+<span class="kw">SELECT</span>
+  <span class="tbl">c</span>.<span class="tbl">name</span>,
+  <span class="fn">COUNT</span>(<span class="tbl">o</span>.<span class="tbl">id</span>) <span class="kw">AS</span> order_count
+<span class="kw">FROM</span> <span class="tbl">customers</span> <span class="tbl">c</span>
+<span class="kw">LEFT JOIN</span> <span class="tbl">orders</span> <span class="tbl">o</span>
+  <span class="kw">ON</span> <span class="tbl">c</span>.<span class="tbl">id</span> = <span class="tbl">o</span>.<span class="tbl">customer_id</span>
+<span class="kw">GROUP BY</span> <span class="tbl">c</span>.<span class="tbl">id</span>, <span class="tbl">c</span>.<span class="tbl">name</span>
+<span class="kw">ORDER BY</span> order_count <span class="kw">DESC</span>;
+
+<span class="cmt">-- หาลูกค้าที่ไม่มีออเดอร์เลย</span>
+<span class="kw">SELECT</span> <span class="tbl">c</span>.<span class="tbl">name</span>
+<span class="kw">FROM</span> <span class="tbl">customers</span> <span class="tbl">c</span>
+<span class="kw">LEFT JOIN</span> <span class="tbl">orders</span> <span class="tbl">o</span>
+  <span class="kw">ON</span> <span class="tbl">c</span>.<span class="tbl">id</span> = <span class="tbl">o</span>.<span class="tbl">customer_id</span>
+<span class="kw">WHERE</span> <span class="tbl">o</span>.<span class="tbl">id</span> <span class="kw">IS NULL</span>;</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Multi-table JOIN และ SELF JOIN</h3>
+    <div class="code-block">
+      <div class="code-body">
+<span class="cmt">-- เชื่อม 3 ตาราง</span>
+<span class="kw">SELECT</span>
+  <span class="tbl">c</span>.<span class="tbl">name</span>       <span class="kw">AS</span> customer,
+  <span class="tbl">p</span>.<span class="tbl">name</span>       <span class="kw">AS</span> product,
+  <span class="tbl">oi</span>.<span class="tbl">quantity</span>,
+  <span class="tbl">oi</span>.<span class="tbl">unit_price</span>
+<span class="kw">FROM</span> <span class="tbl">orders</span> <span class="tbl">o</span>
+<span class="kw">JOIN</span> <span class="tbl">customers</span>   <span class="tbl">c</span>  <span class="kw">ON</span> <span class="tbl">o</span>.<span class="tbl">customer_id</span>  = <span class="tbl">c</span>.<span class="tbl">id</span>
+<span class="kw">JOIN</span> <span class="tbl">order_items</span> <span class="tbl">oi</span> <span class="kw">ON</span> <span class="tbl">o</span>.<span class="tbl">id</span>            = <span class="tbl">oi</span>.<span class="tbl">order_id</span>
+<span class="kw">JOIN</span> <span class="tbl">products</span>    <span class="tbl">p</span>  <span class="kw">ON</span> <span class="tbl">oi</span>.<span class="tbl">product_id</span>  = <span class="tbl">p</span>.<span class="tbl">id</span>;
+
+<span class="cmt">-- SELF JOIN (Employee + Manager)</span>
+<span class="kw">SELECT</span>
+  <span class="tbl">e</span>.<span class="tbl">name</span> <span class="kw">AS</span> employee,
+  <span class="tbl">m</span>.<span class="tbl">name</span> <span class="kw">AS</span> manager
+<span class="kw">FROM</span> <span class="tbl">employees</span> <span class="tbl">e</span>
+<span class="kw">LEFT JOIN</span> <span class="tbl">employees</span> <span class="tbl">m</span>
+  <span class="kw">ON</span> <span class="tbl">e</span>.<span class="tbl">manager_id</span> = <span class="tbl">m</span>.<span class="tbl">id</span>;</div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CHAPTER 7: AGGREGATE ==================== -->
+<section id="aggregate">
+  <div class="chapter-header">
+    <h2>บทที่ 7 — Aggregate Functions & GROUP BY</h2>
+    <p>COUNT, SUM, AVG, MIN, MAX, GROUP BY, HAVING</p>
+  </div>
+
+  <div class="card">
+    <h3>Aggregate Functions</h3>
+    <div class="grid-3">
+      <div style="background:#0d1117;border:1px solid var(--border);border-radius:8px;padding:.8rem;text-align:center">
+        <div style="font-size:1.5rem;color:var(--pink)">COUNT</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:.3rem">นับจำนวนแถว</div>
+      </div>
+      <div style="background:#0d1117;border:1px solid var(--border);border-radius:8px;padding:.8rem;text-align:center">
+        <div style="font-size:1.5rem;color:var(--green)">SUM</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:.3rem">รวมค่า</div>
+      </div>
+      <div style="background:#0d1117;border:1px solid var(--border);border-radius:8px;padding:.8rem;text-align:center">
+        <div style="font-size:1.5rem;color:var(--accent2)">AVG</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:.3rem">ค่าเฉลี่ย</div>
+      </div>
+      <div style="background:#0d1117;border:1px solid var(--border);border-radius:8px;padding:.8rem;text-align:center">
+        <div style="font-size:1.5rem;color:var(--orange)">MIN</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:.3rem">ค่าต่ำสุด</div>
+      </div>
+      <div style="background:#0d1117;border:1px solid var(--border);border-radius:8px;padding:.8rem;text-align:center">
+        <div style="font-size:1.5rem;color:var(--red)">MAX</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:.3rem">ค่าสูงสุด</div>
+      </div>
+      <div style="background:#0d1117;border:1px solid var(--border);border-radius:8px;padding:.8rem;text-align:center">
+        <div style="font-size:1.5rem;color:var(--purple)">GROUP_CONCAT</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:.3rem">รวมเป็น string</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>GROUP BY และ HAVING</h3>
+    <div class="code-block">
+      <div class="code-body">
+<span class="cmt">-- ยอดขายรวมต่อ category</span>
+<span class="kw">SELECT</span>
+  <span class="tbl">category</span>,
+  <span class="fn">COUNT</span>(*) <span class="kw">AS</span> product_count,
+  <span class="fn">AVG</span>(<span class="tbl">price</span>) <span class="kw">AS</span> avg_price,
+  <span class="fn">MIN</span>(<span class="tbl">price</span>) <span class="kw">AS</span> min_price,
+  <span class="fn">MAX</span>(<span class="tbl">price</span>) <span class="kw">AS</span> max_price
+<span class="kw">FROM</span> <span class="tbl">products</span>
+<span class="kw">GROUP BY</span> <span class="tbl">category</span>
+<span class="kw">ORDER BY</span> avg_price <span class="kw">DESC</span>;
+
+<span class="cmt">-- HAVING: กรองกลุ่ม (ต่างจาก WHERE ที่กรองแถว)</span>
+<span class="kw">SELECT</span>
+  <span class="tbl">customer_id</span>,
+  <span class="fn">COUNT</span>(*) <span class="kw">AS</span> order_count,
+  <span class="fn">SUM</span>(<span class="tbl">total</span>) <span class="kw">AS</span> total_spent
+<span class="kw">FROM</span> <span class="tbl">orders</span>
+<span class="kw">WHERE</span> <span class="tbl">status</span> = <span class="str">'paid'</span>       <span class="cmt">-- กรองแถวก่อน GROUP BY</span>
+<span class="kw">GROUP BY</span> <span class="tbl">customer_id</span>
+<span class="kw">HAVING</span> <span class="fn">SUM</span>(<span class="tbl">total</span>) > <span class="num">10000</span>  <span class="cmt">-- กรองหลัง GROUP BY</span>
+<span class="kw">ORDER BY</span> total_spent <span class="kw">DESC</span>;
+
+<span class="cmt">-- COUNT(*) vs COUNT(column)</span>
+<span class="fn">COUNT</span>(*)          <span class="cmt">-- นับทุกแถว รวม NULL</span>
+<span class="fn">COUNT</span>(<span class="tbl">email</span>)      <span class="cmt">-- นับเฉพาะแถวที่ email ไม่ใช่ NULL</span>
+<span class="fn">COUNT</span>(<span class="kw">DISTINCT</span> <span class="tbl">city</span>) <span class="cmt">-- นับค่าไม่ซ้ำ</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>ROLLUP — รวมย่อย</h3>
+    <div class="code-block">
+      <div class="code-body">
+<span class="cmt">-- สร้างรายงานพร้อม subtotal และ grand total</span>
+<span class="kw">SELECT</span>
+  <span class="fn">COALESCE</span>(<span class="tbl">category</span>, <span class="str">'-- รวมทั้งหมด --'</span>) <span class="kw">AS</span> category,
+  <span class="fn">SUM</span>(<span class="tbl">price</span>) <span class="kw">AS</span> total
+<span class="kw">FROM</span> <span class="tbl">products</span>
+<span class="kw">GROUP BY</span> <span class="tbl">category</span> <span class="kw">WITH ROLLUP</span>;</div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CHAPTER 8: SUBQUERY & CTE ==================== -->
+<section id="subquery">
+  <div class="chapter-header">
+    <h2>บทที่ 8 — Subquery และ CTE (WITH clause)</h2>
+    <p>Correlated Subquery, EXISTS, IN, CTE, Recursive CTE</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Subquery ใน WHERE</h3>
+      <div class="code-block">
+        <div class="code-body">
+<span class="cmt">-- สินค้าที่ราคาสูงกว่าค่าเฉลี่ย</span>
+<span class="kw">SELECT</span> <span class="tbl">name</span>, <span class="tbl">price</span>
+<span class="kw">FROM</span> <span class="tbl">products</span>
+<span class="kw">WHERE</span> <span class="tbl">price</span> > (
+  <span class="kw">SELECT</span> <span class="fn">AVG</span>(<span class="tbl">price</span>) <span class="kw">FROM</span> <span class="tbl">products</span>
+);
+
+<span class="cmt">-- ลูกค้าที่เคยสั่งซื้อสินค้า Electronics</span>
+<span class="kw">SELECT</span> <span class="tbl">name</span> <span class="kw">FROM</span> <span class="tbl">customers</span>
+<span class="kw">WHERE</span> <span class="tbl">id</span> <span class="kw">IN</span> (
+  <span class="kw">SELECT DISTINCT</span> <span class="tbl">o</span>.<span class="tbl">customer_id</span>
+  <span class="kw">FROM</span> <span class="tbl">orders</span> <span class="tbl">o</span>
+  <span class="kw">JOIN</span> <span class="tbl">order_items</span> <span class="tbl">oi</span> <span class="kw">ON</span> <span class="tbl">o</span>.<span class="tbl">id</span> = <span class="tbl">oi</span>.<span class="tbl">order_id</span>
+  <span class="kw">JOIN</span> <span class="tbl">products</span> <span class="tbl">p</span> <span class="kw">ON</span> <span class="tbl">oi</span>.<span class="tbl">product_id</span> = <span class="tbl">p</span>.<span class="tbl">id</span>
+  <span class="kw">WHERE</span> <span class="tbl">p</span>.<span class="tbl">category</span> = <span class="str">'Electronics'</span>
+);</div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>EXISTS และ Correlated Subquery</h3>
+      <div class="code-block">
+        <div class="code-body">
+<span class="cmt">-- EXISTS: ตรวจสอบว่ามีแถวอยู่หรือไม่</span>
+<span class="kw">SELECT</span> <span class="tbl">name</span> <span class="kw">FROM</span> <span class="tbl">customers</span> <span class="tbl">c</span>
+<span class="kw">WHERE EXISTS</span> (
+  <span class="kw">SELECT</span> <span class="num">1</span> <span class="kw">FROM</span> <span class="tbl">orders</span> <span class="tbl">o</span>
+  <span class="kw">WHERE</span> <span class="tbl">o</span>.<span class="tbl">customer_id</span> = <span class="tbl">c</span>.<span class="tbl">id</span>  <span class="cmt">-- อ้างอิง outer query</span>
+    <span class="kw">AND</span> <span class="tbl">o</span>.<span class="tbl">total</span> > <span class="num">5000</span>
+);
+
+<span class="cmt">-- Subquery ใน FROM (Derived Table)</span>
+<span class="kw">SELECT</span> <span class="tbl">category</span>, <span class="tbl">avg_price</span>
+<span class="kw">FROM</span> (
+  <span class="kw">SELECT</span>
+    <span class="tbl">category</span>,
+    <span class="fn">AVG</span>(<span class="tbl">price</span>) <span class="kw">AS</span> avg_price
+  <span class="kw">FROM</span> <span class="tbl">products</span>
+  <span class="kw">GROUP BY</span> <span class="tbl">category</span>
+) <span class="kw">AS</span> cat_avg
+<span class="kw">WHERE</span> avg_price > <span class="num">1000</span>;</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>CTE (Common Table Expression) — WITH clause</h3>
+    <div class="code-block">
+      <div class="code-body">
+<span class="cmt">-- CTE ทำให้ query อ่านง่ายขึ้น</span>
+<span class="kw">WITH</span> <span class="tbl">top_customers</span> <span class="kw">AS</span> (
+  <span class="kw">SELECT</span>
+    <span class="tbl">customer_id</span>,
+    <span class="fn">SUM</span>(<span class="tbl">total</span>) <span class="kw">AS</span> total_spent
+  <span class="kw">FROM</span> <span class="tbl">orders</span>
+  <span class="kw">WHERE</span> <span class="tbl">status</span> = <span class="str">'paid'</span>
+  <span class="kw">GROUP BY</span> <span class="tbl">customer_id</span>
+  <span class="kw">HAVING</span> <span class="fn">SUM</span>(<span class="tbl">total</span>) > <span class="num">50000</span>
+),
+<span class="tbl">customer_details</span> <span class="kw">AS</span> (
+  <span class="kw">SELECT</span> <span class="tbl">tc</span>.*, <span class="tbl">c</span>.<span class="tbl">name</span>, <span class="tbl">c</span>.<span class="tbl">city</span>
+  <span class="kw">FROM</span> <span class="tbl">top_customers</span> <span class="tbl">tc</span>
+  <span class="kw">JOIN</span> <span class="tbl">customers</span> <span class="tbl">c</span> <span class="kw">ON</span> <span class="tbl">tc</span>.<span class="tbl">customer_id</span> = <span class="tbl">c</span>.<span class="tbl">id</span>
+)
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">customer_details</span>
+<span class="kw">ORDER BY</span> total_spent <span class="kw">DESC</span>;
+
+<span class="cmt">-- Recursive CTE (สร้าง hierarchy)</span>
+<span class="kw">WITH RECURSIVE</span> <span class="tbl">org_chart</span> <span class="kw">AS</span> (
+  <span class="cmt">-- Base case: CEO (ไม่มี manager)</span>
+  <span class="kw">SELECT</span> <span class="tbl">id</span>, <span class="tbl">name</span>, <span class="tbl">manager_id</span>, <span class="num">0</span> <span class="kw">AS</span> level
+  <span class="kw">FROM</span> <span class="tbl">employees</span>
+  <span class="kw">WHERE</span> <span class="tbl">manager_id</span> <span class="kw">IS NULL</span>
+
+  <span class="kw">UNION ALL</span>
+
+  <span class="cmt">-- Recursive: หาผู้ใต้บังคับบัญชา</span>
+  <span class="kw">SELECT</span> <span class="tbl">e</span>.<span class="tbl">id</span>, <span class="tbl">e</span>.<span class="tbl">name</span>, <span class="tbl">e</span>.<span class="tbl">manager_id</span>, <span class="tbl">oc</span>.<span class="tbl">level</span> + <span class="num">1</span>
+  <span class="kw">FROM</span> <span class="tbl">employees</span> <span class="tbl">e</span>
+  <span class="kw">JOIN</span> <span class="tbl">org_chart</span> <span class="tbl">oc</span> <span class="kw">ON</span> <span class="tbl">e</span>.<span class="tbl">manager_id</span> = <span class="tbl">oc</span>.<span class="tbl">id</span>
+)
+<span class="kw">SELECT</span>
+  <span class="fn">CONCAT</span>(<span class="fn">REPEAT</span>(<span class="str">'  '</span>, <span class="tbl">level</span>), <span class="tbl">name</span>) <span class="kw">AS</span> hierarchy
+<span class="kw">FROM</span> <span class="tbl">org_chart</span>;</div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CHAPTER 9: WINDOW FUNCTIONS ==================== -->
+<section id="window">
+  <div class="chapter-header">
+    <h2>บทที่ 9 — Window Functions</h2>
+    <p>OVER, PARTITION BY, ROW_NUMBER, RANK, LAG/LEAD, Running Totals</p>
+  </div>
+
+  <div class="card">
+    <h3>Window Function คืออะไร?</h3>
+    <p>คำนวณค่าข้ามหลายแถว <strong>โดยไม่ยุบแถว</strong> (ต่างจาก GROUP BY ที่ยุบเป็นแถวเดียว)</p>
+    <div class="compare">
+      <div class="compare-box bad">
+        <div class="compare-label">GROUP BY (ยุบแถว)</div>
+        <div class="code-block"><div class="code-body"><span class="kw">SELECT</span> <span class="tbl">dept</span>, <span class="fn">AVG</span>(<span class="tbl">salary</span>)
+<span class="kw">FROM</span> <span class="tbl">employees</span>
+<span class="kw">GROUP BY</span> <span class="tbl">dept</span>;
+<span class="cmt">-- ได้ 1 แถวต่อ dept</span></div></div>
+      </div>
+      <div class="compare-box good">
+        <div class="compare-label">WINDOW (ไม่ยุบ)</div>
+        <div class="code-block"><div class="code-body"><span class="kw">SELECT</span> <span class="tbl">name</span>, <span class="tbl">dept</span>, <span class="tbl">salary</span>,
+  <span class="fn">AVG</span>(<span class="tbl">salary</span>) <span class="kw">OVER</span>(
+    <span class="kw">PARTITION BY</span> <span class="tbl">dept</span>
+  ) <span class="kw">AS</span> dept_avg
+<span class="kw">FROM</span> <span class="tbl">employees</span>;
+<span class="cmt">-- ทุกแถวยังอยู่ครบ</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Ranking Functions</h3>
+    <div class="code-block">
+      <div class="code-body">
+<span class="kw">SELECT</span>
+  <span class="tbl">name</span>,
+  <span class="tbl">salary</span>,
+  <span class="tbl">dept</span>,
+  <span class="cmt">-- ROW_NUMBER: ลำดับไม่ซ้ำ</span>
+  <span class="fn">ROW_NUMBER</span>() <span class="kw">OVER</span>(<span class="kw">ORDER BY</span> <span class="tbl">salary</span> <span class="kw">DESC</span>) <span class="kw">AS</span> row_num,
+  <span class="cmt">-- RANK: ลำดับที่เท่ากันข้าม</span>
+  <span class="fn">RANK</span>() <span class="kw">OVER</span>(<span class="kw">ORDER BY</span> <span class="tbl">salary</span> <span class="kw">DESC</span>) <span class="kw">AS</span> rnk,
+  <span class="cmt">-- DENSE_RANK: ลำดับที่เท่ากันไม่ข้าม</span>
+  <span class="fn">DENSE_RANK</span>() <span class="kw">OVER</span>(<span class="kw">ORDER BY</span> <span class="tbl">salary</span> <span class="kw">DESC</span>) <span class="kw">AS</span> dense_rnk,
+  <span class="cmt">-- NTILE: แบ่งเป็น N กลุ่ม</span>
+  <span class="fn">NTILE</span>(<span class="num">4</span>) <span class="kw">OVER</span>(<span class="kw">ORDER BY</span> <span class="tbl">salary</span>) <span class="kw">AS</span> quartile,
+  <span class="cmt">-- อันดับใน dept</span>
+  <span class="fn">RANK</span>() <span class="kw">OVER</span>(<span class="kw">PARTITION BY</span> <span class="tbl">dept</span> <span class="kw">ORDER BY</span> <span class="tbl">salary</span> <span class="kw">DESC</span>) <span class="kw">AS</span> dept_rank
+<span class="kw">FROM</span> <span class="tbl">employees</span>;</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>LAG, LEAD — เปรียบเทียบกับแถวก่อน/หลัง</h3>
+    <div class="code-block">
+      <div class="code-body">
+<span class="kw">SELECT</span>
+  <span class="tbl">order_date</span>,
+  <span class="tbl">total</span>,
+  <span class="cmt">-- ยอดคำสั่งซื้อก่อนหน้า</span>
+  <span class="fn">LAG</span>(<span class="tbl">total</span>) <span class="kw">OVER</span>(<span class="kw">ORDER BY</span> <span class="tbl">order_date</span>)  <span class="kw">AS</span> prev_total,
+  <span class="cmt">-- ยอดคำสั่งซื้อถัดไป</span>
+  <span class="fn">LEAD</span>(<span class="tbl">total</span>) <span class="kw">OVER</span>(<span class="kw">ORDER BY</span> <span class="tbl">order_date</span>) <span class="kw">AS</span> next_total,
+  <span class="cmt">-- % เปลี่ยนแปลง</span>
+  (<span class="tbl">total</span> - <span class="fn">LAG</span>(<span class="tbl">total</span>) <span class="kw">OVER</span>(<span class="kw">ORDER BY</span> <span class="tbl">order_date</span>))
+    / <span class="fn">NULLIF</span>(<span class="fn">LAG</span>(<span class="tbl">total</span>) <span class="kw">OVER</span>(<span class="kw">ORDER BY</span> <span class="tbl">order_date</span>), <span class="num">0</span>) * <span class="num">100</span>
+    <span class="kw">AS</span> pct_change
+<span class="kw">FROM</span> <span class="tbl">orders</span>
+<span class="kw">WHERE</span> <span class="tbl">status</span> = <span class="str">'paid'</span>
+<span class="kw">ORDER BY</span> <span class="tbl">order_date</span>;</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Running Total และ Moving Average</h3>
+    <div class="code-block">
+      <div class="code-body">
+<span class="cmt">-- Cumulative Sum (Running Total)</span>
+<span class="kw">SELECT</span>
+  <span class="tbl">order_date</span>,
+  <span class="tbl">total</span>,
+  <span class="fn">SUM</span>(<span class="tbl">total</span>) <span class="kw">OVER</span>(
+    <span class="kw">ORDER BY</span> <span class="tbl">order_date</span>
+    <span class="kw">ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</span>
+  ) <span class="kw">AS</span> running_total,
+
+  <span class="cmt">-- Moving Average (7 วัน)</span>
+  <span class="fn">AVG</span>(<span class="tbl">total</span>) <span class="kw">OVER</span>(
+    <span class="kw">ORDER BY</span> <span class="tbl">order_date</span>
+    <span class="kw">ROWS BETWEEN</span> <span class="num">6</span> <span class="kw">PRECEDING AND CURRENT ROW</span>
+  ) <span class="kw">AS</span> moving_avg_7d
+<span class="kw">FROM</span> <span class="tbl">orders</span>
+<span class="kw">ORDER BY</span> <span class="tbl">order_date</span>;
+
+<span class="cmt">-- TOP N per group (ใช้ CTE)</span>
+<span class="kw">WITH</span> <span class="tbl">ranked</span> <span class="kw">AS</span> (
+  <span class="kw">SELECT</span> *, <span class="fn">ROW_NUMBER</span>() <span class="kw">OVER</span>(
+    <span class="kw">PARTITION BY</span> <span class="tbl">category</span>
+    <span class="kw">ORDER BY</span> <span class="tbl">price</span> <span class="kw">DESC</span>
+  ) <span class="kw">AS</span> rn
+  <span class="kw">FROM</span> <span class="tbl">products</span>
+)
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">ranked</span>
+<span class="kw">WHERE</span> rn <= <span class="num">3</span>; <span class="cmt">-- Top 3 สินค้าแพงสุดต่อ category</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CHAPTER 10: INDEX ==================== -->
+<section id="index">
+  <div class="chapter-header">
+    <h2>บทที่ 10 — Index และ Query Performance</h2>
+    <p>การสร้าง Index, EXPLAIN, และเทคนิค optimize</p>
+  </div>
+
+  <div class="card">
+    <h3>Index คืออะไร?</h3>
+    <p>โครงสร้างข้อมูลพิเศษ (มักเป็น B-Tree) ที่ช่วยให้ค้นหาข้อมูลได้เร็วขึ้นมาก แทนที่จะสแกนทุกแถว (Full Table Scan)</p>
+    <div class="grid-2">
+      <div style="background:#0d1117;border:1px solid var(--red);border-radius:8px;padding:1rem">
+        <div style="color:var(--red);font-weight:700;font-size:12px;margin-bottom:.5rem">❌ ไม่มี Index (Full Scan)</div>
+        <div style="font-size:12px;color:var(--muted)">สแกนทุกแถว = O(n)<br>1 ล้านแถว → ช้ามาก</div>
+      </div>
+      <div style="background:#0d1117;border:1px solid var(--green);border-radius:8px;padding:1rem">
+        <div style="color:var(--green);font-weight:700;font-size:12px;margin-bottom:.5rem">✅ มี Index (B-Tree)</div>
+        <div style="font-size:12px;color:var(--muted)">ค้นหาแบบ Binary = O(log n)<br>1 ล้านแถว → ~20 steps</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>สร้างและลบ Index</h3>
+      <div class="code-block">
+        <div class="code-body">
+<span class="cmt">-- Single column index</span>
+<span class="kw">CREATE INDEX</span> <span class="tbl">idx_email</span>
+  <span class="kw">ON</span> <span class="tbl">customers</span> (<span class="tbl">email</span>);
+
+<span class="cmt">-- Unique index</span>
+<span class="kw">CREATE UNIQUE INDEX</span> <span class="tbl">idx_email_unique</span>
+  <span class="kw">ON</span> <span class="tbl">customers</span> (<span class="tbl">email</span>);
+
+<span class="cmt">-- Composite index (หลาย column)</span>
+<span class="kw">CREATE INDEX</span> <span class="tbl">idx_order_status_date</span>
+  <span class="kw">ON</span> <span class="tbl">orders</span> (<span class="tbl">status</span>, <span class="tbl">order_date</span>);
+
+<span class="cmt">-- Partial index (PostgreSQL)</span>
+<span class="kw">CREATE INDEX</span> <span class="tbl">idx_active_orders</span>
+  <span class="kw">ON</span> <span class="tbl">orders</span> (<span class="tbl">customer_id</span>)
+  <span class="kw">WHERE</span> <span class="tbl">status</span> = <span class="str">'paid'</span>;
+
+<span class="cmt">-- ลบ index</span>
+<span class="kw">DROP INDEX</span> <span class="tbl">idx_email</span> <span class="kw">ON</span> <span class="tbl">customers</span>;</div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>EXPLAIN — วิเคราะห์ Query</h3>
+      <div class="code-block">
+        <div class="code-body">
+<span class="cmt">-- ดูว่า MySQL ใช้ index หรือเปล่า</span>
+<span class="kw">EXPLAIN SELECT</span> * <span class="kw">FROM</span> <span class="tbl">orders</span>
+<span class="kw">WHERE</span> <span class="tbl">customer_id</span> = <span class="num">5</span>;
+
+<span class="cmt">-- EXPLAIN ANALYZE (PostgreSQL)</span>
+<span class="kw">EXPLAIN ANALYZE SELECT</span> * <span class="kw">FROM</span> <span class="tbl">orders</span>
+<span class="kw">WHERE</span> <span class="tbl">customer_id</span> = <span class="num">5</span>;
+
+<span class="cmt">-- columns สำคัญใน EXPLAIN:</span>
+<span class="cmt">-- type: ALL(แย่) → ref → eq_ref → const(ดีสุด)</span>
+<span class="cmt">-- key: index ที่ใช้</span>
+<span class="cmt">-- rows: ประมาณแถวที่สแกน</span>
+<span class="cmt">-- Extra: Using index, Using filesort ฯลฯ</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>เทคนิค Query Optimization</h3>
+    <div class="tbl-wrap">
+      <table>
+        <tr><th>ปัญหา</th><th>แนวทางแก้ไข</th></tr>
+        <tr><td>Full Table Scan</td><td>สร้าง Index บน column ที่ใช้ใน WHERE, JOIN, ORDER BY</td></tr>
+        <tr><td>SELECT *</td><td>ระบุ column ที่ต้องการเท่านั้น ลด I/O</td></tr>
+        <tr><td>LIKE '%xxx'</td><td>Leading wildcard ทำให้ index ไม่ทำงาน ใช้ Full-text search แทน</td></tr>
+        <tr><td>Function บน column</td><td><code>WHERE YEAR(date) = 2024</code> ใช้ <code>WHERE date BETWEEN ... AND ...</code></td></tr>
+        <tr><td>N+1 Problem</td><td>ใช้ JOIN แทนการ query loop ใน code</td></tr>
+        <tr><td>Pagination ช้า</td><td>ใช้ Cursor pagination (<code>WHERE id > last_id LIMIT n</code>) แทน OFFSET ใหญ่</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CHAPTER 11: TRANSACTION ==================== -->
+<section id="transaction">
+  <div class="chapter-header">
+    <h2>บทที่ 11 — Transactions และ ACID</h2>
+    <p>COMMIT, ROLLBACK, SAVEPOINT, Isolation Levels</p>
+  </div>
+
+  <div class="card">
+    <h3>ACID Properties</h3>
+    <div class="grid-2">
+      <div style="background:#0d1117;border:1px solid var(--border);border-radius:8px;padding:1rem">
+        <div style="color:var(--accent2);font-weight:700">A — Atomicity</div>
+        <div style="font-size:13px;color:var(--muted);margin-top:.3rem">ทุกอย่างสำเร็จหรือล้มเหลวพร้อมกัน ไม่มีทำครึ่งเดียว</div>
+      </div>
+      <div style="background:#0d1117;border:1px solid var(--border);border-radius:8px;padding:1rem">
+        <div style="color:var(--green);font-weight:700">C — Consistency</div>
+        <div style="font-size:13px;color:var(--muted);margin-top:.3rem">ข้อมูลต้องถูกต้องตาม constraint ก่อนและหลัง transaction</div>
+      </div>
+      <div style="background:#0d1117;border:1px solid var(--border);border-radius:8px;padding:1rem">
+        <div style="color:var(--yellow);font-weight:700">I — Isolation</div>
+        <div style="font-size:13px;color:var(--muted);margin-top:.3rem">Transaction ที่ทำพร้อมกันไม่กระทบกัน</div>
+      </div>
+      <div style="background:#0d1117;border:1px solid var(--border);border-radius:8px;padding:1rem">
+        <div style="color:var(--orange);font-weight:700">D — Durability</div>
+        <div style="font-size:13px;color:var(--muted);margin-top:.3rem">เมื่อ COMMIT แล้ว ข้อมูลถูกบันทึกถาวร แม้ระบบล่ม</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>ตัวอย่าง Transaction: โอนเงิน</h3>
+    <div class="code-block">
+      <div class="code-body">
+<span class="cmt">-- เริ่ม transaction</span>
+<span class="kw">START TRANSACTION</span>;  <span class="cmt">-- หรือ BEGIN</span>
+
+<span class="kw">UPDATE</span> <span class="tbl">accounts</span>
+<span class="kw">SET</span> <span class="tbl">balance</span> = <span class="tbl">balance</span> - <span class="num">1000</span>
+<span class="kw">WHERE</span> <span class="tbl">id</span> = <span class="num">1</span>;  <span class="cmt">-- หักจากบัญชี A</span>
+
+<span class="cmt">-- ตรวจสอบยอดเงิน</span>
+<span class="kw">SELECT</span> <span class="tbl">balance</span> <span class="kw">FROM</span> <span class="tbl">accounts</span> <span class="kw">WHERE</span> <span class="tbl">id</span> = <span class="num">1</span>;
+
+<span class="kw">UPDATE</span> <span class="tbl">accounts</span>
+<span class="kw">SET</span> <span class="tbl">balance</span> = <span class="tbl">balance</span> + <span class="num">1000</span>
+<span class="kw">WHERE</span> <span class="tbl">id</span> = <span class="num">2</span>;  <span class="cmt">-- เพิ่มให้บัญชี B</span>
+
+<span class="cmt">-- ถ้าสำเร็จ → บันทึก</span>
+<span class="kw">COMMIT</span>;
+
+<span class="cmt">-- ถ้าผิดพลาด → ย้อนกลับ</span>
+<span class="kw">ROLLBACK</span>;
+
+<span class="cmt">-- SAVEPOINT: บันทึกจุดกลางทาง</span>
+<span class="kw">START TRANSACTION</span>;
+<span class="kw">INSERT INTO</span> <span class="tbl">orders</span> ...;
+<span class="kw">SAVEPOINT</span> after_order;
+<span class="kw">INSERT INTO</span> <span class="tbl">order_items</span> ...;
+<span class="cmt">-- ถ้า items ผิด → ย้อนแค่ items</span>
+<span class="kw">ROLLBACK TO SAVEPOINT</span> after_order;
+<span class="kw">COMMIT</span>;</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Isolation Levels</h3>
+    <div class="tbl-wrap">
+      <table>
+        <tr><th>Level</th><th>Dirty Read</th><th>Non-Repeatable</th><th>Phantom Read</th><th>Performance</th></tr>
+        <tr><td>READ UNCOMMITTED</td><td style="color:var(--red)">✓ เกิดได้</td><td style="color:var(--red)">✓</td><td style="color:var(--red)">✓</td><td style="color:var(--green)">เร็วสุด</td></tr>
+        <tr><td>READ COMMITTED</td><td style="color:var(--green)">✗</td><td style="color:var(--red)">✓</td><td style="color:var(--red)">✓</td><td style="color:var(--green)">เร็ว</td></tr>
+        <tr><td><strong>REPEATABLE READ</strong></td><td style="color:var(--green)">✗</td><td style="color:var(--green)">✗</td><td style="color:var(--red)">✓</td><td>กลาง</td></tr>
+        <tr><td>SERIALIZABLE</td><td style="color:var(--green)">✗</td><td style="color:var(--green)">✗</td><td style="color:var(--green)">✗</td><td style="color:var(--red)">ช้าสุด</td></tr>
+      </table>
+    </div>
+    <div class="callout info">
+      <div class="callout-title">Default</div>
+      MySQL InnoDB ใช้ <strong>REPEATABLE READ</strong> เป็นค่าเริ่มต้น | PostgreSQL ใช้ <strong>READ COMMITTED</strong>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CHAPTER 12: DB DESIGN ==================== -->
+<section id="design">
+  <div class="chapter-header">
+    <h2>บทที่ 12 — Database Design & Normalization</h2>
+    <p>Normal Forms, Foreign Keys, Views, Stored Procedures</p>
+  </div>
+
+  <div class="card">
+    <h3>Normal Forms</h3>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="num">1NF</div>
+        <div><strong>First Normal Form</strong> — ทุก cell มีค่าเดียว ไม่มี repeating groups เช่น ไม่เก็บ "กรุงเทพ, เชียงใหม่" ในช่องเดียว</div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">
+        <div class="num">2NF</div>
+        <div><strong>Second Normal Form</strong> — ผ่าน 1NF + ทุก non-key column ขึ้นกับ primary key ทั้งหมด (ไม่มี Partial Dependency)</div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">
+        <div class="num">3NF</div>
+        <div><strong>Third Normal Form</strong> — ผ่าน 2NF + ไม่มี Transitive Dependency (column A → column B → column C)</div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">
+        <div class="num">BCNF</div>
+        <div><strong>Boyce-Codd Normal Form</strong> — เวอร์ชัน strict กว่า 3NF สำหรับกรณีพิเศษ</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>VIEW — ตารางเสมือน</h3>
+    <div class="code-block">
+      <div class="code-body">
+<span class="cmt">-- สร้าง View</span>
+<span class="kw">CREATE VIEW</span> <span class="tbl">v_customer_summary</span> <span class="kw">AS</span>
+<span class="kw">SELECT</span>
+  <span class="tbl">c</span>.<span class="tbl">id</span>,
+  <span class="tbl">c</span>.<span class="tbl">name</span>,
+  <span class="fn">COUNT</span>(<span class="tbl">o</span>.<span class="tbl">id</span>) <span class="kw">AS</span> total_orders,
+  <span class="fn">COALESCE</span>(<span class="fn">SUM</span>(<span class="tbl">o</span>.<span class="tbl">total</span>), <span class="num">0</span>) <span class="kw">AS</span> total_spent
+<span class="kw">FROM</span> <span class="tbl">customers</span> <span class="tbl">c</span>
+<span class="kw">LEFT JOIN</span> <span class="tbl">orders</span> <span class="tbl">o</span>
+  <span class="kw">ON</span> <span class="tbl">c</span>.<span class="tbl">id</span> = <span class="tbl">o</span>.<span class="tbl">customer_id</span>
+<span class="kw">GROUP BY</span> <span class="tbl">c</span>.<span class="tbl">id</span>, <span class="tbl">c</span>.<span class="tbl">name</span>;
+
+<span class="cmt">-- ใช้ View เหมือนตาราง</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">v_customer_summary</span>
+<span class="kw">WHERE</span> total_spent > <span class="num">10000</span>;
+
+<span class="cmt">-- แก้ไข View</span>
+<span class="kw">CREATE OR REPLACE VIEW</span> <span class="tbl">v_customer_summary</span> <span class="kw">AS</span> ...;
+
+<span class="cmt">-- ลบ View</span>
+<span class="kw">DROP VIEW IF EXISTS</span> <span class="tbl">v_customer_summary</span>;</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Stored Procedure และ Function</h3>
+    <div class="code-block">
+      <div class="code-body">
+<span class="cmt">-- Stored Procedure (MySQL)</span>
+<span class="fn">DELIMITER</span> //
+
+<span class="kw">CREATE PROCEDURE</span> <span class="fn">GetCustomerOrders</span>(<span class="kw">IN</span> <span class="tbl">p_customer_id</span> <span class="fn">INT</span>)
+<span class="kw">BEGIN</span>
+  <span class="kw">SELECT</span>
+    <span class="tbl">o</span>.<span class="tbl">id</span>, <span class="tbl">o</span>.<span class="tbl">order_date</span>, <span class="tbl">o</span>.<span class="tbl">total</span>, <span class="tbl">o</span>.<span class="tbl">status</span>
+  <span class="kw">FROM</span> <span class="tbl">orders</span> <span class="tbl">o</span>
+  <span class="kw">WHERE</span> <span class="tbl">o</span>.<span class="tbl">customer_id</span> = <span class="tbl">p_customer_id</span>
+  <span class="kw">ORDER BY</span> <span class="tbl">o</span>.<span class="tbl">order_date</span> <span class="kw">DESC</span>;
+<span class="kw">END</span>//
+
+<span class="fn">DELIMITER</span> ;
+
+<span class="cmt">-- เรียกใช้</span>
+<span class="kw">CALL</span> <span class="fn">GetCustomerOrders</span>(<span class="num">5</span>);
+
+<span class="cmt">-- Function (คืนค่า)</span>
+<span class="fn">DELIMITER</span> //
+<span class="kw">CREATE FUNCTION</span> <span class="fn">GetDiscount</span>(<span class="tbl">total</span> <span class="fn">DECIMAL</span>(<span class="num">10</span>,<span class="num">2</span>))
+<span class="kw">RETURNS DECIMAL</span>(<span class="num">5</span>,<span class="num">2</span>)
+<span class="fn">DETERMINISTIC</span>
+<span class="kw">BEGIN</span>
+  <span class="kw">DECLARE</span> discount <span class="fn">DECIMAL</span>(<span class="num">5</span>,<span class="num">2</span>);
+  <span class="kw">IF</span> total > <span class="num">10000</span> <span class="kw">THEN</span>
+    <span class="kw">SET</span> discount = <span class="num">0.10</span>;
+  <span class="kw">ELSEIF</span> total > <span class="num">5000</span> <span class="kw">THEN</span>
+    <span class="kw">SET</span> discount = <span class="num">0.05</span>;
+  <span class="kw">ELSE</span>
+    <span class="kw">SET</span> discount = <span class="num">0.00</span>;
+  <span class="kw">END IF</span>;
+  <span class="kw">RETURN</span> discount;
+<span class="kw">END</span>//
+<span class="fn">DELIMITER</span> ;
+
+<span class="cmt">-- ใช้ใน query</span>
+<span class="kw">SELECT</span> <span class="tbl">total</span> * (<span class="num">1</span> - <span class="fn">GetDiscount</span>(<span class="tbl">total</span>)) <span class="kw">AS</span> final_price
+<span class="kw">FROM</span> <span class="tbl">orders</span>;</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Quick Reference — SQL Cheatsheet</h3>
+    <div class="grid-3">
+      <div style="background:#0d1117;border:1px solid var(--border);border-radius:8px;padding:.8rem;font-size:12px">
+        <div style="color:var(--accent2);font-weight:700;margin-bottom:.5rem">🔍 SELECT</div>
+        <code style="color:var(--muted);font-size:11px">SELECT col FROM tbl<br>WHERE cond<br>ORDER BY col DESC<br>LIMIT n OFFSET m</code>
+      </div>
+      <div style="background:#0d1117;border:1px solid var(--border);border-radius:8px;padding:.8rem;font-size:12px">
+        <div style="color:var(--green);font-weight:700;margin-bottom:.5rem">📝 INSERT</div>
+        <code style="color:var(--muted);font-size:11px">INSERT INTO tbl (cols)<br>VALUES (v1),(v2);<br><br>INSERT INTO t2<br>SELECT ... FROM t1</code>
+      </div>
+      <div style="background:#0d1117;border:1px solid var(--border);border-radius:8px;padding:.8rem;font-size:12px">
+        <div style="color:var(--yellow);font-weight:700;margin-bottom:.5rem">✏️ UPDATE</div>
+        <code style="color:var(--muted);font-size:11px">UPDATE tbl<br>SET col = val<br>WHERE cond;</code>
+      </div>
+      <div style="background:#0d1117;border:1px solid var(--border);border-radius:8px;padding:.8rem;font-size:12px">
+        <div style="color:var(--red);font-weight:700;margin-bottom:.5rem">🗑️ DELETE</div>
+        <code style="color:var(--muted);font-size:11px">DELETE FROM tbl<br>WHERE cond;<br><br>TRUNCATE TABLE tbl;</code>
+      </div>
+      <div style="background:#0d1117;border:1px solid var(--border);border-radius:8px;padding:.8rem;font-size:12px">
+        <div style="color:var(--pink);font-weight:700;margin-bottom:.5rem">🔗 JOIN</div>
+        <code style="color:var(--muted);font-size:11px">FROM a<br>JOIN b ON a.id=b.a_id<br>LEFT JOIN c ON ...<br>WHERE ...</code>
+      </div>
+      <div style="background:#0d1117;border:1px solid var(--border);border-radius:8px;padding:.8rem;font-size:12px">
+        <div style="color:var(--purple);font-weight:700;margin-bottom:.5rem">📊 AGGREGATE</div>
+        <code style="color:var(--muted);font-size:11px">SELECT col, COUNT(*)<br>FROM tbl<br>GROUP BY col<br>HAVING COUNT(*) > 1</code>
+      </div>
+      <div style="background:#0d1117;border:1px solid var(--border);border-radius:8px;padding:.8rem;font-size:12px">
+        <div style="color:var(--orange);font-weight:700;margin-bottom:.5rem">📋 CTE</div>
+        <code style="color:var(--muted);font-size:11px">WITH cte AS (<br>  SELECT ...<br>)<br>SELECT * FROM cte</code>
+      </div>
+      <div style="background:#0d1117;border:1px solid var(--border);border-radius:8px;padding:.8rem;font-size:12px">
+        <div style="color:var(--accent2);font-weight:700;margin-bottom:.5rem">🪟 WINDOW</div>
+        <code style="color:var(--muted);font-size:11px">ROW_NUMBER() OVER(<br>  PARTITION BY col<br>  ORDER BY col<br>)</code>
+      </div>
+      <div style="background:#0d1117;border:1px solid var(--border);border-radius:8px;padding:.8rem;font-size:12px">
+        <div style="color:var(--green);font-weight:700;margin-bottom:.5rem">🔒 TRANSACTION</div>
+        <code style="color:var(--muted);font-size:11px">START TRANSACTION;<br>-- queries<br>COMMIT;<br>-- or ROLLBACK;</code>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<footer>
+  <p>SQL Teaching Material — สร้างด้วย ❤️ สำหรับผู้เรียน</p>
+  <p style="margin-top:.3rem;font-size:12px">ครอบคลุม: SELECT · DDL · DML · JOINs · Aggregate · CTE · Window Functions · Index · Transactions · DB Design</p>
+</footer>
+
+<script>
+  const nav = document.querySelector('nav');
+  const links = nav.querySelectorAll('a[href^="#"]');
+  const sections = [...links].map(a => document.querySelector(a.getAttribute('href')));
+  window.addEventListener('scroll', () => {
+    let cur = sections[0];
+    sections.forEach(s => { if (s && s.getBoundingClientRect().top <= 80) cur = s; });
+    links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + cur?.id));
+  });
+</script>
+
+</body>
+</html>

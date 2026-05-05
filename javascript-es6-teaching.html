@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>สื่อการสอน JavaScript + ES6</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --yellow:#f7df1e;--blue:#3b82f6;--green:#10b981;--orange:#f59e0b;
+  --red:#ef4444;--purple:#8b5cf6;--cyan:#06b6d4;--pink:#ec4899;
+  --dark:#0f172a;--card:#1c2128;--border:#30363d;--code:#0d1117;
+  --radius:12px;--shadow:0 4px 20px rgba(0,0,0,.3);
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#0d1117;color:#c9d1d9;line-height:1.75}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#0d1117 0%,#161b22 60%,#1a1200 100%);border-bottom:2px solid #f7df1e22;text-align:center;padding:68px 24px 52px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% -20%,rgba(247,223,30,.12),transparent 65%)}
+.hero h1{font-size:clamp(2rem,5vw,3.6rem);font-weight:900;color:#fff;margin-bottom:12px;position:relative;letter-spacing:-1px}
+.hero h1 .js{color:#f7df1e;background:#f7df1e;color:#0d1117;padding:2px 14px;border-radius:8px;display:inline-block}
+.hero h1 .es6{color:#f7df1e}
+.hero p{font-size:1.1rem;color:#8b949e;max-width:600px;margin:0 auto;position:relative}
+.badge-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:20px;position:relative}
+.badge{background:rgba(247,223,30,.1);border:1px solid rgba(247,223,30,.3);color:#f7df1e;padding:4px 14px;border-radius:999px;font-size:.8rem;font-weight:700}
+
+/* NAV */
+.nav-sticky{position:sticky;top:0;z-index:100;background:#161b22;border-bottom:1px solid #30363d;padding:0 10px;overflow-x:auto;white-space:nowrap}
+.nav-sticky a{display:inline-block;padding:11px 12px;font-size:.79rem;font-weight:600;color:#8b949e;text-decoration:none;border-bottom:2px solid transparent;transition:.2s}
+.nav-sticky a:hover,.nav-sticky a.active{color:#f7df1e;border-color:#f7df1e}
+
+/* LAYOUT */
+.container{max-width:1150px;margin:0 auto;padding:40px 20px}
+section{margin-bottom:62px}
+
+/* CHAPTER HEADER */
+.chapter-header{border-radius:var(--radius);padding:22px 28px;margin-bottom:22px;display:flex;align-items:center;gap:18px;border:1px solid #30363d;position:relative;overflow:hidden}
+.chapter-header::before{content:'';position:absolute;top:0;right:0;width:200px;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.03));pointer-events:none}
+.ch-num{font-size:3rem;font-weight:900;opacity:.18;line-height:1;min-width:60px;color:#fff;font-family:monospace}
+.chapter-header h2{font-size:1.38rem;font-weight:800;color:#fff;margin:0}
+.chapter-header p{font-size:.87rem;color:#8b949e;margin-top:5px}
+.ch-js{background:linear-gradient(135deg,#1a1200,#2a1f00);border-color:#f7df1e33}
+.ch-yellow{background:linear-gradient(135deg,#1c1400,#3d2e00);border-color:#eab30833}
+.ch-green{background:linear-gradient(135deg,#052e16,#064e3b)}
+.ch-blue{background:linear-gradient(135deg,#0c1445,#1e3a8a)}
+.ch-purple{background:linear-gradient(135deg,#2e1065,#4c1d95)}
+.ch-orange{background:linear-gradient(135deg,#431407,#7c2d12)}
+.ch-cyan{background:linear-gradient(135deg,#0a2540,#155e75)}
+.ch-red{background:linear-gradient(135deg,#450a0a,#7f1d1d)}
+.ch-pink{background:linear-gradient(135deg,#2d0a1e,#831843)}
+.ch-teal{background:linear-gradient(135deg,#042f2e,#134e4a)}
+.ch-slate{background:linear-gradient(135deg,#0f172a,#1e293b)}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px 24px;margin-bottom:18px;box-shadow:var(--shadow)}
+.card h3{font-size:1.05rem;font-weight:700;color:#e6edf3;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.card p,.card li{font-size:.92rem;color:#8b949e;line-height:1.7}
+.card ul,.card ol{padding-left:18px;display:flex;flex-direction:column;gap:5px}
+
+/* CODE */
+pre{background:var(--code);color:#c9d1d9;border-radius:8px;padding:18px 20px;overflow-x:auto;font-size:.84rem;line-height:1.75;margin:10px 0;font-family:'Cascadia Code','Fira Code','Consolas',monospace;border:1px solid #21262d}
+.inline-code,.ic{background:#21262d;color:#79c0ff;padding:2px 7px;border-radius:5px;font-family:'Cascadia Code','Fira Code',monospace;font-size:.85em}
+
+/* SYNTAX COLORS */
+.kw{color:#ff7b72}    /* keyword: const let function return */
+.str{color:#a5d6ff}   /* string */
+.fn{color:#d2a8ff}    /* function name */
+.cm{color:#484f58;font-style:italic} /* comment */
+.num{color:#79c0ff}   /* number */
+.bool{color:#ff7b72}  /* boolean */
+.op{color:#ff7b72}    /* operator */
+.type{color:#ffa657}  /* type/class */
+.prop{color:#79c0ff}  /* property */
+.tag{color:#7ee787}   /* template literal tag */
+.arr{color:#ffa657}   /* arrow */
+.out{color:#7ee787}   /* output */
+.err{color:#ef4444}   /* error */
+.hl{background:rgba(247,223,30,.08);border-left:3px solid #f7df1e;padding-left:8px;display:block;margin:-1px 0}
+
+/* GRIDS */
+.grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
+.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+
+/* CALLOUT */
+.callout{border-radius:8px;padding:13px 17px;margin:12px 0;display:flex;gap:10px;font-size:.9rem;line-height:1.6}
+.callout.info{background:rgba(59,130,246,.08);border-left:3px solid #3b82f6;color:#93c5fd}
+.callout.tip{background:rgba(16,185,129,.08);border-left:3px solid #10b981;color:#6ee7b7}
+.callout.warn{background:rgba(247,223,30,.08);border-left:3px solid #f7df1e;color:#fef08a}
+.callout.danger{background:rgba(239,68,68,.08);border-left:3px solid #ef4444;color:#fca5a5}
+.callout .ci{font-size:1.05rem;flex-shrink:0;margin-top:1px}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:12px 0}
+th{background:#1c2128;padding:9px 13px;text-align:left;font-weight:700;color:#8b949e;border:1px solid #30363d}
+td{padding:9px 13px;border:1px solid #30363d;vertical-align:top;color:#c9d1d9}
+tr:nth-child(even) td{background:#161b22}
+td code{color:#79c0ff;font-family:'Cascadia Code','Fira Code',monospace;font-size:.85em}
+
+/* COMPARE */
+.compare{display:grid;grid-template-columns:1fr 1fr;border:1px solid #30363d;border-radius:var(--radius);overflow:hidden;margin:12px 0}
+.compare-col:first-child{border-right:1px solid #30363d}
+.compare-head{padding:8px 16px;font-size:.82rem;font-weight:700;text-align:center}
+.compare-head.old{background:rgba(239,68,68,.15);color:#fca5a5}
+.compare-head.new{background:rgba(16,185,129,.15);color:#6ee7b7}
+.compare-col pre{margin:0;border-radius:0;border:none;border-top:1px solid #30363d;font-size:.82rem}
+
+/* FLOW */
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:6px;padding:14px 16px;background:#0d1117;border:1px solid #30363d;border-radius:8px;margin:10px 0;font-family:'Cascadia Code',monospace;font-size:.85rem}
+.fb{padding:7px 14px;border-radius:6px;font-weight:700;text-align:center;color:#fff}
+.fb-y{background:#78350f;color:#fef08a;border:1px solid #f7df1e44}
+.fb-g{background:#065f46;color:#6ee7b7}
+.fb-b{background:#1e3a8a;color:#93c5fd}
+.fb-p{background:#4c1d95;color:#ddd6fe}
+.fb-r{background:#7f1d1d;color:#fca5a5}
+.fb-c{background:#155e75;color:#67e8f9}
+.fa{color:#f7df1e;font-size:1.1rem;padding:0 4px}
+
+/* VERSION TAG */
+.ver{display:inline-block;background:rgba(247,223,30,.15);color:#f7df1e;border:1px solid rgba(247,223,30,.3);padding:1px 8px;border-radius:4px;font-size:.72rem;font-weight:700;margin-left:6px;vertical-align:middle;font-family:monospace}
+
+/* OUTPUT BOX */
+.output{background:#0a1628;border:1px solid #1d4ed8;border-radius:6px;padding:12px 16px;margin:8px 0;font-family:'Cascadia Code','Fira Code',monospace;font-size:.83rem;color:#93c5fd}
+.output::before{content:'// Output';display:block;color:#484f58;font-size:.75rem;margin-bottom:6px}
+
+/* FOOTER */
+footer{background:#0d1117;border-top:1px solid #21262d;color:#484f58;text-align:center;padding:32px;font-size:.85rem}
+footer strong{color:#8b949e}
+
+@media(max-width:600px){
+  .grid-2,.grid-3{grid-template-columns:1fr}
+  .compare{grid-template-columns:1fr}
+  .compare-col:first-child{border-right:none;border-bottom:1px solid #30363d}
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <h1><span class="js">JS</span> &nbsp;<span class="es6">ES6+</span></h1>
+  <p>สื่อการสอน JavaScript ฉบับสมบูรณ์ — ตั้งแต่พื้นฐานถึง ES2024</p>
+  <div class="badge-row">
+    <span class="badge">Variables</span>
+    <span class="badge">Functions</span>
+    <span class="badge">Arrow Functions</span>
+    <span class="badge">Destructuring</span>
+    <span class="badge">Spread/Rest</span>
+    <span class="badge">Promise</span>
+    <span class="badge">Async/Await</span>
+    <span class="badge">Classes</span>
+    <span class="badge">Modules</span>
+    <span class="badge">Array Methods</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav-sticky" id="main-nav">
+  <a href="#datatypes">Data Types</a>
+  <a href="#variables">Variables</a>
+  <a href="#functions">Functions</a>
+  <a href="#objects">Objects</a>
+  <a href="#arrays">Arrays</a>
+  <a href="#destructuring">Destructuring</a>
+  <a href="#spread">Spread/Rest</a>
+  <a href="#classes">Classes</a>
+  <a href="#async">Async/Await</a>
+  <a href="#modules">Modules</a>
+  <a href="#new-features">ES2020+</a>
+  <a href="#array-methods">Array Methods</a>
+</nav>
+
+<div class="container">
+
+<!-- ============================================================ -->
+<!-- 01 Data Types -->
+<!-- ============================================================ -->
+<section id="datatypes">
+  <div class="chapter-header ch-js">
+    <div class="ch-num">01</div>
+    <div>
+      <h2>Data Types และ Type Coercion</h2>
+      <p>ชนิดข้อมูลใน JavaScript และกฎการแปลง type อัตโนมัติ</p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>🔢 Primitive Types (7 ชนิด)</h3>
+<pre><span class="cm">// 1. String</span>
+<span class="kw">const</span> name = <span class="str">'สมชาย'</span>
+<span class="kw">const</span> msg  = <span class="str">"hello world"</span>
+<span class="kw">const</span> tmpl = <span class="str">`สวัสดี <span class="kw">${name}</span>`</span>  <span class="cm">// template literal</span>
+
+<span class="cm">// 2. Number</span>
+<span class="kw">const</span> age  = <span class="num">25</span>
+<span class="kw">const</span> pi   = <span class="num">3.14159</span>
+<span class="kw">const</span> inf  = Infinity
+<span class="kw">const</span> nan  = NaN             <span class="cm">// Not a Number</span>
+
+<span class="cm">// 3. Boolean</span>
+<span class="kw">const</span> isOk = <span class="bool">true</span>
+<span class="kw">const</span> done = <span class="bool">false</span>
+
+<span class="cm">// 4. Undefined — ประกาศแต่ยังไม่มีค่า</span>
+<span class="kw">let</span> x                <span class="cm">// undefined</span>
+
+<span class="cm">// 5. Null — ตั้งใจให้ว่าง</span>
+<span class="kw">const</span> data = <span class="bool">null</span>
+
+<span class="cm">// 6. BigInt (ES2020)</span>
+<span class="kw">const</span> big = <span class="num">9007199254740993n</span>
+
+<span class="cm">// 7. Symbol — unique identifier</span>
+<span class="kw">const</span> id = Symbol(<span class="str">'id'</span>)</pre>
+    </div>
+    <div class="card">
+      <h3>🧩 typeof และ Type Checking</h3>
+<pre><span class="cm">// typeof</span>
+<span class="kw">typeof</span> <span class="str">"hello"</span>     <span class="cm">// "string"</span>
+<span class="kw">typeof</span> <span class="num">42</span>          <span class="cm">// "number"</span>
+<span class="kw">typeof</span> <span class="bool">true</span>        <span class="cm">// "boolean"</span>
+<span class="kw">typeof</span> <span class="kw">undefined</span>   <span class="cm">// "undefined"</span>
+<span class="kw">typeof</span> <span class="bool">null</span>        <span class="cm">// "object" ← bug ดั้งเดิมใน JS!</span>
+<span class="kw">typeof</span> {}          <span class="cm">// "object"</span>
+<span class="kw">typeof</span> []          <span class="cm">// "object"</span>
+<span class="kw">typeof</span> <span class="kw">function</span>(){} <span class="cm">// "function"</span>
+
+<span class="cm">// ตรวจสอบ null</span>
+data === <span class="bool">null</span>                  <span class="cm">// true ✅</span>
+
+<span class="cm">// ตรวจสอบ Array</span>
+Array.<span class="fn">isArray</span>([])               <span class="cm">// true ✅</span>
+
+<span class="cm">// instanceof</span>
+[] <span class="kw">instanceof</span> Array             <span class="cm">// true</span>
+<span class="kw">new</span> Date() <span class="kw">instanceof</span> Date      <span class="cm">// true</span>
+
+<span class="cm">// Nullish check</span>
+<span class="kw">const</span> val = <span class="bool">null</span>
+val == <span class="bool">null</span>    <span class="cm">// true (null หรือ undefined)</span>
+val === <span class="bool">null</span>   <span class="cm">// true (เฉพาะ null เท่านั้น)</span></pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>⚠️ Truthy / Falsy — ค่าที่ JS ถือว่า false</h3>
+    <div class="grid-2">
+<pre><span class="cm">// Falsy values (มี 8 ค่า)</span>
+<span class="bool">false</span>
+<span class="num">0</span>           <span class="cm">// เลขศูนย์</span>
+<span class="num">-0</span>          <span class="cm">// ลบศูนย์</span>
+<span class="num">0n</span>          <span class="cm">// BigInt ศูนย์</span>
+<span class="str">""</span>          <span class="cm">// string ว่าง</span>
+<span class="bool">null</span>
+<span class="kw">undefined</span>
+NaN
+
+<span class="cm">// ทุกค่าอื่นเป็น Truthy รวมถึง...</span>
+<span class="str">"0"</span>         <span class="cm">// string "0" เป็น truthy!</span>
+[]          <span class="cm">// array ว่างเป็น truthy!</span>
+{}          <span class="cm">// object ว่างเป็น truthy!</span></pre>
+<pre><span class="cm">// == vs ===</span>
+<span class="cm">// == (loose) แปลง type อัตโนมัติ</span>
+<span class="num">1</span> == <span class="str">"1"</span>      <span class="cm">// true  ← อันตราย!</span>
+<span class="bool">null</span> == <span class="kw">undefined</span>  <span class="cm">// true</span>
+<span class="num">0</span> == <span class="bool">false</span>   <span class="cm">// true</span>
+
+<span class="cm">// === (strict) ไม่แปลง type</span>
+<span class="num">1</span> === <span class="str">"1"</span>    <span class="cm">// false ✅</span>
+<span class="bool">null</span> === <span class="kw">undefined</span>  <span class="cm">// false ✅</span>
+<span class="num">0</span> === <span class="bool">false</span> <span class="cm">// false ✅</span>
+
+<span class="callout warn" style="margin:0;font-family:inherit;font-size:.85rem">
+⚠️ ใช้ === เสมอ หลีกเลี่ยง == ทั้งหมด
+</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 02 Variables -->
+<!-- ============================================================ -->
+<section id="variables">
+  <div class="chapter-header ch-yellow">
+    <div class="ch-num">02</div>
+    <div>
+      <h2>Variables — var, let, const</h2>
+      <p>Scope, Hoisting และการใช้งานที่ถูกต้อง</p>
+    </div>
+  </div>
+
+  <div class="compare">
+    <div class="compare-col">
+      <div class="compare-head old">⛔ var (หลีกเลี่ยง)</div>
+<pre><span class="cm">// Function scope (ไม่ใช่ block)</span>
+<span class="kw">var</span> x = <span class="num">10</span>
+<span class="kw">if</span> (<span class="bool">true</span>) {
+  <span class="kw">var</span> x = <span class="num">20</span>  <span class="cm">// ทับของเดิม!</span>
+}
+console.log(x)  <span class="cm">// 20 😱</span>
+
+<span class="cm">// Hoisting — ลอยขึ้นไปด้านบน</span>
+console.log(y)  <span class="cm">// undefined</span>
+<span class="kw">var</span> y = <span class="num">5</span>
+
+<span class="cm">// Re-declare ได้</span>
+<span class="kw">var</span> z = <span class="num">1</span>
+<span class="kw">var</span> z = <span class="num">2</span>  <span class="cm">// ไม่ error!</span></pre>
+    </div>
+    <div class="compare-col">
+      <div class="compare-head new">✅ let, const (ใช้เสมอ)</div>
+<pre><span class="cm">// Block scope</span>
+<span class="kw">let</span> x = <span class="num">10</span>
+<span class="kw">if</span> (<span class="bool">true</span>) {
+  <span class="kw">let</span> x = <span class="num">20</span>  <span class="cm">// คนละตัว</span>
+}
+console.log(x)  <span class="cm">// 10 ✅</span>
+
+<span class="cm">// Temporal Dead Zone</span>
+console.log(y)  <span class="cm">// ReferenceError ✅</span>
+<span class="kw">let</span> y = <span class="num">5</span>
+
+<span class="cm">// Re-declare ไม่ได้</span>
+<span class="kw">const</span> z = <span class="num">1</span>
+<span class="cm">// const z = 2  ← SyntaxError ✅</span>
+<span class="cm">// z = 2         ← TypeError ✅</span></pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📌 กฎการใช้ let vs const</h3>
+    <table>
+      <tr><th></th><th><code>const</code></th><th><code>let</code></th></tr>
+      <tr><td>Reassign ได้ไหม</td><td>❌</td><td>✅</td></tr>
+      <tr><td>Redeclare ได้ไหม</td><td>❌</td><td>❌</td></tr>
+      <tr><td>Block scope</td><td>✅</td><td>✅</td></tr>
+      <tr><td>ใช้เมื่อ</td><td>ค่าไม่เปลี่ยน (ส่วนใหญ่)</td><td>ค่าเปลี่ยนได้ (loop, counter)</td></tr>
+    </table>
+    <div class="callout tip">
+      <span class="ci">✅</span>
+      <div><strong>กฎง่ายๆ:</strong> ใช้ <span class="ic">const</span> ก่อนเสมอ เปลี่ยนเป็น <span class="ic">let</span> เมื่อจำเป็นต้อง reassign เท่านั้น ห้ามใช้ <span class="ic">var</span></div>
+    </div>
+<pre><span class="cm">// const กับ object/array — reference ไม่เปลี่ยน แต่เนื้อหาเปลี่ยนได้</span>
+<span class="kw">const</span> user = { name: <span class="str">'สมชาย'</span>, age: <span class="num">25</span> }
+user.age = <span class="num">26</span>    <span class="cm">// ✅ แก้ property ได้</span>
+<span class="cm">// user = {}     ← TypeError: ไม่สามารถ reassign ได้</span>
+
+<span class="kw">const</span> nums = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]
+nums.<span class="fn">push</span>(<span class="num">4</span>)     <span class="cm">// ✅ แก้ array ได้</span>
+<span class="cm">// nums = []     ← TypeError</span></pre>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 03 Functions -->
+<!-- ============================================================ -->
+<section id="functions">
+  <div class="chapter-header ch-green">
+    <div class="ch-num">03</div>
+    <div>
+      <h2>Functions — Arrow, Default, Rest</h2>
+      <p>ทุกรูปแบบของฟังก์ชันใน JavaScript</p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>📌 Function Declaration vs Expression</h3>
+<pre><span class="cm">// ─── Declaration — hoisted ────────────────</span>
+<span class="fn">greet</span>(<span class="str">'สมชาย'</span>)   <span class="cm">// ✅ เรียกก่อนประกาศได้</span>
+
+<span class="kw">function</span> <span class="fn">greet</span>(name) {
+  <span class="kw">return</span> <span class="str">`สวัสดี <span class="kw">${name}</span>!`</span>
+}
+
+<span class="cm">// ─── Expression — NOT hoisted ─────────────</span>
+<span class="cm">// add(1,2)  ← ReferenceError!</span>
+<span class="kw">const</span> <span class="fn">add</span> = <span class="kw">function</span>(a, b) {
+  <span class="kw">return</span> a + b
+}
+
+<span class="cm">// Named expression (ดีกว่าสำหรับ debug)</span>
+<span class="kw">const</span> <span class="fn">multiply</span> = <span class="kw">function</span> <span class="fn">multiply</span>(a, b) {
+  <span class="kw">return</span> a * b
+}</pre>
+    </div>
+    <div class="card">
+      <h3>⚡ Arrow Function <span class="ver">ES6</span></h3>
+<pre><span class="cm">// แบบเต็ม</span>
+<span class="kw">const</span> <span class="fn">add</span> = (a, b) <span class="arr">=></span> {
+  <span class="kw">return</span> a + b
+}
+
+<span class="cm">// Implicit return (ไม่ต้อง return)</span>
+<span class="kw">const</span> <span class="fn">add</span>    = (a, b) <span class="arr">=></span> a + b
+<span class="kw">const</span> <span class="fn">square</span> = x <span class="arr">=></span> x * x    <span class="cm">// 1 param ไม่ต้อง ()</span>
+<span class="kw">const</span> <span class="fn">hello</span>  = () <span class="arr">=></span> <span class="str">'Hi!'</span>   <span class="cm">// ไม่มี param ต้อง ()</span>
+
+<span class="cm">// Return object — ต้องใส่ ()</span>
+<span class="kw">const</span> <span class="fn">makeUser</span> = (n, a) <span class="arr">=></span> ({ name: n, age: a })
+
+<span class="cm">// Arrow function ไม่มี this ของตัวเอง</span>
+<span class="kw">const</span> obj = {
+  name: <span class="str">'obj'</span>,
+  regular() { console.log(<span class="kw">this</span>.name) },  <span class="cm">// ✅ "obj"</span>
+  arrow: () <span class="arr">=></span> { console.log(<span class="kw">this</span>.name) }  <span class="cm">// ❌ undefined</span>
+}</pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🎛️ Parameters — Default, Rest <span class="ver">ES6</span></h3>
+    <div class="grid-2">
+<pre><span class="cm">// Default Parameters</span>
+<span class="kw">function</span> <span class="fn">greet</span>(name = <span class="str">'เพื่อน'</span>, emoji = <span class="str">'👋'</span>) {
+  <span class="kw">return</span> <span class="str">`<span class="kw">${emoji}</span> สวัสดี <span class="kw">${name}</span>!`</span>
+}
+
+<span class="fn">greet</span>()               <span class="cm">// 👋 สวัสดี เพื่อน!</span>
+<span class="fn">greet</span>(<span class="str">'สมชาย'</span>)        <span class="cm">// 👋 สวัสดี สมชาย!</span>
+<span class="fn">greet</span>(<span class="str">'จอห์น'</span>, <span class="str">'🎉'</span>) <span class="cm">// 🎉 สวัสดี จอห์น!</span>
+
+<span class="cm">// Default อ้างอิงตัวก่อนหน้าได้</span>
+<span class="kw">const</span> <span class="fn">createUser</span> = (
+  name,
+  role = <span class="str">'user'</span>,
+  id = Math.<span class="fn">random</span>()
+) => ({ name, role, id })</pre>
+<pre><span class="cm">// Rest Parameters (...args)</span>
+<span class="cm">// ต้องอยู่สุดท้ายเสมอ</span>
+<span class="kw">function</span> <span class="fn">sum</span>(...numbers) {
+  <span class="kw">return</span> numbers.<span class="fn">reduce</span>((a, b) => a + b, <span class="num">0</span>)
+}
+
+<span class="fn">sum</span>(<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>)         <span class="cm">// 6</span>
+<span class="fn">sum</span>(<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>)   <span class="cm">// 15</span>
+
+<span class="kw">function</span> <span class="fn">log</span>(level, ...messages) {
+  messages.<span class="fn">forEach</span>(m => {
+    console.log(<span class="str">`[<span class="kw">${level}</span>] <span class="kw">${m}</span>`</span>)
+  })
+}
+
+<span class="fn">log</span>(<span class="str">'INFO'</span>, <span class="str">'start'</span>, <span class="str">'loading'</span>, <span class="str">'done'</span>)</pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔄 Closure และ Higher-Order Functions</h3>
+    <div class="grid-2">
+<pre><span class="cm">// Closure — ฟังก์ชันจำค่า scope ของตัวเอง</span>
+<span class="kw">function</span> <span class="fn">makeCounter</span>(start = <span class="num">0</span>) {
+  <span class="kw">let</span> count = start
+
+  <span class="kw">return</span> {
+    increment: () <span class="arr">=></span> ++count,
+    decrement: () <span class="arr">=></span> --count,
+    reset:     () <span class="arr">=></span> { count = start; <span class="kw">return</span> count },
+    value:     () <span class="arr">=></span> count,
+  }
+}
+
+<span class="kw">const</span> counter = <span class="fn">makeCounter</span>(<span class="num">10</span>)
+counter.<span class="fn">increment</span>()  <span class="cm">// 11</span>
+counter.<span class="fn">increment</span>()  <span class="cm">// 12</span>
+counter.<span class="fn">decrement</span>()  <span class="cm">// 11</span>
+counter.<span class="fn">value</span>()      <span class="cm">// 11</span></pre>
+<pre><span class="cm">// Higher-Order Function</span>
+<span class="cm">// รับ/คืน function เป็น value</span>
+
+<span class="kw">const</span> <span class="fn">multiply</span> = (factor) => (num) => num * factor
+
+<span class="kw">const</span> double = <span class="fn">multiply</span>(<span class="num">2</span>)
+<span class="kw">const</span> triple = <span class="fn">multiply</span>(<span class="num">3</span>)
+
+double(<span class="num">5</span>)  <span class="cm">// 10</span>
+triple(<span class="num">5</span>)  <span class="cm">// 15</span>
+
+<span class="cm">// Compose functions</span>
+<span class="kw">const</span> <span class="fn">compose</span> = (...fns) =>
+  (x) => fns.<span class="fn">reduceRight</span>((v, f) => <span class="fn">f</span>(v), x)
+
+<span class="kw">const</span> addOne = x => x + <span class="num">1</span>
+<span class="kw">const</span> double2 = x => x * <span class="num">2</span>
+<span class="kw">const</span> transform = <span class="fn">compose</span>(addOne, double2)
+<span class="fn">transform</span>(<span class="num">5</span>)  <span class="cm">// (5*2)+1 = 11</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 04 Objects -->
+<!-- ============================================================ -->
+<section id="objects">
+  <div class="chapter-header ch-blue">
+    <div class="ch-num">04</div>
+    <div>
+      <h2>Objects &amp; Shorthand <span class="ver">ES6</span></h2>
+      <p>Object literals, computed keys, optional chaining</p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>📦 Object Shorthand <span class="ver">ES6</span></h3>
+<pre><span class="kw">const</span> name = <span class="str">'สมชาย'</span>
+<span class="kw">const</span> age  = <span class="num">25</span>
+
+<span class="cm">// ก่อน ES6</span>
+<span class="kw">const</span> user = { name: name, age: age }
+
+<span class="cm">// ES6 Shorthand</span>
+<span class="kw">const</span> user = { name, age }  <span class="cm">// ✅ สั้นกว่า</span>
+
+<span class="cm">// Method shorthand</span>
+<span class="kw">const</span> obj = {
+  value: <span class="num">10</span>,
+
+  <span class="cm">// ก่อน ES6</span>
+  getValue: <span class="kw">function</span>() { <span class="kw">return</span> <span class="kw">this</span>.value },
+
+  <span class="cm">// ES6 shorthand</span>
+  <span class="fn">getValue</span>() { <span class="kw">return</span> <span class="kw">this</span>.value },
+
+  <span class="cm">// Computed property key</span>
+  [<span class="str">'key_'</span> + <span class="num">1</span>]: <span class="str">'dynamic'</span>
+}</pre>
+    </div>
+    <div class="card">
+      <h3>🔗 Optional Chaining &amp; Nullish <span class="ver">ES2020</span></h3>
+<pre><span class="kw">const</span> user = {
+  name: <span class="str">'สมชาย'</span>,
+  address: {
+    city: <span class="str">'กรุงเทพฯ'</span>
+  }
+}
+
+<span class="cm">// ?.  — Optional chaining</span>
+user?.address?.city      <span class="cm">// "กรุงเทพฯ"</span>
+user?.phone?.number      <span class="cm">// undefined (ไม่ error)</span>
+user?.greet?.()          <span class="cm">// ถ้าไม่ใช่ fn → undefined</span>
+arr?.[<span class="num">0</span>]                 <span class="cm">// optional index</span>
+
+<span class="cm">// ?? — Nullish Coalescing</span>
+<span class="cm">// คืนค่าขวาเมื่อซ้ายเป็น null หรือ undefined เท่านั้น</span>
+<span class="kw">const</span> port = <span class="bool">null</span> ?? <span class="num">3000</span>   <span class="cm">// 3000</span>
+<span class="kw">const</span> val  = <span class="num">0</span> ?? <span class="str">'default'</span>  <span class="cm">// 0 ← ต่างจาก ||</span>
+<span class="kw">const</span> val2 = <span class="num">0</span> || <span class="str">'default'</span>  <span class="cm">// "default" ← 0 เป็น falsy</span>
+
+<span class="cm">// ??= — Nullish Assignment (ES2021)</span>
+<span class="kw">let</span> x = <span class="bool">null</span>
+x ??= <span class="num">42</span>    <span class="cm">// x = 42</span>
+x ??= <span class="num">99</span>    <span class="cm">// x ยังเป็น 42 (ไม่ใช่ null/undefined แล้ว)</span></pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔄 Object Methods สำคัญ</h3>
+<pre><span class="kw">const</span> user = { name: <span class="str">'สมชาย'</span>, age: <span class="num">25</span>, role: <span class="str">'admin'</span> }
+
+<span class="cm">// Object.keys / values / entries</span>
+Object.<span class="fn">keys</span>(user)     <span class="cm">// ["name", "age", "role"]</span>
+Object.<span class="fn">values</span>(user)   <span class="cm">// ["สมชาย", 25, "admin"]</span>
+Object.<span class="fn">entries</span>(user)  <span class="cm">// [["name","สมชาย"], ["age",25], ["role","admin"]]</span>
+
+<span class="cm">// Object.assign — merge</span>
+<span class="kw">const</span> updated = Object.<span class="fn">assign</span>({}, user, { age: <span class="num">26</span> })
+
+<span class="cm">// Object.freeze — ป้องกันการแก้ไข</span>
+<span class="kw">const</span> SETTINGS = Object.<span class="fn">freeze</span>({ theme: <span class="str">'dark'</span>, lang: <span class="str">'th'</span> })
+
+<span class="cm">// Object.fromEntries (ES2019)</span>
+<span class="kw">const</span> entries = [[<span class="str">'a'</span>, <span class="num">1</span>], [<span class="str">'b'</span>, <span class="num">2</span>]]
+Object.<span class="fn">fromEntries</span>(entries)  <span class="cm">// { a: 1, b: 2 }</span>
+
+<span class="cm">// ใช้กับ Map</span>
+<span class="kw">const</span> map = <span class="kw">new</span> <span class="type">Map</span>([[<span class="str">'x'</span>, <span class="num">10</span>], [<span class="str">'y'</span>, <span class="num">20</span>]])
+Object.<span class="fn">fromEntries</span>(map)  <span class="cm">// { x: 10, y: 20 }</span>
+
+<span class="cm">// Loop ผ่าน entries</span>
+<span class="kw">for</span> (<span class="kw">const</span> [key, value] <span class="kw">of</span> Object.<span class="fn">entries</span>(user)) {
+  console.log(<span class="str">`<span class="kw">${key}</span>: <span class="kw">${value}</span>`</span>)
+}</pre>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 05 Arrays -->
+<!-- ============================================================ -->
+<section id="arrays">
+  <div class="chapter-header ch-purple">
+    <div class="ch-num">05</div>
+    <div>
+      <h2>Arrays &amp; Iteration</h2>
+      <p>สร้าง, แก้ไข และ iterate arrays ทุกรูปแบบ</p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>🔧 Array Methods พื้นฐาน</h3>
+<pre><span class="kw">const</span> fruits = [<span class="str">'🍎'</span>, <span class="str">'🍊'</span>, <span class="str">'🍋'</span>]
+
+<span class="cm">// เพิ่ม / ลบ</span>
+fruits.<span class="fn">push</span>(<span class="str">'🍇'</span>)       <span class="cm">// เพิ่มท้าย</span>
+fruits.<span class="fn">pop</span>()             <span class="cm">// ลบท้าย → '🍇'</span>
+fruits.<span class="fn">unshift</span>(<span class="str">'🍓'</span>)    <span class="cm">// เพิ่มหน้า</span>
+fruits.<span class="fn">shift</span>()           <span class="cm">// ลบหน้า → '🍓'</span>
+
+<span class="cm">// ค้นหา</span>
+fruits.<span class="fn">indexOf</span>(<span class="str">'🍊'</span>)   <span class="cm">// 1</span>
+fruits.<span class="fn">includes</span>(<span class="str">'🍎'</span>) <span class="cm">// true</span>
+fruits.<span class="fn">find</span>(f => f === <span class="str">'🍋'</span>)     <span class="cm">// '🍋'</span>
+fruits.<span class="fn">findIndex</span>(f => f === <span class="str">'🍋'</span>) <span class="cm">// 2</span>
+
+<span class="cm">// ตัด / แทนที่</span>
+fruits.<span class="fn">slice</span>(<span class="num">1</span>, <span class="num">3</span>)      <span class="cm">// ดึงออกมา [index 1,2]</span>
+fruits.<span class="fn">splice</span>(<span class="num">1</span>, <span class="num">1</span>)     <span class="cm">// ลบ 1 ตัว จาก index 1</span>
+fruits.<span class="fn">splice</span>(<span class="num">1</span>, <span class="num">0</span>, <span class="str">'🍑'</span>)  <span class="cm">// แทรกที่ index 1</span></pre>
+    </div>
+    <div class="card">
+      <h3>🔁 for...of และ iteration <span class="ver">ES6</span></h3>
+<pre><span class="kw">const</span> nums = [<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>]
+
+<span class="cm">// for...of — ค่าแต่ละตัว</span>
+<span class="kw">for</span> (<span class="kw">const</span> n <span class="kw">of</span> nums) {
+  console.log(n)  <span class="cm">// 10, 20, 30</span>
+}
+
+<span class="cm">// entries() — ได้ index ด้วย</span>
+<span class="kw">for</span> (<span class="kw">const</span> [i, n] <span class="kw">of</span> nums.<span class="fn">entries</span>()) {
+  console.log(i, n)  <span class="cm">// 0 10, 1 20, 2 30</span>
+}
+
+<span class="cm">// for...in — keys ของ object</span>
+<span class="kw">const</span> user = { name: <span class="str">'จอห์น'</span>, age: <span class="num">30</span> }
+<span class="kw">for</span> (<span class="kw">const</span> key <span class="kw">in</span> user) {
+  console.log(key, user[key])
+}
+
+<span class="cm">// forEach</span>
+nums.<span class="fn">forEach</span>((n, i) => console.log(i, n))
+
+<span class="cm">// Array.from</span>
+Array.<span class="fn">from</span>({ length: <span class="num">5</span> }, (_, i) => i + <span class="num">1</span>)
+<span class="cm">// [1, 2, 3, 4, 5]</span>
+
+Array.<span class="fn">from</span>(<span class="str">'hello'</span>)  <span class="cm">// ['h','e','l','l','o']</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 06 Destructuring -->
+<!-- ============================================================ -->
+<section id="destructuring">
+  <div class="chapter-header ch-orange">
+    <div class="ch-num">06</div>
+    <div>
+      <h2>Destructuring <span class="ver">ES6</span></h2>
+      <p>แกะ object และ array ออกเป็นตัวแปรในบรรทัดเดียว</p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>📦 Object Destructuring</h3>
+<pre><span class="kw">const</span> user = {
+  name: <span class="str">'สมชาย'</span>,
+  age: <span class="num">25</span>,
+  address: { city: <span class="str">'กรุงเทพฯ'</span>, zip: <span class="str">'10100'</span> }
+}
+
+<span class="cm">// พื้นฐาน</span>
+<span class="kw">const</span> { name, age } = user
+console.log(name)  <span class="cm">// 'สมชาย'</span>
+
+<span class="cm">// เปลี่ยนชื่อตัวแปร</span>
+<span class="kw">const</span> { name: userName, age: userAge } = user
+
+<span class="cm">// Default value</span>
+<span class="kw">const</span> { name, role = <span class="str">'user'</span> } = user
+<span class="cm">// role = 'user' (ไม่มีใน object)</span>
+
+<span class="cm">// Nested destructuring</span>
+<span class="kw">const</span> { address: { city, zip } } = user
+
+<span class="cm">// ใน function parameters</span>
+<span class="kw">function</span> <span class="fn">display</span>({ name, age, role = <span class="str">'guest'</span> }) {
+  console.log(<span class="str">`<span class="kw">${name}</span> (<span class="kw">${age}</span>) - <span class="kw">${role}</span>`</span>)
+}
+<span class="fn">display</span>(user)</pre>
+    </div>
+    <div class="card">
+      <h3>📋 Array Destructuring</h3>
+<pre><span class="kw">const</span> colors = [<span class="str">'red'</span>, <span class="str">'green'</span>, <span class="str">'blue'</span>, <span class="str">'yellow'</span>]
+
+<span class="cm">// พื้นฐาน</span>
+<span class="kw">const</span> [first, second] = colors
+<span class="cm">// first='red', second='green'</span>
+
+<span class="cm">// ข้ามตัวแปร</span>
+<span class="kw">const</span> [, , third] = colors
+<span class="cm">// third='blue'</span>
+
+<span class="cm">// Rest elements</span>
+<span class="kw">const</span> [head, ...tail] = colors
+<span class="cm">// head='red', tail=['green','blue','yellow']</span>
+
+<span class="cm">// Default value</span>
+<span class="kw">const</span> [a, b, c, d, e = <span class="str">'purple'</span>] = colors
+<span class="cm">// e='purple'</span>
+
+<span class="cm">// Swap variables ✨</span>
+<span class="kw">let</span> x = <span class="num">1</span>, y = <span class="num">2</span>
+;[x, y] = [y, x]  <span class="cm">// x=2, y=1</span>
+
+<span class="cm">// จาก function return</span>
+<span class="kw">function</span> <span class="fn">getRange</span>() { <span class="kw">return</span> [<span class="num">1</span>, <span class="num">100</span>] }
+<span class="kw">const</span> [min, max] = <span class="fn">getRange</span>()  <span class="cm">// min=1, max=100</span></pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔀 Mixed Destructuring</h3>
+<pre><span class="kw">const</span> response = {
+  status: <span class="num">200</span>,
+  data: {
+    users: [
+      { id: <span class="num">1</span>, name: <span class="str">'สมชาย'</span>, scores: [<span class="num">90</span>, <span class="num">85</span>, <span class="num">92</span>] },
+      { id: <span class="num">2</span>, name: <span class="str">'สมหญิง'</span>, scores: [<span class="num">88</span>, <span class="num">94</span>, <span class="num">79</span>] },
+    ]
+  }
+}
+
+<span class="cm">// Nested mixed destructuring</span>
+<span class="kw">const</span> { status, data: { users: [firstUser, secondUser] } } = response
+console.log(firstUser.name)   <span class="cm">// 'สมชาย'</span>
+
+<span class="cm">// Destructure แบบ step by step (อ่านง่ายกว่า)</span>
+<span class="kw">const</span> { status, data } = response
+<span class="kw">const</span> { users } = data
+<span class="kw">const</span> [{ name, scores: [best] }] = users
+console.log(name, best)  <span class="cm">// 'สมชาย', 90</span></pre>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 07 Spread & Rest -->
+<!-- ============================================================ -->
+<section id="spread">
+  <div class="chapter-header ch-cyan">
+    <div class="ch-num">07</div>
+    <div>
+      <h2>Spread &amp; Rest Operator <span class="ver">ES6</span></h2>
+      <p>... สามตัวจุดที่ใช้ได้ 2 บทบาท</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🌊 Spread — กระจายออก</h3>
+    <div class="grid-2">
+<pre><span class="cm">// ─── Array Spread ─────────────────────</span>
+<span class="kw">const</span> a = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]
+<span class="kw">const</span> b = [<span class="num">4</span>, <span class="num">5</span>, <span class="num">6</span>]
+
+<span class="cm">// รวม arrays</span>
+<span class="kw">const</span> c = [...a, ...b]       <span class="cm">// [1,2,3,4,5,6]</span>
+<span class="kw">const</span> d = [<span class="num">0</span>, ...a, ...b, <span class="num">7</span>] <span class="cm">// [0,1,2,3,4,5,6,7]</span>
+
+<span class="cm">// Copy array (ไม่แชร์ reference)</span>
+<span class="kw">const</span> copy = [...a]
+
+<span class="cm">// ส่งเป็น arguments</span>
+Math.<span class="fn">max</span>(...a)             <span class="cm">// 3</span>
+console.log(...a)           <span class="cm">// 1 2 3</span>
+
+<span class="cm">// String to chars</span>
+[...<span class="str">'hello'</span>]              <span class="cm">// ['h','e','l','l','o']</span></pre>
+<pre><span class="cm">// ─── Object Spread ─────────────────────</span>
+<span class="kw">const</span> defaults = { theme: <span class="str">'dark'</span>, lang: <span class="str">'th'</span> }
+<span class="kw">const</span> custom   = { lang: <span class="str">'en'</span>, size: <span class="str">'lg'</span> }
+
+<span class="cm">// รวม objects (หลังทับหน้า)</span>
+<span class="kw">const</span> settings = { ...defaults, ...custom }
+<span class="cm">// { theme:'dark', lang:'en', size:'lg' }</span>
+
+<span class="cm">// Clone + แก้บางช่อง</span>
+<span class="kw">const</span> user = { name: <span class="str">'สมชาย'</span>, age: <span class="num">25</span> }
+<span class="kw">const</span> updated = { ...user, age: <span class="num">26</span> }
+
+<span class="cm">// เพิ่ม field ใหม่</span>
+<span class="kw">const</span> withRole = { ...user, role: <span class="str">'admin'</span> }
+
+<span class="cm">// ลบ field ด้วย destructuring</span>
+<span class="kw">const</span> { age, ...withoutAge } = user
+<span class="cm">// withoutAge = { name: 'สมชาย' }</span></pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🧲 Rest — รวบรวม</h3>
+<pre><span class="cm">// ─── Rest in Function ──────────────────────────────────────</span>
+<span class="kw">function</span> <span class="fn">first</span>(a, b, ...rest) {
+  console.log(a, b)    <span class="cm">// 1, 2</span>
+  console.log(rest)    <span class="cm">// [3, 4, 5]</span>
+}
+<span class="fn">first</span>(<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>)
+
+<span class="cm">// ─── Rest in Destructuring ────────────────────────────────</span>
+<span class="kw">const</span> [head, ...tail] = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>]
+<span class="cm">// head=1, tail=[2,3,4]</span>
+
+<span class="kw">const</span> { name, ...rest2 } = { name: <span class="str">'สมชาย'</span>, age: <span class="num">25</span>, role: <span class="str">'admin'</span> }
+<span class="cm">// name='สมชาย', rest2={ age:25, role:'admin' }</span>
+
+<span class="cm">// ─── Use case: ลบ sensitive fields ───────────────────────</span>
+<span class="kw">function</span> <span class="fn">sanitizeUser</span>(user) {
+  <span class="kw">const</span> { password, token, ...safeUser } = user
+  <span class="kw">return</span> safeUser
+}</pre>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 08 Classes -->
+<!-- ============================================================ -->
+<section id="classes">
+  <div class="chapter-header ch-pink">
+    <div class="ch-num">08</div>
+    <div>
+      <h2>Classes <span class="ver">ES6</span></h2>
+      <p>OOP ใน JavaScript — constructor, inheritance, private fields</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🏗️ Class พื้นฐาน</h3>
+    <div class="grid-2">
+<pre><span class="cm">// ─── Class Definition ─────────────────</span>
+<span class="kw">class</span> <span class="type">Animal</span> {
+  <span class="cm">// Private fields (ES2022) ใช้ #</span>
+  #name
+  #sound
+
+  <span class="kw">constructor</span>(name, sound) {
+    <span class="kw">this</span>.#name  = name
+    <span class="kw">this</span>.#sound = sound
+    <span class="kw">this</span>.createdAt = <span class="kw">new</span> Date()
+  }
+
+  <span class="cm">// Getter</span>
+  <span class="kw">get</span> <span class="fn">name</span>() { <span class="kw">return</span> <span class="kw">this</span>.#name }
+
+  <span class="cm">// Setter</span>
+  <span class="kw">set</span> <span class="fn">name</span>(val) {
+    <span class="kw">if</span> (!val) <span class="kw">throw new</span> Error(<span class="str">'Name required'</span>)
+    <span class="kw">this</span>.#name = val
+  }
+
+  <span class="cm">// Method</span>
+  <span class="fn">speak</span>() {
+    <span class="kw">return</span> <span class="str">`<span class="kw">${this.#name}</span> พูดว่า <span class="kw">${this.#sound}</span>!`</span>
+  }
+
+  <span class="cm">// Static method</span>
+  <span class="kw">static</span> <span class="fn">create</span>(name, sound) {
+    <span class="kw">return</span> <span class="kw">new</span> <span class="type">Animal</span>(name, sound)
+  }
+}
+
+<span class="kw">const</span> cat = <span class="kw">new</span> <span class="type">Animal</span>(<span class="str">'แมว'</span>, <span class="str">'เมี้ยว'</span>)
+cat.<span class="fn">speak</span>()      <span class="cm">// 'แมว พูดว่า เมี้ยว!'</span>
+cat.name = <span class="str">'เจ้าตูบ'</span>  <span class="cm">// ใช้ setter</span></pre>
+<pre><span class="cm">// ─── Inheritance ──────────────────────</span>
+<span class="kw">class</span> <span class="type">Dog</span> <span class="kw">extends</span> <span class="type">Animal</span> {
+  #tricks = []
+
+  <span class="kw">constructor</span>(name) {
+    <span class="kw">super</span>(name, <span class="str">'โฮ่ง'</span>)   <span class="cm">// เรียก parent</span>
+  }
+
+  <span class="fn">learn</span>(trick) {
+    <span class="kw">this</span>.#tricks.<span class="fn">push</span>(trick)
+  }
+
+  <span class="fn">perform</span>() {
+    <span class="kw">return</span> <span class="kw">this</span>.#tricks.<span class="fn">join</span>(<span class="str">', '</span>)
+  }
+
+  <span class="cm">// Override parent method</span>
+  <span class="fn">speak</span>() {
+    <span class="kw">return</span> <span class="kw">super</span>.<span class="fn">speak</span>() + <span class="str">' 🐕'</span>
+  }
+}
+
+<span class="kw">const</span> dog = <span class="kw">new</span> <span class="type">Dog</span>(<span class="str">'บีเกิ้ล'</span>)
+dog.<span class="fn">learn</span>(<span class="str">'ยกมือ'</span>)
+dog.<span class="fn">learn</span>(<span class="str">'นอน'</span>)
+dog.<span class="fn">perform</span>()   <span class="cm">// 'ยกมือ, นอน'</span>
+dog.<span class="fn">speak</span>()     <span class="cm">// 'บีเกิ้ล พูดว่า โฮ่ง! 🐕'</span>
+
+dog <span class="kw">instanceof</span> <span class="type">Dog</span>     <span class="cm">// true</span>
+dog <span class="kw">instanceof</span> <span class="type">Animal</span>  <span class="cm">// true</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 09 Async/Await -->
+<!-- ============================================================ -->
+<section id="async">
+  <div class="chapter-header ch-teal">
+    <div class="ch-num">09</div>
+    <div>
+      <h2>Promise &amp; Async/Await <span class="ver">ES6/ES2017</span></h2>
+      <p>จัดการ asynchronous code แบบ modern</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔄 Event Loop แบบเข้าใจง่าย</h3>
+    <div class="flow">
+      <div class="fb fb-y">Call Stack<br><small>sync code</small></div>
+      <div class="fa">→</div>
+      <div class="fb fb-b">Web APIs<br><small>setTimeout/fetch</small></div>
+      <div class="fa">→</div>
+      <div class="fb fb-p">Task Queue<br><small>callbacks</small></div>
+      <div class="fa">→ (stack ว่าง)</div>
+      <div class="fb fb-g">Call Stack<br><small>ทำงานต่อ</small></div>
+    </div>
+  </div>
+
+  <div class="compare">
+    <div class="compare-col">
+      <div class="compare-head old">Callback Hell (หลีกเลี่ยง)</div>
+<pre><span class="fn">getUser</span>(<span class="num">1</span>, <span class="kw">function</span>(user) {
+  <span class="fn">getPosts</span>(user.id, <span class="kw">function</span>(posts) {
+    <span class="fn">getComments</span>(posts[<span class="num">0</span>].id, <span class="kw">function</span>(comments) {
+      <span class="fn">getLikes</span>(comments[<span class="num">0</span>].id, <span class="kw">function</span>(likes) {
+        console.log(likes)
+        <span class="cm">// ← pyramid of doom 😱</span>
+      })
+    })
+  })
+})</pre>
+    </div>
+    <div class="compare-col">
+      <div class="compare-head new">Async/Await (ใช้เสมอ)</div>
+<pre><span class="kw">async function</span> <span class="fn">getData</span>() {
+  <span class="kw">const</span> user     = <span class="kw">await</span> <span class="fn">getUser</span>(<span class="num">1</span>)
+  <span class="kw">const</span> posts    = <span class="kw">await</span> <span class="fn">getPosts</span>(user.id)
+  <span class="kw">const</span> comments = <span class="kw">await</span> <span class="fn">getComments</span>(posts[<span class="num">0</span>].id)
+  <span class="kw">const</span> likes    = <span class="kw">await</span> <span class="fn">getLikes</span>(comments[<span class="num">0</span>].id)
+  <span class="kw">return</span> likes
+  <span class="cm">// อ่านง่ายเหมือน sync! ✅</span>
+}</pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>⚡ Promise พื้นฐาน</h3>
+    <div class="grid-2">
+<pre><span class="cm">// สร้าง Promise</span>
+<span class="kw">const</span> fetchData = <span class="kw">new</span> <span class="type">Promise</span>((resolve, reject) => {
+  setTimeout(() => {
+    <span class="kw">const</span> success = <span class="bool">true</span>
+    <span class="kw">if</span> (success) {
+      <span class="fn">resolve</span>({ data: <span class="str">'ข้อมูล'</span> })
+    } <span class="kw">else</span> {
+      <span class="fn">reject</span>(<span class="kw">new</span> Error(<span class="str">'โหลดไม่ได้'</span>))
+    }
+  }, <span class="num">1000</span>)
+})
+
+<span class="cm">// ใช้ .then / .catch / .finally</span>
+fetchData
+  .<span class="fn">then</span>(data => console.log(data))
+  .<span class="fn">catch</span>(err => console.error(err))
+  .<span class="fn">finally</span>(() => console.log(<span class="str">'done'</span>))</pre>
+<pre><span class="cm">// Promise combinators</span>
+
+<span class="cm">// รอทุกอัน (ล้มเหลวถ้าอันใดอันหนึ่งล้ม)</span>
+<span class="kw">const</span> [users, posts] = <span class="kw">await</span> Promise.<span class="fn">all</span>([
+  <span class="fn">fetchUsers</span>(),
+  <span class="fn">fetchPosts</span>(),
+])
+
+<span class="cm">// รอเร็วที่สุด</span>
+<span class="kw">const</span> fastest = <span class="kw">await</span> Promise.<span class="fn">race</span>([api1, api2])
+
+<span class="cm">// รอทุกอัน ไม่สนว่าล้มเหลว</span>
+<span class="kw">const</span> results = <span class="kw">await</span> Promise.<span class="fn">allSettled</span>([a, b, c])
+results.<span class="fn">forEach</span>(r => {
+  <span class="kw">if</span> (r.status === <span class="str">'fulfilled'</span>) console.log(r.value)
+  <span class="kw">if</span> (r.status === <span class="str">'rejected'</span>)  console.log(r.reason)
+})
+
+<span class="cm">// สำเร็จอันแรกที่ resolve (ES2021)</span>
+<span class="kw">const</span> first = <span class="kw">await</span> Promise.<span class="fn">any</span>([a, b, c])</pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🛡️ Async/Await + Error Handling</h3>
+<pre><span class="cm">// ─── try / catch / finally ──────────────────────────────────</span>
+<span class="kw">async function</span> <span class="fn">fetchUser</span>(id) {
+  <span class="kw">try</span> {
+    <span class="kw">const</span> res  = <span class="kw">await</span> fetch(<span class="str">`/api/users/<span class="kw">${id}</span>`</span>)
+    <span class="kw">if</span> (!res.ok) <span class="kw">throw new</span> Error(<span class="str">`HTTP error: <span class="kw">${res.status}</span>`</span>)
+    <span class="kw">const</span> data = <span class="kw">await</span> res.<span class="fn">json</span>()
+    <span class="kw">return</span> data
+  } <span class="kw">catch</span> (err) {
+    console.error(<span class="str">'Fetch failed:'</span>, err.message)
+    <span class="kw">throw</span> err    <span class="cm">// re-throw ให้ caller จัดการต่อ</span>
+  } <span class="kw">finally</span> {
+    console.log(<span class="str">'เสร็จแล้ว'</span>)   <span class="cm">// รันเสมอ</span>
+  }
+}
+
+<span class="cm">// ─── Parallel fetch (เร็วกว่า sequential) ──────────────────</span>
+<span class="kw">async function</span> <span class="fn">loadDashboard</span>(userId) {
+  <span class="cm">// ❌ Sequential — รอทีละอัน (ช้า)</span>
+  <span class="kw">const</span> user    = <span class="kw">await</span> <span class="fn">fetchUser</span>(userId)
+  <span class="kw">const</span> posts   = <span class="kw">await</span> <span class="fn">fetchPosts</span>(userId)
+  <span class="kw">const</span> friends = <span class="kw">await</span> <span class="fn">fetchFriends</span>(userId)
+
+  <span class="cm">// ✅ Parallel — ทำงานพร้อมกัน (เร็วกว่า)</span>
+  <span class="kw">const</span> [user2, posts2, friends2] = <span class="kw">await</span> Promise.<span class="fn">all</span>([
+    <span class="fn">fetchUser</span>(userId),
+    <span class="fn">fetchPosts</span>(userId),
+    <span class="fn">fetchFriends</span>(userId),
+  ])
+}</pre>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 10 Modules -->
+<!-- ============================================================ -->
+<section id="modules">
+  <div class="chapter-header ch-blue">
+    <div class="ch-num">10</div>
+    <div>
+      <h2>ES Modules <span class="ver">ES6</span></h2>
+      <p>import / export — แยกโค้ดเป็นไฟล์</p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>📤 Export</h3>
+<pre><span class="cm">// ─── utils.js ─────────────────────────</span>
+
+<span class="cm">// Named exports</span>
+<span class="kw">export const</span> PI = <span class="num">3.14159</span>
+
+<span class="kw">export function</span> <span class="fn">add</span>(a, b) { <span class="kw">return</span> a + b }
+
+<span class="kw">export class</span> <span class="type">Calculator</span> {
+  <span class="fn">add</span>(a, b) { <span class="kw">return</span> a + b }
+}
+
+<span class="cm">// Export หลังประกาศ</span>
+<span class="kw">const</span> <span class="fn">multiply</span> = (a, b) => a * b
+<span class="kw">const</span> <span class="fn">divide</span>   = (a, b) => a / b
+<span class="kw">export</span> { multiply, divide }
+
+<span class="cm">// Rename ตอน export</span>
+<span class="kw">export</span> { multiply <span class="kw">as</span> mul }
+
+<span class="cm">// Default export (1 ไฟล์ = 1 default)</span>
+<span class="kw">export default function</span> <span class="fn">formatDate</span>(date) {
+  <span class="kw">return</span> date.<span class="fn">toLocaleDateString</span>(<span class="str">'th-TH'</span>)
+}
+
+<span class="cm">// Re-export จากไฟล์อื่น</span>
+<span class="kw">export</span> { foo, bar } <span class="kw">from</span> <span class="str">'./other.js'</span>
+<span class="kw">export</span> * <span class="kw">from</span> <span class="str">'./helpers.js'</span></pre>
+    </div>
+    <div class="card">
+      <h3>📥 Import</h3>
+<pre><span class="cm">// ─── main.js ──────────────────────────</span>
+
+<span class="cm">// Named imports</span>
+<span class="kw">import</span> { PI, add, Calculator } <span class="kw">from</span> <span class="str">'./utils.js'</span>
+
+<span class="cm">// Rename ตอน import</span>
+<span class="kw">import</span> { multiply <span class="kw">as</span> mul } <span class="kw">from</span> <span class="str">'./utils.js'</span>
+
+<span class="cm">// Default import (ตั้งชื่อได้เอง)</span>
+<span class="kw">import</span> formatDate <span class="kw">from</span> <span class="str">'./utils.js'</span>
+<span class="kw">import</span> myFormat   <span class="kw">from</span> <span class="str">'./utils.js'</span>  <span class="cm">// ชื่ออะไรก็ได้</span>
+
+<span class="cm">// Import ทั้งหมด</span>
+<span class="kw">import</span> * <span class="kw">as</span> utils <span class="kw">from</span> <span class="str">'./utils.js'</span>
+utils.add(<span class="num">1</span>, <span class="num">2</span>)
+utils.PI
+
+<span class="cm">// Default + Named พร้อมกัน</span>
+<span class="kw">import</span> formatDate, { add, PI } <span class="kw">from</span> <span class="str">'./utils.js'</span>
+
+<span class="cm">// Dynamic import (Lazy loading)</span>
+<span class="kw">const</span> module = <span class="kw">await</span> import(<span class="str">'./heavy.js'</span>)
+module.<span class="fn">heavyFunction</span>()</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 11 ES2020+ -->
+<!-- ============================================================ -->
+<section id="new-features">
+  <div class="chapter-header ch-purple">
+    <div class="ch-num">11</div>
+    <div>
+      <h2>ES2020 — ES2024 Features</h2>
+      <p>ฟีเจอร์ใหม่ที่ควรรู้จาก ES2020 ถึงปัจจุบัน</p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>🆕 Template Literals &amp; Tagged Templates <span class="ver">ES6</span></h3>
+<pre><span class="cm">// Template Literal</span>
+<span class="kw">const</span> name = <span class="str">'สมชาย'</span>
+<span class="kw">const</span> age  = <span class="num">25</span>
+
+<span class="kw">const</span> msg = <span class="str">`ชื่อ: <span class="kw">${name}</span>
+อายุ: <span class="kw">${age}</span> ปี
+เกิดปี: <span class="kw">${2024 - age}</span>`</span>  <span class="cm">// multi-line ✅</span>
+
+<span class="cm">// Expression ใน template</span>
+<span class="str">`<span class="kw">${2 + 2}</span>`</span>          <span class="cm">// '4'</span>
+<span class="str">`<span class="kw">${isOk ? 'yes' : 'no'}</span>`</span>  <span class="cm">// ternary</span>
+<span class="str">`<span class="kw">${arr.join(', ')}</span>`</span>  <span class="cm">// method call</span>
+
+<span class="cm">// Tagged Templates</span>
+<span class="kw">function</span> <span class="fn">highlight</span>(strings, ...values) {
+  <span class="kw">return</span> strings.<span class="fn">reduce</span>((acc, str, i) =>
+    acc + str + (values[i] ? <span class="str">`&lt;b&gt;<span class="kw">${values[i]}</span>&lt;/b&gt;`</span> : <span class="str">''</span>)
+  , <span class="str">''</span>)
+}
+
+<span class="kw">const</span> result = highlight<span class="str">`Hello <span class="kw">${name}</span> age <span class="kw">${age}</span>`</span>
+<span class="cm">// 'Hello &lt;b&gt;สมชาย&lt;/b&gt; age &lt;b&gt;25&lt;/b&gt;'</span></pre>
+    </div>
+    <div class="card">
+      <h3>🗺️ Map &amp; Set <span class="ver">ES6</span></h3>
+<pre><span class="cm">// Set — เก็บค่าไม่ซ้ำ</span>
+<span class="kw">const</span> set = <span class="kw">new</span> <span class="type">Set</span>([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">2</span>, <span class="num">1</span>])
+<span class="cm">// Set(3) { 1, 2, 3 }</span>
+
+set.<span class="fn">add</span>(<span class="num">4</span>)
+set.<span class="fn">has</span>(<span class="num">2</span>)    <span class="cm">// true</span>
+set.<span class="fn">delete</span>(<span class="num">1</span>)
+set.size     <span class="cm">// 3</span>
+[...set]     <span class="cm">// [2, 3, 4]</span>
+
+<span class="cm">// ลบซ้ำจาก array</span>
+<span class="kw">const</span> unique = [...<span class="kw">new</span> <span class="type">Set</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">2</span>,<span class="num">3</span>])]  <span class="cm">// [1,2,3]</span>
+
+<span class="cm">// Map — key-value ที่ key เป็นอะไรก็ได้</span>
+<span class="kw">const</span> map = <span class="kw">new</span> <span class="type">Map</span>()
+map.<span class="fn">set</span>(<span class="str">'name'</span>, <span class="str">'สมชาย'</span>)
+map.<span class="fn">set</span>(<span class="num">42</span>, <span class="str">'answer'</span>)     <span class="cm">// number key</span>
+map.<span class="fn">set</span>({}, <span class="str">'object key'</span>) <span class="cm">// object key</span>
+
+map.<span class="fn">get</span>(<span class="str">'name'</span>)  <span class="cm">// 'สมชาย'</span>
+map.<span class="fn">has</span>(<span class="num">42</span>)      <span class="cm">// true</span>
+map.size         <span class="cm">// 3</span>
+
+<span class="kw">for</span> (<span class="kw">const</span> [key, val] <span class="kw">of</span> map) {
+  console.log(key, val)
+}</pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🆕 Features ES2020–2024</h3>
+    <div class="grid-2">
+<pre><span class="cm">// ─── Logical Assignment (ES2021) ──────</span>
+
+<span class="cm">// &&= แทนที่เมื่อ truthy</span>
+<span class="kw">let</span> a = <span class="num">5</span>
+a &&= <span class="num">10</span>   <span class="cm">// a = 10 (เพราะ 5 เป็น truthy)</span>
+<span class="kw">let</span> b = <span class="num">0</span>
+b &&= <span class="num">10</span>   <span class="cm">// b = 0  (เพราะ 0 เป็น falsy)</span>
+
+<span class="cm">// ||= แทนที่เมื่อ falsy</span>
+<span class="kw">let</span> c = <span class="bool">null</span>
+c ||= <span class="str">'default'</span>  <span class="cm">// c = 'default'</span>
+
+<span class="cm">// ─── String.replaceAll (ES2021) ───────</span>
+<span class="str">'a-b-c-d'</span>.<span class="fn">replaceAll</span>(<span class="str">'-'</span>, <span class="str">'_'</span>)  <span class="cm">// 'a_b_c_d'</span>
+
+<span class="cm">// ─── Array.at() (ES2022) ──────────────</span>
+<span class="kw">const</span> arr = [<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>, <span class="num">40</span>]
+arr.<span class="fn">at</span>(<span class="num">0</span>)   <span class="cm">// 10 (จากต้น)</span>
+arr.<span class="fn">at</span>(-<span class="num">1</span>)  <span class="cm">// 40 (จากท้าย) ← สะดวกมาก!</span>
+arr.<span class="fn">at</span>(-<span class="num">2</span>)  <span class="cm">// 30</span>
+
+<span class="cm">// ─── Object.hasOwn() (ES2022) ─────────</span>
+Object.<span class="fn">hasOwn</span>(obj, <span class="str">'key'</span>)  <span class="cm">// แทน hasOwnProperty</span></pre>
+<pre><span class="cm">// ─── Array Methods (ES2023) ───────────</span>
+
+<span class="cm">// toSorted, toReversed, toSpliced — ไม่แก้ต้นฉบับ!</span>
+<span class="kw">const</span> nums = [<span class="num">3</span>, <span class="num">1</span>, <span class="num">4</span>, <span class="num">1</span>, <span class="num">5</span>]
+
+nums.<span class="fn">sort</span>()      <span class="cm">// แก้ nums ต้นฉบับ!</span>
+nums.<span class="fn">toSorted</span>()  <span class="cm">// คืน array ใหม่ ✅</span>
+
+nums.<span class="fn">reverse</span>()      <span class="cm">// แก้ต้นฉบับ!</span>
+nums.<span class="fn">toReversed</span>()   <span class="cm">// คืน array ใหม่ ✅</span>
+
+nums.<span class="fn">with</span>(<span class="num">2</span>, <span class="num">99</span>)  <span class="cm">// แทนที่ index 2 → [3,1,99,1,5]</span>
+
+<span class="cm">// findLast, findLastIndex</span>
+[<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>].<span class="fn">findLast</span>(n => n % <span class="num">2</span> === <span class="num">0</span>)      <span class="cm">// 4</span>
+[<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>].<span class="fn">findLastIndex</span>(n => n % <span class="num">2</span> === <span class="num">0</span>) <span class="cm">// 3</span>
+
+<span class="cm">// ─── Object.groupBy (ES2024) ──────────</span>
+<span class="kw">const</span> people = [
+  { name: <span class="str">'Alice'</span>, dept: <span class="str">'dev'</span> },
+  { name: <span class="str">'Bob'</span>,   dept: <span class="str">'hr'</span>  },
+  { name: <span class="str">'Carol'</span>, dept: <span class="str">'dev'</span> },
+]
+
+Object.<span class="fn">groupBy</span>(people, p => p.dept)
+<span class="cm">// { dev: [Alice, Carol], hr: [Bob] }</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 12 Array Methods -->
+<!-- ============================================================ -->
+<section id="array-methods">
+  <div class="chapter-header ch-green">
+    <div class="ch-num">12</div>
+    <div>
+      <h2>Array Methods สำคัญ</h2>
+      <p>map, filter, reduce, flat, every, some — ใช้บ่อยที่สุด</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🗺️ map — แปลงทุกตัว (คืน array ขนาดเดิม)</h3>
+<pre><span class="kw">const</span> nums = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>]
+
+nums.<span class="fn">map</span>(n => n * <span class="num">2</span>)              <span class="cm">// [2, 4, 6, 8, 10]</span>
+nums.<span class="fn">map</span>(n => n ** <span class="num">2</span>)             <span class="cm">// [1, 4, 9, 16, 25]</span>
+nums.<span class="fn">map</span>(String)                   <span class="cm">// ['1','2','3','4','5']</span>
+
+<span class="kw">const</span> users = [
+  { id: <span class="num">1</span>, name: <span class="str">'สมชาย'</span>,  age: <span class="num">25</span> },
+  { id: <span class="num">2</span>, name: <span class="str">'สมหญิง'</span>, age: <span class="num">30</span> },
+  { id: <span class="num">3</span>, name: <span class="str">'จอห์น'</span>,   age: <span class="num">22</span> },
+]
+
+users.<span class="fn">map</span>(u => u.name)             <span class="cm">// ['สมชาย', 'สมหญิง', 'จอห์น']</span>
+users.<span class="fn">map</span>(({ id, name }) => ({ id, name }))  <span class="cm">// เลือกแค่บางช่อง</span>
+users.<span class="fn">map</span>(u => ({ ...u, age: u.age + <span class="num">1</span> }))  <span class="cm">// เพิ่มอายุทุกคน</span></pre>
+  </div>
+
+  <div class="card">
+    <h3>🔍 filter — กรองตามเงื่อนไข (คืน subset)</h3>
+<pre><span class="kw">const</span> nums = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>, <span class="num">6</span>]
+
+nums.<span class="fn">filter</span>(n => n % <span class="num">2</span> === <span class="num">0</span>)          <span class="cm">// [2, 4, 6] — เลขคู่</span>
+nums.<span class="fn">filter</span>(n => n > <span class="num">3</span>)                <span class="cm">// [4, 5, 6]</span>
+
+users.<span class="fn">filter</span>(u => u.age >= <span class="num">25</span>)         <span class="cm">// [สมชาย, สมหญิง]</span>
+users.<span class="fn">filter</span>(u => u.name.<span class="fn">includes</span>(<span class="str">'ส'</span>)) <span class="cm">// [สมชาย, สมหญิง]</span>
+
+<span class="cm">// กรอง falsy values</span>
+[<span class="num">0</span>, <span class="num">1</span>, <span class="str">''</span>, <span class="str">'hi'</span>, <span class="bool">null</span>, <span class="bool">true</span>].<span class="fn">filter</span>(Boolean)  <span class="cm">// [1, 'hi', true]</span>
+
+<span class="cm">// ลบซ้ำ</span>
+<span class="kw">const</span> arr = [<span class="num">1</span>,<span class="num">2</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">3</span>,<span class="num">4</span>]
+arr.<span class="fn">filter</span>((v, i, a) => a.<span class="fn">indexOf</span>(v) === i)  <span class="cm">// [1, 2, 3, 4]</span></pre>
+  </div>
+
+  <div class="card">
+    <h3>⚙️ reduce — รวมเป็นค่าเดียว</h3>
+<pre><span class="cm">// reduce(callback, initialValue)</span>
+<span class="cm">// callback(accumulator, currentValue, index, array)</span>
+
+<span class="kw">const</span> nums = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>]
+
+<span class="cm">// รวม</span>
+nums.<span class="fn">reduce</span>((sum, n) => sum + n, <span class="num">0</span>)    <span class="cm">// 15</span>
+
+<span class="cm">// หาค่ามากสุด</span>
+nums.<span class="fn">reduce</span>((max, n) => n > max ? n : max, -Infinity)  <span class="cm">// 5</span>
+
+<span class="cm">// นับความถี่</span>
+[<span class="str">'a'</span>,<span class="str">'b'</span>,<span class="str">'a'</span>,<span class="str">'c'</span>,<span class="str">'b'</span>,<span class="str">'a'</span>].<span class="fn">reduce</span>((acc, v) => {
+  acc[v] = (acc[v] || <span class="num">0</span>) + <span class="num">1</span>
+  <span class="kw">return</span> acc
+}, {})
+<span class="cm">// { a: 3, b: 2, c: 1 }</span>
+
+<span class="cm">// จัดกลุ่ม users โดย role</span>
+users.<span class="fn">reduce</span>((groups, user) => {
+  <span class="kw">const</span> key = user.role
+  groups[key] = groups[key] || []
+  groups[key].<span class="fn">push</span>(user)
+  <span class="kw">return</span> groups
+}, {})
+
+<span class="cm">// flatten nested array</span>
+[[<span class="num">1</span>,<span class="num">2</span>],[<span class="num">3</span>,<span class="num">4</span>]].<span class="fn">reduce</span>((acc, arr) => [...acc, ...arr], [])</pre>
+  </div>
+
+  <div class="card">
+    <h3>🔗 Method Chaining + flat/flatMap</h3>
+<pre><span class="kw">const</span> data = [
+  { name: <span class="str">'Alice'</span>,  scores: [<span class="num">80</span>, <span class="num">90</span>, <span class="num">70</span>], active: <span class="bool">true</span>  },
+  { name: <span class="str">'Bob'</span>,    scores: [<span class="num">60</span>, <span class="num">75</span>, <span class="num">80</span>], active: <span class="bool">false</span> },
+  { name: <span class="str">'Carol'</span>,  scores: [<span class="num">95</span>, <span class="num">88</span>, <span class="num">92</span>], active: <span class="bool">true</span>  },
+]
+
+<span class="cm">// Chain: กรอง → คำนวณ → เรียง</span>
+<span class="kw">const</span> result = data
+  .<span class="fn">filter</span>(u => u.active)
+  .<span class="fn">map</span>(u => ({
+    name: u.name,
+    avg: u.scores.<span class="fn">reduce</span>((s, n) => s + n, <span class="num">0</span>) / u.scores.length
+  }))
+  .<span class="fn">sort</span>((a, b) => b.avg - a.avg)
+
+<span class="cm">// result: [{ name: 'Carol', avg: 91.67 }, { name: 'Alice', avg: 80 }]</span>
+
+<span class="cm">// flat — แผ่ nested array</span>
+[<span class="num">1</span>, [<span class="num">2</span>, <span class="num">3</span>], [<span class="num">4</span>, [<span class="num">5</span>]]].<span class="fn">flat</span>()     <span class="cm">// [1, 2, 3, 4, [5]]</span>
+[<span class="num">1</span>, [<span class="num">2</span>, <span class="num">3</span>], [<span class="num">4</span>, [<span class="num">5</span>]]].<span class="fn">flat</span>(Infinity)  <span class="cm">// [1,2,3,4,5]</span>
+
+<span class="cm">// flatMap — map แล้ว flat ลึก 1 ชั้น</span>
+[<span class="str">'hello world'</span>, <span class="str">'foo bar'</span>].<span class="fn">flatMap</span>(s => s.<span class="fn">split</span>(<span class="str">' '</span>))
+<span class="cm">// ['hello', 'world', 'foo', 'bar']</span>
+
+<span class="cm">// every / some</span>
+nums.<span class="fn">every</span>(n => n > <span class="num">0</span>)    <span class="cm">// true — ทุกตัวมากกว่า 0?</span>
+nums.<span class="fn">some</span>(n => n > <span class="num">4</span>)     <span class="cm">// true — มีตัวใดมากกว่า 4?</span></pre>
+  </div>
+
+  <div class="card">
+    <h3>🗂️ สรุป Array Methods ทั้งหมด</h3>
+    <table>
+      <tr><th>Method</th><th>คืนค่า</th><th>แก้ต้นฉบับ</th><th>ใช้เมื่อ</th></tr>
+      <tr><td><code>map(fn)</code></td><td>Array ใหม่ (ขนาดเดิม)</td><td>❌</td><td>แปลงทุก element</td></tr>
+      <tr><td><code>filter(fn)</code></td><td>Array ใหม่ (เล็กกว่า)</td><td>❌</td><td>กรองตามเงื่อนไข</td></tr>
+      <tr><td><code>reduce(fn, init)</code></td><td>ค่าเดียว</td><td>❌</td><td>รวม/สรุปข้อมูล</td></tr>
+      <tr><td><code>forEach(fn)</code></td><td>undefined</td><td>❌</td><td>ทำอะไรกับทุกตัว</td></tr>
+      <tr><td><code>find(fn)</code></td><td>ค่าแรกที่ match</td><td>❌</td><td>ค้นหา 1 ตัว</td></tr>
+      <tr><td><code>some(fn)</code></td><td>boolean</td><td>❌</td><td>มีตัวใดตรงไหม</td></tr>
+      <tr><td><code>every(fn)</code></td><td>boolean</td><td>❌</td><td>ทุกตัวตรงไหม</td></tr>
+      <tr><td><code>flat(depth)</code></td><td>Array ใหม่</td><td>❌</td><td>แผ่ nested array</td></tr>
+      <tr><td><code>flatMap(fn)</code></td><td>Array ใหม่</td><td>❌</td><td>map + flat(1)</td></tr>
+      <tr><td><code>sort(fn)</code></td><td>Array เดิม</td><td>✅</td><td>เรียงลำดับ</td></tr>
+      <tr><td><code>reverse()</code></td><td>Array เดิม</td><td>✅</td><td>กลับลำดับ</td></tr>
+      <tr><td><code>toSorted(fn)</code></td><td>Array ใหม่</td><td>❌</td><td>เรียงแบบ immutable</td></tr>
+      <tr><td><code>toReversed()</code></td><td>Array ใหม่</td><td>❌</td><td>กลับแบบ immutable</td></tr>
+    </table>
+    <div class="callout warn">
+      <span class="ci">⚠️</span>
+      <div><strong>ระวัง sort()!</strong> — แก้ array ต้นฉบับเสมอ ถ้าไม่อยากแก้ต้นฉบับให้ใช้ <span class="ic">[...arr].sort()</span> หรือ <span class="ic">arr.toSorted()</span></div>
+    </div>
+  </div>
+</section>
+
+</div><!-- end container -->
+
+<footer>
+  <strong>สื่อการสอน JavaScript + ES6+ ฉบับสมบูรณ์</strong><br>
+  ครอบคลุม Data Types · Variables · Functions · Objects · Arrays · Destructuring · Spread/Rest · Classes · Async/Await · Modules · ES2020-2024 · Array Methods
+</footer>
+
+<script>
+const sections = document.querySelectorAll('section[id]')
+const navLinks  = document.querySelectorAll('.nav-sticky a')
+window.addEventListener('scroll', () => {
+  let cur = ''
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 110) cur = s.id })
+  navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + cur))
+}, { passive: true })
+</script>
+</body>
+</html>

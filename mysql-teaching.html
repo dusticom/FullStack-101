@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MySQL — สื่อการสอน</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --card: #161b22;
+    --border: #30363d;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --accent: #e67e22;
+    --accent2: #f39c12;
+    --mysql-blue: #4479a1;
+    --mysql-orange: #f29111;
+    --green: #3fb950;
+    --yellow: #d29922;
+    --red: #f85149;
+    --purple: #a371f7;
+    --pink: #f778ba;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; font-size: 15px; line-height: 1.7; }
+
+  nav { position: sticky; top: 0; z-index: 100; background: rgba(13,17,23,.95); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); padding: 0 1rem; display: flex; align-items: center; gap: .5rem; overflow-x: auto; height: 52px; }
+  nav a { color: var(--muted); text-decoration: none; font-size: 13px; white-space: nowrap; padding: .3rem .6rem; border-radius: 6px; transition: all .2s; }
+  nav a:hover, nav a.active { color: var(--mysql-orange); background: rgba(242,145,17,.12); }
+  nav .logo { color: var(--mysql-orange); font-weight: 700; font-size: 15px; margin-right: .5rem; white-space: nowrap; }
+
+  .hero { text-align: center; padding: 4rem 1rem 3rem; background: linear-gradient(160deg, #0d1117 0%, #1a1200 50%, #0d1117 100%); border-bottom: 1px solid var(--border); }
+  .hero h1 { font-size: clamp(2rem,5vw,3.2rem); font-weight: 800; background: linear-gradient(135deg, var(--mysql-orange), #f9ca24); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .hero p { color: var(--muted); margin-top: .8rem; font-size: 1.05rem; }
+  .badge-row { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center; margin-top: 1.2rem; }
+  .badge { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: .25rem .8rem; font-size: 12px; color: var(--muted); }
+
+  .container { max-width: 960px; margin: 0 auto; padding: 2rem 1rem; }
+  section { margin-bottom: 3.5rem; scroll-margin-top: 60px; }
+
+  .chapter-header { border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; border-left: 4px solid var(--mysql-orange); background: linear-gradient(135deg, #1a1200, #161b22); }
+  .chapter-header h2 { font-size: 1.4rem; color: var(--mysql-orange); }
+  .chapter-header p { color: var(--muted); margin-top: .3rem; font-size: .9rem; }
+
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; margin-bottom: 1rem; }
+  .card h3 { color: var(--mysql-orange); margin-bottom: .6rem; font-size: 1rem; }
+
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+
+  .code-block { background: #0d1117; border: 1px solid var(--border); border-radius: 8px; margin: .8rem 0; overflow: hidden; }
+  .code-header { background: #1c2128; padding: .4rem .8rem; font-size: 11px; color: var(--muted); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+  .code-body { padding: 1rem; overflow-x: auto; font-family: 'Consolas','Courier New',monospace; font-size: 13.5px; line-height: 1.8; }
+  .kw { color: #ff7b72; }
+  .fn { color: #d2a8ff; }
+  .str { color: #a5d6ff; }
+  .num { color: #79c0ff; }
+  .cmt { color: #8b949e; font-style: italic; }
+  .tbl { color: #ffa657; }
+  .op { color: #ff7b72; }
+  .val { color: #3fb950; }
+  .var { color: #f778ba; }
+
+  .callout { border-radius: 8px; padding: 1rem 1.2rem; margin: .8rem 0; border-left: 4px solid; }
+  .callout.info { border-color: var(--mysql-orange); background: rgba(242,145,17,.08); }
+  .callout.tip { border-color: var(--green); background: rgba(63,185,80,.08); }
+  .callout.warn { border-color: var(--yellow); background: rgba(210,153,34,.08); }
+  .callout.danger { border-color: var(--red); background: rgba(248,81,73,.08); }
+  .callout-title { font-weight: 700; font-size: .8rem; letter-spacing: .05em; text-transform: uppercase; margin-bottom: .3rem; }
+  .callout.info .callout-title { color: var(--mysql-orange); }
+  .callout.tip .callout-title { color: var(--green); }
+  .callout.warn .callout-title { color: var(--yellow); }
+  .callout.danger .callout-title { color: var(--red); }
+
+  .tbl-wrap { overflow-x: auto; margin: .8rem 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th { background: #1c2128; color: var(--mysql-orange); padding: .6rem .9rem; text-align: left; border: 1px solid var(--border); }
+  td { padding: .55rem .9rem; border: 1px solid var(--border); color: var(--text); vertical-align: top; }
+  tr:hover td { background: rgba(255,255,255,.03); }
+
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: .8rem 0; }
+  .compare-box { border-radius: 8px; padding: 1rem; border: 1px solid var(--border); }
+  .compare-box.bad { border-top: 3px solid var(--red); }
+  .compare-box.good { border-top: 3px solid var(--green); }
+  .compare-label { font-size: 11px; font-weight: 700; margin-bottom: .5rem; text-transform: uppercase; }
+  .compare-box.bad .compare-label { color: var(--red); }
+  .compare-box.good .compare-label { color: var(--green); }
+
+  .flow { display: flex; flex-direction: column; gap: .4rem; }
+  .flow-step { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: .7rem 1rem; display: flex; align-items: center; gap: .8rem; font-size: 13px; }
+  .flow-step .num { background: var(--mysql-orange); color: #000; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+  .flow-arrow { text-align: center; color: var(--muted); font-size: 11px; }
+
+  .tag { display: inline-block; border-radius: 4px; padding: 1px 7px; font-size: 11px; font-weight: 700; margin: 0 2px; font-family: monospace; }
+  .tag-blue { background: #1a2a3a; color: #7cb9e8; border: 1px solid var(--mysql-blue); }
+  .tag-orange { background: #2a1a00; color: #ffa657; border: 1px solid var(--mysql-orange); }
+  .tag-green { background: #1a3a1a; color: #7ee787; border: 1px solid var(--green); }
+  .tag-red { background: #3a1a1a; color: #ff9999; border: 1px solid var(--red); }
+  .tag-purple { background: #2a1a3a; color: #d2a8ff; border: 1px solid var(--purple); }
+
+  footer { text-align: center; padding: 2rem; color: var(--muted); font-size: 13px; border-top: 1px solid var(--border); }
+  @media(max-width:600px) { .compare { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="logo">🐬 MySQL</span>
+  <a href="#intro">บทนำ</a>
+  <a href="#install">ติดตั้ง</a>
+  <a href="#datatype">Data Types</a>
+  <a href="#engine">Storage Engine</a>
+  <a href="#crud">CRUD</a>
+  <a href="#joins">JOINs</a>
+  <a href="#functions">Functions</a>
+  <a href="#index">Index</a>
+  <a href="#transaction">Transaction</a>
+  <a href="#users">Users & Permissions</a>
+  <a href="#advanced">Advanced</a>
+  <a href="#backup">Backup</a>
+</nav>
+
+<div class="hero">
+  <h1>🐬 MySQL</h1>
+  <p>ระบบจัดการฐานข้อมูล Relational ที่ได้รับความนิยมมากที่สุดในโลก</p>
+  <div class="badge-row">
+    <span class="badge">MySQL 8.x</span>
+    <span class="badge">InnoDB</span>
+    <span class="badge">ACID Compliant</span>
+    <span class="badge">Replication</span>
+    <span class="badge">JSON Support</span>
+    <span class="badge">Window Functions</span>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ==================== CHAPTER 1 ==================== -->
+<section id="intro">
+  <div class="chapter-header">
+    <h2>บทที่ 1 — บทนำและสถาปัตยกรรม MySQL</h2>
+    <p>MySQL คืออะไร, สถาปัตยกรรม, เปรียบเทียบกับ RDBMS อื่น</p>
+  </div>
+
+  <div class="card">
+    <h3>MySQL คืออะไร?</h3>
+    <p>MySQL เป็น Open-source Relational Database Management System (RDBMS) พัฒนาโดย Oracle ใช้ภาษา SQL เป็นหลัก เหมาะสำหรับ Web Applications ทุกขนาด ตั้งแต่โปรเจกต์เล็กจนถึงระดับ Enterprise</p>
+    <div class="grid-3" style="margin-top:1rem">
+      <div style="background:#0d1117;border:1px solid var(--border);border-radius:8px;padding:1rem;text-align:center">
+        <div style="font-size:2rem">⚡</div>
+        <div style="color:var(--mysql-orange);font-weight:700;margin:.3rem 0">เร็ว</div>
+        <div style="font-size:12px;color:var(--muted)">Optimized สำหรับ read-heavy workloads</div>
+      </div>
+      <div style="background:#0d1117;border:1px solid var(--border);border-radius:8px;padding:1rem;text-align:center">
+        <div style="font-size:2rem">🔒</div>
+        <div style="color:var(--mysql-orange);font-weight:700;margin:.3rem 0">ปลอดภัย</div>
+        <div style="font-size:12px;color:var(--muted)">SSL/TLS, User permissions, Encryption</div>
+      </div>
+      <div style="background:#0d1117;border:1px solid var(--border);border-radius:8px;padding:1rem;text-align:center">
+        <div style="font-size:2rem">🌍</div>
+        <div style="color:var(--mysql-orange);font-weight:700;margin:.3rem 0">ยืดหยุ่น</div>
+        <div style="font-size:12px;color:var(--muted)">รองรับ Windows, Linux, macOS</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>เปรียบเทียบ MySQL vs PostgreSQL vs SQLite</h3>
+    <div class="tbl-wrap">
+      <table>
+        <tr><th>คุณสมบัติ</th><th>MySQL 8.x</th><th>PostgreSQL 16</th><th>SQLite</th></tr>
+        <tr><td>ใช้งาน</td><td>Web apps, OLTP</td><td>Complex queries, Analytics</td><td>Embedded, Mobile</td></tr>
+        <tr><td>License</td><td>GPL / Commercial</td><td>PostgreSQL (Free)</td><td>Public Domain</td></tr>
+        <tr><td>JSON Support</td><td>✅ JSON type</td><td>✅ JSONB (indexed)</td><td>✅ text-based</td></tr>
+        <tr><td>Full-text Search</td><td>✅ Built-in</td><td>✅ Advanced</td><td>✅ Basic</td></tr>
+        <tr><td>Replication</td><td>✅ Master-Slave</td><td>✅ Streaming</td><td>❌</td></tr>
+        <tr><td>ACID</td><td>✅ InnoDB</td><td>✅</td><td>✅</td></tr>
+        <tr><td>Window Functions</td><td>✅ MySQL 8+</td><td>✅</td><td>✅ 3.25+</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>สถาปัตยกรรม MySQL</h3>
+    <div class="flow">
+      <div class="flow-step"><div class="num">1</div><div><strong>Client Layer</strong> — mysql CLI, MySQL Workbench, Application drivers (Node.js, PHP, Python)</div></div>
+      <div class="flow-arrow">↓ SQL Query</div>
+      <div class="flow-step"><div class="num">2</div><div><strong>Connection Pool</strong> — จัดการ connections, Authentication, Thread management</div></div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step"><div class="num">3</div><div><strong>Query Cache / Parser</strong> — Parse SQL → AST → Optimizer เลือก Execution Plan ที่ดีที่สุด</div></div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step"><div class="num">4</div><div><strong>Storage Engine (InnoDB)</strong> — จัดการข้อมูลจริง, Buffer Pool, Transaction Log (redo/undo)</div></div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step"><div class="num">5</div><div><strong>File System</strong> — .ibd files (data+index), .frm (table def), Binary Log (binlog)</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CHAPTER 2 ==================== -->
+<section id="install">
+  <div class="chapter-header">
+    <h2>บทที่ 2 — ติดตั้งและเริ่มต้นใช้งาน</h2>
+    <p>ติดตั้ง MySQL, เชื่อมต่อ, คำสั่งพื้นฐาน, MySQL Workbench</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>ติดตั้งบน Ubuntu/Debian</h3>
+      <div class="code-block">
+        <div class="code-header"><span>bash</span></div>
+        <div class="code-body">
+<span class="cmt"># ติดตั้ง MySQL Server</span>
+sudo apt update
+sudo apt install mysql-server -y
+
+<span class="cmt"># ตรวจสอบสถานะ</span>
+sudo systemctl status mysql
+
+<span class="cmt"># เริ่ม/หยุด/รีสตาร์ท</span>
+sudo systemctl start mysql
+sudo systemctl stop mysql
+sudo systemctl restart mysql
+
+<span class="cmt"># ตั้งค่าความปลอดภัยครั้งแรก</span>
+sudo mysql_secure_installation
+
+<span class="cmt"># เชื่อมต่อ</span>
+mysql -u root -p
+mysql -u root -p -h 127.0.0.1 -P 3306</div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>ติดตั้งด้วย Docker</h3>
+      <div class="code-block">
+        <div class="code-header"><span>bash</span></div>
+        <div class="code-body">
+<span class="cmt"># รัน MySQL container</span>
+docker run -d \
+  --name mysql-dev \
+  -e MYSQL_ROOT_PASSWORD=secret \
+  -e MYSQL_DATABASE=myapp \
+  -e MYSQL_USER=appuser \
+  -e MYSQL_PASSWORD=apppass \
+  -p 3306:3306 \
+  mysql:8.0
+
+<span class="cmt"># เชื่อมต่อเข้า container</span>
+docker exec -it mysql-dev mysql -u root -p
+
+<span class="cmt"># docker-compose.yml</span>
+<span class="val">services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: myapp
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>คำสั่งพื้นฐาน MySQL CLI</h3>
+    <div class="code-block">
+      <div class="code-header"><span>mysql></span></div>
+      <div class="code-body">
+<span class="cmt">-- ดูฐานข้อมูลทั้งหมด</span>
+<span class="kw">SHOW DATABASES</span>;
+
+<span class="cmt">-- สร้างฐานข้อมูล</span>
+<span class="kw">CREATE DATABASE</span> <span class="tbl">myapp</span>
+  <span class="kw">CHARACTER SET</span> utf8mb4
+  <span class="kw">COLLATE</span> utf8mb4_unicode_ci;
+
+<span class="cmt">-- เลือกฐานข้อมูล</span>
+<span class="kw">USE</span> <span class="tbl">myapp</span>;
+
+<span class="cmt">-- ดูตารางทั้งหมด</span>
+<span class="kw">SHOW TABLES</span>;
+
+<span class="cmt">-- ดูโครงสร้างตาราง</span>
+<span class="kw">DESCRIBE</span> <span class="tbl">users</span>;
+<span class="kw">SHOW CREATE TABLE</span> <span class="tbl">users</span>\G
+
+<span class="cmt">-- ดู variables</span>
+<span class="kw">SHOW VARIABLES LIKE</span> <span class="str">'%charset%'</span>;
+<span class="kw">SHOW VARIABLES LIKE</span> <span class="str">'max_connections'</span>;
+
+<span class="cmt">-- ดู process ที่กำลังรัน</span>
+<span class="kw">SHOW PROCESSLIST</span>;
+
+<span class="cmt">-- ดู status</span>
+<span class="kw">SHOW STATUS LIKE</span> <span class="str">'Threads%'</span>;
+
+<span class="cmt">-- ออกจาก mysql</span>
+<span class="kw">EXIT</span>; <span class="cmt">-- หรือ \q หรือ quit</span></div>
+    </div>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title">charset สำคัญมาก</div>
+    ใช้ <strong>utf8mb4</strong> เสมอ (ไม่ใช่ utf8 ที่เก่ากว่า) เพราะรองรับ emoji และ Unicode ครบถ้วน Collation ที่นิยมคือ <strong>utf8mb4_unicode_ci</strong> (case-insensitive)
+  </div>
+</section>
+
+<!-- ==================== CHAPTER 3 ==================== -->
+<section id="datatype">
+  <div class="chapter-header">
+    <h2>บทที่ 3 — Data Types ใน MySQL</h2>
+    <p>ชนิดข้อมูลตัวเลข, ข้อความ, วันเวลา, JSON และการเลือกใช้ที่ถูกต้อง</p>
+  </div>
+
+  <div class="card">
+    <h3>ชนิดตัวเลข (Numeric)</h3>
+    <div class="tbl-wrap">
+      <table>
+        <tr><th>Type</th><th>ขนาด</th><th>ช่วงค่า</th><th>ใช้เมื่อ</th></tr>
+        <tr><td><code>TINYINT</code></td><td>1 byte</td><td>-128 ถึง 127</td><td>flag, status เล็กๆ</td></tr>
+        <tr><td><code>SMALLINT</code></td><td>2 bytes</td><td>-32,768 ถึง 32,767</td><td>ตัวเลขขนาดเล็ก</td></tr>
+        <tr><td><code>INT</code></td><td>4 bytes</td><td>-2.1B ถึง 2.1B</td><td>id, count ทั่วไป</td></tr>
+        <tr><td><code>BIGINT</code></td><td>8 bytes</td><td>±9.2 × 10¹⁸</td><td>id ขนาดใหญ่, timestamp</td></tr>
+        <tr><td><code>DECIMAL(p,s)</code></td><td>varies</td><td>ตามกำหนด</td><td>ราคา, เงิน (แม่นยำ 100%)</td></tr>
+        <tr><td><code>FLOAT</code></td><td>4 bytes</td><td>~7 หลัก</td><td>ค่าประมาณ, coordinates</td></tr>
+        <tr><td><code>DOUBLE</code></td><td>8 bytes</td><td>~15 หลัก</td><td>วิทยาศาสตร์, ค่าประมาณละเอียด</td></tr>
+      </table>
+    </div>
+    <div class="callout danger">
+      <div class="callout-title">ระวัง Float/Double กับเงิน</div>
+      <strong>ห้ามใช้ FLOAT/DOUBLE เก็บราคาสินค้า!</strong> เพราะมี floating point error เช่น 0.1 + 0.2 ≠ 0.3 ใช้ <code>DECIMAL(10,2)</code> แทนเสมอ
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>ชนิดข้อความ (String)</h3>
+    <div class="tbl-wrap">
+      <table>
+        <tr><th>Type</th><th>ขนาดสูงสุด</th><th>ลักษณะ</th><th>ใช้เมื่อ</th></tr>
+        <tr><td><code>CHAR(n)</code></td><td>255 chars</td><td>ความยาวคงที่ (padding)</td><td>รหัสประเทศ, สถานะ fixed</td></tr>
+        <tr><td><code>VARCHAR(n)</code></td><td>65,535 bytes</td><td>ความยาวยืดหยุ่น</td><td>ชื่อ, email, url</td></tr>
+        <tr><td><code>TEXT</code></td><td>65,535 bytes</td><td>ข้อความยาว ไม่ index ได้เต็ม</td><td>คำอธิบาย, เนื้อหาบทความ</td></tr>
+        <tr><td><code>MEDIUMTEXT</code></td><td>16 MB</td><td>ข้อความยาวมาก</td><td>HTML content, JSON เก่า</td></tr>
+        <tr><td><code>LONGTEXT</code></td><td>4 GB</td><td>ใหญ่มาก</td><td>log files, binary data เป็น base64</td></tr>
+        <tr><td><code>ENUM</code></td><td>max 65,535</td><td>ค่าจำกัด</td><td>status ('active','inactive')</td></tr>
+        <tr><td><code>SET</code></td><td>max 64</td><td>หลายค่าพร้อมกัน</td><td>permissions บน bit</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>ชนิดวันเวลา (Date/Time)</h3>
+    <div class="tbl-wrap">
+      <table>
+        <tr><th>Type</th><th>Format</th><th>Range</th><th>ใช้เมื่อ</th></tr>
+        <tr><td><code>DATE</code></td><td>YYYY-MM-DD</td><td>1000-01-01 ถึง 9999-12-31</td><td>วันเกิด, วันหมดอายุ</td></tr>
+        <tr><td><code>TIME</code></td><td>HH:MM:SS</td><td>-838:59:59 ถึง 838:59:59</td><td>เวลาเปิด-ปิด</td></tr>
+        <tr><td><code>DATETIME</code></td><td>YYYY-MM-DD HH:MM:SS</td><td>1000 ถึง 9999</td><td>เวลาที่เกิดเหตุการณ์</td></tr>
+        <tr><td><code>TIMESTAMP</code></td><td>YYYY-MM-DD HH:MM:SS</td><td>1970 ถึง 2038</td><td>created_at, updated_at (auto)</td></tr>
+        <tr><td><code>YEAR</code></td><td>YYYY</td><td>1901 ถึง 2155</td><td>ปีเดียว</td></tr>
+      </table>
+    </div>
+    <div class="code-block">
+      <div class="code-body">
+<span class="cmt">-- TIMESTAMP auto-update</span>
+<span class="kw">CREATE TABLE</span> <span class="tbl">posts</span> (
+  <span class="tbl">id</span>         <span class="fn">INT</span> <span class="kw">PRIMARY KEY AUTO_INCREMENT</span>,
+  <span class="tbl">title</span>      <span class="fn">VARCHAR</span>(<span class="num">255</span>),
+  <span class="tbl">created_at</span> <span class="fn">TIMESTAMP</span> <span class="kw">DEFAULT</span> <span class="fn">CURRENT_TIMESTAMP</span>,
+  <span class="tbl">updated_at</span> <span class="fn">TIMESTAMP</span> <span class="kw">DEFAULT</span> <span class="fn">CURRENT_TIMESTAMP</span>
+                         <span class="kw">ON UPDATE</span> <span class="fn">CURRENT_TIMESTAMP</span>
+);</div>
+    </div>
+    <div class="callout warn">
+      <div class="callout-title">Y2K38 Problem</div>
+      TIMESTAMP มีขีดจำกัดที่ปี 2038 — ถ้าระบบต้องใช้งานหลังปีนั้น ให้ใช้ <code>DATETIME</code> แทน
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>JSON Type (MySQL 5.7+)</h3>
+    <div class="code-block">
+      <div class="code-body">
+<span class="kw">CREATE TABLE</span> <span class="tbl">products</span> (
+  <span class="tbl">id</span>       <span class="fn">INT</span> <span class="kw">PRIMARY KEY AUTO_INCREMENT</span>,
+  <span class="tbl">name</span>     <span class="fn">VARCHAR</span>(<span class="num">200</span>),
+  <span class="tbl">metadata</span> <span class="fn">JSON</span>
+);
+
+<span class="kw">INSERT INTO</span> <span class="tbl">products</span> (<span class="tbl">name</span>, <span class="tbl">metadata</span>) <span class="kw">VALUES</span> (
+  <span class="str">'iPhone 15'</span>,
+  <span class="str">'{"color": "black", "storage": 256, "tags": ["phone", "apple"]}'</span>
+);
+
+<span class="cmt">-- ดึงค่าจาก JSON</span>
+<span class="kw">SELECT</span>
+  <span class="tbl">name</span>,
+  <span class="fn">JSON_EXTRACT</span>(<span class="tbl">metadata</span>, <span class="str">'$.color'</span>) <span class="kw">AS</span> color,
+  <span class="tbl">metadata</span>-><span class="str">'$.storage'</span>            <span class="kw">AS</span> storage,  <span class="cmt">-- shorthand</span>
+  <span class="tbl">metadata</span>->><span class="str">'$.color'</span>            <span class="kw">AS</span> color_str <span class="cmt">-- unquoted</span>
+<span class="kw">FROM</span> <span class="tbl">products</span>;
+
+<span class="cmt">-- WHERE บน JSON</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">products</span>
+<span class="kw">WHERE</span> <span class="fn">JSON_EXTRACT</span>(<span class="tbl">metadata</span>, <span class="str">'$.storage'</span>) >= <span class="num">256</span>;
+
+<span class="cmt">-- แก้ไข JSON</span>
+<span class="kw">UPDATE</span> <span class="tbl">products</span>
+<span class="kw">SET</span> <span class="tbl">metadata</span> = <span class="fn">JSON_SET</span>(<span class="tbl">metadata</span>, <span class="str">'$.storage'</span>, <span class="num">512</span>)
+<span class="kw">WHERE</span> <span class="tbl">id</span> = <span class="num">1</span>;</div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CHAPTER 4 ==================== -->
+<section id="engine">
+  <div class="chapter-header">
+    <h2>บทที่ 4 — Storage Engines</h2>
+    <p>InnoDB vs MyISAM, การเลือก Engine, Buffer Pool</p>
+  </div>
+
+  <div class="card">
+    <h3>InnoDB vs MyISAM</h3>
+    <div class="tbl-wrap">
+      <table>
+        <tr><th>คุณสมบัติ</th><th>InnoDB ✅</th><th>MyISAM</th></tr>
+        <tr><td>ACID / Transaction</td><td style="color:var(--green)">✅ รองรับ</td><td style="color:var(--red)">❌ ไม่รองรับ</td></tr>
+        <tr><td>Foreign Keys</td><td style="color:var(--green)">✅</td><td style="color:var(--red)">❌</td></tr>
+        <tr><td>Row-level Locking</td><td style="color:var(--green)">✅ (เร็วกว่า)</td><td>Table-level Lock</td></tr>
+        <tr><td>Crash Recovery</td><td style="color:var(--green)">✅ Automatic</td><td style="color:var(--red)">Manual repair</td></tr>
+        <tr><td>Full-text Search</td><td style="color:var(--green)">✅ MySQL 5.6+</td><td style="color:var(--green)">✅ เร็วกว่า</td></tr>
+        <tr><td>ใช้เมื่อ</td><td>ทุกกรณีทั่วไป</td><td>Read-only, legacy</td></tr>
+      </table>
+    </div>
+    <div class="callout tip">
+      <div class="callout-title">แนะนำ</div>
+      ใช้ <strong>InnoDB</strong> เสมอ — เป็น default ของ MySQL 5.5+ และรองรับ ACID transactions ซึ่งสำคัญมากสำหรับข้อมูลสำคัญ
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>InnoDB Buffer Pool</h3>
+    <p>หน่วยความจำหลักของ InnoDB ที่ cache ข้อมูลและ index ไว้ใน RAM — ยิ่งใหญ่ยิ่งเร็ว</p>
+    <div class="code-block">
+      <div class="code-body">
+<span class="cmt">-- ดูขนาด Buffer Pool ปัจจุบัน</span>
+<span class="kw">SHOW VARIABLES LIKE</span> <span class="str">'innodb_buffer_pool_size'</span>;
+
+<span class="cmt">-- ตั้งค่าใน my.cnf (แนะนำ 70-80% ของ RAM)</span>
+<span class="val">[mysqld]
+innodb_buffer_pool_size = 1G   # สำหรับ 2GB RAM
+innodb_buffer_pool_size = 4G   # สำหรับ 8GB RAM</span>
+
+<span class="cmt">-- ดู buffer pool hit rate (ควร > 99%)</span>
+<span class="kw">SHOW STATUS LIKE</span> <span class="str">'Innodb_buffer_pool_read%'</span>;</div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CHAPTER 5 ==================== -->
+<section id="crud">
+  <div class="chapter-header">
+    <h2>บทที่ 5 — CRUD และ MySQL-specific Syntax</h2>
+    <p>AUTO_INCREMENT, ON DUPLICATE KEY, REPLACE, Multi-table UPDATE/DELETE</p>
+  </div>
+
+  <div class="card">
+    <h3>AUTO_INCREMENT และ LAST_INSERT_ID()</h3>
+    <div class="code-block">
+      <div class="code-body">
+<span class="kw">CREATE TABLE</span> <span class="tbl">users</span> (
+  <span class="tbl">id</span>    <span class="fn">INT</span> <span class="kw">UNSIGNED NOT NULL AUTO_INCREMENT</span>,
+  <span class="tbl">name</span>  <span class="fn">VARCHAR</span>(<span class="num">100</span>),
+  <span class="kw">PRIMARY KEY</span> (<span class="tbl">id</span>)
+) <span class="fn">ENGINE</span>=InnoDB <span class="fn">AUTO_INCREMENT</span>=<span class="num">1000</span>; <span class="cmt">-- เริ่มจาก 1000</span>
+
+<span class="kw">INSERT INTO</span> <span class="tbl">users</span> (<span class="tbl">name</span>) <span class="kw">VALUES</span> (<span class="str">'สมชาย'</span>);
+
+<span class="cmt">-- ดู id ที่เพิ่งใส่ไป</span>
+<span class="kw">SELECT</span> <span class="fn">LAST_INSERT_ID</span>(); <span class="cmt">-- 1000</span>
+
+<span class="cmt">-- รีเซ็ต AUTO_INCREMENT</span>
+<span class="kw">ALTER TABLE</span> <span class="tbl">users</span> <span class="fn">AUTO_INCREMENT</span> = <span class="num">1</span>;</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>ON DUPLICATE KEY UPDATE (Upsert)</h3>
+    <div class="code-block">
+      <div class="code-body">
+<span class="cmt">-- ถ้า primary/unique key ซ้ำ → UPDATE แทน INSERT</span>
+<span class="kw">INSERT INTO</span> <span class="tbl">page_views</span> (<span class="tbl">page_id</span>, <span class="tbl">views</span>)
+<span class="kw">VALUES</span> (<span class="num">42</span>, <span class="num">1</span>)
+<span class="kw">ON DUPLICATE KEY UPDATE</span>
+  <span class="tbl">views</span> = <span class="tbl">views</span> + <span class="num">1</span>,
+  <span class="tbl">last_viewed</span> = <span class="fn">NOW</span>();
+
+<span class="cmt">-- ใช้ VALUES() อ้างอิงค่าที่จะ INSERT</span>
+<span class="kw">INSERT INTO</span> <span class="tbl">product_stock</span> (<span class="tbl">product_id</span>, <span class="tbl">stock</span>)
+<span class="kw">VALUES</span> (<span class="num">1</span>, <span class="num">100</span>)
+<span class="kw">ON DUPLICATE KEY UPDATE</span>
+  <span class="tbl">stock</span> = <span class="fn">VALUES</span>(<span class="tbl">stock</span>); <span class="cmt">-- ใช้ค่า 100 ที่ระบุ</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Multi-table UPDATE และ DELETE</h3>
+    <div class="code-block">
+      <div class="code-body">
+<span class="cmt">-- UPDATE หลายตารางพร้อมกัน</span>
+<span class="kw">UPDATE</span> <span class="tbl">orders</span> <span class="tbl">o</span>
+<span class="kw">JOIN</span> <span class="tbl">customers</span> <span class="tbl">c</span> <span class="kw">ON</span> <span class="tbl">o</span>.<span class="tbl">customer_id</span> = <span class="tbl">c</span>.<span class="tbl">id</span>
+<span class="kw">SET</span>
+  <span class="tbl">o</span>.<span class="tbl">discount</span> = <span class="num">0.1</span>,
+  <span class="tbl">c</span>.<span class="tbl">tier</span> = <span class="str">'gold'</span>
+<span class="kw">WHERE</span> <span class="tbl">c</span>.<span class="tbl">total_spent</span> > <span class="num">100000</span>;
+
+<span class="cmt">-- DELETE จากหลายตารางพร้อมกัน</span>
+<span class="kw">DELETE</span> <span class="tbl">o</span>, <span class="tbl">oi</span>
+<span class="kw">FROM</span> <span class="tbl">orders</span> <span class="tbl">o</span>
+<span class="kw">JOIN</span> <span class="tbl">order_items</span> <span class="tbl">oi</span> <span class="kw">ON</span> <span class="tbl">o</span>.<span class="tbl">id</span> = <span class="tbl">oi</span>.<span class="tbl">order_id</span>
+<span class="kw">WHERE</span> <span class="tbl">o</span>.<span class="tbl">status</span> = <span class="str">'cancelled'</span>
+  <span class="kw">AND</span> <span class="tbl">o</span>.<span class="tbl">order_date</span> < <span class="str">'2023-01-01'</span>;</div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CHAPTER 6 ==================== -->
+<section id="joins">
+  <div class="chapter-header">
+    <h2>บทที่ 6 — JOINs และ Subqueries</h2>
+    <p>JOIN types, Subqueries, EXISTS, Derived Tables</p>
+  </div>
+
+  <div class="card">
+    <h3>ประเภท JOIN ด้วยภาพ</h3>
+    <div class="grid-2">
+      <div style="background:#0d1117;border:1px solid var(--border);border-radius:8px;padding:1rem">
+        <div style="color:var(--mysql-orange);font-weight:700;font-size:13px;margin-bottom:.5rem">INNER JOIN</div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:0">
+          <div style="width:60px;height:60px;border-radius:50%;background:rgba(74,158,218,.3);border:2px solid #4a9eda;display:flex;align-items:center;justify-content:center;font-size:11px;color:#4a9eda;margin-right:-15px">A</div>
+          <div style="width:30px;height:60px;background:rgba(163,113,247,.5);border:1px solid var(--purple);z-index:1"></div>
+          <div style="width:60px;height:60px;border-radius:50%;background:rgba(247,120,186,.3);border:2px solid var(--pink);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--pink);margin-left:-15px">B</div>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-top:.5rem;text-align:center">เฉพาะส่วนที่ทับกัน</div>
+      </div>
+      <div style="background:#0d1117;border:1px solid var(--border);border-radius:8px;padding:1rem">
+        <div style="color:var(--mysql-orange);font-weight:700;font-size:13px;margin-bottom:.5rem">LEFT JOIN</div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:0">
+          <div style="width:60px;height:60px;border-radius:50%;background:rgba(74,158,218,.6);border:2px solid #4a9eda;display:flex;align-items:center;justify-content:center;font-size:11px;color:#000;font-weight:700;margin-right:-15px">A</div>
+          <div style="width:30px;height:60px;background:rgba(163,113,247,.3);border:1px solid var(--purple);z-index:1"></div>
+          <div style="width:60px;height:60px;border-radius:50%;background:rgba(247,120,186,.15);border:2px solid var(--pink);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--pink);margin-left:-15px">B</div>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-top:.5rem;text-align:center">ทั้งหมดของ A + match จาก B</div>
+      </div>
+    </div>
+    <div class="code-block" style="margin-top:1rem">
+      <div class="code-body">
+<span class="cmt">-- หาลูกค้าที่ไม่มี order (Anti JOIN)</span>
+<span class="kw">SELECT</span> <span class="tbl">c</span>.*
+<span class="kw">FROM</span> <span class="tbl">customers</span> <span class="tbl">c</span>
+<span class="kw">LEFT JOIN</span> <span class="tbl">orders</span> <span class="tbl">o</span> <span class="kw">ON</span> <span class="tbl">c</span>.<span class="tbl">id</span> = <span class="tbl">o</span>.<span class="tbl">customer_id</span>
+<span class="kw">WHERE</span> <span class="tbl">o</span>.<span class="tbl">id</span> <span class="kw">IS NULL</span>; <span class="cmt">-- ← เทคนิคสำคัญ</span>
+
+<span class="cmt">-- STRAIGHT_JOIN (force join order)</span>
+<span class="kw">SELECT</span> <span class="kw">STRAIGHT_JOIN</span> <span class="tbl">o</span>.*, <span class="tbl">c</span>.<span class="tbl">name</span>
+<span class="kw">FROM</span> <span class="tbl">orders</span> <span class="tbl">o</span>
+<span class="kw">JOIN</span> <span class="tbl">customers</span> <span class="tbl">c</span> <span class="kw">ON</span> <span class="tbl">o</span>.<span class="tbl">customer_id</span> = <span class="tbl">c</span>.<span class="tbl">id</span>;</div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CHAPTER 7 ==================== -->
+<section id="functions">
+  <div class="chapter-header">
+    <h2>บทที่ 7 — MySQL Built-in Functions</h2>
+    <p>String, Math, Date/Time, Aggregate, Conditional Functions</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>String Functions</h3>
+      <div class="code-block">
+        <div class="code-body">
+<span class="fn">LENGTH</span>(<span class="str">'hello'</span>)          <span class="cmt">-- 5 (bytes)</span>
+<span class="fn">CHAR_LENGTH</span>(<span class="str">'hello'</span>)    <span class="cmt">-- 5 (chars)</span>
+<span class="fn">UPPER</span>(<span class="str">'hello'</span>)           <span class="cmt">-- HELLO</span>
+<span class="fn">LOWER</span>(<span class="str">'HELLO'</span>)           <span class="cmt">-- hello</span>
+<span class="fn">TRIM</span>(<span class="str">'  hello  '</span>)       <span class="cmt">-- 'hello'</span>
+<span class="fn">LTRIM</span>(<span class="str">'  hello'</span>)         <span class="cmt">-- 'hello'</span>
+<span class="fn">RTRIM</span>(<span class="str">'hello  '</span>)         <span class="cmt">-- 'hello'</span>
+<span class="fn">CONCAT</span>(<span class="str">'Hello'</span>,<span class="str">' World'</span>) <span class="cmt">-- 'Hello World'</span>
+<span class="fn">CONCAT_WS</span>(<span class="str">','</span>,<span class="str">'a'</span>,<span class="str">'b'</span>)  <span class="cmt">-- 'a,b'</span>
+<span class="fn">SUBSTRING</span>(<span class="str">'abcdef'</span>,<span class="num">2</span>,<span class="num">3</span>) <span class="cmt">-- 'bcd'</span>
+<span class="fn">LEFT</span>(<span class="str">'abcdef'</span>,<span class="num">3</span>)         <span class="cmt">-- 'abc'</span>
+<span class="fn">RIGHT</span>(<span class="str">'abcdef'</span>,<span class="num">3</span>)        <span class="cmt">-- 'def'</span>
+<span class="fn">REPLACE</span>(<span class="str">'hi there'</span>,<span class="str">'hi'</span>,<span class="str">'hello'</span>) <span class="cmt">-- 'hello there'</span>
+<span class="fn">LOCATE</span>(<span class="str">'lo'</span>,<span class="str">'hello'</span>)     <span class="cmt">-- 4</span>
+<span class="fn">INSTR</span>(<span class="str">'hello'</span>,<span class="str">'lo'</span>)      <span class="cmt">-- 4</span>
+<span class="fn">LPAD</span>(<span class="str">'42'</span>,<span class="num">5</span>,<span class="str">'0'</span>)          <span class="cmt">-- '00042'</span>
+<span class="fn">RPAD</span>(<span class="str">'hi'</span>,<span class="num">5</span>,<span class="str">'.'</span>)          <span class="cmt">-- 'hi...'</span>
+<span class="fn">REPEAT</span>(<span class="str">'ab'</span>,<span class="num">3</span>)            <span class="cmt">-- 'ababab'</span>
+<span class="fn">REVERSE</span>(<span class="str">'hello'</span>)          <span class="cmt">-- 'olleh'</span>
+<span class="fn">FORMAT</span>(<span class="num">1234567.89</span>,<span class="num">2</span>)     <span class="cmt">-- '1,234,567.89'</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Date/Time Functions</h3>
+      <div class="code-block">
+        <div class="code-body">
+<span class="fn">NOW</span>()                    <span class="cmt">-- 2024-05-01 10:30:00</span>
+<span class="fn">CURDATE</span>()               <span class="cmt">-- 2024-05-01</span>
+<span class="fn">CURTIME</span>()               <span class="cmt">-- 10:30:00</span>
+<span class="fn">YEAR</span>(<span class="fn">NOW</span>())             <span class="cmt">-- 2024</span>
+<span class="fn">MONTH</span>(<span class="fn">NOW</span>())            <span class="cmt">-- 5</span>
+<span class="fn">DAY</span>(<span class="fn">NOW</span>())              <span class="cmt">-- 1</span>
+<span class="fn">HOUR</span>(<span class="fn">NOW</span>())             <span class="cmt">-- 10</span>
+<span class="fn">MINUTE</span>(<span class="fn">NOW</span>())           <span class="cmt">-- 30</span>
+<span class="fn">DAYNAME</span>(<span class="fn">NOW</span>())          <span class="cmt">-- 'Wednesday'</span>
+<span class="fn">MONTHNAME</span>(<span class="fn">NOW</span>())        <span class="cmt">-- 'May'</span>
+<span class="fn">DAYOFWEEK</span>(<span class="fn">NOW</span>())        <span class="cmt">-- 4 (1=Sun)</span>
+<span class="fn">DATE_FORMAT</span>(<span class="fn">NOW</span>(),<span class="str">'%d/%m/%Y'</span>) <span class="cmt">-- 01/05/2024</span>
+<span class="fn">DATE_ADD</span>(<span class="fn">NOW</span>(), <span class="kw">INTERVAL</span> <span class="num">7</span> <span class="kw">DAY</span>)
+<span class="fn">DATE_SUB</span>(<span class="fn">NOW</span>(), <span class="kw">INTERVAL</span> <span class="num">1</span> <span class="kw">MONTH</span>)
+<span class="fn">DATEDIFF</span>(<span class="str">'2024-12-31'</span>,<span class="fn">NOW</span>()) <span class="cmt">-- วันที่เหลือ</span>
+<span class="fn">TIMEDIFF</span>(<span class="str">'10:00'</span>,<span class="str">'08:30'</span>)   <span class="cmt">-- 01:30:00</span>
+<span class="fn">UNIX_TIMESTAMP</span>(<span class="fn">NOW</span>())  <span class="cmt">-- epoch seconds</span>
+<span class="fn">FROM_UNIXTIME</span>(<span class="num">1714550000</span>) <span class="cmt">-- datetime</span>
+<span class="fn">STR_TO_DATE</span>(<span class="str">'01/05/2024'</span>,<span class="str">'%d/%m/%Y'</span>)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Math Functions</h3>
+      <div class="code-block">
+        <div class="code-body">
+<span class="fn">ABS</span>(<span class="op">-</span><span class="num">5</span>)           <span class="cmt">-- 5</span>
+<span class="fn">CEIL</span>(<span class="num">4.1</span>)          <span class="cmt">-- 5</span>
+<span class="fn">FLOOR</span>(<span class="num">4.9</span>)         <span class="cmt">-- 4</span>
+<span class="fn">ROUND</span>(<span class="num">4.567</span>,<span class="num">2</span>)     <span class="cmt">-- 4.57</span>
+<span class="fn">TRUNCATE</span>(<span class="num">4.567</span>,<span class="num">2</span>) <span class="cmt">-- 4.56 (ไม่ปัดเศษ)</span>
+<span class="fn">MOD</span>(<span class="num">10</span>,<span class="num">3</span>)          <span class="cmt">-- 1 (เศษ)</span>
+<span class="fn">POWER</span>(<span class="num">2</span>,<span class="num">10</span>)        <span class="cmt">-- 1024</span>
+<span class="fn">SQRT</span>(<span class="num">16</span>)           <span class="cmt">-- 4</span>
+<span class="fn">LOG</span>(<span class="num">100</span>)           <span class="cmt">-- 4.605... (ln)</span>
+<span class="fn">LOG10</span>(<span class="num">100</span>)         <span class="cmt">-- 2</span>
+<span class="fn">RAND</span>()             <span class="cmt">-- 0.0 - 1.0 สุ่ม</span>
+<span class="fn">FLOOR</span>(<span class="fn">RAND</span>()*<span class="num">100</span>) <span class="cmt">-- 0-99 สุ่ม</span>
+<span class="fn">PI</span>()               <span class="cmt">-- 3.14159...</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>GROUP_CONCAT</h3>
+      <div class="code-block">
+        <div class="code-body">
+<span class="cmt">-- รวมค่าในกลุ่มเป็น string เดียว</span>
+<span class="kw">SELECT</span>
+  <span class="tbl">customer_id</span>,
+  <span class="fn">GROUP_CONCAT</span>(
+    <span class="tbl">p</span>.<span class="tbl">name</span>
+    <span class="kw">ORDER BY</span> <span class="tbl">p</span>.<span class="tbl">name</span>
+    <span class="kw">SEPARATOR</span> <span class="str">', '</span>
+  ) <span class="kw">AS</span> products_ordered
+<span class="kw">FROM</span> <span class="tbl">orders</span> <span class="tbl">o</span>
+<span class="kw">JOIN</span> <span class="tbl">order_items</span> <span class="tbl">oi</span> <span class="kw">ON</span> <span class="tbl">o</span>.<span class="tbl">id</span> = <span class="tbl">oi</span>.<span class="tbl">order_id</span>
+<span class="kw">JOIN</span> <span class="tbl">products</span> <span class="tbl">p</span> <span class="kw">ON</span> <span class="tbl">oi</span>.<span class="tbl">product_id</span> = <span class="tbl">p</span>.<span class="tbl">id</span>
+<span class="kw">GROUP BY</span> <span class="tbl">customer_id</span>;
+
+<span class="cmt">-- ผลลัพธ์: "iPhone 15, MacBook Air, AirPods"</span>
+
+<span class="cmt">-- ตั้งค่า limit (default 1024 bytes)</span>
+<span class="kw">SET</span> <span class="fn">SESSION</span> group_concat_max_len = <span class="num">10000</span>;</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CHAPTER 8 ==================== -->
+<section id="index">
+  <div class="chapter-header">
+    <h2>บทที่ 8 — Index ใน MySQL</h2>
+    <p>B-Tree Index, Full-text Index, EXPLAIN, Query Optimization</p>
+  </div>
+
+  <div class="card">
+    <h3>ประเภท Index</h3>
+    <div class="tbl-wrap">
+      <table>
+        <tr><th>ประเภท</th><th>ใช้กับ</th><th>ตัวอย่าง</th></tr>
+        <tr><td>PRIMARY KEY</td><td>ระบุแถวไม่ซ้ำ (Clustered)</td><td>id INT PRIMARY KEY</td></tr>
+        <tr><td>UNIQUE INDEX</td><td>ห้ามซ้ำ + เร็ว</td><td>UNIQUE (email)</td></tr>
+        <tr><td>INDEX (B-Tree)</td><td>WHERE, JOIN, ORDER BY</td><td>INDEX (customer_id)</td></tr>
+        <tr><td>COMPOSITE INDEX</td><td>หลาย column</td><td>INDEX (status, date)</td></tr>
+        <tr><td>FULLTEXT INDEX</td><td>ค้นหาข้อความ</td><td>FULLTEXT (title, body)</td></tr>
+        <tr><td>SPATIAL INDEX</td><td>Geographic data</td><td>SPATIAL (location)</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>EXPLAIN — วิเคราะห์ Query Plan</h3>
+    <div class="code-block">
+      <div class="code-body">
+<span class="kw">EXPLAIN SELECT</span> *
+<span class="kw">FROM</span> <span class="tbl">orders</span> <span class="tbl">o</span>
+<span class="kw">JOIN</span> <span class="tbl">customers</span> <span class="tbl">c</span> <span class="kw">ON</span> <span class="tbl">o</span>.<span class="tbl">customer_id</span> = <span class="tbl">c</span>.<span class="tbl">id</span>
+<span class="kw">WHERE</span> <span class="tbl">o</span>.<span class="tbl">status</span> = <span class="str">'paid'</span>;
+
+<span class="cmt">/*
+id | select_type | table | type  | key          | rows | Extra
+1  | SIMPLE      | o     | ref   | idx_status   | 500  | Using index
+1  | SIMPLE      | c     | eq_ref| PRIMARY      | 1    |
+
+type ยิ่งดีขึ้น:
+ALL(Full Scan) → index → range → ref → eq_ref → const/system
+*/</span>
+
+<span class="cmt">-- EXPLAIN ANALYZE (MySQL 8.0.18+)</span>
+<span class="kw">EXPLAIN ANALYZE SELECT</span> * <span class="kw">FROM</span> <span class="tbl">orders</span>
+<span class="kw">WHERE</span> <span class="tbl">customer_id</span> = <span class="num">5</span>;
+<span class="cmt">-- แสดงเวลาจริงที่ใช้แต่ละ step</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Covering Index และ Composite Index</h3>
+    <div class="code-block">
+      <div class="code-body">
+<span class="cmt">-- Composite Index: ลำดับ column สำคัญมาก!</span>
+<span class="cmt">-- Rule: (Equality → Range → Sort → Select)</span>
+<span class="kw">CREATE INDEX</span> <span class="tbl">idx_order_lookup</span>
+  <span class="kw">ON</span> <span class="tbl">orders</span> (<span class="tbl">customer_id</span>, <span class="tbl">status</span>, <span class="tbl">order_date</span>);
+
+<span class="cmt">-- index นี้ช่วย query นี้ได้เต็มที่:</span>
+<span class="kw">WHERE</span> <span class="tbl">customer_id</span> = <span class="num">5</span>
+  <span class="kw">AND</span> <span class="tbl">status</span> = <span class="str">'paid'</span>
+<span class="kw">ORDER BY</span> <span class="tbl">order_date</span>;
+
+<span class="cmt">-- Covering Index: query ดึงแค่ cols ใน index</span>
+<span class="kw">CREATE INDEX</span> <span class="tbl">idx_cover</span>
+  <span class="kw">ON</span> <span class="tbl">orders</span> (<span class="tbl">customer_id</span>, <span class="tbl">total</span>, <span class="tbl">status</span>);
+
+<span class="cmt">-- ไม่ต้อง access ตาราง (Extra: Using index)</span>
+<span class="kw">SELECT</span> <span class="tbl">total</span>, <span class="tbl">status</span>
+<span class="kw">FROM</span> <span class="tbl">orders</span>
+<span class="kw">WHERE</span> <span class="tbl">customer_id</span> = <span class="num">5</span>;</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Full-text Search</h3>
+    <div class="code-block">
+      <div class="code-body">
+<span class="kw">CREATE TABLE</span> <span class="tbl">articles</span> (
+  <span class="tbl">id</span>      <span class="fn">INT</span> <span class="kw">PRIMARY KEY AUTO_INCREMENT</span>,
+  <span class="tbl">title</span>   <span class="fn">VARCHAR</span>(<span class="num">255</span>),
+  <span class="tbl">content</span> <span class="fn">TEXT</span>,
+  <span class="kw">FULLTEXT INDEX</span> <span class="tbl">ft_idx</span> (<span class="tbl">title</span>, <span class="tbl">content</span>)
+);
+
+<span class="cmt">-- Natural Language Mode (default)</span>
+<span class="kw">SELECT</span> *, <span class="fn">MATCH</span>(<span class="tbl">title</span>, <span class="tbl">content</span>) <span class="kw">AGAINST</span> (<span class="str">'MySQL database'</span>) <span class="kw">AS</span> score
+<span class="kw">FROM</span> <span class="tbl">articles</span>
+<span class="kw">WHERE</span> <span class="fn">MATCH</span>(<span class="tbl">title</span>, <span class="tbl">content</span>) <span class="kw">AGAINST</span> (<span class="str">'MySQL database'</span>)
+<span class="kw">ORDER BY</span> score <span class="kw">DESC</span>;
+
+<span class="cmt">-- Boolean Mode (+ ต้องมี, - ต้องไม่มี, * wildcard)</span>
+<span class="kw">WHERE</span> <span class="fn">MATCH</span>(<span class="tbl">title</span>, <span class="tbl">content</span>)
+  <span class="kw">AGAINST</span> (<span class="str">'+MySQL +performance -slow'</span> <span class="kw">IN BOOLEAN MODE</span>);</div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CHAPTER 9 ==================== -->
+<section id="transaction">
+  <div class="chapter-header">
+    <h2>บทที่ 9 — Transactions, Locks และ Deadlocks</h2>
+    <p>COMMIT/ROLLBACK, Row Locks, Deadlock detection</p>
+  </div>
+
+  <div class="card">
+    <h3>Locking ใน InnoDB</h3>
+    <div class="tbl-wrap">
+      <table>
+        <tr><th>Lock Type</th><th>ใครถือได้</th><th>เกิดเมื่อ</th></tr>
+        <tr><td>Shared Lock (S)</td><td>หลาย transaction</td><td>SELECT ... FOR SHARE</td></tr>
+        <tr><td>Exclusive Lock (X)</td><td>1 transaction เท่านั้น</td><td>UPDATE, DELETE, SELECT ... FOR UPDATE</td></tr>
+        <tr><td>Intention Shared (IS)</td><td>Table level</td><td>ก่อน S lock บน row</td></tr>
+        <tr><td>Intention Exclusive (IX)</td><td>Table level</td><td>ก่อน X lock บน row</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>SELECT FOR UPDATE และ FOR SHARE</h3>
+    <div class="code-block">
+      <div class="code-body">
+<span class="cmt">-- Lock แถวเพื่อ update (ป้องกัน race condition)</span>
+<span class="kw">START TRANSACTION</span>;
+
+<span class="kw">SELECT</span> <span class="tbl">stock</span>
+<span class="kw">FROM</span> <span class="tbl">products</span>
+<span class="kw">WHERE</span> <span class="tbl">id</span> = <span class="num">101</span>
+<span class="kw">FOR UPDATE</span>;  <span class="cmt">-- ← lock แถวนี้ไว้</span>
+
+<span class="cmt">-- ตรวจ stock และ update</span>
+<span class="kw">UPDATE</span> <span class="tbl">products</span>
+<span class="kw">SET</span> <span class="tbl">stock</span> = <span class="tbl">stock</span> - <span class="num">1</span>
+<span class="kw">WHERE</span> <span class="tbl">id</span> = <span class="num">101</span>;
+
+<span class="kw">COMMIT</span>;
+
+<span class="cmt">-- SKIP LOCKED: ข้ามแถวที่ถูก lock ไปแล้ว</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">job_queue</span>
+<span class="kw">WHERE</span> <span class="tbl">status</span> = <span class="str">'pending'</span>
+<span class="kw">LIMIT</span> <span class="num">10</span>
+<span class="kw">FOR UPDATE SKIP LOCKED</span>; <span class="cmt">-- ← สำหรับ Queue processing</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Deadlock และการป้องกัน</h3>
+    <div class="compare">
+      <div class="compare-box bad">
+        <div class="compare-label">Deadlock เกิดขึ้น</div>
+        <div class="code-block"><div class="code-body">
+<span class="cmt">-- TX A:</span>
+<span class="kw">UPDATE</span> <span class="tbl">accounts</span> <span class="kw">SET</span>... <span class="kw">WHERE</span> id=<span class="num">1</span>;
+<span class="cmt">-- (รอ TX B ปล่อย lock id=2)</span>
+<span class="kw">UPDATE</span> <span class="tbl">accounts</span> <span class="kw">SET</span>... <span class="kw">WHERE</span> id=<span class="num">2</span>;
+
+<span class="cmt">-- TX B (พร้อมกัน):</span>
+<span class="kw">UPDATE</span> <span class="tbl">accounts</span> <span class="kw">SET</span>... <span class="kw">WHERE</span> id=<span class="num">2</span>;
+<span class="cmt">-- (รอ TX A ปล่อย lock id=1)</span>
+<span class="kw">UPDATE</span> <span class="tbl">accounts</span> <span class="kw">SET</span>... <span class="kw">WHERE</span> id=<span class="num">1</span>;</div></div>
+      </div>
+      <div class="compare-box good">
+        <div class="compare-label">แก้: Lock ตามลำดับเดียวกัน</div>
+        <div class="code-block"><div class="code-body">
+<span class="cmt">-- ทั้ง TX A และ TX B:</span>
+<span class="cmt">-- lock id เล็กก่อนเสมอ</span>
+<span class="kw">UPDATE</span> <span class="tbl">accounts</span> <span class="kw">SET</span>...
+<span class="kw">WHERE</span> id = <span class="fn">LEAST</span>(<span class="num">1</span>,<span class="num">2</span>);
+
+<span class="kw">UPDATE</span> <span class="tbl">accounts</span> <span class="kw">SET</span>...
+<span class="kw">WHERE</span> id = <span class="fn">GREATEST</span>(<span class="num">1</span>,<span class="num">2</span>);</div></div>
+      </div>
+    </div>
+    <div class="code-block">
+      <div class="code-body">
+<span class="cmt">-- ดู deadlock ล่าสุด</span>
+<span class="kw">SHOW ENGINE INNODB STATUS</span>\G
+
+<span class="cmt">-- ตั้งค่า timeout (default 50 วินาที)</span>
+<span class="kw">SET</span> innodb_lock_wait_timeout = <span class="num">10</span>;</div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CHAPTER 10 ==================== -->
+<section id="users">
+  <div class="chapter-header">
+    <h2>บทที่ 10 — Users, Permissions และ Security</h2>
+    <p>CREATE USER, GRANT, REVOKE, Best Practices</p>
+  </div>
+
+  <div class="card">
+    <h3>จัดการ Users</h3>
+    <div class="code-block">
+      <div class="code-body">
+<span class="cmt">-- สร้าง User</span>
+<span class="kw">CREATE USER</span> <span class="str">'appuser'</span>@<span class="str">'localhost'</span>
+  <span class="kw">IDENTIFIED BY</span> <span class="str">'StrongP@ssw0rd!'</span>;
+
+<span class="cmt">-- User จาก host ใดก็ได้</span>
+<span class="kw">CREATE USER</span> <span class="str">'reader'</span>@<span class="str">'%'</span>
+  <span class="kw">IDENTIFIED BY</span> <span class="str">'password'</span>;
+
+<span class="cmt">-- เปลี่ยน password</span>
+<span class="kw">ALTER USER</span> <span class="str">'appuser'</span>@<span class="str">'localhost'</span>
+  <span class="kw">IDENTIFIED BY</span> <span class="str">'NewPassword!'</span>;
+
+<span class="cmt">-- ลบ User</span>
+<span class="kw">DROP USER</span> <span class="str">'olduser'</span>@<span class="str">'localhost'</span>;
+
+<span class="cmt">-- ดู Users ทั้งหมด</span>
+<span class="kw">SELECT</span> <span class="tbl">user</span>, <span class="tbl">host</span>, <span class="tbl">authentication_string</span>
+<span class="kw">FROM</span> <span class="tbl">mysql</span>.<span class="tbl">user</span>;</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>GRANT และ REVOKE</h3>
+    <div class="code-block">
+      <div class="code-body">
+<span class="cmt">-- ให้ทุก permission บน database เดียว</span>
+<span class="kw">GRANT ALL PRIVILEGES ON</span> <span class="tbl">myapp</span>.* <span class="kw">TO</span> <span class="str">'appuser'</span>@<span class="str">'localhost'</span>;
+
+<span class="cmt">-- ให้แค่ SELECT</span>
+<span class="kw">GRANT SELECT ON</span> <span class="tbl">myapp</span>.* <span class="kw">TO</span> <span class="str">'reader'</span>@<span class="str">'%'</span>;
+
+<span class="cmt">-- ให้ SELECT, INSERT, UPDATE บนตารางเดียว</span>
+<span class="kw">GRANT SELECT</span>, <span class="kw">INSERT</span>, <span class="kw">UPDATE ON</span> <span class="tbl">myapp</span>.<span class="tbl">orders</span>
+  <span class="kw">TO</span> <span class="str">'appuser'</span>@<span class="str">'localhost'</span>;
+
+<span class="cmt">-- ถอน permission</span>
+<span class="kw">REVOKE INSERT ON</span> <span class="tbl">myapp</span>.* <span class="kw">FROM</span> <span class="str">'reader'</span>@<span class="str">'%'</span>;
+
+<span class="cmt">-- apply ทันที</span>
+<span class="kw">FLUSH PRIVILEGES</span>;
+
+<span class="cmt">-- ดู permissions ของ user</span>
+<span class="kw">SHOW GRANTS FOR</span> <span class="str">'appuser'</span>@<span class="str">'localhost'</span>;</div>
+    </div>
+    <div class="callout tip">
+      <div class="callout-title">Principle of Least Privilege</div>
+      App user ควรมีแค่ SELECT, INSERT, UPDATE, DELETE บน database ที่ใช้งาน — ไม่ควรใช้ root สำหรับ application
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CHAPTER 11 ==================== -->
+<section id="advanced">
+  <div class="chapter-header">
+    <h2>บทที่ 11 — Advanced MySQL Features</h2>
+    <p>Stored Procedures, Triggers, Events, Partitioning, Replication</p>
+  </div>
+
+  <div class="card">
+    <h3>Triggers</h3>
+    <div class="code-block">
+      <div class="code-body">
+<span class="cmt">-- Trigger: บันทึก log ทุกครั้งที่ราคาเปลี่ยน</span>
+<span class="fn">DELIMITER</span> //
+<span class="kw">CREATE TRIGGER</span> <span class="tbl">trg_price_change</span>
+<span class="kw">AFTER UPDATE ON</span> <span class="tbl">products</span>
+<span class="kw">FOR EACH ROW</span>
+<span class="kw">BEGIN</span>
+  <span class="kw">IF</span> <span class="kw">OLD</span>.<span class="tbl">price</span> != <span class="kw">NEW</span>.<span class="tbl">price</span> <span class="kw">THEN</span>
+    <span class="kw">INSERT INTO</span> <span class="tbl">price_log</span>
+      (<span class="tbl">product_id</span>, <span class="tbl">old_price</span>, <span class="tbl">new_price</span>, <span class="tbl">changed_at</span>)
+    <span class="kw">VALUES</span>
+      (<span class="kw">NEW</span>.<span class="tbl">id</span>, <span class="kw">OLD</span>.<span class="tbl">price</span>, <span class="kw">NEW</span>.<span class="tbl">price</span>, <span class="fn">NOW</span>());
+  <span class="kw">END IF</span>;
+<span class="kw">END</span>//
+<span class="fn">DELIMITER</span> ;
+
+<span class="cmt">-- ดู Triggers</span>
+<span class="kw">SHOW TRIGGERS</span>;
+<span class="kw">DROP TRIGGER IF EXISTS</span> <span class="tbl">trg_price_change</span>;</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Scheduled Events (MySQL Cron)</h3>
+    <div class="code-block">
+      <div class="code-body">
+<span class="cmt">-- เปิด Event Scheduler</span>
+<span class="kw">SET GLOBAL</span> event_scheduler = <span class="kw">ON</span>;
+
+<span class="cmt">-- Event: ลบ log เก่าทุกวัน</span>
+<span class="kw">CREATE EVENT</span> <span class="tbl">evt_clean_logs</span>
+<span class="kw">ON SCHEDULE EVERY</span> <span class="num">1</span> <span class="kw">DAY</span>
+  <span class="kw">STARTS</span> <span class="str">'2024-01-01 02:00:00'</span>
+<span class="kw">DO</span>
+  <span class="kw">DELETE FROM</span> <span class="tbl">system_logs</span>
+  <span class="kw">WHERE</span> <span class="tbl">created_at</span> < <span class="fn">DATE_SUB</span>(<span class="fn">NOW</span>(), <span class="kw">INTERVAL</span> <span class="num">90</span> <span class="kw">DAY</span>);
+
+<span class="cmt">-- Event ทำครั้งเดียว</span>
+<span class="kw">CREATE EVENT</span> <span class="tbl">evt_one_time</span>
+<span class="kw">ON SCHEDULE AT</span> <span class="str">'2024-12-31 23:59:59'</span>
+<span class="kw">DO</span> <span class="kw">CALL</span> <span class="fn">year_end_cleanup</span>();
+
+<span class="cmt">-- ดู Events</span>
+<span class="kw">SHOW EVENTS</span>;</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Table Partitioning</h3>
+    <div class="code-block">
+      <div class="code-body">
+<span class="cmt">-- RANGE Partitioning (แบ่งตาม ปี)</span>
+<span class="kw">CREATE TABLE</span> <span class="tbl">sales</span> (
+  <span class="tbl">id</span>         <span class="fn">INT</span>,
+  <span class="tbl">sale_date</span>  <span class="fn">DATE</span>,
+  <span class="tbl">amount</span>     <span class="fn">DECIMAL</span>(<span class="num">10</span>,<span class="num">2</span>)
+)
+<span class="kw">PARTITION BY RANGE</span> (<span class="fn">YEAR</span>(<span class="tbl">sale_date</span>)) (
+  <span class="kw">PARTITION</span> p2022 <span class="kw">VALUES LESS THAN</span> (<span class="num">2023</span>),
+  <span class="kw">PARTITION</span> p2023 <span class="kw">VALUES LESS THAN</span> (<span class="num">2024</span>),
+  <span class="kw">PARTITION</span> p2024 <span class="kw">VALUES LESS THAN</span> (<span class="num">2025</span>),
+  <span class="kw">PARTITION</span> pmax  <span class="kw">VALUES LESS THAN MAXVALUE</span>
+);
+
+<span class="cmt">-- MySQL ใช้ Partition Pruning อัตโนมัติ</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">sales</span>
+<span class="kw">WHERE</span> <span class="tbl">sale_date</span> <span class="kw">BETWEEN</span> <span class="str">'2024-01-01'</span> <span class="kw">AND</span> <span class="str">'2024-12-31'</span>;
+<span class="cmt">-- ← scan แค่ p2024 ไม่ต้องสแกนทุก partition</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CHAPTER 12 ==================== -->
+<section id="backup">
+  <div class="chapter-header">
+    <h2>บทที่ 12 — Backup, Restore และ Performance Tuning</h2>
+    <p>mysqldump, mysqlpump, Binary Log, my.cnf Tuning</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>mysqldump — Backup</h3>
+      <div class="code-block">
+        <div class="code-header"><span>bash</span></div>
+        <div class="code-body">
+<span class="cmt"># Backup database เดียว</span>
+mysqldump -u root -p myapp > myapp_backup.sql
+
+<span class="cmt"># Backup พร้อม create database statement</span>
+mysqldump -u root -p \
+  --databases myapp \
+  --single-transaction \
+  --routines \
+  --triggers \
+  > myapp_full.sql
+
+<span class="cmt"># Backup ตารางเดียว</span>
+mysqldump -u root -p myapp orders > orders.sql
+
+<span class="cmt"># Backup ทุก database</span>
+mysqldump -u root -p --all-databases > all_db.sql
+
+<span class="cmt"># Compress</span>
+mysqldump -u root -p myapp | gzip > myapp_$(date +%Y%m%d).sql.gz
+
+<span class="cmt"># Restore</span>
+mysql -u root -p myapp < myapp_backup.sql
+gunzip < myapp_backup.sql.gz | mysql -u root -p myapp</div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Performance Tuning (my.cnf)</h3>
+      <div class="code-block">
+        <div class="code-header"><span>/etc/mysql/my.cnf</span></div>
+        <div class="code-body">
+<span class="val">[mysqld]
+# Buffer Pool (70-80% ของ RAM)
+innodb_buffer_pool_size = 4G
+
+# Log file size
+innodb_log_file_size = 256M
+
+# Flush method (Linux)
+innodb_flush_method = O_DIRECT
+
+# Connections
+max_connections = 200
+thread_cache_size = 50
+
+# Query Cache (deprecated MySQL 8)
+# ใช้ ProxySQL หรือ Redis แทน
+
+# Slow Query Log
+slow_query_log = 1
+slow_query_log_file = /var/log/mysql-slow.log
+long_query_time = 1  # วินาที
+
+# Character Set
+character_set_server = utf8mb4
+collation_server = utf8mb4_unicode_ci
+
+# Binary Log (สำหรับ Replication)
+log_bin = /var/log/mysql/mysql-bin.log
+binlog_format = ROW
+expire_logs_days = 7</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Replication (Master-Slave)</h3>
+    <div class="flow">
+      <div class="flow-step"><div class="num">1</div><div><strong>Master</strong> — เขียน changes ไปยัง Binary Log (binlog)</div></div>
+      <div class="flow-arrow">→ Binlog Stream →</div>
+      <div class="flow-step"><div class="num">2</div><div><strong>Slave I/O Thread</strong> — อ่าน binlog จาก master, เขียนไป Relay Log</div></div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step"><div class="num">3</div><div><strong>Slave SQL Thread</strong> — อ่าน Relay Log และ apply กับ Slave database</div></div>
+    </div>
+    <div class="callout info">
+      <div class="callout-title">ประโยชน์ของ Replication</div>
+      <ul style="margin:.3rem 0 0 1.2rem;font-size:13.5px">
+        <li><strong>Read Scaling</strong> — ส่ง SELECT queries ไป Slave ลด load บน Master</li>
+        <li><strong>Backup</strong> — ทำ backup บน Slave โดยไม่กระทบ Master</li>
+        <li><strong>High Availability</strong> — ถ้า Master ล่ม สามารถ promote Slave เป็น Master</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Checklist — MySQL Best Practices</h3>
+    <div class="grid-2">
+      <div>
+        <div style="color:var(--green);font-weight:700;margin-bottom:.5rem">✅ ควรทำ</div>
+        <ul style="color:var(--muted);font-size:13px;list-style:none">
+          <li>✅ ใช้ InnoDB engine เสมอ</li>
+          <li>✅ ใช้ utf8mb4 charset</li>
+          <li>✅ ใส่ index บน FK, WHERE, JOIN columns</li>
+          <li>✅ ใช้ DECIMAL สำหรับเงิน</li>
+          <li>✅ ใช้ prepared statements ป้องกัน SQL Injection</li>
+          <li>✅ ตั้ง innodb_buffer_pool_size ให้เหมาะสม</li>
+          <li>✅ เปิด slow query log</li>
+          <li>✅ Backup สม่ำเสมอและทดสอบ restore</li>
+          <li>✅ ใช้ EXPLAIN วิเคราะห์ query ช้า</li>
+          <li>✅ Principle of least privilege สำหรับ users</li>
+        </ul>
+      </div>
+      <div>
+        <div style="color:var(--red);font-weight:700;margin-bottom:.5rem">❌ ควรหลีกเลี่ยง</div>
+        <ul style="color:var(--muted);font-size:13px;list-style:none">
+          <li>❌ ใช้ root user สำหรับ application</li>
+          <li>❌ SELECT * ใน production</li>
+          <li>❌ FLOAT/DOUBLE สำหรับเงิน</li>
+          <li>❌ ไม่มี WHERE ใน UPDATE/DELETE</li>
+          <li>❌ Index ทุก column (ช้า write)</li>
+          <li>❌ N+1 query problem</li>
+          <li>❌ ฝัง password ใน code</li>
+          <li>❌ ไม่ backup</li>
+          <li>❌ LIKE '%xxx' บน indexed column</li>
+          <li>❌ transaction ขนาดใหญ่เกินไป</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<footer>
+  <p>MySQL Teaching Material — สร้างด้วย ❤️ สำหรับผู้เรียน</p>
+  <p style="margin-top:.3rem;font-size:12px">ครอบคลุม: Architecture · Data Types · Storage Engines · CRUD · JOINs · Functions · Index · Transactions · Users · Advanced · Backup</p>
+</footer>
+
+<script>
+  const nav = document.querySelector('nav');
+  const links = nav.querySelectorAll('a[href^="#"]');
+  const sections = [...links].map(a => document.querySelector(a.getAttribute('href')));
+  window.addEventListener('scroll', () => {
+    let cur = sections[0];
+    sections.forEach(s => { if (s && s.getBoundingClientRect().top <= 80) cur = s; });
+    links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + cur?.id));
+  });
+</script>
+
+</body>
+</html>

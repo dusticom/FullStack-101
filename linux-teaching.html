@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>สื่อการสอน Linux Command Line</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#10b981;--blue:#3b82f6;--orange:#f59e0b;--red:#ef4444;
+  --purple:#8b5cf6;--cyan:#06b6d4;--yellow:#eab308;--pink:#ec4899;
+  --dark:#0f172a;--light:#f8fafc;--card:#fff;--border:#e2e8f0;
+  --code-bg:#0d1117;--radius:12px;--shadow:0 4px 20px rgba(0,0,0,.07);
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#0d1117;color:#c9d1d9;line-height:1.75}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#0d1117 0%,#161b22 50%,#0d2137 100%);border-bottom:1px solid #21262d;text-align:center;padding:64px 24px 48px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,rgba(16,185,129,.15),transparent 60%)}
+.hero h1{font-size:clamp(2rem,5vw,3.4rem);font-weight:900;color:#fff;margin-bottom:12px;position:relative}
+.hero h1 span{color:#10b981}
+.hero p{font-size:1.1rem;color:#8b949e;max-width:580px;margin:0 auto;position:relative}
+.badge-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:20px;position:relative}
+.badge{background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);color:#6ee7b7;padding:4px 14px;border-radius:999px;font-size:.8rem;font-weight:700}
+
+/* NAV */
+.nav-sticky{position:sticky;top:0;z-index:100;background:#161b22;border-bottom:1px solid #21262d;padding:0 12px;overflow-x:auto;white-space:nowrap}
+.nav-sticky a{display:inline-block;padding:12px 13px;font-size:.8rem;font-weight:600;color:#8b949e;text-decoration:none;border-bottom:2px solid transparent;transition:.2s}
+.nav-sticky a:hover,.nav-sticky a.active{color:#10b981;border-color:#10b981}
+
+/* LAYOUT */
+.container{max-width:1140px;margin:0 auto;padding:40px 20px}
+section{margin-bottom:60px}
+
+/* CHAPTER HEADER */
+.chapter-header{border-radius:var(--radius);padding:22px 26px;margin-bottom:22px;display:flex;align-items:center;gap:16px;border:1px solid #21262d}
+.ch-num{font-size:2.8rem;font-weight:900;opacity:.2;line-height:1;min-width:56px;color:#fff}
+.chapter-header h2{font-size:1.35rem;font-weight:800;color:#fff;margin:0}
+.chapter-header p{font-size:.88rem;color:#8b949e;margin-top:4px}
+.ch-green{background:linear-gradient(135deg,#052e16,#064e3b)}
+.ch-blue{background:linear-gradient(135deg,#0c1445,#1e3a8a)}
+.ch-purple{background:linear-gradient(135deg,#2e1065,#4c1d95)}
+.ch-orange{background:linear-gradient(135deg,#431407,#7c2d12)}
+.ch-cyan{background:linear-gradient(135deg,#0a2540,#155e75)}
+.ch-red{background:linear-gradient(135deg,#450a0a,#7f1d1d)}
+.ch-yellow{background:linear-gradient(135deg,#1c1400,#78350f)}
+.ch-pink{background:linear-gradient(135deg,#2d0a1e,#831843)}
+.ch-teal{background:linear-gradient(135deg,#042f2e,#134e4a)}
+.ch-slate{background:linear-gradient(135deg,#0f172a,#1e293b)}
+
+/* CARDS */
+.card{background:#161b22;border:1px solid #21262d;border-radius:var(--radius);padding:22px 24px;margin-bottom:18px;box-shadow:var(--shadow)}
+.card h3{font-size:1.05rem;font-weight:700;color:#e6edf3;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.card p,.card li{font-size:.92rem;color:#8b949e}
+.card ul{padding-left:18px;display:flex;flex-direction:column;gap:5px}
+
+/* CODE / TERMINAL */
+pre{background:#0d1117;color:#c9d1d9;border-radius:8px;padding:18px 20px;overflow-x:auto;font-size:.84rem;line-height:1.75;margin:10px 0;font-family:'Cascadia Code','Fira Code','Consolas',monospace;border:1px solid #21262d}
+.terminal{background:#000;border-radius:10px;overflow:hidden;margin:12px 0;border:1px solid #333}
+.terminal-bar{background:#1a1a1a;padding:10px 16px;display:flex;align-items:center;gap:8px}
+.terminal-bar span{width:12px;height:12px;border-radius:50%}
+.t-red{background:#ff5f57}.t-yellow{background:#febc2e}.t-green{background:#28c840}
+.terminal-title{color:#666;font-size:.8rem;margin-left:8px}
+.terminal pre{background:#000;border:none;border-radius:0;margin:0;padding:16px 20px}
+.prompt{color:#10b981;font-weight:700}
+.cmd{color:#79c0ff}
+.out{color:#c9d1d9}
+.comment-line{color:#484f58;font-style:italic}
+.hl{background:rgba(16,185,129,.15);border-left:3px solid #10b981;padding-left:8px;display:block;margin:-2px 0}
+
+/* SYNTAX */
+.kw{color:#ff7b72}.str{color:#a5d6ff}.fn{color:#d2a8ff}
+.cm{color:#484f58;font-style:italic}.type{color:#ffa657}
+.num{color:#79c0ff}.flag{color:#ffa657}.path{color:#a5d6ff}
+.var{color:#c9d1d9}.op{color:#ff7b72}
+
+/* INLINE CODE */
+.ic{background:#21262d;color:#79c0ff;padding:2px 7px;border-radius:5px;font-family:'Cascadia Code','Fira Code',monospace;font-size:.86em}
+
+/* GRID */
+.grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
+.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+
+/* CALLOUT */
+.callout{border-radius:8px;padding:14px 18px;margin:12px 0;display:flex;gap:10px;font-size:.9rem;line-height:1.6}
+.callout.info{background:rgba(59,130,246,.1);border-left:3px solid #3b82f6;color:#93c5fd}
+.callout.tip{background:rgba(16,185,129,.1);border-left:3px solid #10b981;color:#6ee7b7}
+.callout.warn{background:rgba(245,158,11,.1);border-left:3px solid #f59e0b;color:#fcd34d}
+.callout.danger{background:rgba(239,68,68,.1);border-left:3px solid #ef4444;color:#fca5a5}
+.callout .ci{font-size:1.05rem;margin-top:1px;flex-shrink:0}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:12px 0}
+th{background:#1c2128;padding:9px 13px;text-align:left;font-weight:700;color:#8b949e;border:1px solid #21262d}
+td{padding:9px 13px;border:1px solid #21262d;vertical-align:top;color:#c9d1d9}
+tr:nth-child(even) td{background:#161b22}
+td code,th code{font-family:'Cascadia Code','Fira Code',monospace;font-size:.85em;color:#79c0ff}
+
+/* CMD TABLE */
+.cmd-table td:first-child code{color:#10b981}
+
+/* PERMISSION BOX */
+.perm-box{display:flex;gap:4px;align-items:center;font-family:monospace;font-size:1.1rem;padding:12px 16px;background:#0d1117;border-radius:8px;border:1px solid #21262d;margin:10px 0;flex-wrap:wrap;gap:2px}
+.p-dash{color:#484f58}.p-r{color:#ffa657}.p-w{color:#ef4444}.p-x{color:#10b981}.p-grp{display:flex;gap:0}
+.p-label{font-size:.75rem;color:#484f58;margin-right:12px;margin-left:4px;align-self:center}
+
+/* PIPE FLOW */
+.pipe-flow{display:flex;align-items:center;flex-wrap:wrap;gap:0;background:#0d1117;border:1px solid #21262d;border-radius:8px;padding:14px 16px;margin:10px 0;font-family:monospace;font-size:.88rem}
+.pf-box{background:#1c2128;border:1px solid #21262d;padding:7px 14px;border-radius:6px;color:#c9d1d9}
+.pf-pipe{color:#10b981;padding:0 10px;font-size:1.1rem;font-weight:700}
+.pf-redir{color:#ffa657;padding:0 8px;font-size:1.1rem}
+
+/* FOOTER */
+footer{background:#0d1117;border-top:1px solid #21262d;color:#484f58;text-align:center;padding:32px;font-size:.85rem}
+footer strong{color:#8b949e}
+
+@media(max-width:600px){.grid-2,.grid-3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>🐧 <span>Linux</span> Command Line</h1>
+  <p>สื่อการสอนฉบับสมบูรณ์ — ตั้งแต่คำสั่งพื้นฐานจนถึง Shell Scripting</p>
+  <div class="badge-row">
+    <span class="badge">File System</span>
+    <span class="badge">Permissions</span>
+    <span class="badge">Process</span>
+    <span class="badge">Networking</span>
+    <span class="badge">Pipe &amp; Redirect</span>
+    <span class="badge">Shell Script</span>
+    <span class="badge">Cron Job</span>
+    <span class="badge">SSH</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav-sticky" id="main-nav">
+  <a href="#basics">พื้นฐาน</a>
+  <a href="#files">File System</a>
+  <a href="#permissions">Permissions</a>
+  <a href="#text">Text Processing</a>
+  <a href="#process">Process</a>
+  <a href="#pipe">Pipe &amp; Redirect</a>
+  <a href="#network">Network</a>
+  <a href="#archive">Archive</a>
+  <a href="#disk">Disk</a>
+  <a href="#user">User</a>
+  <a href="#script">Shell Script</a>
+  <a href="#cron">Cron &amp; SSH</a>
+</nav>
+
+<div class="container">
+
+<!-- ===================================================== -->
+<!-- 01 พื้นฐาน -->
+<!-- ===================================================== -->
+<section id="basics">
+  <div class="chapter-header ch-green">
+    <div class="ch-num">01</div>
+    <div>
+      <h2>คำสั่งพื้นฐาน &amp; Navigation</h2>
+      <p>คำสั่งแรกที่ต้องรู้ — ดู path, เปลี่ยน directory, ดูไฟล์</p>
+    </div>
+  </div>
+
+  <div class="callout info">
+    <span class="ci">💡</span>
+    <div><strong>Prompt</strong> — <span class="ic">user@hostname:~$</span> ตัว <span class="ic">~</span> หมายถึง home directory, <span class="ic">$</span> = user ทั่วไป, <span class="ic">#</span> = root</div>
+  </div>
+
+  <div class="terminal">
+    <div class="terminal-bar"><span class="t-red"></span><span class="t-yellow"></span><span class="t-green"></span><span class="terminal-title">bash</span></div>
+    <pre><span class="prompt">$</span> <span class="cmd">pwd</span>                   <span class="comment-line"># Print Working Directory — ดู path ปัจจุบัน</span>
+<span class="out">/home/user</span>
+
+<span class="prompt">$</span> <span class="cmd">ls</span>                    <span class="comment-line"># list files</span>
+<span class="out">Desktop  Documents  Downloads  Pictures</span>
+
+<span class="prompt">$</span> <span class="cmd">ls -la</span>               <span class="comment-line"># -l = long format, -a = ไฟล์ซ่อน (.dotfiles)</span>
+<span class="out">total 32
+drwxr-xr-x 5 user user 4096 Jan 10 09:00 .
+drwxr-xr-x 3 root root 4096 Jan  5 08:00 ..
+-rw-r--r-- 1 user user  220 Jan  5 08:00 .bash_logout
+drwxr-xr-x 2 user user 4096 Jan 10 09:00 Documents</span>
+
+<span class="prompt">$</span> <span class="cmd">cd Documents</span>         <span class="comment-line"># เปลี่ยน directory</span>
+<span class="prompt">$</span> <span class="cmd">cd ..</span>                <span class="comment-line"># ขึ้นไป 1 ระดับ</span>
+<span class="prompt">$</span> <span class="cmd">cd ~</span>                  <span class="comment-line"># กลับ home</span>
+<span class="prompt">$</span> <span class="cmd">cd -</span>                  <span class="comment-line"># กลับ directory ก่อนหน้า</span>
+<span class="prompt">$</span> <span class="cmd">cd /var/log</span>           <span class="comment-line"># ไปด้วย absolute path</span></pre>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>📋 ls options</h3>
+      <table class="cmd-table">
+        <tr><th>คำสั่ง</th><th>ความหมาย</th></tr>
+        <tr><td><code>ls</code></td><td>แสดงไฟล์ใน directory ปัจจุบัน</td></tr>
+        <tr><td><code>ls -l</code></td><td>แสดงรายละเอียด (long format)</td></tr>
+        <tr><td><code>ls -a</code></td><td>แสดงไฟล์ซ่อน (.dotfiles)</td></tr>
+        <tr><td><code>ls -la</code></td><td>รวม long + hidden</td></tr>
+        <tr><td><code>ls -lh</code></td><td>แสดงขนาดแบบอ่านง่าย (K/M/G)</td></tr>
+        <tr><td><code>ls -lt</code></td><td>เรียงตามเวลาแก้ไขล่าสุด</td></tr>
+        <tr><td><code>ls -lS</code></td><td>เรียงตามขนาดไฟล์</td></tr>
+        <tr><td><code>ls -R</code></td><td>แสดงแบบ recursive ทุก subdir</td></tr>
+        <tr><td><code>ls *.txt</code></td><td>แสดงเฉพาะ .txt (glob)</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>🔍 ดูข้อมูลระบบ</h3>
+      <div class="terminal">
+        <div class="terminal-bar"><span class="t-red"></span><span class="t-yellow"></span><span class="t-green"></span></div>
+        <pre><span class="prompt">$</span> <span class="cmd">whoami</span>            <span class="comment-line"># ชื่อ user ปัจจุบัน</span>
+<span class="out">user</span>
+
+<span class="prompt">$</span> <span class="cmd">hostname</span>          <span class="comment-line"># ชื่อเครื่อง</span>
+<span class="out">my-server</span>
+
+<span class="prompt">$</span> <span class="cmd">date</span>              <span class="comment-line"># วันเวลาปัจจุบัน</span>
+<span class="prompt">$</span> <span class="cmd">uptime</span>            <span class="comment-line"># เปิดเครื่องมานานแค่ไหน</span>
+<span class="prompt">$</span> <span class="cmd">uname -a</span>          <span class="comment-line"># ข้อมูล kernel/OS</span>
+<span class="prompt">$</span> <span class="cmd">lsb_release -a</span>    <span class="comment-line"># ข้อมูล distro</span>
+<span class="prompt">$</span> <span class="cmd">echo $SHELL</span>       <span class="comment-line"># shell ที่ใช้อยู่</span>
+<span class="prompt">$</span> <span class="cmd">history</span>           <span class="comment-line"># ดูประวัติคำสั่ง</span>
+<span class="prompt">$</span> <span class="cmd">clear</span>             <span class="comment-line"># ล้างหน้าจอ (Ctrl+L)</span>
+<span class="prompt">$</span> <span class="cmd">man ls</span>            <span class="comment-line"># คู่มือ</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>⌨️ Keyboard Shortcuts สำคัญ</h3>
+    <table>
+      <tr><th>Shortcut</th><th>ทำอะไร</th></tr>
+      <tr><td><code>Ctrl + C</code></td><td>ยกเลิก/หยุดโปรแกรมที่รันอยู่</td></tr>
+      <tr><td><code>Ctrl + Z</code></td><td>หยุดชั่วคราว (suspend) → ใช้ <code>fg</code> กลับมา</td></tr>
+      <tr><td><code>Ctrl + D</code></td><td>ออกจาก shell / EOF</td></tr>
+      <tr><td><code>Ctrl + L</code></td><td>ล้างหน้าจอ (clear)</td></tr>
+      <tr><td><code>Tab</code></td><td>Auto-complete คำสั่ง/ชื่อไฟล์</td></tr>
+      <tr><td><code>↑ ↓</code></td><td>ดูประวัติคำสั่ง (history)</td></tr>
+      <tr><td><code>Ctrl + R</code></td><td>ค้นหาประวัติ (reverse search)</td></tr>
+      <tr><td><code>Ctrl + A / E</code></td><td>ไปต้น/ท้ายบรรทัด</td></tr>
+      <tr><td><code>Ctrl + W</code></td><td>ลบคำหน้า cursor</td></tr>
+      <tr><td><code>!!</code></td><td>รันคำสั่งล่าสุดซ้ำ (เช่น <code>sudo !!</code>)</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ===================================================== -->
+<!-- 02 File System -->
+<!-- ===================================================== -->
+<section id="files">
+  <div class="chapter-header ch-blue">
+    <div class="ch-num">02</div>
+    <div>
+      <h2>File System — สร้าง คัดลอก ย้าย ลบ</h2>
+      <p>จัดการไฟล์และ directory ทุกรูปแบบ</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🗂️ โครงสร้าง Linux File System</h3>
+    <table>
+      <tr><th>Directory</th><th>ใช้เก็บอะไร</th></tr>
+      <tr><td><code>/</code></td><td>Root — ราก ของทุกอย่าง</td></tr>
+      <tr><td><code>/home</code></td><td>home ของแต่ละ user เช่น <code>/home/user</code></td></tr>
+      <tr><td><code>/root</code></td><td>home ของ root</td></tr>
+      <tr><td><code>/etc</code></td><td>config files ของระบบ</td></tr>
+      <tr><td><code>/var</code></td><td>logs, databases, spool files</td></tr>
+      <tr><td><code>/tmp</code></td><td>ไฟล์ชั่วคราว — ถูกลบเมื่อ reboot</td></tr>
+      <tr><td><code>/usr</code></td><td>โปรแกรมและ libraries สำหรับ user</td></tr>
+      <tr><td><code>/bin, /sbin</code></td><td>คำสั่งพื้นฐาน (ls, cp, bash…)</td></tr>
+      <tr><td><code>/dev</code></td><td>device files (disk, terminal)</td></tr>
+      <tr><td><code>/proc, /sys</code></td><td>virtual filesystem — ข้อมูล kernel/process</td></tr>
+      <tr><td><code>/opt</code></td><td>โปรแกรม third-party ที่ติดตั้งเพิ่ม</td></tr>
+    </table>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>📁 สร้าง / ลบ Directory &amp; File</h3>
+      <div class="terminal">
+        <div class="terminal-bar"><span class="t-red"></span><span class="t-yellow"></span><span class="t-green"></span></div>
+        <pre><span class="comment-line"># ─── Directory ───────────────────────</span>
+<span class="prompt">$</span> <span class="cmd">mkdir photos</span>          <span class="comment-line"># สร้าง dir</span>
+<span class="prompt">$</span> <span class="cmd">mkdir -p a/b/c</span>        <span class="comment-line"># สร้างซ้อนกัน</span>
+<span class="prompt">$</span> <span class="cmd">rmdir photos</span>          <span class="comment-line"># ลบ dir ว่าง</span>
+<span class="prompt">$</span> <span class="cmd">rm -r mydir</span>           <span class="comment-line"># ลบ dir + เนื้อหา</span>
+<span class="prompt">$</span> <span class="cmd">rm -rf mydir</span>          <span class="comment-line"># ไม่ถาม (ระวัง!)</span>
+
+<span class="comment-line"># ─── File ─────────────────────────────</span>
+<span class="prompt">$</span> <span class="cmd">touch file.txt</span>        <span class="comment-line"># สร้างไฟล์ว่าง</span>
+<span class="prompt">$</span> <span class="cmd">touch {a,b,c}.txt</span>     <span class="comment-line"># สร้างหลายไฟล์</span>
+<span class="prompt">$</span> <span class="cmd">rm file.txt</span>           <span class="comment-line"># ลบไฟล์</span>
+<span class="prompt">$</span> <span class="cmd">rm -i file.txt</span>        <span class="comment-line"># ถามก่อนลบ</span>
+<span class="prompt">$</span> <span class="cmd">rm *.log</span>              <span class="comment-line"># ลบทุก .log</span></pre>
+      </div>
+    </div>
+    <div class="card">
+      <h3>📋 คัดลอก &amp; ย้ายไฟล์</h3>
+      <div class="terminal">
+        <div class="terminal-bar"><span class="t-red"></span><span class="t-yellow"></span><span class="t-green"></span></div>
+        <pre><span class="comment-line"># ─── Copy ─────────────────────────────</span>
+<span class="prompt">$</span> <span class="cmd">cp file.txt backup.txt</span>  <span class="comment-line"># copy file</span>
+<span class="prompt">$</span> <span class="cmd">cp -r dir1 dir2</span>         <span class="comment-line"># copy directory</span>
+<span class="prompt">$</span> <span class="cmd">cp -p file.txt dest/</span>    <span class="comment-line"># รักษา permission</span>
+<span class="prompt">$</span> <span class="cmd">cp *.txt ~/backup/</span>      <span class="comment-line"># copy หลายไฟล์</span>
+
+<span class="comment-line"># ─── Move / Rename ────────────────────</span>
+<span class="prompt">$</span> <span class="cmd">mv file.txt newname.txt</span> <span class="comment-line"># เปลี่ยนชื่อ</span>
+<span class="prompt">$</span> <span class="cmd">mv file.txt ~/Documents/</span><span class="comment-line"># ย้าย</span>
+<span class="prompt">$</span> <span class="cmd">mv dir1 /opt/</span>           <span class="comment-line"># ย้าย dir</span>
+
+<span class="comment-line"># ─── Link ─────────────────────────────</span>
+<span class="prompt">$</span> <span class="cmd">ln -s /var/log logs</span>     <span class="comment-line"># symlink</span>
+<span class="prompt">$</span> <span class="cmd">ln file.txt hard.txt</span>    <span class="comment-line"># hard link</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔍 find — ค้นหาไฟล์</h3>
+    <div class="terminal">
+      <div class="terminal-bar"><span class="t-red"></span><span class="t-yellow"></span><span class="t-green"></span></div>
+      <pre><span class="comment-line"># find [path] [options] [expression]</span>
+<span class="prompt">$</span> <span class="cmd">find . -name "*.txt"</span>              <span class="comment-line"># ค้นหาจากชื่อ</span>
+<span class="prompt">$</span> <span class="cmd">find . -iname "*.TXT"</span>             <span class="comment-line"># case insensitive</span>
+<span class="prompt">$</span> <span class="cmd">find /var/log -name "*.log" -mtime -7</span>  <span class="comment-line"># แก้ไขใน 7 วันที่ผ่านมา</span>
+<span class="prompt">$</span> <span class="cmd">find . -type f -size +10M</span>         <span class="comment-line"># ไฟล์ขนาดมากกว่า 10MB</span>
+<span class="prompt">$</span> <span class="cmd">find . -type d -name "node_modules"</span><span class="comment-line"># หา directory ชื่อ node_modules</span>
+<span class="prompt">$</span> <span class="cmd">find . -empty</span>                     <span class="comment-line"># ไฟล์/dir ว่าง</span>
+<span class="prompt">$</span> <span class="cmd">find . -perm 644</span>                  <span class="comment-line"># ไฟล์ที่มี permission 644</span>
+<span class="prompt">$</span> <span class="cmd">find . -user john</span>                 <span class="comment-line"># ไฟล์ของ user john</span>
+
+<span class="comment-line"># รัน command กับผลลัพธ์</span>
+<span class="prompt">$</span> <span class="cmd">find . -name "*.log" -delete</span>      <span class="comment-line"># ลบไฟล์ที่เจอ</span>
+<span class="prompt">$</span> <span class="cmd">find . -name "*.sh" -exec chmod +x {} \;</span>  <span class="comment-line"># exec command</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================== -->
+<!-- 03 Permissions -->
+<!-- ===================================================== -->
+<section id="permissions">
+  <div class="chapter-header ch-purple">
+    <div class="ch-num">03</div>
+    <div>
+      <h2>File Permissions</h2>
+      <p>rwx, chmod, chown — ควบคุมสิทธิ์การเข้าถึงไฟล์</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔑 อ่าน Permission</h3>
+    <div class="perm-box">
+      <span class="p-dash">-</span>
+      <span class="p-grp"><span class="p-r">r</span><span class="p-w">w</span><span class="p-x">x</span></span>
+      <span class="p-label">owner</span>
+      <span class="p-grp"><span class="p-r">r</span><span class="p-dash">-</span><span class="p-x">x</span></span>
+      <span class="p-label">group</span>
+      <span class="p-grp"><span class="p-r">r</span><span class="p-dash">-</span><span class="p-dash">-</span></span>
+      <span class="p-label">others</span>
+    </div>
+    <table>
+      <tr><th>ตำแหน่ง</th><th>ความหมาย</th></tr>
+      <tr><td><code>-</code> (ตัวแรก)</td><td><code>-</code> = file, <code>d</code> = directory, <code>l</code> = symlink</td></tr>
+      <tr><td><code>r</code> (read)</td><td>อ่านได้ — ค่า 4</td></tr>
+      <tr><td><code>w</code> (write)</td><td>เขียน/แก้ไขได้ — ค่า 2</td></tr>
+      <tr><td><code>x</code> (execute)</td><td>รันได้ (file) / เข้า dir ได้ — ค่า 1</td></tr>
+      <tr><td><code>-</code></td><td>ไม่มีสิทธิ์นั้น</td></tr>
+    </table>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>🔢 chmod — Numeric Mode</h3>
+      <div class="terminal">
+        <div class="terminal-bar"><span class="t-red"></span><span class="t-yellow"></span><span class="t-green"></span></div>
+        <pre><span class="comment-line"># r=4, w=2, x=1 บวกรวมกัน</span>
+<span class="comment-line"># 7 = rwx  6 = rw-  5 = r-x</span>
+<span class="comment-line"># 4 = r--  3 = -wx  0 = ---</span>
+
+<span class="prompt">$</span> <span class="cmd">chmod 755 script.sh</span>   <span class="comment-line"># rwxr-xr-x</span>
+<span class="prompt">$</span> <span class="cmd">chmod 644 file.txt</span>    <span class="comment-line"># rw-r--r--</span>
+<span class="prompt">$</span> <span class="cmd">chmod 600 private.key</span> <span class="comment-line"># rw-------</span>
+<span class="prompt">$</span> <span class="cmd">chmod 777 public/</span>     <span class="comment-line"># rwxrwxrwx (ระวัง!)</span>
+<span class="prompt">$</span> <span class="cmd">chmod -R 755 mydir/</span>   <span class="comment-line"># recursive</span></pre>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🔤 chmod — Symbolic Mode</h3>
+      <div class="terminal">
+        <div class="terminal-bar"><span class="t-red"></span><span class="t-yellow"></span><span class="t-green"></span></div>
+        <pre><span class="comment-line"># u=user g=group o=others a=all</span>
+<span class="comment-line"># + เพิ่ม  - ลบ  = กำหนด</span>
+
+<span class="prompt">$</span> <span class="cmd">chmod +x script.sh</span>    <span class="comment-line"># ทุกคน execute</span>
+<span class="prompt">$</span> <span class="cmd">chmod u+x script.sh</span>   <span class="comment-line"># เฉพาะ owner</span>
+<span class="prompt">$</span> <span class="cmd">chmod g-w file.txt</span>    <span class="comment-line"># ลบ write จาก group</span>
+<span class="prompt">$</span> <span class="cmd">chmod o=r file.txt</span>    <span class="comment-line"># others อ่านได้อย่างเดียว</span>
+<span class="prompt">$</span> <span class="cmd">chmod a-x file.txt</span>    <span class="comment-line"># ลบ execute ทุกคน</span>
+<span class="prompt">$</span> <span class="cmd">chmod u+rw,g+r,o= f</span>  <span class="comment-line"># หลาย rule พร้อมกัน</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>👤 chown / chgrp — เปลี่ยนเจ้าของ</h3>
+    <div class="terminal">
+      <div class="terminal-bar"><span class="t-red"></span><span class="t-yellow"></span><span class="t-green"></span></div>
+      <pre><span class="prompt">$</span> <span class="cmd">sudo chown john file.txt</span>        <span class="comment-line"># เปลี่ยน owner</span>
+<span class="prompt">$</span> <span class="cmd">sudo chown john:devs file.txt</span>   <span class="comment-line"># เปลี่ยน owner:group</span>
+<span class="prompt">$</span> <span class="cmd">sudo chown -R www-data /var/www</span> <span class="comment-line"># recursive</span>
+<span class="prompt">$</span> <span class="cmd">sudo chgrp docker /usr/bin/docker</span><span class="comment-line"># เปลี่ยนแค่ group</span>
+
+<span class="comment-line"># sudo — ทำในนาม root</span>
+<span class="prompt">$</span> <span class="cmd">sudo apt update</span>    <span class="comment-line"># รันเป็น root</span>
+<span class="prompt">$</span> <span class="cmd">sudo -i</span>            <span class="comment-line"># เปิด root shell</span>
+<span class="prompt">$</span> <span class="cmd">sudo -u john cmd</span>   <span class="comment-line"># รันในนาม user อื่น</span></pre>
+    </div>
+    <table>
+      <tr><th>Permission</th><th>Numeric</th><th>ใช้กับ</th></tr>
+      <tr><td><code>rwxr-xr-x</code></td><td><code>755</code></td><td>executables, directories ทั่วไป</td></tr>
+      <tr><td><code>rw-r--r--</code></td><td><code>644</code></td><td>text files, config files</td></tr>
+      <tr><td><code>rw-------</code></td><td><code>600</code></td><td>private keys, sensitive files</td></tr>
+      <tr><td><code>rwx------</code></td><td><code>700</code></td><td>private scripts/directories</td></tr>
+      <tr><td><code>rwxrwxr-x</code></td><td><code>775</code></td><td>shared project directory</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ===================================================== -->
+<!-- 04 Text Processing -->
+<!-- ===================================================== -->
+<section id="text">
+  <div class="chapter-header ch-orange">
+    <div class="ch-num">04</div>
+    <div>
+      <h2>Text Processing</h2>
+      <p>cat, less, grep, sed, awk, cut, sort — เครื่องมือจัดการข้อความ</p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>📖 อ่านไฟล์</h3>
+      <div class="terminal">
+        <div class="terminal-bar"><span class="t-red"></span><span class="t-yellow"></span><span class="t-green"></span></div>
+        <pre><span class="prompt">$</span> <span class="cmd">cat file.txt</span>       <span class="comment-line"># แสดงทั้งหมด</span>
+<span class="prompt">$</span> <span class="cmd">cat -n file.txt</span>    <span class="comment-line"># แสดงพร้อมเลขบรรทัด</span>
+<span class="prompt">$</span> <span class="cmd">cat a.txt b.txt</span>    <span class="comment-line"># แสดงต่อกัน</span>
+
+<span class="prompt">$</span> <span class="cmd">head -20 file.txt</span>  <span class="comment-line"># 20 บรรทัดแรก</span>
+<span class="prompt">$</span> <span class="cmd">tail -20 file.txt</span>  <span class="comment-line"># 20 บรรทัดสุดท้าย</span>
+<span class="prompt">$</span> <span class="cmd">tail -f app.log</span>    <span class="comment-line"># ติดตาม log แบบ real-time</span>
+
+<span class="prompt">$</span> <span class="cmd">less file.txt</span>      <span class="comment-line"># อ่านทีละหน้า</span>
+<span class="comment-line"># ใน less: Space=ลงหน้า b=ขึ้นหน้า</span>
+<span class="comment-line">#          /word=ค้นหา n=ถัดไป q=ออก</span>
+
+<span class="prompt">$</span> <span class="cmd">wc file.txt</span>        <span class="comment-line"># นับ lines words bytes</span>
+<span class="prompt">$</span> <span class="cmd">wc -l file.txt</span>     <span class="comment-line"># นับแค่บรรทัด</span></pre>
+      </div>
+    </div>
+    <div class="card">
+      <h3>✏️ เขียนลงไฟล์</h3>
+      <div class="terminal">
+        <div class="terminal-bar"><span class="t-red"></span><span class="t-yellow"></span><span class="t-green"></span></div>
+        <pre><span class="comment-line"># > เขียนทับ (overwrite)</span>
+<span class="prompt">$</span> <span class="cmd">echo "hello" > file.txt</span>
+<span class="prompt">$</span> <span class="cmd">echo "world" > file.txt</span>  <span class="comment-line"># ทับของเดิม!</span>
+
+<span class="comment-line"># >> ต่อท้าย (append)</span>
+<span class="prompt">$</span> <span class="cmd">echo "line 1" > file.txt</span>
+<span class="prompt">$</span> <span class="cmd">echo "line 2" >> file.txt</span>
+
+<span class="comment-line"># heredoc — เขียนหลายบรรทัด</span>
+<span class="prompt">$</span> <span class="cmd">cat > config.txt << 'EOF'</span>
+<span class="out">HOST=localhost
+PORT=3000
+DEBUG=true
+EOF</span>
+
+<span class="comment-line"># tee — แสดงบนหน้าจอ + บันทึกไฟล์</span>
+<span class="prompt">$</span> <span class="cmd">ls -la | tee output.txt</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔍 grep — ค้นหาข้อความ</h3>
+    <div class="terminal">
+      <div class="terminal-bar"><span class="t-red"></span><span class="t-yellow"></span><span class="t-green"></span></div>
+      <pre><span class="comment-line"># grep [options] pattern [file]</span>
+<span class="prompt">$</span> <span class="cmd">grep "error" app.log</span>           <span class="comment-line"># ค้นหา "error"</span>
+<span class="prompt">$</span> <span class="cmd">grep -i "ERROR" app.log</span>         <span class="comment-line"># case insensitive</span>
+<span class="prompt">$</span> <span class="cmd">grep -n "error" app.log</span>         <span class="comment-line"># แสดงเลขบรรทัด</span>
+<span class="prompt">$</span> <span class="cmd">grep -v "DEBUG" app.log</span>         <span class="comment-line"># บรรทัดที่ไม่มี DEBUG</span>
+<span class="prompt">$</span> <span class="cmd">grep -r "TODO" ./src</span>            <span class="comment-line"># ค้นใน dir (recursive)</span>
+<span class="prompt">$</span> <span class="cmd">grep -l "error" *.log</span>           <span class="comment-line"># แค่ชื่อไฟล์</span>
+<span class="prompt">$</span> <span class="cmd">grep -c "error" app.log</span>         <span class="comment-line"># นับจำนวนบรรทัด</span>
+<span class="prompt">$</span> <span class="cmd">grep -A3 "FATAL" app.log</span>        <span class="comment-line"># 3 บรรทัดหลัง match</span>
+<span class="prompt">$</span> <span class="cmd">grep -B2 "FATAL" app.log</span>        <span class="comment-line"># 2 บรรทัดก่อน match</span>
+<span class="prompt">$</span> <span class="cmd">grep -E "error|warning" app.log</span> <span class="comment-line"># regex extended</span>
+<span class="prompt">$</span> <span class="cmd">grep "^ERROR" app.log</span>           <span class="comment-line"># ขึ้นต้นด้วย ERROR</span>
+<span class="prompt">$</span> <span class="cmd">grep "\.js$" file.txt</span>           <span class="comment-line"># ลงท้ายด้วย .js</span></pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>⚙️ sed — แทนที่ข้อความ</h3>
+    <div class="terminal">
+      <div class="terminal-bar"><span class="t-red"></span><span class="t-yellow"></span><span class="t-green"></span></div>
+      <pre><span class="comment-line"># sed 's/old/new/' — substitute</span>
+<span class="prompt">$</span> <span class="cmd">sed 's/foo/bar/' file.txt</span>       <span class="comment-line"># แทนที่แค่อันแรก</span>
+<span class="prompt">$</span> <span class="cmd">sed 's/foo/bar/g' file.txt</span>      <span class="comment-line"># แทนที่ทุกอัน (g=global)</span>
+<span class="prompt">$</span> <span class="cmd">sed 's/foo/bar/gi' file.txt</span>     <span class="comment-line"># case insensitive</span>
+<span class="prompt">$</span> <span class="cmd">sed -i 's/foo/bar/g' file.txt</span>   <span class="comment-line"># แก้ไขไฟล์ตรง (in-place)</span>
+<span class="prompt">$</span> <span class="cmd">sed -i.bak 's/foo/bar/g' f.txt</span>  <span class="comment-line"># backup เป็น f.txt.bak</span>
+
+<span class="comment-line"># ลบบรรทัด</span>
+<span class="prompt">$</span> <span class="cmd">sed '/pattern/d' file.txt</span>       <span class="comment-line"># ลบบรรทัดที่มี pattern</span>
+<span class="prompt">$</span> <span class="cmd">sed '5d' file.txt</span>               <span class="comment-line"># ลบบรรทัดที่ 5</span>
+<span class="prompt">$</span> <span class="cmd">sed '1,3d' file.txt</span>             <span class="comment-line"># ลบบรรทัด 1-3</span>
+
+<span class="comment-line"># แสดงเฉพาะบางบรรทัด</span>
+<span class="prompt">$</span> <span class="cmd">sed -n '5,10p' file.txt</span>         <span class="comment-line"># แสดงบรรทัด 5-10</span>
+<span class="prompt">$</span> <span class="cmd">sed -n '/start/,/end/p' file.txt</span><span class="comment-line"># ระหว่าง pattern</span></pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📊 awk — ประมวลผลข้อมูล Column</h3>
+    <div class="terminal">
+      <div class="terminal-bar"><span class="t-red"></span><span class="t-yellow"></span><span class="t-green"></span></div>
+      <pre><span class="comment-line"># $1 $2 $3 = column 1 2 3, $NF = column สุดท้าย</span>
+<span class="prompt">$</span> <span class="cmd">awk '{print $1}' file.txt</span>          <span class="comment-line"># column แรก</span>
+<span class="prompt">$</span> <span class="cmd">awk '{print $1, $3}' file.txt</span>       <span class="comment-line"># column 1 และ 3</span>
+<span class="prompt">$</span> <span class="cmd">awk -F: '{print $1}' /etc/passwd</span>    <span class="comment-line"># -F = delimiter (:)</span>
+<span class="prompt">$</span> <span class="cmd">awk '{sum+=$1} END{print sum}' f</span>    <span class="comment-line"># รวมค่า column 1</span>
+<span class="prompt">$</span> <span class="cmd">awk 'NR==5' file.txt</span>               <span class="comment-line"># บรรทัดที่ 5</span>
+<span class="prompt">$</span> <span class="cmd">awk 'NR>=5 && NR<=10' file.txt</span>     <span class="comment-line"># บรรทัด 5-10</span>
+<span class="prompt">$</span> <span class="cmd">awk '/error/{print NR, $0}' app.log</span> <span class="comment-line"># บรรทัดที่มี error</span>
+<span class="prompt">$</span> <span class="cmd">ls -l | awk '{print $5, $9}'</span>        <span class="comment-line"># ขนาด + ชื่อไฟล์</span>
+
+<span class="comment-line"># sort และ uniq</span>
+<span class="prompt">$</span> <span class="cmd">sort file.txt</span>                       <span class="comment-line"># เรียง a-z</span>
+<span class="prompt">$</span> <span class="cmd">sort -r file.txt</span>                    <span class="comment-line"># เรียง z-a</span>
+<span class="prompt">$</span> <span class="cmd">sort -n numbers.txt</span>                 <span class="comment-line"># เรียงตัวเลข</span>
+<span class="prompt">$</span> <span class="cmd">sort -u file.txt</span>                    <span class="comment-line"># ไม่ซ้ำ</span>
+<span class="prompt">$</span> <span class="cmd">sort file.txt | uniq -c | sort -rn</span>  <span class="comment-line"># นับความถี่</span>
+<span class="prompt">$</span> <span class="cmd">cut -d: -f1 /etc/passwd</span>             <span class="comment-line"># ตัด column (: delimiter)</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================== -->
+<!-- 05 Process Management -->
+<!-- ===================================================== -->
+<section id="process">
+  <div class="chapter-header ch-cyan">
+    <div class="ch-num">05</div>
+    <div>
+      <h2>Process Management</h2>
+      <p>ps, top, kill, jobs, fg/bg — ดูและจัดการ process</p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>📊 ดู Process</h3>
+      <div class="terminal">
+        <div class="terminal-bar"><span class="t-red"></span><span class="t-yellow"></span><span class="t-green"></span></div>
+        <pre><span class="prompt">$</span> <span class="cmd">ps</span>              <span class="comment-line"># process ของ shell นี้</span>
+<span class="prompt">$</span> <span class="cmd">ps aux</span>          <span class="comment-line"># process ทั้งหมดในระบบ</span>
+<span class="prompt">$</span> <span class="cmd">ps aux | grep nginx</span>  <span class="comment-line"># หา nginx</span>
+<span class="prompt">$</span> <span class="cmd">pgrep nginx</span>     <span class="comment-line"># PID ของ nginx</span>
+<span class="prompt">$</span> <span class="cmd">pstree</span>          <span class="comment-line"># แสดงเป็น tree</span>
+
+<span class="comment-line"># top / htop — real-time</span>
+<span class="prompt">$</span> <span class="cmd">top</span>             <span class="comment-line"># monitor แบบ real-time</span>
+<span class="prompt">$</span> <span class="cmd">htop</span>            <span class="comment-line"># top ที่สวยกว่า (ต้องติดตั้ง)</span>
+
+<span class="comment-line"># ใน top: q=ออก k=kill M=เรียงRAM</span>
+<span class="comment-line">#         P=เรียง CPU u=กรอง user</span></pre>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🔫 Kill Process</h3>
+      <div class="terminal">
+        <div class="terminal-bar"><span class="t-red"></span><span class="t-yellow"></span><span class="t-green"></span></div>
+        <pre><span class="comment-line"># kill signal</span>
+<span class="prompt">$</span> <span class="cmd">kill 1234</span>       <span class="comment-line"># SIGTERM (หยุดสุภาพ)</span>
+<span class="prompt">$</span> <span class="cmd">kill -9 1234</span>    <span class="comment-line"># SIGKILL (บังคับหยุด)</span>
+<span class="prompt">$</span> <span class="cmd">kill -l</span>         <span class="comment-line"># list signals ทั้งหมด</span>
+<span class="prompt">$</span> <span class="cmd">pkill nginx</span>     <span class="comment-line"># kill ตามชื่อ</span>
+<span class="prompt">$</span> <span class="cmd">killall node</span>    <span class="comment-line"># kill ทุก process ชื่อ node</span>
+
+<span class="comment-line"># Signals สำคัญ</span>
+<span class="comment-line"># SIGTERM (15) — ขอให้หยุด gracefully</span>
+<span class="comment-line"># SIGKILL (9)  — บังคับหยุดทันที</span>
+<span class="comment-line"># SIGHUP  (1)  — reload config</span>
+<span class="comment-line"># SIGINT  (2)  — Ctrl+C</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>⚙️ Background / Foreground Jobs</h3>
+    <div class="terminal">
+      <div class="terminal-bar"><span class="t-red"></span><span class="t-yellow"></span><span class="t-green"></span></div>
+      <pre><span class="comment-line"># รันแบบ background</span>
+<span class="prompt">$</span> <span class="cmd">sleep 100 &amp;</span>          <span class="comment-line"># & = รันใน background</span>
+<span class="out">[1] 12345</span>             <span class="comment-line"># [job_num] PID</span>
+
+<span class="prompt">$</span> <span class="cmd">jobs</span>                 <span class="comment-line"># ดู background jobs</span>
+<span class="out">[1]+  Running    sleep 100 &</span>
+
+<span class="prompt">$</span> <span class="cmd">fg %1</span>               <span class="comment-line"># นำ job 1 กลับ foreground</span>
+<span class="prompt">$</span> <span class="cmd">bg %1</span>               <span class="comment-line"># ส่ง job 1 ไป background</span>
+
+<span class="comment-line"># Ctrl+Z = suspend → แล้วค่อย bg</span>
+<span class="prompt">$</span> <span class="cmd">vim file.txt</span>
+<span class="comment-line"># กด Ctrl+Z</span>
+<span class="out">[1]+  Stopped    vim file.txt</span>
+<span class="prompt">$</span> <span class="cmd">bg</span>                   <span class="comment-line"># ส่งไป background</span>
+
+<span class="comment-line"># nohup — ทำงานต่อแม้ปิด terminal</span>
+<span class="prompt">$</span> <span class="cmd">nohup node server.js &amp;</span>
+<span class="prompt">$</span> <span class="cmd">nohup ./script.sh > output.log 2>&amp;1 &amp;</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================== -->
+<!-- 06 Pipe & Redirect -->
+<!-- ===================================================== -->
+<section id="pipe">
+  <div class="chapter-header ch-yellow">
+    <div class="ch-num">06</div>
+    <div>
+      <h2>Pipe &amp; Redirection</h2>
+      <p>|, &gt;, &lt;, 2&gt;, &amp;&amp;, || — เชื่อมคำสั่งและจัดการ I/O</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔄 Standard Streams</h3>
+    <table>
+      <tr><th>Stream</th><th>หมายเลข</th><th>คือ</th></tr>
+      <tr><td><code>stdin</code></td><td>0</td><td>ข้อมูลขาเข้า (keyboard)</td></tr>
+      <tr><td><code>stdout</code></td><td>1</td><td>ข้อมูลขาออกปกติ</td></tr>
+      <tr><td><code>stderr</code></td><td>2</td><td>ข้อความ error</td></tr>
+    </table>
+    <div class="pipe-flow">
+      <div class="pf-box">stdin (0)</div>
+      <div class="pf-pipe">→</div>
+      <div class="pf-box">COMMAND</div>
+      <div class="pf-pipe">→</div>
+      <div class="pf-box">stdout (1)</div>
+      <div style="width:100%;height:0"></div>
+      <div style="width:120px"></div>
+      <div class="pf-redir">↘</div>
+      <div class="pf-box" style="background:#2d0a0a;border-color:#7f1d1d;color:#fca5a5">stderr (2)</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📤 Redirection</h3>
+    <div class="terminal">
+      <div class="terminal-bar"><span class="t-red"></span><span class="t-yellow"></span><span class="t-green"></span></div>
+      <pre><span class="comment-line"># stdout redirect</span>
+<span class="prompt">$</span> <span class="cmd">ls > files.txt</span>           <span class="comment-line"># เขียนทับ</span>
+<span class="prompt">$</span> <span class="cmd">ls >> files.txt</span>          <span class="comment-line"># ต่อท้าย</span>
+
+<span class="comment-line"># stderr redirect</span>
+<span class="prompt">$</span> <span class="cmd">ls /x 2> error.txt</span>      <span class="comment-line"># error ไปไฟล์</span>
+<span class="prompt">$</span> <span class="cmd">ls /x 2>> error.txt</span>     <span class="comment-line"># error ต่อท้าย</span>
+<span class="prompt">$</span> <span class="cmd">ls /x 2> /dev/null</span>      <span class="comment-line"># ทิ้ง error</span>
+
+<span class="comment-line"># stdout + stderr รวมกัน</span>
+<span class="prompt">$</span> <span class="cmd">cmd > out.txt 2>&amp;1</span>      <span class="comment-line"># ทั้งคู่ไปไฟล์</span>
+<span class="prompt">$</span> <span class="cmd">cmd &> out.txt</span>           <span class="comment-line"># แบบย่อ</span>
+<span class="prompt">$</span> <span class="cmd">cmd > /dev/null 2>&amp;1</span>   <span class="comment-line"># ทิ้งทั้งหมด</span>
+
+<span class="comment-line"># stdin redirect</span>
+<span class="prompt">$</span> <span class="cmd">sort < names.txt</span>         <span class="comment-line"># อ่านจากไฟล์</span>
+<span class="prompt">$</span> <span class="cmd">mysql db < dump.sql</span>      <span class="comment-line"># import SQL</span></pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔗 Pipe และการเชื่อมคำสั่ง</h3>
+    <div class="terminal">
+      <div class="terminal-bar"><span class="t-red"></span><span class="t-yellow"></span><span class="t-green"></span></div>
+      <pre><span class="comment-line"># | pipe — ส่ง stdout ของซ้ายเป็น stdin ของขวา</span>
+<span class="prompt">$</span> <span class="cmd">ls -la | grep ".txt"</span>              <span class="comment-line"># filter</span>
+<span class="prompt">$</span> <span class="cmd">cat access.log | grep "404" | wc -l</span><span class="comment-line"># นับ 404</span>
+<span class="prompt">$</span> <span class="cmd">ps aux | sort -k3 -rn | head -10</span>  <span class="comment-line"># top 10 CPU</span>
+<span class="prompt">$</span> <span class="cmd">cat /etc/passwd | awk -F: '{print $1}' | sort</span>
+
+<span class="comment-line"># && — รันถัดไปถ้าสำเร็จ (exit 0)</span>
+<span class="prompt">$</span> <span class="cmd">mkdir project && cd project && git init</span>
+<span class="prompt">$</span> <span class="cmd">npm install && npm start</span>
+
+<span class="comment-line"># || — รันถัดไปถ้าล้มเหลว</span>
+<span class="prompt">$</span> <span class="cmd">ping server || echo "server down"</span>
+
+<span class="comment-line"># ; — รันทุกอันไม่สนผลลัพธ์</span>
+<span class="prompt">$</span> <span class="cmd">echo "start"; ./script.sh; echo "done"</span>
+
+<span class="comment-line"># xargs — แปลง stdout เป็น argument</span>
+<span class="prompt">$</span> <span class="cmd">find . -name "*.log" | xargs rm</span>
+<span class="prompt">$</span> <span class="cmd">cat urls.txt | xargs wget</span>
+<span class="prompt">$</span> <span class="cmd">echo "a b c" | xargs -n1 echo</span>     <span class="comment-line"># ทีละอัน</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================== -->
+<!-- 07 Network -->
+<!-- ===================================================== -->
+<section id="network">
+  <div class="chapter-header ch-red">
+    <div class="ch-num">07</div>
+    <div>
+      <h2>Networking Commands</h2>
+      <p>ping, curl, wget, netstat, ss — ตรวจสอบและจัดการ network</p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>🌐 ตรวจสอบ Network</h3>
+      <div class="terminal">
+        <div class="terminal-bar"><span class="t-red"></span><span class="t-yellow"></span><span class="t-green"></span></div>
+        <pre><span class="prompt">$</span> <span class="cmd">ping google.com</span>       <span class="comment-line"># ทดสอบ connectivity</span>
+<span class="prompt">$</span> <span class="cmd">ping -c4 8.8.8.8</span>      <span class="comment-line"># 4 ครั้งแล้วหยุด</span>
+<span class="prompt">$</span> <span class="cmd">traceroute google.com</span> <span class="comment-line"># ดู route</span>
+<span class="prompt">$</span> <span class="cmd">nslookup google.com</span>   <span class="comment-line"># DNS lookup</span>
+<span class="prompt">$</span> <span class="cmd">dig google.com</span>        <span class="comment-line"># DNS detail</span>
+<span class="prompt">$</span> <span class="cmd">host google.com</span>       <span class="comment-line"># DNS ย่อ</span>
+
+<span class="comment-line"># network interfaces</span>
+<span class="prompt">$</span> <span class="cmd">ip addr</span>               <span class="comment-line"># IP addresses (ip a)</span>
+<span class="prompt">$</span> <span class="cmd">ip route</span>              <span class="comment-line"># routing table</span>
+<span class="prompt">$</span> <span class="cmd">ifconfig</span>              <span class="comment-line"># (เก่า)</span></pre>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🔌 Ports และ Connections</h3>
+      <div class="terminal">
+        <div class="terminal-bar"><span class="t-red"></span><span class="t-yellow"></span><span class="t-green"></span></div>
+        <pre><span class="comment-line"># ss (socket statistics) — แทน netstat</span>
+<span class="prompt">$</span> <span class="cmd">ss -tulnp</span>       <span class="comment-line"># TCP/UDP listening ports</span>
+<span class="prompt">$</span> <span class="cmd">ss -an</span>          <span class="comment-line"># connections ทั้งหมด</span>
+<span class="prompt">$</span> <span class="cmd">ss -tnp</span>         <span class="comment-line"># TCP + process name</span>
+
+<span class="comment-line"># netstat (เก่า แต่ยังใช้ได้)</span>
+<span class="prompt">$</span> <span class="cmd">netstat -tulnp</span>  <span class="comment-line"># listening ports</span>
+<span class="prompt">$</span> <span class="cmd">netstat -an</span>     <span class="comment-line"># all connections</span>
+
+<span class="comment-line"># ตรวจ port เฉพาะ</span>
+<span class="prompt">$</span> <span class="cmd">ss -lnp | grep :3000</span>
+<span class="prompt">$</span> <span class="cmd">lsof -i :3000</span>   <span class="comment-line"># ใครใช้ port 3000</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🌍 curl — HTTP Client</h3>
+    <div class="terminal">
+      <div class="terminal-bar"><span class="t-red"></span><span class="t-yellow"></span><span class="t-green"></span></div>
+      <pre><span class="comment-line"># GET</span>
+<span class="prompt">$</span> <span class="cmd">curl https://api.example.com/users</span>
+<span class="prompt">$</span> <span class="cmd">curl -s https://api.example.com</span>       <span class="comment-line"># -s = silent</span>
+<span class="prompt">$</span> <span class="cmd">curl -o file.html https://example.com</span> <span class="comment-line"># บันทึกลงไฟล์</span>
+<span class="prompt">$</span> <span class="cmd">curl -I https://example.com</span>           <span class="comment-line"># headers เท่านั้น</span>
+<span class="prompt">$</span> <span class="cmd">curl -L https://bit.ly/abc</span>            <span class="comment-line"># follow redirect</span>
+
+<span class="comment-line"># POST JSON</span>
+<span class="prompt">$</span> <span class="cmd">curl -X POST https://api.example.com/users \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer TOKEN" \
+  -d '{"name":"John","email":"john@example.com"}'</span>
+
+<span class="comment-line"># PUT / DELETE</span>
+<span class="prompt">$</span> <span class="cmd">curl -X PUT  https://api.example.com/users/1 -d '{"name":"Jane"}'</span>
+<span class="prompt">$</span> <span class="cmd">curl -X DELETE https://api.example.com/users/1</span>
+
+<span class="comment-line"># Download ไฟล์</span>
+<span class="prompt">$</span> <span class="cmd">wget https://example.com/file.zip</span>
+<span class="prompt">$</span> <span class="cmd">wget -O myfile.zip https://example.com/file.zip</span>
+<span class="prompt">$</span> <span class="cmd">wget -c https://example.com/big.iso</span>  <span class="comment-line"># resume download</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================== -->
+<!-- 08 Archive -->
+<!-- ===================================================== -->
+<section id="archive">
+  <div class="chapter-header ch-teal">
+    <div class="ch-num">08</div>
+    <div>
+      <h2>Archive &amp; Compression</h2>
+      <p>tar, gzip, zip — บีบอัดและแตกไฟล์</p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>📦 tar — Archive ยอดนิยม</h3>
+      <div class="terminal">
+        <div class="terminal-bar"><span class="t-red"></span><span class="t-yellow"></span><span class="t-green"></span></div>
+        <pre><span class="comment-line"># c=create x=extract f=file</span>
+<span class="comment-line"># z=gzip    j=bzip2  v=verbose</span>
+
+<span class="comment-line"># ─── สร้าง archive ──────────────────</span>
+<span class="prompt">$</span> <span class="cmd">tar -czf backup.tar.gz mydir/</span>
+<span class="prompt">$</span> <span class="cmd">tar -cjf backup.tar.bz2 mydir/</span>   <span class="comment-line"># bzip2</span>
+<span class="prompt">$</span> <span class="cmd">tar -cf  backup.tar mydir/</span>        <span class="comment-line"># ไม่บีบ</span>
+
+<span class="comment-line"># ─── แตกไฟล์ ────────────────────────</span>
+<span class="prompt">$</span> <span class="cmd">tar -xzf backup.tar.gz</span>            <span class="comment-line"># แตกใน dir นี้</span>
+<span class="prompt">$</span> <span class="cmd">tar -xzf backup.tar.gz -C /tmp/</span>  <span class="comment-line"># แตกใน /tmp</span>
+
+<span class="comment-line"># ─── ดูเนื้อหา ────────────────────</span>
+<span class="prompt">$</span> <span class="cmd">tar -tzf backup.tar.gz</span>            <span class="comment-line"># list ไฟล์</span></pre>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🗜️ gzip / zip</h3>
+      <div class="terminal">
+        <div class="terminal-bar"><span class="t-red"></span><span class="t-yellow"></span><span class="t-green"></span></div>
+        <pre><span class="comment-line"># gzip — บีบเดียว</span>
+<span class="prompt">$</span> <span class="cmd">gzip file.txt</span>         <span class="comment-line"># → file.txt.gz</span>
+<span class="prompt">$</span> <span class="cmd">gzip -k file.txt</span>      <span class="comment-line"># -k เก็บต้นฉบับ</span>
+<span class="prompt">$</span> <span class="cmd">gunzip file.txt.gz</span>    <span class="comment-line"># แตก gzip</span>
+<span class="prompt">$</span> <span class="cmd">zcat file.txt.gz</span>      <span class="comment-line"># อ่านโดยไม่แตก</span>
+
+<span class="comment-line"># zip — รองรับ Windows</span>
+<span class="prompt">$</span> <span class="cmd">zip archive.zip f1 f2 f3</span>
+<span class="prompt">$</span> <span class="cmd">zip -r archive.zip mydir/</span>  <span class="comment-line"># recursive</span>
+<span class="prompt">$</span> <span class="cmd">unzip archive.zip</span>
+<span class="prompt">$</span> <span class="cmd">unzip archive.zip -d /tmp/</span> <span class="comment-line"># แตกไปที่</span>
+<span class="prompt">$</span> <span class="cmd">unzip -l archive.zip</span>       <span class="comment-line"># ดูเนื้อหา</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================== -->
+<!-- 09 Disk -->
+<!-- ===================================================== -->
+<section id="disk">
+  <div class="chapter-header ch-pink">
+    <div class="ch-num">09</div>
+    <div>
+      <h2>Disk &amp; Memory</h2>
+      <p>df, du, free — ตรวจสอบพื้นที่และหน่วยความจำ</p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>💾 Disk Usage</h3>
+      <div class="terminal">
+        <div class="terminal-bar"><span class="t-red"></span><span class="t-yellow"></span><span class="t-green"></span></div>
+        <pre><span class="comment-line"># df — disk free (space บน partitions)</span>
+<span class="prompt">$</span> <span class="cmd">df -h</span>              <span class="comment-line"># -h = human readable</span>
+<span class="out">Filesystem  Size  Used Avail Use% Mounted on
+/dev/sda1    50G   20G   28G  42% /
+tmpfs       2.0G     0  2.0G   0% /tmp</span>
+
+<span class="prompt">$</span> <span class="cmd">df -h /home</span>        <span class="comment-line"># เฉพาะ /home</span>
+<span class="prompt">$</span> <span class="cmd">df -i</span>              <span class="comment-line"># inode usage</span>
+
+<span class="comment-line"># du — disk usage (ขนาด files)</span>
+<span class="prompt">$</span> <span class="cmd">du -sh *</span>           <span class="comment-line"># ขนาดทุกรายการ</span>
+<span class="prompt">$</span> <span class="cmd">du -sh ~/Downloads</span> <span class="comment-line"># ขนาด dir</span>
+<span class="prompt">$</span> <span class="cmd">du -h --max-depth=1 /var</span>
+<span class="prompt">$</span> <span class="cmd">du -sh * | sort -h | tail -10</span>  <span class="comment-line"># top 10 ใหญ่</span></pre>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🧠 Memory</h3>
+      <div class="terminal">
+        <div class="terminal-bar"><span class="t-red"></span><span class="t-yellow"></span><span class="t-green"></span></div>
+        <pre><span class="prompt">$</span> <span class="cmd">free -h</span>
+<span class="out">              total  used   free  shared buff/cache
+Mem:           7.7G   2.1G  3.4G   312M      2.2G
+Swap:          2.0G   100M  1.9G</span>
+
+<span class="prompt">$</span> <span class="cmd">free -m</span>            <span class="comment-line"># แสดงเป็น MB</span>
+<span class="prompt">$</span> <span class="cmd">free -s 2</span>          <span class="comment-line"># อัปเดตทุก 2 วินาที</span>
+
+<span class="comment-line"># vmstat — virtual memory stats</span>
+<span class="prompt">$</span> <span class="cmd">vmstat 2 5</span>         <span class="comment-line"># ทุก 2 วิ จำนวน 5 ครั้ง</span>
+
+<span class="comment-line"># /proc files</span>
+<span class="prompt">$</span> <span class="cmd">cat /proc/meminfo</span>  <span class="comment-line"># รายละเอียด RAM</span>
+<span class="prompt">$</span> <span class="cmd">cat /proc/cpuinfo</span>  <span class="comment-line"># ข้อมูล CPU</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================== -->
+<!-- 10 User Management -->
+<!-- ===================================================== -->
+<section id="user">
+  <div class="chapter-header ch-slate">
+    <div class="ch-num">10</div>
+    <div>
+      <h2>User &amp; Group Management</h2>
+      <p>useradd, passwd, groups — จัดการผู้ใช้ในระบบ</p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>👤 จัดการ User</h3>
+      <div class="terminal">
+        <div class="terminal-bar"><span class="t-red"></span><span class="t-yellow"></span><span class="t-green"></span></div>
+        <pre><span class="comment-line"># สร้าง user</span>
+<span class="prompt">$</span> <span class="cmd">sudo useradd -m john</span>         <span class="comment-line"># -m = สร้าง home dir</span>
+<span class="prompt">$</span> <span class="cmd">sudo useradd -m -s /bin/bash -G sudo john</span>
+
+<span class="comment-line"># ตั้ง / เปลี่ยน password</span>
+<span class="prompt">$</span> <span class="cmd">sudo passwd john</span>
+<span class="prompt">$</span> <span class="cmd">passwd</span>                        <span class="comment-line"># เปลี่ยนของตัวเอง</span>
+
+<span class="comment-line"># แก้ไข user</span>
+<span class="prompt">$</span> <span class="cmd">sudo usermod -aG docker john</span>  <span class="comment-line"># เพิ่ม group</span>
+<span class="prompt">$</span> <span class="cmd">sudo usermod -s /bin/zsh john</span> <span class="comment-line"># เปลี่ยน shell</span>
+<span class="prompt">$</span> <span class="cmd">sudo usermod -l newname john</span>  <span class="comment-line"># เปลี่ยนชื่อ</span>
+
+<span class="comment-line"># ลบ user</span>
+<span class="prompt">$</span> <span class="cmd">sudo userdel john</span>             <span class="comment-line"># ลบ user</span>
+<span class="prompt">$</span> <span class="cmd">sudo userdel -r john</span>          <span class="comment-line"># ลบทั้ง home dir</span>
+
+<span class="comment-line"># ดู user info</span>
+<span class="prompt">$</span> <span class="cmd">id john</span>                       <span class="comment-line"># UID GID groups</span>
+<span class="prompt">$</span> <span class="cmd">groups john</span>                   <span class="comment-line"># groups ที่อยู่</span>
+<span class="prompt">$</span> <span class="cmd">who</span>                           <span class="comment-line"># ใครล็อกอินอยู่</span>
+<span class="prompt">$</span> <span class="cmd">last</span>                          <span class="comment-line"># ประวัติการล็อกอิน</span></pre>
+      </div>
+    </div>
+    <div class="card">
+      <h3>👥 จัดการ Group</h3>
+      <div class="terminal">
+        <div class="terminal-bar"><span class="t-red"></span><span class="t-yellow"></span><span class="t-green"></span></div>
+        <pre><span class="prompt">$</span> <span class="cmd">sudo groupadd devs</span>       <span class="comment-line"># สร้าง group</span>
+<span class="prompt">$</span> <span class="cmd">sudo groupdel devs</span>       <span class="comment-line"># ลบ group</span>
+<span class="prompt">$</span> <span class="cmd">cat /etc/group</span>           <span class="comment-line"># ดู groups ทั้งหมด</span>
+<span class="prompt">$</span> <span class="cmd">cat /etc/passwd</span>          <span class="comment-line"># ดู users ทั้งหมด</span>
+
+<span class="comment-line"># sudo privileges</span>
+<span class="prompt">$</span> <span class="cmd">sudo usermod -aG sudo john</span>  <span class="comment-line"># Ubuntu</span>
+<span class="prompt">$</span> <span class="cmd">sudo usermod -aG wheel john</span> <span class="comment-line"># CentOS/RHEL</span>
+<span class="prompt">$</span> <span class="cmd">sudo visudo</span>                 <span class="comment-line"># แก้ sudoers</span>
+
+<span class="comment-line"># su — switch user</span>
+<span class="prompt">$</span> <span class="cmd">su john</span>       <span class="comment-line"># เปลี่ยนเป็น john</span>
+<span class="prompt">$</span> <span class="cmd">su - john</span>     <span class="comment-line"># เปลี่ยนพร้อม environment</span>
+<span class="prompt">$</span> <span class="cmd">su -</span>          <span class="comment-line"># เปลี่ยนเป็น root</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================== -->
+<!-- 11 Shell Script -->
+<!-- ===================================================== -->
+<section id="script">
+  <div class="chapter-header ch-green">
+    <div class="ch-num">11</div>
+    <div>
+      <h2>Shell Scripting</h2>
+      <p>Variables, Conditions, Loops, Functions — เขียน script อัตโนมัติ</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📝 โครงสร้าง Script พื้นฐาน</h3>
+    <div class="terminal">
+      <div class="terminal-bar"><span class="t-red"></span><span class="t-yellow"></span><span class="t-green"></span></div>
+      <pre><span class="comment-line">#!/bin/bash</span>
+<span class="comment-line"># ↑ shebang — บอกว่าใช้ interpreter อะไร</span>
+<span class="comment-line"># #!/usr/bin/env bash  ← แนะนำกว่า</span>
+
+<span class="comment-line"># รันได้ต้อง chmod +x ก่อน</span>
+<span class="prompt">$</span> <span class="cmd">chmod +x myscript.sh</span>
+<span class="prompt">$</span> <span class="cmd">./myscript.sh</span>
+<span class="prompt">$</span> <span class="cmd">bash myscript.sh</span>     <span class="comment-line"># ไม่ต้อง chmod</span></pre>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>📦 Variables</h3>
+<pre><span class="comment-line">#!/usr/bin/env bash</span>
+
+<span class="comment-line"># กำหนด — ห้ามมี space รอบ =</span>
+<span class="var">name</span>=<span class="str">"สมชาย"</span>
+<span class="var">age</span>=<span class="num">25</span>
+<span class="var">greeting</span>=<span class="str">"สวัสดี <span class="kw">$name</span>"</span>
+
+<span class="comment-line"># อ่านค่า</span>
+echo <span class="str">"<span class="kw">$name</span>"</span>       <span class="comment-line"># สมชาย</span>
+echo <span class="str">"${name}123"</span> <span class="comment-line"># กำกัด variable</span>
+
+<span class="comment-line"># Readonly</span>
+<span class="kw">readonly</span> <span class="var">PI</span>=<span class="num">3.14159</span>
+
+<span class="comment-line"># Command substitution</span>
+<span class="var">today</span>=$(<span class="fn">date</span> +%Y-%m-%d)
+<span class="var">files</span>=$(<span class="fn">ls</span> | wc -l)
+
+<span class="comment-line"># Special variables</span>
+<span class="comment-line"># $0  = ชื่อ script</span>
+<span class="comment-line"># $1..$9 = arguments</span>
+<span class="comment-line"># $@ = arguments ทั้งหมด (array)</span>
+<span class="comment-line"># $# = จำนวน arguments</span>
+<span class="comment-line"># $? = exit code ของ command ล่าสุด</span>
+<span class="comment-line"># $$ = PID ของ script นี้</span>
+echo <span class="str">"Script: <span class="kw">$0</span>, Args: <span class="kw">$#</span>"</span></pre>
+    </div>
+    <div class="card">
+      <h3>🔀 Conditions</h3>
+<pre><span class="comment-line">#!/usr/bin/env bash</span>
+
+<span class="var">score</span>=<span class="num">85</span>
+
+<span class="comment-line"># if / elif / else</span>
+<span class="kw">if</span> [[ <span class="kw">$score</span> -ge <span class="num">90</span> ]]; <span class="kw">then</span>
+  echo <span class="str">"เกรด A"</span>
+<span class="kw">elif</span> [[ <span class="kw">$score</span> -ge <span class="num">80</span> ]]; <span class="kw">then</span>
+  echo <span class="str">"เกรด B"</span>
+<span class="kw">else</span>
+  echo <span class="str">"เกรด C"</span>
+<span class="kw">fi</span>
+
+<span class="comment-line"># File tests</span>
+<span class="kw">if</span> [[ -f <span class="str">"file.txt"</span> ]]; <span class="kw">then</span>
+  echo <span class="str">"file exists"</span>
+<span class="kw">fi</span>
+<span class="comment-line"># -f file  -d directory  -e exists</span>
+<span class="comment-line"># -r readable  -w writable  -x executable</span>
+<span class="comment-line"># -s not empty  -z string empty</span>
+
+<span class="comment-line"># String comparison</span>
+<span class="kw">if</span> [[ <span class="str">"<span class="kw">$name</span>"</span> == <span class="str">"admin"</span> ]]; <span class="kw">then</span>
+  echo <span class="str">"welcome admin"</span>
+<span class="kw">fi</span>
+
+<span class="comment-line"># Numeric: -eq -ne -gt -lt -ge -le</span>
+<span class="comment-line"># Logical: && || !</span></pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔁 Loops</h3>
+    <div class="grid-2">
+<pre><span class="comment-line"># for loop</span>
+<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="num">1 2 3 4 5</span>; <span class="kw">do</span>
+  echo <span class="str">"item <span class="kw">$i</span>"</span>
+<span class="kw">done</span>
+
+<span class="comment-line"># C-style for</span>
+<span class="kw">for</span> ((<span class="var">i</span>=<span class="num">0</span>; i&lt;<span class="num">5</span>; i++)); <span class="kw">do</span>
+  echo <span class="str">"<span class="kw">$i</span>"</span>
+<span class="kw">done</span>
+
+<span class="comment-line"># loop ไฟล์</span>
+<span class="kw">for</span> <span class="var">file</span> <span class="kw">in</span> *.txt; <span class="kw">do</span>
+  echo <span class="str">"processing <span class="kw">$file</span>"</span>
+<span class="kw">done</span>
+
+<span class="comment-line"># loop arguments</span>
+<span class="kw">for</span> <span class="var">arg</span> <span class="kw">in</span> <span class="str">"<span class="kw">$@</span>"</span>; <span class="kw">do</span>
+  echo <span class="str">"arg: <span class="kw">$arg</span>"</span>
+<span class="kw">done</span></pre>
+<pre><span class="comment-line"># while loop</span>
+<span class="var">count</span>=<span class="num">0</span>
+<span class="kw">while</span> [[ <span class="kw">$count</span> -lt <span class="num">5</span> ]]; <span class="kw">do</span>
+  echo <span class="str">"count: <span class="kw">$count</span>"</span>
+  ((<span class="var">count</span>++))
+<span class="kw">done</span>
+
+<span class="comment-line"># อ่านทีละบรรทัดจากไฟล์</span>
+<span class="kw">while</span> IFS= read -r <span class="var">line</span>; <span class="kw">do</span>
+  echo <span class="str">"<span class="kw">$line</span>"</span>
+<span class="kw">done</span> &lt; file.txt
+
+<span class="comment-line"># until — วนจนกว่าจะจริง</span>
+<span class="kw">until</span> ping -c1 google.com; <span class="kw">do</span>
+  echo <span class="str">"waiting..."</span>
+  sleep 5
+<span class="kw">done</span>
+echo <span class="str">"network is up!"</span></pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>⚙️ Functions</h3>
+<pre><span class="comment-line">#!/usr/bin/env bash</span>
+
+<span class="comment-line"># ประกาศ function</span>
+<span class="kw">function</span> <span class="fn">greet</span>() {
+  <span class="kw">local</span> <span class="var">name</span>=<span class="str">"<span class="kw">$1</span>"</span>      <span class="comment-line"># local = ไม่ใช่ global</span>
+  echo <span class="str">"สวัสดี <span class="kw">$name</span>!"</span>
+  <span class="kw">return</span> <span class="num">0</span>            <span class="comment-line"># exit code</span>
+}
+
+<span class="comment-line"># เรียกใช้</span>
+<span class="fn">greet</span> <span class="str">"สมชาย"</span>
+
+<span class="comment-line"># Function คืนค่า (ผ่าน echo)</span>
+<span class="kw">function</span> <span class="fn">get_date</span>() {
+  echo $(<span class="fn">date</span> +%Y-%m-%d)
+}
+
+<span class="var">today</span>=$(<span class="fn">get_date</span>)
+echo <span class="str">"วันที่: <span class="kw">$today</span>"</span>
+
+<span class="comment-line"># ─── ตัวอย่าง Script จริง: Backup ─────────────────</span>
+<span class="kw">function</span> <span class="fn">backup</span>() {
+  <span class="kw">local</span> <span class="var">src</span>=<span class="str">"<span class="kw">$1</span>"</span>
+  <span class="kw">local</span> <span class="var">dest</span>=<span class="str">"<span class="kw">$2</span>"</span>
+  <span class="kw">local</span> <span class="var">timestamp</span>=$(<span class="fn">date</span> +%Y%m%d_%H%M%S)
+  <span class="kw">local</span> <span class="var">archive</span>=<span class="str">"<span class="kw">${dest}</span>/backup_<span class="kw">${timestamp}</span>.tar.gz"</span>
+
+  <span class="kw">if</span> [[ ! -d <span class="str">"<span class="kw">$src</span>"</span> ]]; <span class="kw">then</span>
+    echo <span class="str">"Error: ไม่พบ directory <span class="kw">$src</span>"</span> &gt;&amp;2
+    <span class="kw">return</span> <span class="num">1</span>
+  <span class="kw">fi</span>
+
+  mkdir -p <span class="str">"<span class="kw">$dest</span>"</span>
+  tar -czf <span class="str">"<span class="kw">$archive</span>"</span> <span class="str">"<span class="kw">$src</span>"</span>
+  echo <span class="str">"✅ Backup เสร็จ: <span class="kw">$archive</span>"</span>
+}
+
+<span class="fn">backup</span> <span class="str">"/var/www"</span> <span class="str">"/backup"</span></pre>
+  </div>
+</section>
+
+<!-- ===================================================== -->
+<!-- 12 Cron & SSH -->
+<!-- ===================================================== -->
+<section id="cron">
+  <div class="chapter-header ch-blue">
+    <div class="ch-num">12</div>
+    <div>
+      <h2>Cron Jobs &amp; SSH</h2>
+      <p>ตั้งเวลาทำงานอัตโนมัติ และเชื่อมต่อเซิร์ฟเวอร์ระยะไกล</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>⏰ Cron — Scheduled Tasks</h3>
+    <div class="terminal">
+      <div class="terminal-bar"><span class="t-red"></span><span class="t-yellow"></span><span class="t-green"></span></div>
+      <pre><span class="prompt">$</span> <span class="cmd">crontab -e</span>   <span class="comment-line"># แก้ไข cron ของ user นี้</span>
+<span class="prompt">$</span> <span class="cmd">crontab -l</span>   <span class="comment-line"># ดู cron ที่ตั้งไว้</span>
+<span class="prompt">$</span> <span class="cmd">crontab -r</span>   <span class="comment-line"># ลบ cron ทั้งหมด</span></pre>
+    </div>
+    <div class="card" style="margin-top:0;background:#0d1117;border-color:#21262d">
+      <h3 style="color:#ffa657">📅 Cron Syntax</h3>
+<pre style="background:#000;border:none">
+<span class="type">* * * * *</span>  command
+<span class="type">│ │ │ │ └─</span> วันในสัปดาห์ (0=อาทิตย์, 1=จันทร์ ... 6=เสาร์)
+<span class="type">│ │ │ └───</span> เดือน (1-12)
+<span class="type">│ │ └─────</span> วันในเดือน (1-31)
+<span class="type">│ └───────</span> ชั่วโมง (0-23)
+<span class="type">└─────────</span> นาที (0-59)
+</pre>
+    </div>
+    <div class="terminal">
+      <div class="terminal-bar"><span class="t-red"></span><span class="t-yellow"></span><span class="t-green"></span></div>
+      <pre><span class="comment-line"># ตัวอย่าง crontab</span>
+<span class="out">0 2 * * *    /home/user/backup.sh          # ทุกวัน 02:00</span>
+<span class="out">*/15 * * * * /opt/check.sh                 # ทุก 15 นาที</span>
+<span class="out">0 9 * * 1    /scripts/report.sh            # ทุกวันจันทร์ 09:00</span>
+<span class="out">0 0 1 * *    /scripts/monthly.sh           # วันที่ 1 ของทุกเดือน</span>
+<span class="out">30 6 * * 1-5 /scripts/workday.sh           # วันทำงาน 06:30</span>
+<span class="out">@reboot      /scripts/startup.sh           # ตอน boot</span>
+<span class="out">@daily       /scripts/daily.sh             # ทุกวัน</span>
+
+<span class="comment-line"># redirect output</span>
+<span class="out">0 2 * * * /backup.sh >> /var/log/backup.log 2>&1</span></pre>
+    </div>
+    <div class="callout tip">
+      <span class="ci">💡</span>
+      <div>ใช้ <a href="https://crontab.guru" style="color:#10b981">crontab.guru</a> ตรวจสอบ cron expression ให้ถูกต้อง</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔐 SSH — Secure Shell</h3>
+    <div class="terminal">
+      <div class="terminal-bar"><span class="t-red"></span><span class="t-yellow"></span><span class="t-green"></span></div>
+      <pre><span class="comment-line"># ─── เชื่อมต่อ ─────────────────────────────────────</span>
+<span class="prompt">$</span> <span class="cmd">ssh user@server.com</span>             <span class="comment-line"># เชื่อมต่อ</span>
+<span class="prompt">$</span> <span class="cmd">ssh -p 2222 user@server.com</span>     <span class="comment-line"># port ต่างจาก 22</span>
+<span class="prompt">$</span> <span class="cmd">ssh -i ~/.ssh/mykey user@host</span>   <span class="comment-line"># ใช้ key</span>
+
+<span class="comment-line"># ─── สร้าง SSH Key ─────────────────────────────────</span>
+<span class="prompt">$</span> <span class="cmd">ssh-keygen -t ed25519 -C "email@example.com"</span>
+<span class="comment-line"># สร้าง: ~/.ssh/id_ed25519 (private) + id_ed25519.pub (public)</span>
+
+<span class="comment-line"># ─── Copy key ไปยัง server ────────────────────────</span>
+<span class="prompt">$</span> <span class="cmd">ssh-copy-id user@server.com</span>    <span class="comment-line"># copy pub key</span>
+<span class="comment-line"># หลังจากนี้ SSH ได้โดยไม่ต้องใส่ password</span>
+
+<span class="comment-line"># ─── SCP — คัดลอกไฟล์ผ่าน SSH ─────────────────────</span>
+<span class="prompt">$</span> <span class="cmd">scp file.txt user@server:/home/user/</span>  <span class="comment-line"># ส่งไป</span>
+<span class="prompt">$</span> <span class="cmd">scp user@server:/var/log/app.log .</span>    <span class="comment-line"># ดึงมา</span>
+<span class="prompt">$</span> <span class="cmd">scp -r mydir user@server:/opt/</span>        <span class="comment-line"># recursive</span>
+
+<span class="comment-line"># ─── rsync — sync ไฟล์ ────────────────────────────</span>
+<span class="prompt">$</span> <span class="cmd">rsync -avz /local/dir user@server:/remote/</span>
+<span class="prompt">$</span> <span class="cmd">rsync -avz --delete src/ dest/</span>   <span class="comment-line"># sync + ลบส่วนเกิน</span>
+<span class="prompt">$</span> <span class="cmd">rsync -avz -e ssh user@server:/remote/ /local/</span>
+
+<span class="comment-line"># ─── SSH Config (~/.ssh/config) ────────────────────</span>
+<span class="out">Host myserver
+    HostName 192.168.1.100
+    User ubuntu
+    Port 22
+    IdentityFile ~/.ssh/mykey</span>
+
+<span class="comment-line"># ใช้งาน</span>
+<span class="prompt">$</span> <span class="cmd">ssh myserver</span>   <span class="comment-line"># แทน ssh ubuntu@192.168.1.100</span></pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📦 Package Management</h3>
+    <table>
+      <tr><th>คำสั่ง</th><th>Ubuntu/Debian (apt)</th><th>CentOS/RHEL (dnf/yum)</th></tr>
+      <tr><td>อัปเดต list</td><td><code>sudo apt update</code></td><td><code>sudo dnf check-update</code></td></tr>
+      <tr><td>อัปเกรด</td><td><code>sudo apt upgrade</code></td><td><code>sudo dnf upgrade</code></td></tr>
+      <tr><td>ติดตั้ง</td><td><code>sudo apt install nginx</code></td><td><code>sudo dnf install nginx</code></td></tr>
+      <tr><td>ลบ</td><td><code>sudo apt remove nginx</code></td><td><code>sudo dnf remove nginx</code></td></tr>
+      <tr><td>ค้นหา</td><td><code>apt search nginx</code></td><td><code>dnf search nginx</code></td></tr>
+      <tr><td>ดูข้อมูล</td><td><code>apt show nginx</code></td><td><code>dnf info nginx</code></td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>🛎️ systemd — Service Management</h3>
+    <div class="terminal">
+      <div class="terminal-bar"><span class="t-red"></span><span class="t-yellow"></span><span class="t-green"></span></div>
+      <pre><span class="comment-line"># ─── จัดการ Service ─────────────────────────────</span>
+<span class="prompt">$</span> <span class="cmd">sudo systemctl start nginx</span>      <span class="comment-line"># เริ่ม service</span>
+<span class="prompt">$</span> <span class="cmd">sudo systemctl stop nginx</span>       <span class="comment-line"># หยุด service</span>
+<span class="prompt">$</span> <span class="cmd">sudo systemctl restart nginx</span>    <span class="comment-line"># restart</span>
+<span class="prompt">$</span> <span class="cmd">sudo systemctl reload nginx</span>     <span class="comment-line"># reload config</span>
+<span class="prompt">$</span> <span class="cmd">sudo systemctl enable nginx</span>     <span class="comment-line"># เปิดตอน boot</span>
+<span class="prompt">$</span> <span class="cmd">sudo systemctl disable nginx</span>    <span class="comment-line"># ไม่เปิดตอน boot</span>
+<span class="prompt">$</span> <span class="cmd">sudo systemctl status nginx</span>     <span class="comment-line"># ดูสถานะ</span>
+<span class="prompt">$</span> <span class="cmd">systemctl list-units --type=service</span>  <span class="comment-line"># ดู service ทั้งหมด</span>
+
+<span class="comment-line"># ─── Journal / Logs ──────────────────────────────</span>
+<span class="prompt">$</span> <span class="cmd">journalctl -u nginx</span>             <span class="comment-line"># logs ของ nginx</span>
+<span class="prompt">$</span> <span class="cmd">journalctl -u nginx -f</span>          <span class="comment-line"># follow real-time</span>
+<span class="prompt">$</span> <span class="cmd">journalctl -u nginx --since "1h ago"</span>  <span class="comment-line"># 1 ชั่วโมงที่ผ่านมา</span>
+<span class="prompt">$</span> <span class="cmd">journalctl -p err</span>               <span class="comment-line"># เฉพาะ error</span></pre>
+    </div>
+  </div>
+</section>
+
+</div><!-- end container -->
+
+<footer>
+  <strong>สื่อการสอน Linux Command Line ฉบับสมบูรณ์</strong><br>
+  ครอบคลุม Navigation · File System · Permissions · Text Processing · Process · Pipe &amp; Redirect · Network · Archive · Disk · User Management · Shell Scripting · Cron &amp; SSH
+</footer>
+
+<script>
+const sections = document.querySelectorAll('section[id]')
+const navLinks  = document.querySelectorAll('.nav-sticky a')
+window.addEventListener('scroll', () => {
+  let cur = ''
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 110) cur = s.id })
+  navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + cur))
+}, { passive: true })
+</script>
+</body>
+</html>

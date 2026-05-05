@@ -1,0 +1,1514 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>สื่อการสอน Express.js + TypeScript Backend</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#3b82f6;--indigo:#6366f1;--green:#10b981;--orange:#f59e0b;
+  --red:#ef4444;--pink:#ec4899;--purple:#8b5cf6;--cyan:#06b6d4;
+  --teal:#14b8a6;--dark:#0f172a;--light:#f8fafc;--card:#ffffff;
+  --border:#e2e8f0;--code-bg:#0d1117;--radius:12px;
+  --shadow:0 4px 24px rgba(0,0,0,.08);
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--light);color:var(--dark);line-height:1.75}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 40%,#065f46 100%);color:#fff;text-align:center;padding:72px 24px 56px}
+.hero h1{font-size:clamp(1.9rem,5vw,3.4rem);font-weight:900;margin-bottom:14px;letter-spacing:-1px}
+.hero p{font-size:1.15rem;opacity:.85;max-width:600px;margin:0 auto}
+.badge-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:22px}
+.badge{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);padding:5px 16px;border-radius:999px;font-size:.82rem;font-weight:700}
+
+/* NAV */
+.nav-sticky{position:sticky;top:0;z-index:100;background:#fff;border-bottom:2px solid var(--border);padding:0 12px;overflow-x:auto;white-space:nowrap;box-shadow:0 2px 12px rgba(0,0,0,.07)}
+.nav-sticky a{display:inline-block;padding:13px 14px;font-size:.82rem;font-weight:600;color:#64748b;text-decoration:none;border-bottom:3px solid transparent;transition:.2s}
+.nav-sticky a:hover,.nav-sticky a.active{color:var(--green);border-color:var(--green)}
+
+/* LAYOUT */
+.container{max-width:1120px;margin:0 auto;padding:44px 20px}
+section{margin-bottom:64px}
+
+/* CHAPTER HEADER */
+.chapter-header{border-radius:var(--radius);padding:26px 30px;margin-bottom:26px;display:flex;align-items:center;gap:18px;color:#fff}
+.chapter-header .ch-num{font-size:3rem;font-weight:900;opacity:.25;line-height:1;min-width:60px}
+.chapter-header h2{font-size:1.45rem;font-weight:800;margin:0}
+.chapter-header p{font-size:.9rem;opacity:.75;margin-top:5px}
+.ch-green{background:linear-gradient(135deg,#065f46,#047857)}
+.ch-blue{background:linear-gradient(135deg,#1e3a8a,#1d4ed8)}
+.ch-purple{background:linear-gradient(135deg,#4c1d95,#6d28d9)}
+.ch-orange{background:linear-gradient(135deg,#78350f,#d97706)}
+.ch-teal{background:linear-gradient(135deg,#134e4a,#0d9488)}
+.ch-red{background:linear-gradient(135deg,#7f1d1d,#dc2626)}
+.ch-indigo{background:linear-gradient(135deg,#312e81,#4f46e5)}
+.ch-cyan{background:linear-gradient(135deg,#164e63,#0891b2)}
+.ch-pink{background:linear-gradient(135deg,#831843,#db2777)}
+.ch-slate{background:linear-gradient(135deg,#1e293b,#475569)}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:26px 28px;margin-bottom:20px;box-shadow:var(--shadow)}
+.card h3{font-size:1.1rem;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.card p,.card li{font-size:.94rem;color:#334155}
+.card ul{padding-left:20px;display:flex;flex-direction:column;gap:6px}
+
+/* CODE */
+pre{background:var(--code-bg);color:#c9d1d9;border-radius:10px;padding:20px 22px;overflow-x:auto;font-size:.84rem;line-height:1.7;margin:14px 0;font-family:'Cascadia Code','Fira Code','Consolas',monospace;border:1px solid #21262d}
+code{font-family:'Cascadia Code','Fira Code',monospace;font-size:.88em}
+.inline-code{background:#f1f5f9;color:#be185d;padding:2px 7px;border-radius:5px;font-family:monospace;font-size:.87em}
+
+/* SYNTAX COLORS — GitHub Dark */
+.kw{color:#ff7b72}       /* keyword */
+.str{color:#a5d6ff}      /* string */
+.fn{color:#d2a8ff}       /* function */
+.cm{color:#8b949e;font-style:italic} /* comment */
+.type{color:#ffa657}     /* type/class */
+.num{color:#79c0ff}      /* number */
+.var{color:#c9d1d9}      /* variable */
+.imp{color:#ff7b72}      /* import */
+.dec{color:#ffa657}      /* decorator */
+.prop{color:#79c0ff}     /* property */
+.op{color:#c9d1d9}       /* operator */
+
+/* GRID */
+.grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+
+/* CALLOUT */
+.callout{border-radius:10px;padding:15px 20px;margin:14px 0;display:flex;gap:12px;align-items:flex-start;font-size:.93rem;line-height:1.6}
+.callout.info{background:#eff6ff;border-left:4px solid var(--blue);color:#1e40af}
+.callout.tip{background:#f0fdf4;border-left:4px solid var(--green);color:#166534}
+.callout.warn{background:#fffbeb;border-left:4px solid var(--orange);color:#92400e}
+.callout.danger{background:#fef2f2;border-left:4px solid var(--red);color:#991b1b}
+.callout .ci{font-size:1.1rem;margin-top:1px}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:14px 0}
+th{background:#f1f5f9;padding:10px 14px;text-align:left;font-weight:700;color:#475569;border:1px solid var(--border)}
+td{padding:10px 14px;border:1px solid var(--border);vertical-align:top}
+tr:nth-child(even) td{background:#f8fafc}
+
+/* FLOW */
+.flow{display:flex;align-items:center;gap:0;flex-wrap:wrap;margin:16px 0;padding:18px;background:#f8fafc;border-radius:10px;border:1px solid var(--border)}
+.flow-box{padding:10px 16px;border-radius:8px;font-weight:700;font-size:.85rem;text-align:center;color:#fff;min-width:90px}
+.flow-arr{padding:0 8px;color:#94a3b8;font-size:1.4rem;font-weight:300}
+.fb-green{background:#059669}.fb-blue{background:#2563eb}.fb-purple{background:#7c3aed}
+.fb-orange{background:#d97706}.fb-red{background:#dc2626}.fb-cyan{background:#0891b2}
+.fb-teal{background:#0d9488}.fb-slate{background:#475569}
+
+/* HTTP METHOD BADGES */
+.method{display:inline-block;padding:3px 10px;border-radius:5px;font-size:.78rem;font-weight:800;margin-right:6px;font-family:monospace}
+.get{background:#dcfce7;color:#166534}.post{background:#dbeafe;color:#1e40af}
+.put{background:#fef9c3;color:#854d0e}.patch{background:#fff7ed;color:#9a3412}
+.delete{background:#fee2e2;color:#991b1b}
+
+/* STATUS BADGE */
+.status{display:inline-block;padding:3px 10px;border-radius:5px;font-size:.8rem;font-weight:700;font-family:monospace}
+.s200{background:#dcfce7;color:#166534}.s201{background:#d1fae5;color:#065f46}
+.s400{background:#fef9c3;color:#854d0e}.s401{background:#fee2e2;color:#991b1b}
+.s403{background:#fce7f3;color:#9d174d}.s404{background:#fee2e2;color:#991b1b}
+.s500{background:#fef2f2;color:#7f1d1d}
+
+/* STEP */
+.step-list{display:flex;flex-direction:column;gap:14px}
+.step{display:flex;gap:14px;align-items:flex-start}
+.step-num{min-width:34px;height:34px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.88rem;flex-shrink:0}
+.step-body h4{font-weight:700;margin-bottom:3px;font-size:.95rem}
+.step-body p{font-size:.9rem;color:#475569}
+
+/* FOLDER TREE */
+.tree{background:var(--code-bg);border:1px solid #21262d;border-radius:10px;padding:20px 22px;font-family:'Cascadia Code','Fira Code',monospace;font-size:.84rem;color:#c9d1d9;line-height:1.8}
+.tree .folder{color:#ffa657}.tree .file{color:#79c0ff}.tree .cm2{color:#8b949e}
+
+/* FOOTER */
+footer{background:var(--dark);color:#94a3b8;text-align:center;padding:36px;font-size:.88rem}
+footer strong{color:#fff}
+
+@media(max-width:640px){
+  .grid-2{grid-template-columns:1fr}
+  .flow{flex-direction:column;align-items:flex-start}
+  .flow-arr{transform:rotate(90deg)}
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>🚀 Express.js + TypeScript</h1>
+  <p>สื่อการสอน Backend ฉบับสมบูรณ์ — ตั้งแต่ติดตั้งจนถึง Production</p>
+  <div class="badge-row">
+    <span class="badge">Express 4/5</span>
+    <span class="badge">TypeScript 5</span>
+    <span class="badge">Node.js 20+</span>
+    <span class="badge">REST API</span>
+    <span class="badge">JWT Auth</span>
+    <span class="badge">Middleware</span>
+    <span class="badge">Prisma ORM</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav-sticky" id="main-nav">
+  <a href="#setup">ติดตั้ง &amp; Setup</a>
+  <a href="#typescript-node">TS กับ Node</a>
+  <a href="#routing">Routing</a>
+  <a href="#middleware">Middleware</a>
+  <a href="#controllers">Controllers</a>
+  <a href="#validation">Validation</a>
+  <a href="#auth">JWT Auth</a>
+  <a href="#database">Database</a>
+  <a href="#error">Error Handling</a>
+  <a href="#structure">โครงสร้าง</a>
+</nav>
+
+<div class="container">
+
+<!-- ============================================================ -->
+<!-- SECTION 1: ติดตั้ง & Setup -->
+<!-- ============================================================ -->
+<section id="setup">
+  <div class="chapter-header ch-green">
+    <div class="ch-num">01</div>
+    <div>
+      <h2>ติดตั้งและตั้งค่าโปรเจกต์</h2>
+      <p>สร้าง Express + TypeScript ตั้งแต่ศูนย์ พร้อม tsconfig และ dev tools</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📦 ติดตั้ง Dependencies</h3>
+    <div class="step-list">
+      <div class="step"><div class="step-num">1</div><div class="step-body"><h4>สร้างโปรเจกต์</h4>
+<pre><span class="cm"># สร้างโฟลเดอร์และ init</span>
+mkdir my-api && cd my-api
+npm init -y</pre>
+      </div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-body"><h4>ติดตั้ง Express + TypeScript</h4>
+<pre><span class="cm"># Production dependencies</span>
+npm install express
+
+<span class="cm"># Development dependencies</span>
+npm install -D typescript ts-node-dev @types/express @types/node
+
+<span class="cm"># เครื่องมือเพิ่มเติม</span>
+npm install dotenv cors helmet morgan
+npm install -D @types/cors @types/morgan</pre>
+      </div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-body"><h4>สร้าง tsconfig.json</h4>
+<pre><span class="cm"># สร้าง tsconfig อัตโนมัติ</span>
+npx tsc --init</pre>
+      </div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>⚙️ tsconfig.json ที่แนะนำสำหรับ Backend</h3>
+<pre>{
+  <span class="prop">"compilerOptions"</span>: {
+    <span class="prop">"target"</span>: <span class="str">"ES2022"</span>,           <span class="cm">// Node 16+ รองรับ ES2022</span>
+    <span class="prop">"module"</span>: <span class="str">"commonjs"</span>,         <span class="cm">// Node.js ใช้ CommonJS</span>
+    <span class="prop">"lib"</span>: [<span class="str">"ES2022"</span>],
+    <span class="prop">"outDir"</span>: <span class="str">"./dist"</span>,           <span class="cm">// output directory</span>
+    <span class="prop">"rootDir"</span>: <span class="str">"./src"</span>,
+    <span class="prop">"strict"</span>: <span class="kw">true</span>,               <span class="cm">// เปิด strict mode ทั้งหมด</span>
+    <span class="prop">"esModuleInterop"</span>: <span class="kw">true</span>,
+    <span class="prop">"skipLibCheck"</span>: <span class="kw">true</span>,
+    <span class="prop">"forceConsistentCasingInFileNames"</span>: <span class="kw">true</span>,
+    <span class="prop">"resolveJsonModule"</span>: <span class="kw">true</span>,    <span class="cm">// import JSON ได้</span>
+    <span class="prop">"baseUrl"</span>: <span class="str">"."</span>,
+    <span class="prop">"paths"</span>: {
+      <span class="prop">"@/*"</span>: [<span class="str">"src/*"</span>]            <span class="cm">// path aliases</span>
+    }
+  },
+  <span class="prop">"include"</span>: [<span class="str">"src/**/*"</span>],
+  <span class="prop">"exclude"</span>: [<span class="str">"node_modules"</span>, <span class="str">"dist"</span>]
+}</pre>
+  </div>
+
+  <div class="card">
+    <h3>📝 package.json scripts</h3>
+<pre>{
+  <span class="prop">"scripts"</span>: {
+    <span class="prop">"dev"</span>: <span class="str">"ts-node-dev --respawn --transpile-only src/index.ts"</span>,
+    <span class="prop">"build"</span>: <span class="str">"tsc"</span>,
+    <span class="prop">"start"</span>: <span class="str">"node dist/index.js"</span>,
+    <span class="prop">"lint"</span>: <span class="str">"eslint src --ext .ts"</span>,
+    <span class="prop">"test"</span>: <span class="str">"jest"</span>
+  }
+}</pre>
+    <div class="callout tip">
+      <span class="ci">💡</span>
+      <div><strong>ts-node-dev</strong> คือ nodemon สำหรับ TypeScript — watch ไฟล์และ restart อัตโนมัติ <span class="inline-code">--respawn</span> = restart เมื่อ crash, <span class="inline-code">--transpile-only</span> = เร็วขึ้นไม่ type-check ตอน dev</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🚀 Entry Point: src/index.ts</h3>
+<pre><span class="imp">import</span> express <span class="kw">from</span> <span class="str">'express'</span>
+<span class="imp">import</span> cors <span class="kw">from</span> <span class="str">'cors'</span>
+<span class="imp">import</span> helmet <span class="kw">from</span> <span class="str">'helmet'</span>
+<span class="imp">import</span> morgan <span class="kw">from</span> <span class="str">'morgan'</span>
+<span class="imp">import</span> <span class="str">'dotenv/config'</span>
+<span class="imp">import</span> { userRouter } <span class="kw">from</span> <span class="str">'@/routes/user.routes'</span>
+<span class="imp">import</span> { errorHandler } <span class="kw">from</span> <span class="str">'@/middleware/errorHandler'</span>
+
+<span class="kw">const</span> <span class="var">app</span> = <span class="fn">express</span>()
+<span class="kw">const</span> <span class="var">PORT</span> = process.env.<span class="prop">PORT</span> ?? <span class="num">3000</span>
+
+<span class="cm">// ─── Global Middleware ─────────────────────────────</span>
+app.<span class="fn">use</span>(<span class="fn">helmet</span>())           <span class="cm">// HTTP security headers</span>
+app.<span class="fn">use</span>(<span class="fn">cors</span>())             <span class="cm">// Cross-Origin</span>
+app.<span class="fn">use</span>(<span class="fn">morgan</span>(<span class="str">'dev'</span>))      <span class="cm">// HTTP logging</span>
+app.<span class="fn">use</span>(express.<span class="fn">json</span>())    <span class="cm">// parse JSON body</span>
+app.<span class="fn">use</span>(express.<span class="fn">urlencoded</span>({ extended: <span class="kw">true</span> }))
+
+<span class="cm">// ─── Routes ───────────────────────────────────────</span>
+app.<span class="fn">use</span>(<span class="str">'/api/users'</span>, <span class="var">userRouter</span>)
+
+<span class="cm">// Health check</span>
+app.<span class="fn">get</span>(<span class="str">'/health'</span>, (<span class="var">_req</span>, <span class="var">res</span>) => res.<span class="fn">json</span>({ status: <span class="str">'ok'</span> }))
+
+<span class="cm">// ─── Error Handler (ต้องอยู่สุดท้าย) ─────────────</span>
+app.<span class="fn">use</span>(<span class="var">errorHandler</span>)
+
+app.<span class="fn">listen</span>(<span class="var">PORT</span>, () => {
+  console.log(<span class="str">`🚀 Server running on http://localhost:<span class="kw">${PORT}</span>`</span>)
+})</pre>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 2: TypeScript กับ Node/Express -->
+<!-- ============================================================ -->
+<section id="typescript-node">
+  <div class="chapter-header ch-blue">
+    <div class="ch-num">02</div>
+    <div>
+      <h2>TypeScript กับ Express</h2>
+      <p>Request, Response, Types และการกำหนด Typed interfaces</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📋 Request &amp; Response Types</h3>
+<pre><span class="imp">import</span> { <span class="type">Request</span>, <span class="type">Response</span>, <span class="type">NextFunction</span> } <span class="kw">from</span> <span class="str">'express'</span>
+
+<span class="cm">// Generic Types ของ Express</span>
+<span class="cm">// Request&lt;Params, ResBody, ReqBody, Query&gt;</span>
+<span class="cm">// Response&lt;ResBody&gt;</span>
+
+<span class="cm">// ─── ตัวอย่าง Typed Request ───────────────────────</span>
+
+<span class="cm">// กำหนด type สำหรับ URL params</span>
+<span class="kw">interface</span> <span class="type">UserParams</span> { id: <span class="type">string</span> }
+
+<span class="cm">// กำหนด type สำหรับ Request body</span>
+<span class="kw">interface</span> <span class="type">CreateUserBody</span> {
+  name: <span class="type">string</span>
+  email: <span class="type">string</span>
+  password: <span class="type">string</span>
+}
+
+<span class="cm">// กำหนด type สำหรับ Query string</span>
+<span class="kw">interface</span> <span class="type">UserQuery</span> {
+  page?: <span class="type">string</span>
+  limit?: <span class="type">string</span>
+  search?: <span class="type">string</span>
+}
+
+<span class="cm">// ใช้ generic types ใน handler</span>
+<span class="kw">const</span> <span class="fn">getUser</span> = (
+  req: <span class="type">Request</span>&lt;<span class="type">UserParams</span>&gt;,
+  res: <span class="type">Response</span>
+) => {
+  <span class="kw">const</span> { id } = req.params  <span class="cm">// string ✅</span>
+  res.<span class="fn">json</span>({ id })
+}
+
+<span class="kw">const</span> <span class="fn">createUser</span> = (
+  req: <span class="type">Request</span>&lt;{}, {}, <span class="type">CreateUserBody</span>&gt;,
+  res: <span class="type">Response</span>
+) => {
+  <span class="kw">const</span> { name, email, password } = req.body  <span class="cm">// typed ✅</span>
+  res.<span class="fn">status</span>(<span class="num">201</span>).<span class="fn">json</span>({ name, email })
+}
+
+<span class="kw">const</span> <span class="fn">getUsers</span> = (
+  req: <span class="type">Request</span>&lt;{}, {}, {}, <span class="type">UserQuery</span>&gt;,
+  res: <span class="type">Response</span>
+) => {
+  <span class="kw">const</span> page = Number(req.query.page ?? <span class="str">'1'</span>)
+  res.<span class="fn">json</span>({ page })
+}</pre>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>🔧 Extending Request Type</h3>
+<pre><span class="cm">// src/types/express.d.ts</span>
+<span class="cm">// เพิ่ม custom properties ให้ Request</span>
+<span class="kw">declare namespace</span> <span class="type">Express</span> {
+  <span class="kw">interface</span> <span class="type">Request</span> {
+    user?: {
+      id: <span class="type">number</span>
+      email: <span class="type">string</span>
+      role: <span class="type">string</span>
+    }
+    requestId?: <span class="type">string</span>
+  }
+}
+
+<span class="cm">// ใช้งาน — หลังจาก middleware set แล้ว</span>
+app.<span class="fn">get</span>(<span class="str">'/profile'</span>, (<span class="var">req</span>, <span class="var">res</span>) => {
+  <span class="cm">// req.user มี type แล้ว ✅</span>
+  <span class="kw">const</span> userId = req.user?.id
+  res.<span class="fn">json</span>({ userId })
+})</pre>
+    </div>
+    <div class="card">
+      <h3>📌 Type-safe Response</h3>
+<pre><span class="cm">// กำหนด Response format มาตรฐาน</span>
+<span class="kw">interface</span> <span class="type">ApiResponse</span>&lt;<span class="type">T</span>&gt; {
+  success: <span class="type">boolean</span>
+  data?: <span class="type">T</span>
+  message?: <span class="type">string</span>
+  errors?: <span class="type">string</span>[]
+}
+
+<span class="cm">// Helper function</span>
+<span class="kw">function</span> <span class="fn">sendSuccess</span>&lt;<span class="type">T</span>&gt;(res: <span class="type">Response</span>, data: <span class="type">T</span>, code = <span class="num">200</span>) {
+  <span class="kw">return</span> res.<span class="fn">status</span>(code).<span class="fn">json</span>({
+    success: <span class="kw">true</span>, data
+  } <span class="kw">satisfies</span> <span class="type">ApiResponse</span>&lt;<span class="type">T</span>&gt;)
+}
+
+<span class="kw">function</span> <span class="fn">sendError</span>(res: <span class="type">Response</span>, msg: <span class="type">string</span>, code = <span class="num">400</span>) {
+  <span class="kw">return</span> res.<span class="fn">status</span>(code).<span class="fn">json</span>({
+    success: <span class="kw">false</span>, message: msg
+  })
+}
+
+<span class="cm">// ใช้งาน</span>
+<span class="fn">sendSuccess</span>(res, { id: <span class="num">1</span>, name: <span class="str">"สมชาย"</span> })
+<span class="fn">sendError</span>(res, <span class="str">"ไม่พบข้อมูล"</span>, <span class="num">404</span>)</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 3: Routing -->
+<!-- ============================================================ -->
+<section id="routing">
+  <div class="chapter-header ch-purple">
+    <div class="ch-num">03</div>
+    <div>
+      <h2>Routing</h2>
+      <p>Express Router, RESTful API และการแยก routes ให้เป็นระเบียบ</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🗺️ Express Router พื้นฐาน</h3>
+<pre><span class="imp">import</span> { <span class="type">Router</span> } <span class="kw">from</span> <span class="str">'express'</span>
+<span class="imp">import</span> * <span class="kw">as</span> <span class="var">userController</span> <span class="kw">from</span> <span class="str">'@/controllers/user.controller'</span>
+<span class="imp">import</span> { authenticate } <span class="kw">from</span> <span class="str">'@/middleware/auth'</span>
+<span class="imp">import</span> { validate } <span class="kw">from</span> <span class="str">'@/middleware/validate'</span>
+<span class="imp">import</span> { createUserSchema, updateUserSchema } <span class="kw">from</span> <span class="str">'@/schemas/user.schema'</span>
+
+<span class="kw">export const</span> <span class="var">userRouter</span> = <span class="fn">Router</span>()
+
+<span class="cm">// ─── Public Routes ────────────────────────────────</span>
+userRouter.<span class="fn">post</span>(<span class="str">'/register'</span>, <span class="fn">validate</span>(<span class="var">createUserSchema</span>), <span class="var">userController</span>.register)
+userRouter.<span class="fn">post</span>(<span class="str">'/login'</span>,    <span class="var">userController</span>.login)
+
+<span class="cm">// ─── Protected Routes ─────────────────────────────</span>
+userRouter.<span class="fn">use</span>(<span class="var">authenticate</span>)  <span class="cm">// ทุก route ด้านล่างต้อง auth</span>
+
+userRouter.<span class="fn">get</span>(<span class="str">'/'</span>,     <span class="var">userController</span>.getAll)
+userRouter.<span class="fn">get</span>(<span class="str">'/:id'</span>, <span class="var">userController</span>.getOne)
+userRouter.<span class="fn">put</span>(<span class="str">'/:id'</span>, <span class="fn">validate</span>(<span class="var">updateUserSchema</span>), <span class="var">userController</span>.update)
+userRouter.<span class="fn">delete</span>(<span class="str">'/:id'</span>, <span class="var">userController</span>.remove)</pre>
+  </div>
+
+  <div class="card">
+    <h3>🔗 RESTful API Design</h3>
+    <table>
+      <tr><th>Method</th><th>Path</th><th>Action</th><th>Status</th></tr>
+      <tr>
+        <td><span class="method get">GET</span></td>
+        <td><span class="inline-code">/api/users</span></td>
+        <td>ดูรายการทั้งหมด</td>
+        <td><span class="status s200">200</span></td>
+      </tr>
+      <tr>
+        <td><span class="method get">GET</span></td>
+        <td><span class="inline-code">/api/users/:id</span></td>
+        <td>ดูรายการเดียว</td>
+        <td><span class="status s200">200</span> / <span class="status s404">404</span></td>
+      </tr>
+      <tr>
+        <td><span class="method post">POST</span></td>
+        <td><span class="inline-code">/api/users</span></td>
+        <td>สร้างใหม่</td>
+        <td><span class="status s201">201</span></td>
+      </tr>
+      <tr>
+        <td><span class="method put">PUT</span></td>
+        <td><span class="inline-code">/api/users/:id</span></td>
+        <td>แทนที่ทั้งหมด</td>
+        <td><span class="status s200">200</span></td>
+      </tr>
+      <tr>
+        <td><span class="method patch">PATCH</span></td>
+        <td><span class="inline-code">/api/users/:id</span></td>
+        <td>แก้ไขบางส่วน</td>
+        <td><span class="status s200">200</span></td>
+      </tr>
+      <tr>
+        <td><span class="method delete">DELETE</span></td>
+        <td><span class="inline-code">/api/users/:id</span></td>
+        <td>ลบ</td>
+        <td><span class="status s200">200</span> / <span class="status s404">404</span></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>🔀 Router ซ้อนกัน (Nested Router)</h3>
+<pre><span class="cm">// src/routes/index.ts — รวม routes ทั้งหมด</span>
+<span class="imp">import</span> { <span class="type">Router</span> } <span class="kw">from</span> <span class="str">'express'</span>
+<span class="imp">import</span> { userRouter }    <span class="kw">from</span> <span class="str">'./user.routes'</span>
+<span class="imp">import</span> { productRouter } <span class="kw">from</span> <span class="str">'./product.routes'</span>
+<span class="imp">import</span> { orderRouter }   <span class="kw">from</span> <span class="str">'./order.routes'</span>
+
+<span class="kw">export const</span> <span class="var">apiRouter</span> = <span class="fn">Router</span>()
+
+apiRouter.<span class="fn">use</span>(<span class="str">'/users'</span>,    <span class="var">userRouter</span>)
+apiRouter.<span class="fn">use</span>(<span class="str">'/products'</span>, <span class="var">productRouter</span>)
+apiRouter.<span class="fn">use</span>(<span class="str">'/orders'</span>,   <span class="var">orderRouter</span>)
+
+<span class="cm">// ─── ใน index.ts ───────────────────────────────────</span>
+app.<span class="fn">use</span>(<span class="str">'/api/v1'</span>, <span class="var">apiRouter</span>)
+
+<span class="cm">// ─── Product routes ที่ซ้อนกับ reviews ────────────</span>
+<span class="cm">// GET  /api/v1/products</span>
+<span class="cm">// GET  /api/v1/products/:id</span>
+<span class="cm">// GET  /api/v1/products/:id/reviews  ← nested</span>
+
+productRouter.<span class="fn">use</span>(<span class="str">'/:productId/reviews'</span>, <span class="var">reviewRouter</span>)</pre>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 4: Middleware -->
+<!-- ============================================================ -->
+<section id="middleware">
+  <div class="chapter-header ch-orange">
+    <div class="ch-num">04</div>
+    <div>
+      <h2>Middleware</h2>
+      <p>หัวใจของ Express — ฟังก์ชันที่รันระหว่าง Request กับ Response</p>
+    </div>
+  </div>
+
+  <div class="callout info">
+    <span class="ci">🧩</span>
+    <div><strong>Middleware</strong> คือฟังก์ชันที่รับ <span class="inline-code">(req, res, next)</span> เรียงต่อกันเป็น "pipeline" — แต่ละตัวทำงานแล้วเรียก <span class="inline-code">next()</span> ส่งต่อ หรือส่ง response กลับ</div>
+  </div>
+
+  <div class="card">
+    <h3>🔄 Middleware Pipeline</h3>
+    <div class="flow">
+      <div class="flow-box fb-slate">Request</div>
+      <div class="flow-arr">→</div>
+      <div class="flow-box fb-blue">helmet<br><small>security</small></div>
+      <div class="flow-arr">→</div>
+      <div class="flow-box fb-blue">cors<br><small>origin</small></div>
+      <div class="flow-arr">→</div>
+      <div class="flow-box fb-blue">morgan<br><small>logging</small></div>
+      <div class="flow-arr">→</div>
+      <div class="flow-box fb-purple">auth<br><small>JWT verify</small></div>
+      <div class="flow-arr">→</div>
+      <div class="flow-box fb-teal">validate<br><small>body/params</small></div>
+      <div class="flow-arr">→</div>
+      <div class="flow-box fb-green">Controller<br><small>handler</small></div>
+      <div class="flow-arr">→</div>
+      <div class="flow-box fb-red">errorHandler<br><small>catch errors</small></div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>🔧 สร้าง Middleware เอง</h3>
+<pre><span class="imp">import</span> { <span class="type">Request</span>, <span class="type">Response</span>, <span class="type">NextFunction</span> } <span class="kw">from</span> <span class="str">'express'</span>
+
+<span class="cm">// ─── Logger Middleware ─────────────────────────────</span>
+<span class="kw">export function</span> <span class="fn">requestLogger</span>(
+  req: <span class="type">Request</span>,
+  res: <span class="type">Response</span>,
+  next: <span class="type">NextFunction</span>
+) {
+  <span class="kw">const</span> start = Date.now()
+  console.log(<span class="str">`→ <span class="kw">${req.method}</span> <span class="kw">${req.path}</span>`</span>)
+
+  res.<span class="fn">on</span>(<span class="str">'finish'</span>, () => {
+    <span class="kw">const</span> ms = Date.now() - start
+    console.log(<span class="str">`← <span class="kw">${res.statusCode}</span> (<span class="kw">${ms}</span>ms)`</span>)
+  })
+
+  <span class="fn">next</span>()  <span class="cm">// ส่งต่อไป middleware ถัดไป</span>
+}
+
+<span class="cm">// ─── Rate Limiter Middleware ───────────────────────</span>
+<span class="kw">const</span> <span class="var">requestCounts</span> = <span class="kw">new</span> <span class="type">Map</span>&lt;<span class="type">string</span>, <span class="type">number</span>[]&gt;()
+
+<span class="kw">export function</span> <span class="fn">rateLimiter</span>(
+  max: <span class="type">number</span>,
+  windowMs: <span class="type">number</span>
+) {
+  <span class="kw">return</span> (req: <span class="type">Request</span>, res: <span class="type">Response</span>, next: <span class="type">NextFunction</span>) => {
+    <span class="kw">const</span> ip = req.ip ?? <span class="str">'unknown'</span>
+    <span class="kw">const</span> now = Date.now()
+    <span class="kw">const</span> times = (<span class="var">requestCounts</span>.<span class="fn">get</span>(ip) ?? [])
+      .<span class="fn">filter</span>(t => now - t < windowMs)
+
+    <span class="kw">if</span> (times.length >= max) {
+      <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">429</span>).<span class="fn">json</span>({ message: <span class="str">'Too Many Requests'</span> })
+    }
+
+    times.<span class="fn">push</span>(now)
+    <span class="var">requestCounts</span>.<span class="fn">set</span>(ip, times)
+    <span class="fn">next</span>()
+  }
+}</pre>
+    </div>
+    <div class="card">
+      <h3>🔒 Auth Middleware (JWT)</h3>
+<pre><span class="imp">import</span> { <span class="type">Request</span>, <span class="type">Response</span>, <span class="type">NextFunction</span> } <span class="kw">from</span> <span class="str">'express'</span>
+<span class="imp">import</span> jwt <span class="kw">from</span> <span class="str">'jsonwebtoken'</span>
+
+<span class="kw">interface</span> <span class="type">JwtPayload</span> {
+  id: <span class="type">number</span>
+  email: <span class="type">string</span>
+  role: <span class="type">string</span>
+}
+
+<span class="kw">export function</span> <span class="fn">authenticate</span>(
+  req: <span class="type">Request</span>,
+  res: <span class="type">Response</span>,
+  next: <span class="type">NextFunction</span>
+) {
+  <span class="kw">try</span> {
+    <span class="kw">const</span> header = req.headers.authorization
+    <span class="kw">if</span> (!header?.startsWith(<span class="str">'Bearer '</span>)) {
+      <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">401</span>).<span class="fn">json</span>({ message: <span class="str">'ไม่มี Token'</span> })
+    }
+
+    <span class="kw">const</span> token = header.<span class="fn">slice</span>(<span class="num">7</span>)
+    <span class="kw">const</span> decoded = jwt.<span class="fn">verify</span>(
+      token, process.env.<span class="prop">JWT_SECRET</span>!
+    ) <span class="kw">as</span> <span class="type">JwtPayload</span>
+
+    req.user = decoded  <span class="cm">// ผ่าน extended type</span>
+    <span class="fn">next</span>()
+  } <span class="kw">catch</span> {
+    res.<span class="fn">status</span>(<span class="num">401</span>).<span class="fn">json</span>({ message: <span class="str">'Token ไม่ถูกต้อง'</span> })
+  }
+}
+
+<span class="cm">// Role-based middleware factory</span>
+<span class="kw">export function</span> <span class="fn">requireRole</span>(...roles: <span class="type">string</span>[]) {
+  <span class="kw">return</span> (<span class="var">req</span>: <span class="type">Request</span>, <span class="var">res</span>: <span class="type">Response</span>, <span class="var">next</span>: <span class="type">NextFunction</span>) => {
+    <span class="kw">if</span> (!roles.<span class="fn">includes</span>(req.user?.role ?? <span class="str">''</span>)) {
+      <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">403</span>).<span class="fn">json</span>({ message: <span class="str">'ไม่มีสิทธิ์'</span> })
+    }
+    <span class="fn">next</span>()
+  }
+}
+
+<span class="cm">// ใช้งาน</span>
+router.<span class="fn">delete</span>(<span class="str">'/:id'</span>, <span class="fn">authenticate</span>, <span class="fn">requireRole</span>(<span class="str">'admin'</span>), handler)</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 5: Controllers -->
+<!-- ============================================================ -->
+<section id="controllers">
+  <div class="chapter-header ch-teal">
+    <div class="ch-num">05</div>
+    <div>
+      <h2>Controllers &amp; Services Pattern</h2>
+      <p>แยก Business Logic ออกจาก Route Handler ให้เป็นระเบียบ</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🏗️ Architecture: Controller → Service → Repository</h3>
+    <div class="flow">
+      <div class="flow-box fb-blue">Route<br><small>HTTP path</small></div>
+      <div class="flow-arr">→</div>
+      <div class="flow-box fb-purple">Controller<br><small>req/res</small></div>
+      <div class="flow-arr">→</div>
+      <div class="flow-box fb-teal">Service<br><small>business logic</small></div>
+      <div class="flow-arr">→</div>
+      <div class="flow-box fb-green">Repository<br><small>database</small></div>
+      <div class="flow-arr">→</div>
+      <div class="flow-box fb-slate">Database</div>
+    </div>
+    <table>
+      <tr><th>Layer</th><th>หน้าที่</th><th>รู้จัก</th></tr>
+      <tr><td><strong>Controller</strong></td><td>จัดการ HTTP req/res, parse input, format output</td><td>req, res, next</td></tr>
+      <tr><td><strong>Service</strong></td><td>Business logic, validation กฎทางธุรกิจ</td><td>DTOs เท่านั้น</td></tr>
+      <tr><td><strong>Repository</strong></td><td>CRUD กับ database เท่านั้น</td><td>Database/ORM</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>📋 User Controller</h3>
+<pre><span class="cm">// src/controllers/user.controller.ts</span>
+<span class="imp">import</span> { <span class="type">Request</span>, <span class="type">Response</span>, <span class="type">NextFunction</span> } <span class="kw">from</span> <span class="str">'express'</span>
+<span class="imp">import</span> { <span class="var">userService</span> } <span class="kw">from</span> <span class="str">'@/services/user.service'</span>
+<span class="imp">import</span> { <span class="type">CreateUserDto</span>, <span class="type">UpdateUserDto</span> } <span class="kw">from</span> <span class="str">'@/types/user.types'</span>
+
+<span class="cm">// GET /api/users?page=1&limit=10&search=xxx</span>
+<span class="kw">export async function</span> <span class="fn">getAll</span>(req: <span class="type">Request</span>, res: <span class="type">Response</span>, next: <span class="type">NextFunction</span>) {
+  <span class="kw">try</span> {
+    <span class="kw">const</span> page  = Number(req.query.page)  || <span class="num">1</span>
+    <span class="kw">const</span> limit = Number(req.query.limit) || <span class="num">10</span>
+    <span class="kw">const</span> search = req.query.search <span class="kw">as</span> <span class="type">string</span> | <span class="kw">undefined</span>
+
+    <span class="kw">const</span> result = <span class="kw">await</span> <span class="var">userService</span>.<span class="fn">findAll</span>({ page, limit, search })
+    res.<span class="fn">json</span>({ success: <span class="kw">true</span>, ...result })
+  } <span class="kw">catch</span> (err) {
+    <span class="fn">next</span>(err)  <span class="cm">// ส่งให้ error handler</span>
+  }
+}
+
+<span class="cm">// GET /api/users/:id</span>
+<span class="kw">export async function</span> <span class="fn">getOne</span>(req: <span class="type">Request</span>&lt;{ id: <span class="type">string</span> }&gt;, res: <span class="type">Response</span>, next: <span class="type">NextFunction</span>) {
+  <span class="kw">try</span> {
+    <span class="kw">const</span> user = <span class="kw">await</span> <span class="var">userService</span>.<span class="fn">findById</span>(Number(req.params.id))
+    <span class="kw">if</span> (!user) <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">404</span>).<span class="fn">json</span>({ message: <span class="str">'ไม่พบผู้ใช้'</span> })
+    res.<span class="fn">json</span>({ success: <span class="kw">true</span>, data: user })
+  } <span class="kw">catch</span> (err) { <span class="fn">next</span>(err) }
+}
+
+<span class="cm">// POST /api/users</span>
+<span class="kw">export async function</span> <span class="fn">register</span>(
+  req: <span class="type">Request</span>&lt;{}, {}, <span class="type">CreateUserDto</span>&gt;,
+  res: <span class="type">Response</span>,
+  next: <span class="type">NextFunction</span>
+) {
+  <span class="kw">try</span> {
+    <span class="kw">const</span> user = <span class="kw">await</span> <span class="var">userService</span>.<span class="fn">create</span>(req.body)
+    res.<span class="fn">status</span>(<span class="num">201</span>).<span class="fn">json</span>({ success: <span class="kw">true</span>, data: user })
+  } <span class="kw">catch</span> (err) { <span class="fn">next</span>(err) }
+}
+
+<span class="cm">// DELETE /api/users/:id</span>
+<span class="kw">export async function</span> <span class="fn">remove</span>(req: <span class="type">Request</span>&lt;{ id: <span class="type">string</span> }&gt;, res: <span class="type">Response</span>, next: <span class="type">NextFunction</span>) {
+  <span class="kw">try</span> {
+    <span class="kw">await</span> <span class="var">userService</span>.<span class="fn">delete</span>(Number(req.params.id))
+    res.<span class="fn">json</span>({ success: <span class="kw">true</span>, message: <span class="str">'ลบสำเร็จ'</span> })
+  } <span class="kw">catch</span> (err) { <span class="fn">next</span>(err) }
+}</pre>
+  </div>
+
+  <div class="card">
+    <h3>⚙️ User Service</h3>
+<pre><span class="cm">// src/services/user.service.ts</span>
+<span class="imp">import</span> bcrypt <span class="kw">from</span> <span class="str">'bcrypt'</span>
+<span class="imp">import</span> { <span class="var">userRepository</span> } <span class="kw">from</span> <span class="str">'@/repositories/user.repository'</span>
+<span class="imp">import</span> { <span class="type">CreateUserDto</span> } <span class="kw">from</span> <span class="str">'@/types/user.types'</span>
+<span class="imp">import</span> { <span class="type">AppError</span> } <span class="kw">from</span> <span class="str">'@/utils/AppError'</span>
+
+<span class="kw">interface</span> <span class="type">FindAllOptions</span> {
+  page: <span class="type">number</span>; limit: <span class="type">number</span>; search?: <span class="type">string</span>
+}
+
+<span class="kw">export const</span> <span class="var">userService</span> = {
+  <span class="kw">async</span> <span class="fn">findAll</span>({ page, limit, search }: <span class="type">FindAllOptions</span>) {
+    <span class="kw">const</span> skip = (page - <span class="num">1</span>) * limit
+    <span class="kw">const</span> [users, total] = <span class="kw">await</span> <span class="var">userRepository</span>.<span class="fn">findAndCount</span>({ skip, limit, search })
+    <span class="kw">return</span> { data: users, total, page, totalPages: Math.<span class="fn">ceil</span>(total / limit) }
+  },
+
+  <span class="kw">async</span> <span class="fn">findById</span>(id: <span class="type">number</span>) {
+    <span class="kw">return</span> <span class="var">userRepository</span>.<span class="fn">findById</span>(id)
+  },
+
+  <span class="kw">async</span> <span class="fn">create</span>(dto: <span class="type">CreateUserDto</span>) {
+    <span class="cm">// ตรวจ email ซ้ำ</span>
+    <span class="kw">const</span> existing = <span class="kw">await</span> <span class="var">userRepository</span>.<span class="fn">findByEmail</span>(dto.email)
+    <span class="kw">if</span> (existing) <span class="kw">throw new</span> <span class="type">AppError</span>(<span class="str">'Email นี้ถูกใช้แล้ว'</span>, <span class="num">409</span>)
+
+    <span class="cm">// hash password</span>
+    <span class="kw">const</span> hashed = <span class="kw">await</span> bcrypt.<span class="fn">hash</span>(dto.password, <span class="num">12</span>)
+    <span class="kw">return</span> <span class="var">userRepository</span>.<span class="fn">create</span>({ ...dto, password: hashed })
+  },
+
+  <span class="kw">async</span> <span class="fn">delete</span>(id: <span class="type">number</span>) {
+    <span class="kw">const</span> user = <span class="kw">await</span> <span class="var">userRepository</span>.<span class="fn">findById</span>(id)
+    <span class="kw">if</span> (!user) <span class="kw">throw new</span> <span class="type">AppError</span>(<span class="str">'ไม่พบผู้ใช้'</span>, <span class="num">404</span>)
+    <span class="kw">return</span> <span class="var">userRepository</span>.<span class="fn">delete</span>(id)
+  }
+}</pre>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 6: Validation -->
+<!-- ============================================================ -->
+<section id="validation">
+  <div class="chapter-header ch-red">
+    <div class="ch-num">06</div>
+    <div>
+      <h2>Validation ด้วย Zod</h2>
+      <p>ตรวจสอบข้อมูลขาเข้าด้วย Schema และ TypeScript types อัตโนมัติ</p>
+    </div>
+  </div>
+
+  <div class="callout info">
+    <span class="ci">🛡️</span>
+    <div><strong>Zod</strong> คือ schema validation library ที่ TypeScript-first — สร้าง schema ครั้งเดียว ได้ทั้ง runtime validation และ TypeScript type พร้อมกัน</div>
+  </div>
+
+  <div class="card">
+    <h3>📦 ติดตั้ง Zod</h3>
+<pre>npm install zod</pre>
+  </div>
+
+  <div class="card">
+    <h3>📋 สร้าง Schemas</h3>
+<pre><span class="cm">// src/schemas/user.schema.ts</span>
+<span class="imp">import</span> { z } <span class="kw">from</span> <span class="str">'zod'</span>
+
+<span class="kw">export const</span> <span class="var">createUserSchema</span> = z.<span class="fn">object</span>({
+  body: z.<span class="fn">object</span>({
+    name: z.<span class="fn">string</span>()
+      .<span class="fn">min</span>(<span class="num">2</span>, <span class="str">'ชื่อต้องมีอย่างน้อย 2 ตัวอักษร'</span>)
+      .<span class="fn">max</span>(<span class="num">50</span>, <span class="str">'ชื่อยาวเกินไป'</span>),
+    email: z.<span class="fn">string</span>()
+      .<span class="fn">email</span>(<span class="str">'รูปแบบ email ไม่ถูกต้อง'</span>)
+      .<span class="fn">toLowerCase</span>(),
+    password: z.<span class="fn">string</span>()
+      .<span class="fn">min</span>(<span class="num">8</span>, <span class="str">'รหัสผ่านต้องมีอย่างน้อย 8 ตัว'</span>)
+      .<span class="fn">regex</span>(/[A-Z]/, <span class="str">'ต้องมีตัวพิมพ์ใหญ่อย่างน้อย 1 ตัว'</span>),
+    role: z.<span class="fn">enum</span>([<span class="str">'user'</span>, <span class="str">'admin'</span>]).<span class="fn">default</span>(<span class="str">'user'</span>),
+    age: z.<span class="fn">number</span>().<span class="fn">int</span>().<span class="fn">min</span>(<span class="num">18</span>).<span class="fn">max</span>(<span class="num">120</span>).<span class="fn">optional</span>(),
+  })
+})
+
+<span class="kw">export const</span> <span class="var">updateUserSchema</span> = z.<span class="fn">object</span>({
+  params: z.<span class="fn">object</span>({ id: z.<span class="fn">string</span>().<span class="fn">regex</span>(/^\d+$/, <span class="str">'id ต้องเป็นตัวเลข'</span>) }),
+  body: <span class="var">createUserSchema</span>.shape.body.<span class="fn">partial</span>()  <span class="cm">// ทุกช่อง optional</span>
+})
+
+<span class="kw">export const</span> <span class="var">paginationSchema</span> = z.<span class="fn">object</span>({
+  query: z.<span class="fn">object</span>({
+    page:   z.<span class="fn">string</span>().<span class="fn">optional</span>().<span class="fn">transform</span>(v => Number(v) || <span class="num">1</span>),
+    limit:  z.<span class="fn">string</span>().<span class="fn">optional</span>().<span class="fn">transform</span>(v => Math.<span class="fn">min</span>(Number(v) || <span class="num">10</span>, <span class="num">100</span>)),
+    search: z.<span class="fn">string</span>().<span class="fn">optional</span>(),
+  })
+})
+
+<span class="cm">// Export inferred types</span>
+<span class="kw">export type</span> <span class="type">CreateUserDto</span> = z.<span class="fn">infer</span>&lt;<span class="kw">typeof</span> <span class="var">createUserSchema</span>&gt;[<span class="str">'body'</span>]
+<span class="kw">export type</span> <span class="type">UpdateUserDto</span> = z.<span class="fn">infer</span>&lt;<span class="kw">typeof</span> <span class="var">updateUserSchema</span>&gt;[<span class="str">'body'</span>]</pre>
+  </div>
+
+  <div class="card">
+    <h3>🔧 Validate Middleware</h3>
+<pre><span class="cm">// src/middleware/validate.ts</span>
+<span class="imp">import</span> { <span class="type">Request</span>, <span class="type">Response</span>, <span class="type">NextFunction</span> } <span class="kw">from</span> <span class="str">'express'</span>
+<span class="imp">import</span> { <span class="type">AnyZodObject</span>, <span class="type">ZodError</span> } <span class="kw">from</span> <span class="str">'zod'</span>
+
+<span class="kw">export function</span> <span class="fn">validate</span>(schema: <span class="type">AnyZodObject</span>) {
+  <span class="kw">return</span> <span class="kw">async</span> (req: <span class="type">Request</span>, res: <span class="type">Response</span>, next: <span class="type">NextFunction</span>) => {
+    <span class="kw">try</span> {
+      <span class="cm">// parse และ transform ข้อมูลใน place</span>
+      <span class="kw">const</span> parsed = <span class="kw">await</span> schema.<span class="fn">parseAsync</span>({
+        body:   req.body,
+        query:  req.query,
+        params: req.params,
+      })
+
+      <span class="cm">// แทนที่ด้วยข้อมูลที่ผ่านการ transform แล้ว</span>
+      req.body   = parsed.body   ?? req.body
+      req.query  = parsed.query  ?? req.query
+      req.params = parsed.params ?? req.params
+
+      <span class="fn">next</span>()
+    } <span class="kw">catch</span> (err) {
+      <span class="kw">if</span> (err <span class="kw">instanceof</span> <span class="type">ZodError</span>) {
+        <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">422</span>).<span class="fn">json</span>({
+          success: <span class="kw">false</span>,
+          message: <span class="str">'ข้อมูลไม่ถูกต้อง'</span>,
+          errors: err.errors.<span class="fn">map</span>(e => ({
+            field: e.path.<span class="fn">join</span>(<span class="str">'.'</span>),
+            message: e.message,
+          }))
+        })
+      }
+      <span class="fn">next</span>(err)
+    }
+  }
+}
+
+<span class="cm">// ใช้งานใน router</span>
+router.<span class="fn">post</span>(<span class="str">'/'</span>, <span class="fn">validate</span>(<span class="var">createUserSchema</span>), <span class="var">userController</span>.register)</pre>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 7: JWT Authentication -->
+<!-- ============================================================ -->
+<section id="auth">
+  <div class="chapter-header ch-indigo">
+    <div class="ch-num">07</div>
+    <div>
+      <h2>JWT Authentication</h2>
+      <p>Register, Login, Access Token, Refresh Token</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔄 Authentication Flow</h3>
+    <div class="flow">
+      <div class="flow-box fb-blue">Client<br>POST /login</div>
+      <div class="flow-arr">→</div>
+      <div class="flow-box fb-purple">Verify<br>Password</div>
+      <div class="flow-arr">→</div>
+      <div class="flow-box fb-teal">Sign JWT<br>Access+Refresh</div>
+      <div class="flow-arr">→</div>
+      <div class="flow-box fb-green">Return Tokens</div>
+    </div>
+    <div class="flow">
+      <div class="flow-box fb-blue">Client<br>GET /protected</div>
+      <div class="flow-arr">Bearer token →</div>
+      <div class="flow-box fb-purple">Verify JWT<br>middleware</div>
+      <div class="flow-arr">→ req.user</div>
+      <div class="flow-box fb-green">Controller</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📦 ติดตั้ง</h3>
+<pre>npm install jsonwebtoken bcrypt
+npm install -D @types/jsonwebtoken @types/bcrypt</pre>
+  </div>
+
+  <div class="card">
+    <h3>🔐 Auth Service</h3>
+<pre><span class="cm">// src/services/auth.service.ts</span>
+<span class="imp">import</span> bcrypt <span class="kw">from</span> <span class="str">'bcrypt'</span>
+<span class="imp">import</span> jwt <span class="kw">from</span> <span class="str">'jsonwebtoken'</span>
+<span class="imp">import</span> { <span class="var">userRepository</span> } <span class="kw">from</span> <span class="str">'@/repositories/user.repository'</span>
+<span class="imp">import</span> { <span class="type">AppError</span> } <span class="kw">from</span> <span class="str">'@/utils/AppError'</span>
+
+<span class="kw">const</span> <span class="var">ACCESS_SECRET</span>  = process.env.<span class="prop">JWT_SECRET</span>!
+<span class="kw">const</span> <span class="var">REFRESH_SECRET</span> = process.env.<span class="prop">JWT_REFRESH_SECRET</span>!
+
+<span class="kw">export interface</span> <span class="type">TokenPayload</span> {
+  id: <span class="type">number</span>; email: <span class="type">string</span>; role: <span class="type">string</span>
+}
+
+<span class="kw">function</span> <span class="fn">signTokens</span>(payload: <span class="type">TokenPayload</span>) {
+  <span class="kw">const</span> accessToken = jwt.<span class="fn">sign</span>(payload, <span class="var">ACCESS_SECRET</span>, {
+    expiresIn: <span class="str">'15m'</span>
+  })
+  <span class="kw">const</span> refreshToken = jwt.<span class="fn">sign</span>(payload, <span class="var">REFRESH_SECRET</span>, {
+    expiresIn: <span class="str">'7d'</span>
+  })
+  <span class="kw">return</span> { accessToken, refreshToken }
+}
+
+<span class="kw">export const</span> <span class="var">authService</span> = {
+  <span class="kw">async</span> <span class="fn">login</span>(email: <span class="type">string</span>, password: <span class="type">string</span>) {
+    <span class="kw">const</span> user = <span class="kw">await</span> <span class="var">userRepository</span>.<span class="fn">findByEmail</span>(email)
+    <span class="kw">if</span> (!user) <span class="kw">throw new</span> <span class="type">AppError</span>(<span class="str">'Email หรือรหัสผ่านไม่ถูกต้อง'</span>, <span class="num">401</span>)
+
+    <span class="kw">const</span> valid = <span class="kw">await</span> bcrypt.<span class="fn">compare</span>(password, user.password)
+    <span class="kw">if</span> (!valid) <span class="kw">throw new</span> <span class="type">AppError</span>(<span class="str">'Email หรือรหัสผ่านไม่ถูกต้อง'</span>, <span class="num">401</span>)
+
+    <span class="kw">const</span> tokens = <span class="fn">signTokens</span>({ id: user.id, email: user.email, role: user.role })
+
+    <span class="cm">// เก็บ refreshToken ใน DB (optional)</span>
+    <span class="kw">await</span> <span class="var">userRepository</span>.<span class="fn">updateRefreshToken</span>(user.id, tokens.refreshToken)
+
+    <span class="kw">const</span> { password: _, ...userWithoutPw } = user
+    <span class="kw">return</span> { user: userWithoutPw, ...tokens }
+  },
+
+  <span class="kw">async</span> <span class="fn">refreshToken</span>(token: <span class="type">string</span>) {
+    <span class="kw">try</span> {
+      <span class="kw">const</span> payload = jwt.<span class="fn">verify</span>(token, <span class="var">REFRESH_SECRET</span>) <span class="kw">as</span> <span class="type">TokenPayload</span>
+      <span class="kw">return</span> <span class="fn">signTokens</span>({ id: payload.id, email: payload.email, role: payload.role })
+    } <span class="kw">catch</span> {
+      <span class="kw">throw new</span> <span class="type">AppError</span>(<span class="str">'Refresh token ไม่ถูกต้อง'</span>, <span class="num">401</span>)
+    }
+  },
+
+  <span class="kw">async</span> <span class="fn">logout</span>(userId: <span class="type">number</span>) {
+    <span class="kw">await</span> <span class="var">userRepository</span>.<span class="fn">updateRefreshToken</span>(userId, <span class="kw">null</span>)
+  }
+}</pre>
+  </div>
+
+  <div class="card">
+    <h3>🎮 Auth Controller</h3>
+<pre><span class="cm">// src/controllers/auth.controller.ts</span>
+<span class="imp">import</span> { <span class="type">Request</span>, <span class="type">Response</span>, <span class="type">NextFunction</span> } <span class="kw">from</span> <span class="str">'express'</span>
+<span class="imp">import</span> { <span class="var">authService</span> } <span class="kw">from</span> <span class="str">'@/services/auth.service'</span>
+
+<span class="kw">export async function</span> <span class="fn">login</span>(req: <span class="type">Request</span>, res: <span class="type">Response</span>, next: <span class="type">NextFunction</span>) {
+  <span class="kw">try</span> {
+    <span class="kw">const</span> { email, password } = req.body
+    <span class="kw">const</span> result = <span class="kw">await</span> <span class="var">authService</span>.<span class="fn">login</span>(email, password)
+
+    <span class="cm">// เก็บ refreshToken ใน httpOnly cookie (ปลอดภัยกว่า localStorage)</span>
+    res.<span class="fn">cookie</span>(<span class="str">'refreshToken'</span>, result.refreshToken, {
+      httpOnly: <span class="kw">true</span>,
+      secure: process.env.<span class="prop">NODE_ENV</span> === <span class="str">'production'</span>,
+      sameSite: <span class="str">'strict'</span>,
+      maxAge: <span class="num">7</span> * <span class="num">24</span> * <span class="num">60</span> * <span class="num">60</span> * <span class="num">1000</span>  <span class="cm">// 7 วัน</span>
+    })
+
+    res.<span class="fn">json</span>({
+      success: <span class="kw">true</span>,
+      user: result.user,
+      accessToken: result.accessToken
+    })
+  } <span class="kw">catch</span> (err) { <span class="fn">next</span>(err) }
+}
+
+<span class="kw">export async function</span> <span class="fn">refresh</span>(req: <span class="type">Request</span>, res: <span class="type">Response</span>, next: <span class="type">NextFunction</span>) {
+  <span class="kw">try</span> {
+    <span class="kw">const</span> token = req.cookies?.refreshToken
+    <span class="kw">if</span> (!token) <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">401</span>).<span class="fn">json</span>({ message: <span class="str">'ไม่มี refresh token'</span> })
+
+    <span class="kw">const</span> tokens = <span class="kw">await</span> <span class="var">authService</span>.<span class="fn">refreshToken</span>(token)
+    res.<span class="fn">json</span>({ success: <span class="kw">true</span>, ...tokens })
+  } <span class="kw">catch</span> (err) { <span class="fn">next</span>(err) }
+}
+
+<span class="kw">export async function</span> <span class="fn">logout</span>(req: <span class="type">Request</span>, res: <span class="type">Response</span>, next: <span class="type">NextFunction</span>) {
+  <span class="kw">try</span> {
+    <span class="kw">await</span> <span class="var">authService</span>.<span class="fn">logout</span>(req.user!.id)
+    res.<span class="fn">clearCookie</span>(<span class="str">'refreshToken'</span>)
+    res.<span class="fn">json</span>({ success: <span class="kw">true</span>, message: <span class="str">'ออกจากระบบสำเร็จ'</span> })
+  } <span class="kw">catch</span> (err) { <span class="fn">next</span>(err) }
+}</pre>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 8: Database with Prisma -->
+<!-- ============================================================ -->
+<section id="database">
+  <div class="chapter-header ch-cyan">
+    <div class="ch-num">08</div>
+    <div>
+      <h2>Database ด้วย Prisma ORM</h2>
+      <p>Type-safe database access พร้อม schema, migrations และ relations</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📦 ติดตั้ง Prisma</h3>
+<pre><span class="cm"># ติดตั้ง Prisma</span>
+npm install @prisma/client
+npm install -D prisma
+
+<span class="cm"># init (สร้าง prisma/schema.prisma)</span>
+npx prisma init --datasource-provider postgresql
+
+<span class="cm"># .env</span>
+DATABASE_URL=<span class="str">"postgresql://user:password@localhost:5432/mydb?schema=public"</span></pre>
+  </div>
+
+  <div class="card">
+    <h3>📋 Prisma Schema</h3>
+<pre><span class="cm">// prisma/schema.prisma</span>
+generator client {
+  provider = <span class="str">"prisma-client-js"</span>
+}
+
+datasource db {
+  provider = <span class="str">"postgresql"</span>
+  url      = env(<span class="str">"DATABASE_URL"</span>)
+}
+
+model User {
+  id           Int       @id @default(autoincrement())
+  name         String
+  email        String    @unique
+  password     String
+  role         Role      @default(USER)
+  refreshToken String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  posts        Post[]    <span class="cm">// relation</span>
+  profile      Profile?  <span class="cm">// one-to-one</span>
+
+  @@map(<span class="str">"users"</span>)
+}
+
+model Post {
+  id        Int       @id @default(autoincrement())
+  title     String
+  content   String?
+  published Boolean   @default(false)
+  author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId  Int
+  tags      Tag[]     @relation(<span class="str">"PostTags"</span>)  <span class="cm">// many-to-many</span>
+  createdAt DateTime  @default(now())
+
+  @@index([authorId])
+  @@map(<span class="str">"posts"</span>)
+}
+
+model Tag {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  posts Post[] @relation(<span class="str">"PostTags"</span>)
+}
+
+model Profile {
+  id     Int     @id @default(autoincrement())
+  bio    String?
+  avatar String?
+  user   User    @relation(fields: [userId], references: [id])
+  userId Int     @unique
+}
+
+enum Role {
+  USER
+  ADMIN
+  MODERATOR
+}</pre>
+    <div class="callout tip">
+      <span class="ci">💡</span>
+      <div>หลังแก้ schema รัน <span class="inline-code">npx prisma migrate dev --name init</span> เพื่อสร้าง migration และ <span class="inline-code">npx prisma generate</span> เพื่อ regenerate client</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🗄️ Prisma Client Singleton</h3>
+<pre><span class="cm">// src/lib/prisma.ts</span>
+<span class="imp">import</span> { <span class="type">PrismaClient</span> } <span class="kw">from</span> <span class="str">'@prisma/client'</span>
+
+<span class="kw">const</span> globalForPrisma = globalThis <span class="kw">as unknown as</span> {
+  prisma: <span class="type">PrismaClient</span> | undefined
+}
+
+<span class="kw">export const</span> <span class="var">prisma</span> = globalForPrisma.prisma ?? <span class="kw">new</span> <span class="type">PrismaClient</span>({
+  log: process.env.<span class="prop">NODE_ENV</span> === <span class="str">'development'</span>
+    ? [<span class="str">'query'</span>, <span class="str">'error'</span>, <span class="str">'warn'</span>]
+    : [<span class="str">'error'</span>],
+})
+
+<span class="kw">if</span> (process.env.<span class="prop">NODE_ENV</span> !== <span class="str">'production'</span>) {
+  globalForPrisma.prisma = <span class="var">prisma</span>
+}</pre>
+  </div>
+
+  <div class="card">
+    <h3>🏪 Repository Pattern</h3>
+<pre><span class="cm">// src/repositories/user.repository.ts</span>
+<span class="imp">import</span> { <span class="var">prisma</span> } <span class="kw">from</span> <span class="str">'@/lib/prisma'</span>
+<span class="imp">import</span> <span class="kw">type</span> { <span class="type">Prisma</span> } <span class="kw">from</span> <span class="str">'@prisma/client'</span>
+
+<span class="kw">export const</span> <span class="var">userRepository</span> = {
+  <span class="kw">async</span> <span class="fn">findAndCount</span>({ skip, limit, search }: {
+    skip: <span class="type">number</span>; limit: <span class="type">number</span>; search?: <span class="type">string</span>
+  }) {
+    <span class="kw">const</span> where: <span class="type">Prisma.UserWhereInput</span> = search
+      ? { OR: [
+          { name:  { contains: search, mode: <span class="str">'insensitive'</span> } },
+          { email: { contains: search, mode: <span class="str">'insensitive'</span> } },
+        ]}
+      : {}
+
+    <span class="kw">return</span> prisma.$<span class="fn">transaction</span>([
+      prisma.user.<span class="fn">findMany</span>({
+        where, skip, take: limit,
+        select: { id: <span class="kw">true</span>, name: <span class="kw">true</span>, email: <span class="kw">true</span>, role: <span class="kw">true</span>, createdAt: <span class="kw">true</span> },
+        orderBy: { createdAt: <span class="str">'desc'</span> }
+      }),
+      prisma.user.<span class="fn">count</span>({ where })
+    ])
+  },
+
+  <span class="kw">async</span> <span class="fn">findById</span>(id: <span class="type">number</span>) {
+    <span class="kw">return</span> prisma.user.<span class="fn">findUnique</span>({
+      where: { id },
+      select: { id: <span class="kw">true</span>, name: <span class="kw">true</span>, email: <span class="kw">true</span>, role: <span class="kw">true</span>, profile: <span class="kw">true</span> }
+    })
+  },
+
+  <span class="kw">async</span> <span class="fn">findByEmail</span>(email: <span class="type">string</span>) {
+    <span class="kw">return</span> prisma.user.<span class="fn">findUnique</span>({ where: { email } })
+  },
+
+  <span class="kw">async</span> <span class="fn">create</span>(data: <span class="type">Prisma.UserCreateInput</span>) {
+    <span class="kw">return</span> prisma.user.<span class="fn">create</span>({
+      data,
+      select: { id: <span class="kw">true</span>, name: <span class="kw">true</span>, email: <span class="kw">true</span>, role: <span class="kw">true</span> }
+    })
+  },
+
+  <span class="kw">async</span> <span class="fn">update</span>(id: <span class="type">number</span>, data: <span class="type">Prisma.UserUpdateInput</span>) {
+    <span class="kw">return</span> prisma.user.<span class="fn">update</span>({ where: { id }, data })
+  },
+
+  <span class="kw">async</span> <span class="fn">delete</span>(id: <span class="type">number</span>) {
+    <span class="kw">return</span> prisma.user.<span class="fn">delete</span>({ where: { id } })
+  },
+
+  <span class="kw">async</span> <span class="fn">updateRefreshToken</span>(id: <span class="type">number</span>, token: <span class="type">string</span> | <span class="kw">null</span>) {
+    <span class="kw">return</span> prisma.user.<span class="fn">update</span>({ where: { id }, data: { refreshToken: token } })
+  }
+}</pre>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 9: Error Handling -->
+<!-- ============================================================ -->
+<section id="error">
+  <div class="chapter-header ch-pink">
+    <div class="ch-num">09</div>
+    <div>
+      <h2>Error Handling</h2>
+      <p>จัดการ errors ทุกประเภทแบบ centralized ด้วย Custom Error classes</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔴 Custom AppError Class</h3>
+<pre><span class="cm">// src/utils/AppError.ts</span>
+<span class="kw">export class</span> <span class="type">AppError</span> <span class="kw">extends</span> <span class="type">Error</span> {
+  <span class="kw">public readonly</span> statusCode: <span class="type">number</span>
+  <span class="kw">public readonly</span> isOperational: <span class="type">boolean</span>
+
+  <span class="kw">constructor</span>(message: <span class="type">string</span>, statusCode = <span class="num">500</span>, isOperational = <span class="kw">true</span>) {
+    <span class="kw">super</span>(message)
+    <span class="kw">this</span>.statusCode = statusCode
+    <span class="kw">this</span>.isOperational = isOperational
+    Error.<span class="fn">captureStackTrace</span>(<span class="kw">this</span>, <span class="kw">this</span>.constructor)
+    Object.<span class="fn">setPrototypeOf</span>(<span class="kw">this</span>, <span class="type">AppError</span>.prototype)
+  }
+}
+
+<span class="cm">// ─── Specific Error Classes ────────────────────────</span>
+<span class="kw">export class</span> <span class="type">NotFoundError</span> <span class="kw">extends</span> <span class="type">AppError</span> {
+  <span class="kw">constructor</span>(resource = <span class="str">'ข้อมูล'</span>) {
+    <span class="kw">super</span>(<span class="str">`ไม่พบ <span class="kw">${resource}</span>`</span>, <span class="num">404</span>)
+  }
+}
+
+<span class="kw">export class</span> <span class="type">UnauthorizedError</span> <span class="kw">extends</span> <span class="type">AppError</span> {
+  <span class="kw">constructor</span>(message = <span class="str">'กรุณาเข้าสู่ระบบ'</span>) {
+    <span class="kw">super</span>(message, <span class="num">401</span>)
+  }
+}
+
+<span class="kw">export class</span> <span class="type">ForbiddenError</span> <span class="kw">extends</span> <span class="type">AppError</span> {
+  <span class="kw">constructor</span>(message = <span class="str">'ไม่มีสิทธิ์เข้าถึง'</span>) {
+    <span class="kw">super</span>(message, <span class="num">403</span>)
+  }
+}
+
+<span class="kw">export class</span> <span class="type">ConflictError</span> <span class="kw">extends</span> <span class="type">AppError</span> {
+  <span class="kw">constructor</span>(message: <span class="type">string</span>) {
+    <span class="kw">super</span>(message, <span class="num">409</span>)
+  }
+}
+
+<span class="cm">// ใช้งาน</span>
+<span class="kw">throw new</span> <span class="type">NotFoundError</span>(<span class="str">'ผู้ใช้'</span>)     <span class="cm">// 404: ไม่พบผู้ใช้</span>
+<span class="kw">throw new</span> <span class="type">ConflictError</span>(<span class="str">'Email ซ้ำ'</span>) <span class="cm">// 409: Email ซ้ำ</span></pre>
+  </div>
+
+  <div class="card">
+    <h3>🛡️ Global Error Handler Middleware</h3>
+<pre><span class="cm">// src/middleware/errorHandler.ts</span>
+<span class="imp">import</span> { <span class="type">Request</span>, <span class="type">Response</span>, <span class="type">NextFunction</span> } <span class="kw">from</span> <span class="str">'express'</span>
+<span class="imp">import</span> { <span class="type">ZodError</span> } <span class="kw">from</span> <span class="str">'zod'</span>
+<span class="imp">import</span> { <span class="type">Prisma</span> } <span class="kw">from</span> <span class="str">'@prisma/client'</span>
+<span class="imp">import</span> { <span class="type">AppError</span> } <span class="kw">from</span> <span class="str">'@/utils/AppError'</span>
+
+<span class="kw">export function</span> <span class="fn">errorHandler</span>(
+  err: <span class="kw">unknown</span>,
+  req: <span class="type">Request</span>,
+  res: <span class="type">Response</span>,
+  _next: <span class="type">NextFunction</span>
+) {
+  <span class="cm">// 1. AppError (ที่เราสร้างเอง)</span>
+  <span class="kw">if</span> (err <span class="kw">instanceof</span> <span class="type">AppError</span>) {
+    <span class="kw">return</span> res.<span class="fn">status</span>(err.statusCode).<span class="fn">json</span>({
+      success: <span class="kw">false</span>,
+      message: err.message
+    })
+  }
+
+  <span class="cm">// 2. Zod Validation Error</span>
+  <span class="kw">if</span> (err <span class="kw">instanceof</span> <span class="type">ZodError</span>) {
+    <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">422</span>).<span class="fn">json</span>({
+      success: <span class="kw">false</span>,
+      message: <span class="str">'ข้อมูลไม่ถูกต้อง'</span>,
+      errors: err.errors.<span class="fn">map</span>(e => ({
+        field: e.path.<span class="fn">join</span>(<span class="str">'.'</span>),
+        message: e.message
+      }))
+    })
+  }
+
+  <span class="cm">// 3. Prisma Errors</span>
+  <span class="kw">if</span> (err <span class="kw">instanceof</span> <span class="type">Prisma.PrismaClientKnownRequestError</span>) {
+    <span class="kw">if</span> (err.code === <span class="str">'P2002'</span>) {  <span class="cm">// Unique constraint</span>
+      <span class="kw">const</span> field = (err.meta?.target <span class="kw">as</span> <span class="type">string</span>[])?.join(<span class="str">', '</span>)
+      <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">409</span>).<span class="fn">json</span>({
+        success: <span class="kw">false</span>, message: <span class="str">`<span class="kw">${field}</span> นี้ถูกใช้ไปแล้ว`</span>
+      })
+    }
+    <span class="kw">if</span> (err.code === <span class="str">'P2025'</span>) {  <span class="cm">// Record not found</span>
+      <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">404</span>).<span class="fn">json</span>({
+        success: <span class="kw">false</span>, message: <span class="str">'ไม่พบข้อมูลที่ต้องการ'</span>
+      })
+    }
+  }
+
+  <span class="cm">// 4. Unknown error — ไม่เปิดเผย detail ใน production</span>
+  console.error(<span class="str">'Unhandled error:'</span>, err)
+  res.<span class="fn">status</span>(<span class="num">500</span>).<span class="fn">json</span>({
+    success: <span class="kw">false</span>,
+    message: process.env.<span class="prop">NODE_ENV</span> === <span class="str">'production'</span>
+      ? <span class="str">'เกิดข้อผิดพลาดภายในเซิร์ฟเวอร์'</span>
+      : (err <span class="kw">instanceof</span> Error ? err.message : <span class="str">'Unknown error'</span>)
+  })
+}</pre>
+  </div>
+
+  <div class="card">
+    <h3>🔄 Async Handler Wrapper</h3>
+<pre><span class="cm">// src/utils/asyncHandler.ts</span>
+<span class="cm">// ห่อ async functions เพื่อ catch errors อัตโนมัติ</span>
+<span class="imp">import</span> { <span class="type">Request</span>, <span class="type">Response</span>, <span class="type">NextFunction</span>, <span class="type">RequestHandler</span> } <span class="kw">from</span> <span class="str">'express'</span>
+
+<span class="kw">type</span> <span class="type">AsyncFn</span> = (<span class="var">req</span>: <span class="type">Request</span>, <span class="var">res</span>: <span class="type">Response</span>, <span class="var">next</span>: <span class="type">NextFunction</span>) => <span class="type">Promise</span>&lt;<span class="kw">any</span>&gt;
+
+<span class="kw">export function</span> <span class="fn">asyncHandler</span>(fn: <span class="type">AsyncFn</span>): <span class="type">RequestHandler</span> {
+  <span class="kw">return</span> (<span class="var">req</span>, <span class="var">res</span>, <span class="var">next</span>) => {
+    Promise.<span class="fn">resolve</span>(<span class="fn">fn</span>(req, res, next)).<span class="fn">catch</span>(next)
+  }
+}
+
+<span class="cm">// ─── ก่อนใช้ asyncHandler ────────────────────────</span>
+router.<span class="fn">get</span>(<span class="str">'/'</span>, <span class="kw">async</span> (req, res, next) => {
+  <span class="kw">try</span> {
+    <span class="kw">const</span> data = <span class="kw">await</span> <span class="fn">someAsyncOp</span>()
+    res.<span class="fn">json</span>(data)
+  } <span class="kw">catch</span> (err) { <span class="fn">next</span>(err) }  <span class="cm">// ต้องเขียน try/catch ทุกครั้ง</span>
+})
+
+<span class="cm">// ─── หลังใช้ asyncHandler ────────────────────────</span>
+router.<span class="fn">get</span>(<span class="str">'/'</span>, <span class="fn">asyncHandler</span>(<span class="kw">async</span> (req, res) => {
+  <span class="kw">const</span> data = <span class="kw">await</span> <span class="fn">someAsyncOp</span>()
+  res.<span class="fn">json</span>(data)
+  <span class="cm">// error จะถูก catch อัตโนมัติ ✅</span>
+}))</pre>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 10: โครงสร้างโปรเจกต์ -->
+<!-- ============================================================ -->
+<section id="structure">
+  <div class="chapter-header ch-slate">
+    <div class="ch-num">10</div>
+    <div>
+      <h2>โครงสร้างโปรเจกต์ &amp; Best Practices</h2>
+      <p>Environment variables, Logging, และการเตรียมโปรเจกต์สู่ Production</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📁 โครงสร้างโปรเจกต์แนะนำ</h3>
+    <div class="tree">
+<span class="folder">my-api/</span>
+├── <span class="folder">src/</span>
+│   ├── <span class="file">index.ts</span>              <span class="cm2"># Entry point</span>
+│   ├── <span class="folder">config/</span>
+│   │   └── <span class="file">env.ts</span>            <span class="cm2"># Validate &amp; export env vars</span>
+│   ├── <span class="folder">routes/</span>
+│   │   ├── <span class="file">index.ts</span>          <span class="cm2"># รวม routers ทั้งหมด</span>
+│   │   ├── <span class="file">user.routes.ts</span>
+│   │   ├── <span class="file">auth.routes.ts</span>
+│   │   └── <span class="file">product.routes.ts</span>
+│   ├── <span class="folder">controllers/</span>
+│   │   ├── <span class="file">user.controller.ts</span>
+│   │   └── <span class="file">auth.controller.ts</span>
+│   ├── <span class="folder">services/</span>
+│   │   ├── <span class="file">user.service.ts</span>
+│   │   └── <span class="file">auth.service.ts</span>
+│   ├── <span class="folder">repositories/</span>
+│   │   └── <span class="file">user.repository.ts</span>
+│   ├── <span class="folder">middleware/</span>
+│   │   ├── <span class="file">auth.ts</span>           <span class="cm2"># JWT auth middleware</span>
+│   │   ├── <span class="file">validate.ts</span>       <span class="cm2"># Zod validation</span>
+│   │   └── <span class="file">errorHandler.ts</span>
+│   ├── <span class="folder">schemas/</span>              <span class="cm2"># Zod schemas</span>
+│   │   └── <span class="file">user.schema.ts</span>
+│   ├── <span class="folder">types/</span>
+│   │   ├── <span class="file">express.d.ts</span>      <span class="cm2"># Extend Express types</span>
+│   │   └── <span class="file">index.ts</span>          <span class="cm2"># Shared types</span>
+│   ├── <span class="folder">utils/</span>
+│   │   ├── <span class="file">AppError.ts</span>
+│   │   └── <span class="file">asyncHandler.ts</span>
+│   └── <span class="folder">lib/</span>
+│       └── <span class="file">prisma.ts</span>         <span class="cm2"># Prisma singleton</span>
+├── <span class="folder">prisma/</span>
+│   ├── <span class="file">schema.prisma</span>
+│   └── <span class="folder">migrations/</span>
+├── <span class="file">.env</span>
+├── <span class="file">.env.example</span>
+├── <span class="file">tsconfig.json</span>
+└── <span class="file">package.json</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔒 Validate Environment Variables</h3>
+<pre><span class="cm">// src/config/env.ts</span>
+<span class="imp">import</span> { z } <span class="kw">from</span> <span class="str">'zod'</span>
+<span class="imp">import</span> <span class="str">'dotenv/config'</span>
+
+<span class="kw">const</span> <span class="var">envSchema</span> = z.<span class="fn">object</span>({
+  NODE_ENV:           z.<span class="fn">enum</span>([<span class="str">'development'</span>, <span class="str">'production'</span>, <span class="str">'test'</span>])
+                       .<span class="fn">default</span>(<span class="str">'development'</span>),
+  PORT:               z.<span class="fn">string</span>().<span class="fn">default</span>(<span class="str">'3000'</span>),
+  DATABASE_URL:       z.<span class="fn">string</span>().<span class="fn">url</span>(),
+  JWT_SECRET:         z.<span class="fn">string</span>().<span class="fn">min</span>(<span class="num">32</span>),
+  JWT_REFRESH_SECRET: z.<span class="fn">string</span>().<span class="fn">min</span>(<span class="num">32</span>),
+  CORS_ORIGIN:        z.<span class="fn">string</span>().<span class="fn">default</span>(<span class="str">'*'</span>),
+})
+
+<span class="kw">const</span> parsed = <span class="var">envSchema</span>.<span class="fn">safeParse</span>(process.env)
+
+<span class="kw">if</span> (!parsed.success) {
+  console.error(<span class="str">'❌ Invalid environment variables:'</span>)
+  console.error(parsed.error.<span class="fn">flatten</span>().fieldErrors)
+  process.<span class="fn">exit</span>(<span class="num">1</span>)  <span class="cm">// หยุดทำงานทันที</span>
+}
+
+<span class="kw">export const</span> <span class="var">env</span> = parsed.data
+
+<span class="cm">// ใช้งาน</span>
+<span class="imp">import</span> { env } <span class="kw">from</span> <span class="str">'@/config/env'</span>
+console.log(env.PORT)  <span class="cm">// type-safe ✅</span></pre>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>✅ Best Practices</h3>
+      <ul>
+        <li>ใช้ <strong>Controller → Service → Repository</strong> เสมอ</li>
+        <li>Throw <span class="inline-code">AppError</span> แทน <span class="inline-code">res.status()</span> ใน service</li>
+        <li>ใช้ <span class="inline-code">asyncHandler</span> ครอบทุก async route</li>
+        <li>Validate env vars ตอน startup</li>
+        <li>เก็บ <span class="inline-code">refreshToken</span> ใน httpOnly cookie</li>
+        <li>ใช้ <span class="inline-code">select</span> ใน Prisma เสมอ — ไม่ return password</li>
+        <li>ใช้ <span class="inline-code">helmet()</span> และ <span class="inline-code">cors()</span> ทุกโปรเจกต์</li>
+        <li>ใช้ Zod <span class="inline-code">infer</span> สร้าง DTO types</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>❌ หลีกเลี่ยง</h3>
+      <ul>
+        <li>ไม่เขียน logic ใน routes โดยตรง</li>
+        <li>ไม่ใช้ <span class="inline-code">any</span> type</li>
+        <li>ไม่ return password ใน response</li>
+        <li>ไม่ตรวจสอบ input ใน controller (ให้ validate middleware ทำ)</li>
+        <li>ไม่ใส่ secret ใน code — ใช้ <span class="inline-code">.env</span></li>
+        <li>ไม่ commit <span class="inline-code">.env</span> ขึ้น git</li>
+        <li>ไม่ใช้ <span class="inline-code">console.log</span> ใน production</li>
+        <li>ไม่ทำ database query ใน controller</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🌐 .env.example (commit ขึ้น git)</h3>
+<pre><span class="cm"># Server</span>
+NODE_ENV=development
+PORT=3000
+
+<span class="cm"># Database</span>
+DATABASE_URL=postgresql://USER:PASSWORD@localhost:5432/DBNAME
+
+<span class="cm"># JWT (ควรยาวและ random อย่างน้อย 32 ตัว)</span>
+JWT_SECRET=your-super-secret-key-here-at-least-32-chars
+JWT_REFRESH_SECRET=another-super-secret-refresh-key-32-chars
+
+<span class="cm"># CORS</span>
+CORS_ORIGIN=http://localhost:3000</pre>
+    <div class="callout warn">
+      <span class="ci">⚠️</span>
+      <div>เพิ่ม <span class="inline-code">.env</span> ใน <span class="inline-code">.gitignore</span> เสมอ! commit เฉพาะ <span class="inline-code">.env.example</span> ที่ไม่มีค่าจริง</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📊 สรุป Request Lifecycle</h3>
+    <div class="flow">
+      <div class="flow-box fb-slate">HTTP Request</div>
+      <div class="flow-arr">→</div>
+      <div class="flow-box fb-blue">Global MW<br><small>helmet/cors</small></div>
+      <div class="flow-arr">→</div>
+      <div class="flow-box fb-purple">Auth MW<br><small>JWT verify</small></div>
+      <div class="flow-arr">→</div>
+      <div class="flow-box fb-teal">Validate MW<br><small>Zod schema</small></div>
+      <div class="flow-arr">→</div>
+      <div class="flow-box fb-green">Controller<br><small>parse req</small></div>
+      <div class="flow-arr">→</div>
+      <div class="flow-box fb-cyan">Service<br><small>logic</small></div>
+      <div class="flow-arr">→</div>
+      <div class="flow-box fb-orange">Repository<br><small>Prisma</small></div>
+    </div>
+    <div class="flow">
+      <div class="flow-box fb-orange">Database</div>
+      <div class="flow-arr">→ data</div>
+      <div class="flow-box fb-green">Controller</div>
+      <div class="flow-arr">→ res.json()</div>
+      <div class="flow-box fb-slate">HTTP Response</div>
+      <div class="flow-arr">↗ error path</div>
+      <div class="flow-box fb-red">Error Handler<br><small>next(err)</small></div>
+    </div>
+  </div>
+</section>
+
+</div><!-- end .container -->
+
+<footer>
+  <strong>สื่อการสอน Express.js + TypeScript Backend ฉบับสมบูรณ์</strong><br>
+  ครอบคลุม Setup · TypeScript Types · Routing · Middleware · Controllers · Validation · JWT Auth · Prisma ORM · Error Handling · Project Structure
+</footer>
+
+<script>
+// Nav active highlight on scroll
+const sections = document.querySelectorAll('section[id]')
+const navLinks  = document.querySelectorAll('.nav-sticky a')
+window.addEventListener('scroll', () => {
+  let current = ''
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 110) current = s.id })
+  navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + current))
+}, { passive: true })
+</script>
+</body>
+</html>

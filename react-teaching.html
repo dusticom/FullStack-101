@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>สื่อการสอน React</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --react:#61dafb;--blue:#3b82f6;--green:#10b981;--orange:#f59e0b;
+  --red:#ef4444;--purple:#8b5cf6;--cyan:#06b6d4;--pink:#ec4899;
+  --dark:#0f172a;--card:#1c2128;--border:#30363d;--code:#0d1117;
+  --radius:12px;--shadow:0 4px 20px rgba(0,0,0,.3);
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#0d1117;color:#c9d1d9;line-height:1.75}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#0d1117 0%,#061c2e 60%,#00232e 100%);border-bottom:2px solid #61dafb22;text-align:center;padding:68px 24px 52px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% -20%,rgba(97,218,251,.12),transparent 65%)}
+.hero h1{font-size:clamp(2rem,5vw,3.6rem);font-weight:900;color:#fff;margin-bottom:12px;position:relative;letter-spacing:-1px}
+.hero h1 .react-badge{background:#61dafb;color:#0d1117;padding:2px 14px;border-radius:8px;display:inline-block}
+.hero h1 .sub{color:#61dafb}
+.hero p{font-size:1.1rem;color:#8b949e;max-width:620px;margin:0 auto;position:relative}
+.badge-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:20px;position:relative}
+.badge{background:rgba(97,218,251,.1);border:1px solid rgba(97,218,251,.3);color:#61dafb;padding:4px 14px;border-radius:999px;font-size:.8rem;font-weight:700}
+
+/* NAV */
+.nav-sticky{position:sticky;top:0;z-index:100;background:#161b22;border-bottom:1px solid #30363d;padding:0 10px;overflow-x:auto;white-space:nowrap}
+.nav-sticky a{display:inline-block;padding:11px 12px;font-size:.79rem;font-weight:600;color:#8b949e;text-decoration:none;border-bottom:2px solid transparent;transition:.2s}
+.nav-sticky a:hover,.nav-sticky a.active{color:#61dafb;border-color:#61dafb}
+
+/* LAYOUT */
+.container{max-width:1150px;margin:0 auto;padding:40px 20px}
+section{margin-bottom:62px}
+
+/* CHAPTER HEADER */
+.chapter-header{border-radius:var(--radius);padding:22px 28px;margin-bottom:22px;display:flex;align-items:center;gap:18px;border:1px solid #30363d;position:relative;overflow:hidden}
+.chapter-header::before{content:'';position:absolute;top:0;right:0;width:200px;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.03));pointer-events:none}
+.ch-num{font-size:3rem;font-weight:900;opacity:.18;line-height:1;min-width:60px;color:#fff;font-family:monospace}
+.chapter-header h2{font-size:1.38rem;font-weight:800;color:#fff;margin:0}
+.chapter-header p{font-size:.87rem;color:#8b949e;margin-top:5px}
+.ch-react{background:linear-gradient(135deg,#001e2e,#003a52);border-color:#61dafb33}
+.ch-green{background:linear-gradient(135deg,#052e16,#064e3b);border-color:#10b98133}
+.ch-blue{background:linear-gradient(135deg,#0c1445,#1e3a8a);border-color:#3b82f633}
+.ch-purple{background:linear-gradient(135deg,#2e1065,#4c1d95);border-color:#8b5cf633}
+.ch-orange{background:linear-gradient(135deg,#431407,#7c2d12);border-color:#f59e0b33}
+.ch-cyan{background:linear-gradient(135deg,#0a2540,#155e75);border-color:#06b6d433}
+.ch-red{background:linear-gradient(135deg,#450a0a,#7f1d1d);border-color:#ef444433}
+.ch-pink{background:linear-gradient(135deg,#2d0a1e,#831843);border-color:#ec489933}
+.ch-teal{background:linear-gradient(135deg,#042f2e,#134e4a);border-color:#0d948433}
+.ch-slate{background:linear-gradient(135deg,#0f172a,#1e293b);border-color:#64748b33}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px 24px;margin-bottom:18px;box-shadow:var(--shadow)}
+.card h3{font-size:1.05rem;font-weight:700;color:#e6edf3;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.card p,.card li{font-size:.92rem;color:#8b949e;line-height:1.7}
+.card ul,.card ol{padding-left:18px;display:flex;flex-direction:column;gap:5px}
+
+/* CODE */
+pre{background:var(--code);color:#c9d1d9;border-radius:8px;padding:18px 20px;overflow-x:auto;font-size:.84rem;line-height:1.75;margin:10px 0;font-family:'Cascadia Code','Fira Code','Consolas',monospace;border:1px solid #21262d}
+.inline-code,.ic{background:#21262d;color:#79c0ff;padding:2px 7px;border-radius:5px;font-family:'Cascadia Code','Fira Code',monospace;font-size:.85em}
+
+/* SYNTAX COLORS */
+.kw{color:#ff7b72}
+.str{color:#a5d6ff}
+.fn{color:#d2a8ff}
+.cm{color:#484f58;font-style:italic}
+.num{color:#79c0ff}
+.bool{color:#ff7b72}
+.op{color:#ff7b72}
+.type{color:#ffa657}
+.prop{color:#79c0ff}
+.tag{color:#7ee787}
+.arr{color:#ffa657}
+.out{color:#7ee787}
+.err{color:#ef4444}
+.jsx{color:#61dafb}
+.attr{color:#ffa657}
+.hl{background:rgba(97,218,251,.08);border-left:3px solid #61dafb;padding-left:8px;display:block;margin:-1px 0}
+
+/* GRIDS */
+.grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
+.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+
+/* CALLOUT */
+.callout{border-radius:8px;padding:13px 17px;margin:12px 0;display:flex;gap:10px;font-size:.9rem;line-height:1.6}
+.callout.info{background:rgba(59,130,246,.08);border-left:3px solid #3b82f6;color:#93c5fd}
+.callout.tip{background:rgba(16,185,129,.08);border-left:3px solid #10b981;color:#6ee7b7}
+.callout.warn{background:rgba(247,223,30,.08);border-left:3px solid #f7df1e;color:#fef08a}
+.callout.danger{background:rgba(239,68,68,.08);border-left:3px solid #ef4444;color:#fca5a5}
+.callout.react{background:rgba(97,218,251,.08);border-left:3px solid #61dafb;color:#a5f3fc}
+.callout .ci{font-size:1.05rem;flex-shrink:0;margin-top:1px}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:12px 0}
+th{background:#1c2128;padding:9px 13px;text-align:left;font-weight:700;color:#8b949e;border:1px solid #30363d}
+td{padding:9px 13px;border:1px solid #30363d;vertical-align:top;color:#c9d1d9}
+tr:nth-child(even) td{background:#161b22}
+td code{color:#79c0ff;font-family:'Cascadia Code','Fira Code',monospace;font-size:.85em}
+
+/* COMPARE */
+.compare{display:grid;grid-template-columns:1fr 1fr;border:1px solid #30363d;border-radius:var(--radius);overflow:hidden;margin:12px 0}
+.compare-col:first-child{border-right:1px solid #30363d}
+.compare-head{padding:8px 16px;font-size:.82rem;font-weight:700;text-align:center}
+.compare-head.bad{background:rgba(239,68,68,.15);color:#fca5a5}
+.compare-head.good{background:rgba(16,185,129,.15);color:#6ee7b7}
+.compare-col pre{margin:0;border-radius:0;border:none;border-top:1px solid #30363d;font-size:.82rem}
+
+/* FLOW */
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:6px;padding:14px 16px;background:#0d1117;border:1px solid #30363d;border-radius:8px;margin:10px 0;font-family:'Cascadia Code',monospace;font-size:.85rem}
+.fb{padding:7px 14px;border-radius:6px;font-weight:700;text-align:center;color:#fff}
+.fb-c{background:#0e4166;color:#67e8f9;border:1px solid #61dafb44}
+.fb-g{background:#065f46;color:#6ee7b7}
+.fb-b{background:#1e3a8a;color:#93c5fd}
+.fb-p{background:#4c1d95;color:#ddd6fe}
+.fb-r{background:#7f1d1d;color:#fca5a5}
+.fb-o{background:#78350f;color:#fed7aa}
+.fa{color:#61dafb;font-size:1.1rem;padding:0 4px}
+
+/* OUTPUT BOX */
+.output{background:#0a1628;border:1px solid #1d4ed8;border-radius:6px;padding:12px 16px;margin:8px 0;font-family:'Cascadia Code','Fira Code',monospace;font-size:.83rem;color:#93c5fd}
+.output::before{content:'// Output';display:block;color:#484f58;font-size:.75rem;margin-bottom:6px}
+
+/* COMPONENT DIAGRAM */
+.comp-box{border:2px solid #61dafb44;border-radius:10px;padding:14px 18px;background:rgba(97,218,251,.04);margin:8px 0;position:relative}
+.comp-box .comp-name{position:absolute;top:-11px;left:14px;background:#0d1117;padding:0 8px;color:#61dafb;font-weight:700;font-size:.82rem;font-family:monospace}
+.comp-box.child{border-color:#8b5cf644;background:rgba(139,92,246,.04)}
+.comp-box.child .comp-name{color:#a78bfa}
+.comp-box.state{border-color:#10b98144;background:rgba(16,185,129,.04)}
+.comp-box.state .comp-name{color:#34d399}
+
+/* HOOK BADGE */
+.hook{display:inline-block;background:rgba(97,218,251,.15);border:1px solid rgba(97,218,251,.3);color:#67e8f9;padding:2px 10px;border-radius:6px;font-family:monospace;font-size:.8rem;font-weight:700;margin:2px}
+
+/* FOOTER */
+footer{background:#0d1117;border-top:1px solid #21262d;color:#484f58;text-align:center;padding:32px;font-size:.85rem}
+footer strong{color:#8b949e}
+
+@media(max-width:600px){
+  .grid-2,.grid-3{grid-template-columns:1fr}
+  .compare{grid-template-columns:1fr}
+  .compare-col:first-child{border-right:none;border-bottom:1px solid #30363d}
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <h1><span class="react-badge">React</span> &nbsp;<span class="sub">JS Library</span></h1>
+  <p>สื่อการสอน React ฉบับสมบูรณ์ — ตั้งแต่ Component แรกถึง Hooks ขั้นสูง</p>
+  <div class="badge-row">
+    <span class="badge">JSX</span>
+    <span class="badge">Components</span>
+    <span class="badge">Props</span>
+    <span class="badge">State</span>
+    <span class="badge">useState</span>
+    <span class="badge">useEffect</span>
+    <span class="badge">useContext</span>
+    <span class="badge">useRef</span>
+    <span class="badge">useMemo</span>
+    <span class="badge">Custom Hooks</span>
+    <span class="badge">Event Handling</span>
+    <span class="badge">Forms</span>
+    <span class="badge">Lists &amp; Keys</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav-sticky" id="main-nav">
+  <a href="index.html">🏠 หน้าหลัก</a>
+  <a href="#intro">แนะนำ React</a>
+  <a href="#jsx">JSX</a>
+  <a href="#components">Components</a>
+  <a href="#props">Props</a>
+  <a href="#state">State</a>
+  <a href="#useeffect">useEffect</a>
+  <a href="#events">Events</a>
+  <a href="#lists">Lists &amp; Keys</a>
+  <a href="#forms">Forms</a>
+  <a href="#context">useContext</a>
+  <a href="#useref">useRef</a>
+  <a href="#usememo">useMemo/useCallback</a>
+  <a href="#custom-hooks">Custom Hooks</a>
+  <a href="#patterns">Patterns</a>
+</nav>
+
+<div class="container">
+
+<!-- ===================== SECTION 1: แนะนำ React ===================== -->
+<section id="intro">
+  <div class="chapter-header ch-react">
+    <div class="ch-num">01</div>
+    <div>
+      <h2>React คืออะไร?</h2>
+      <p>ทำความรู้จัก React, Virtual DOM และโครงสร้างโปรเจค</p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>⚛️ React คืออะไร?</h3>
+      <p>React คือ <strong style="color:#61dafb">JavaScript Library</strong> สำหรับสร้าง User Interface (UI) พัฒนาโดย Meta (Facebook) มีจุดเด่น:</p>
+      <ul style="margin-top:10px">
+        <li><strong style="color:#61dafb">Component-Based</strong> — แบ่ง UI เป็นชิ้นส่วนเล็กๆ นำกลับมาใช้ซ้ำได้</li>
+        <li><strong style="color:#10b981">Declarative</strong> — บอกว่าอยากได้อะไร ไม่ต้องบอกวิธีทำ</li>
+        <li><strong style="color:#f59e0b">Virtual DOM</strong> — อัปเดต DOM อย่างชาญฉลาด เร็วกว่า DOM จริง</li>
+        <li><strong style="color:#8b5cf6">One-way Data Flow</strong> — ข้อมูลไหลจากบนลงล่าง ควบคุมง่าย</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>🔄 Virtual DOM ทำงานอย่างไร?</h3>
+      <div class="flow" style="flex-direction:column;align-items:flex-start;gap:4px">
+        <div style="display:flex;align-items:center;gap:8px;width:100%">
+          <span class="fb fb-c" style="min-width:120px;text-align:center">State เปลี่ยน</span>
+          <span class="fa">→</span>
+          <span class="fb fb-b" style="min-width:140px;text-align:center">Re-render Virtual DOM</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;width:100%">
+          <span class="fb fb-p" style="min-width:120px;text-align:center">Diffing</span>
+          <span class="fa">→</span>
+          <span style="color:#8b949e;font-size:.82rem">เปรียบเทียบ Virtual DOM ใหม่กับเก่า</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;width:100%">
+          <span class="fb fb-g" style="min-width:120px;text-align:center">Patch DOM</span>
+          <span class="fa">→</span>
+          <span style="color:#8b949e;font-size:.82rem">อัปเดตเฉพาะส่วนที่เปลี่ยน</span>
+        </div>
+      </div>
+      <p style="margin-top:10px">ผลลัพธ์: UI อัปเดตเร็วมาก ไม่ต้อง re-render ทั้งหน้า</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📁 โครงสร้างโปรเจค React (Vite)</h3>
+    <pre><span class="cm"># สร้างโปรเจคใหม่ด้วย Vite</span>
+npm create vite@latest my-app -- --template react
+cd my-app
+npm install
+npm run dev</pre>
+    <pre><span class="cm"># โครงสร้างไฟล์</span>
+my-app/
+├── public/
+│   └── vite.svg
+├── src/
+│   ├── assets/          <span class="cm"># รูปภาพ, ไฟล์ static</span>
+│   ├── components/      <span class="cm"># Custom Components</span>
+│   ├── App.jsx          <span class="cm"># Root Component</span>
+│   └── main.jsx         <span class="cm"># Entry point</span>
+├── index.html
+├── package.json
+└── vite.config.js</pre>
+    <pre><span class="cm">// src/main.jsx — จุดเริ่มต้นของแอป</span>
+<span class="kw">import</span> React <span class="kw">from</span> <span class="str">'react'</span>
+<span class="kw">import</span> ReactDOM <span class="kw">from</span> <span class="str">'react-dom/client'</span>
+<span class="kw">import</span> App <span class="kw">from</span> <span class="str">'./App.jsx'</span>
+
+ReactDOM.<span class="fn">createRoot</span>(document.<span class="fn">getElementById</span>(<span class="str">'root'</span>)).<span class="fn">render</span>(
+  <span class="jsx">&lt;App /&gt;</span>
+)</pre>
+  </div>
+</section>
+
+<!-- ===================== SECTION 2: JSX ===================== -->
+<section id="jsx">
+  <div class="chapter-header ch-cyan">
+    <div class="ch-num">02</div>
+    <div>
+      <h2>JSX — JavaScript + XML</h2>
+      <p>ไวยากรณ์พิเศษที่ทำให้เขียน HTML ใน JavaScript ได้</p>
+    </div>
+  </div>
+
+  <div class="callout react">
+    <span class="ci">⚛️</span>
+    <div>JSX ไม่ใช่ HTML จริงๆ — มันคือ syntax sugar สำหรับ <code class="ic">React.createElement()</code> Babel จะแปลง JSX ให้เป็น JavaScript ให้อัตโนมัติ</div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>✍️ กฎพื้นฐานของ JSX</h3>
+      <ul>
+        <li>ต้อง return <strong style="color:#61dafb">element เดียว</strong> (ใช้ Fragment ได้)</li>
+        <li>แท็กต้อง <strong style="color:#f59e0b">ปิดเสมอ</strong> เช่น <code class="ic">&lt;br /&gt;</code></li>
+        <li>ใช้ <code class="ic">className</code> แทน <code class="ic">class</code></li>
+        <li>ใช้ <code class="ic">htmlFor</code> แทน <code class="ic">for</code></li>
+        <li>ใช้ <code class="ic">{expression}</code> ใส่ค่า JavaScript</li>
+        <li>Style ใช้ <strong>object</strong>: <code class="ic">style=&#123;&#123;color:'red'&#125;&#125;</code></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>🔁 JSX vs createElement</h3>
+      <div class="compare">
+        <div class="compare-col">
+          <div class="compare-head bad">ก่อน JSX</div>
+          <pre>React.<span class="fn">createElement</span>(
+  <span class="str">'h1'</span>,
+  <span class="prop">{className:</span><span class="str">'title'</span><span class="prop">}</span>,
+  <span class="str">'Hello World'</span>
+)</pre>
+        </div>
+        <div class="compare-col">
+          <div class="compare-head good">ด้วย JSX</div>
+          <pre><span class="jsx">&lt;h1</span> <span class="attr">className</span>=<span class="str">"title"</span><span class="jsx">&gt;</span>
+  Hello World
+<span class="jsx">&lt;/h1&gt;</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>💡 ตัวอย่าง JSX ที่ใช้งานบ่อย</h3>
+    <pre><span class="kw">function</span> <span class="fn">Profile</span>() {
+  <span class="kw">const</span> name <span class="op">=</span> <span class="str">'สมชาย'</span>
+  <span class="kw">const</span> age <span class="op">=</span> <span class="num">25</span>
+  <span class="kw">const</span> isLoggedIn <span class="op">=</span> <span class="bool">true</span>
+
+  <span class="kw">return</span> (
+    <span class="cm">{/* Fragment — ไม่สร้าง element จริงใน DOM */}</span>
+    <span class="jsx">&lt;&gt;</span>
+      <span class="jsx">&lt;h1&gt;</span>สวัสดี, <span class="op">{</span>name<span class="op">}</span>!<span class="jsx">&lt;/h1&gt;</span>
+      <span class="jsx">&lt;p&gt;</span>อายุ: <span class="op">{</span>age<span class="op">}</span> ปี<span class="jsx">&lt;/p&gt;</span>
+
+      <span class="cm">{/* Conditional Rendering */}</span>
+      <span class="op">{</span>isLoggedIn <span class="op">&&</span> <span class="jsx">&lt;p&gt;</span>ยินดีต้อนรับ!<span class="jsx">&lt;/p&gt;</span><span class="op">}</span>
+      <span class="op">{</span>isLoggedIn <span class="op">?</span> <span class="jsx">&lt;p&gt;</span>เข้าสู่ระบบแล้ว<span class="jsx">&lt;/p&gt;</span> <span class="op">:</span> <span class="jsx">&lt;p&gt;</span>กรุณาเข้าสู่ระบบ<span class="jsx">&lt;/p&gt;</span><span class="op">}</span>
+
+      <span class="cm">{/* Expression ใน JSX */}</span>
+      <span class="jsx">&lt;p&gt;</span>2 + 2 = <span class="op">{</span><span class="num">2</span> <span class="op">+</span> <span class="num">2</span><span class="op">}</span><span class="jsx">&lt;/p&gt;</span>
+
+      <span class="cm">{/* Inline Style */}</span>
+      <span class="jsx">&lt;p</span> <span class="attr">style</span>=<span class="op">{{</span> <span class="prop">color</span>: <span class="str">'#61dafb'</span>, <span class="prop">fontWeight</span>: <span class="str">'bold'</span> <span class="op">}}</span><span class="jsx">&gt;</span>
+        Styled Text
+      <span class="jsx">&lt;/p&gt;</span>
+
+      <span class="cm">{/* Self-closing tag */}</span>
+      <span class="jsx">&lt;img</span> <span class="attr">src</span>=<span class="str">"photo.jpg"</span> <span class="attr">alt</span>=<span class="str">"รูปภาพ"</span> <span class="jsx">/&gt;</span>
+    <span class="jsx">&lt;/&gt;</span>
+  )
+}</pre>
+  </div>
+</section>
+
+<!-- ===================== SECTION 3: Components ===================== -->
+<section id="components">
+  <div class="chapter-header ch-green">
+    <div class="ch-num">03</div>
+    <div>
+      <h2>Components — ชิ้นส่วนของ UI</h2>
+      <p>แนวคิด Component-Based และการสร้าง Component แบบต่างๆ</p>
+    </div>
+  </div>
+
+  <div class="callout tip">
+    <span class="ci">💡</span>
+    <div>ชื่อ Component <strong>ต้องขึ้นต้นด้วยตัวพิมพ์ใหญ่</strong> เสมอ เช่น <code class="ic">MyButton</code> ไม่ใช่ <code class="ic">myButton</code> React ใช้ตัวนี้แยกแยะ Component กับ HTML tag ธรรมดา</div>
+  </div>
+
+  <div class="card">
+    <h3>🏗️ โครงสร้างแอป แบบ Component Tree</h3>
+    <div class="comp-box">
+      <span class="comp-name">&lt;App /&gt;</span>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px">
+        <div class="comp-box child" style="flex:1;min-width:150px">
+          <span class="comp-name">&lt;Header /&gt;</span>
+          <div class="comp-box child" style="margin-top:8px">
+            <span class="comp-name">&lt;Logo /&gt;</span>
+          </div>
+          <div class="comp-box child" style="margin-top:8px">
+            <span class="comp-name">&lt;NavMenu /&gt;</span>
+          </div>
+        </div>
+        <div class="comp-box child" style="flex:2;min-width:200px">
+          <span class="comp-name">&lt;Main /&gt;</span>
+          <div class="comp-box child" style="margin-top:8px">
+            <span class="comp-name">&lt;ProductList /&gt;</span>
+          </div>
+        </div>
+        <div class="comp-box child" style="flex:1;min-width:120px">
+          <span class="comp-name">&lt;Footer /&gt;</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>⚙️ Function Component (แนะนำ)</h3>
+      <pre><span class="cm">// Function Component แบบพื้นฐาน</span>
+<span class="kw">function</span> <span class="fn">Greeting</span>() {
+  <span class="kw">return</span> <span class="jsx">&lt;h1&gt;</span>สวัสดี React!<span class="jsx">&lt;/h1&gt;</span>
+}
+
+<span class="cm">// Arrow Function Component</span>
+<span class="kw">const</span> <span class="fn">Button</span> <span class="op">=</span> () <span class="arr">=&gt;</span> {
+  <span class="kw">return</span> <span class="jsx">&lt;button&gt;</span>คลิกฉัน<span class="jsx">&lt;/button&gt;</span>
+}
+
+<span class="cm">// ใช้งาน Component</span>
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">return</span> (
+    <span class="jsx">&lt;div&gt;</span>
+      <span class="jsx">&lt;Greeting /&gt;</span>
+      <span class="jsx">&lt;Button /&gt;</span>
+    <span class="jsx">&lt;/div&gt;</span>
+  )
+}</pre>
+    </div>
+
+    <div class="card">
+      <h3>📤 Export / Import Component</h3>
+      <pre><span class="cm">// components/Card.jsx</span>
+<span class="kw">function</span> <span class="fn">Card</span>() {
+  <span class="kw">return</span> <span class="jsx">&lt;div</span> <span class="attr">className</span>=<span class="str">"card"</span><span class="jsx">&gt;</span>...<span class="jsx">&lt;/div&gt;</span>
+}
+
+<span class="cm">// Named Export</span>
+<span class="kw">export</span> { Card }
+
+<span class="cm">// Default Export</span>
+<span class="kw">export default</span> Card
+
+<span class="cm">// ----------------------------</span>
+<span class="cm">// App.jsx — การ import</span>
+<span class="kw">import</span> Card <span class="kw">from</span> <span class="str">'./components/Card'</span>        <span class="cm">// default</span>
+<span class="kw">import</span> { Card } <span class="kw">from</span> <span class="str">'./components/Card'</span>    <span class="cm">// named</span></pre>
+      <div class="callout warn" style="margin-top:10px">
+        <span class="ci">⚠️</span>
+        <div>1 ไฟล์ควรมี default export ได้แค่ 1 ตัว แต่ named export มีได้หลายตัว</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SECTION 4: Props ===================== -->
+<section id="props">
+  <div class="chapter-header ch-blue">
+    <div class="ch-num">04</div>
+    <div>
+      <h2>Props — ส่งข้อมูลระหว่าง Components</h2>
+      <p>การส่งข้อมูลจาก Parent ไป Child Component</p>
+    </div>
+  </div>
+
+  <div class="callout info">
+    <span class="ci">ℹ️</span>
+    <div><strong>Props เป็น Read-Only!</strong> Child ไม่สามารถแก้ไข props ที่ได้รับมาได้ ถ้าต้องการเปลี่ยนแปลงข้อมูล ให้ใช้ <strong>State</strong> แทน</div>
+  </div>
+
+  <div class="card">
+    <h3>📨 การส่งและรับ Props</h3>
+    <pre><span class="cm">// Child Component — รับ props</span>
+<span class="kw">function</span> <span class="fn">UserCard</span>({ name, age, isAdmin }) {
+  <span class="kw">return</span> (
+    <span class="jsx">&lt;div</span> <span class="attr">className</span>=<span class="str">"user-card"</span><span class="jsx">&gt;</span>
+      <span class="jsx">&lt;h2&gt;</span><span class="op">{</span>name<span class="op">}</span><span class="jsx">&lt;/h2&gt;</span>
+      <span class="jsx">&lt;p&gt;</span>อายุ: <span class="op">{</span>age<span class="op">}</span><span class="jsx">&lt;/p&gt;</span>
+      <span class="op">{</span>isAdmin <span class="op">&amp;&amp;</span> <span class="jsx">&lt;span&gt;</span>👑 Admin<span class="jsx">&lt;/span&gt;</span><span class="op">}</span>
+    <span class="jsx">&lt;/div&gt;</span>
+  )
+}
+
+<span class="cm">// Parent Component — ส่ง props</span>
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">return</span> (
+    <span class="jsx">&lt;div&gt;</span>
+      <span class="jsx">&lt;UserCard</span> <span class="attr">name</span>=<span class="str">"สมชาย"</span> <span class="attr">age</span>=<span class="op">{</span><span class="num">25</span><span class="op">}</span> <span class="attr">isAdmin</span>=<span class="op">{</span><span class="bool">true</span><span class="op">}</span> <span class="jsx">/&gt;</span>
+      <span class="jsx">&lt;UserCard</span> <span class="attr">name</span>=<span class="str">"สมหญิง"</span> <span class="attr">age</span>=<span class="op">{</span><span class="num">22</span><span class="op">}</span> <span class="jsx">/&gt;</span>
+    <span class="jsx">&lt;/div&gt;</span>
+  )
+}</pre>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>🎯 Default Props</h3>
+      <pre><span class="kw">function</span> <span class="fn">Button</span>({ label <span class="op">=</span> <span class="str">'คลิก'</span>, color <span class="op">=</span> <span class="str">'blue'</span> }) {
+  <span class="kw">return</span> (
+    <span class="jsx">&lt;button</span> <span class="attr">style</span>=<span class="op">{{</span><span class="prop">background</span>: color<span class="op">}}</span><span class="jsx">&gt;</span>
+      <span class="op">{</span>label<span class="op">}</span>
+    <span class="jsx">&lt;/button&gt;</span>
+  )
+}
+
+<span class="cm">// ใช้งาน — ไม่ส่ง props ก็ได้ค่า default</span>
+<span class="jsx">&lt;Button /&gt;</span>                              <span class="cm">// คลิก, blue</span>
+<span class="jsx">&lt;Button</span> <span class="attr">label</span>=<span class="str">"บันทึก"</span> <span class="attr">color</span>=<span class="str">"green"</span> <span class="jsx">/&gt;</span> <span class="cm">// บันทึก, green</span></pre>
+    </div>
+
+    <div class="card">
+      <h3>👶 Children Prop</h3>
+      <pre><span class="cm">// รับ children เพื่อ wrap content</span>
+<span class="kw">function</span> <span class="fn">Card</span>({ title, children }) {
+  <span class="kw">return</span> (
+    <span class="jsx">&lt;div</span> <span class="attr">className</span>=<span class="str">"card"</span><span class="jsx">&gt;</span>
+      <span class="jsx">&lt;h3&gt;</span><span class="op">{</span>title<span class="op">}</span><span class="jsx">&lt;/h3&gt;</span>
+      <span class="jsx">&lt;div&gt;</span><span class="op">{</span>children<span class="op">}</span><span class="jsx">&lt;/div&gt;</span>
+    <span class="jsx">&lt;/div&gt;</span>
+  )
+}
+
+<span class="cm">// ใช้งาน</span>
+<span class="jsx">&lt;Card</span> <span class="attr">title</span>=<span class="str">"ยินดีต้อนรับ"</span><span class="jsx">&gt;</span>
+  <span class="jsx">&lt;p&gt;</span>เนื้อหาภายใน Card<span class="jsx">&lt;/p&gt;</span>
+  <span class="jsx">&lt;button&gt;</span>ตกลง<span class="jsx">&lt;/button&gt;</span>
+<span class="jsx">&lt;/Card&gt;</span></pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔗 Prop Spreading และ Rest Props</h3>
+    <pre><span class="cm">// ส่ง props ทั้งหมดด้วย Spread</span>
+<span class="kw">const</span> user <span class="op">=</span> { name: <span class="str">'สมชาย'</span>, age: <span class="num">25</span>, isAdmin: <span class="bool">true</span> }
+<span class="jsx">&lt;UserCard</span> <span class="op">{...user}</span> <span class="jsx">/&gt;</span>   <span class="cm">// เทียบเท่า name="สมชาย" age={25} isAdmin={true}</span>
+
+<span class="cm">// Rest Props — รวม props ที่เหลือไว้ในตัวแปรเดียว</span>
+<span class="kw">function</span> <span class="fn">Input</span>({ label, <span class="op">...</span>rest }) {
+  <span class="kw">return</span> (
+    <span class="jsx">&lt;div&gt;</span>
+      <span class="jsx">&lt;label&gt;</span><span class="op">{</span>label<span class="op">}</span><span class="jsx">&lt;/label&gt;</span>
+      <span class="jsx">&lt;input</span> <span class="op">{...rest}</span> <span class="jsx">/&gt;</span>  <span class="cm">{/* ส่ง type, placeholder, onChange ฯลฯ ต่อให้ input */}</span>
+    <span class="jsx">&lt;/div&gt;</span>
+  )
+}
+
+<span class="jsx">&lt;Input</span> <span class="attr">label</span>=<span class="str">"ชื่อ"</span> <span class="attr">type</span>=<span class="str">"text"</span> <span class="attr">placeholder</span>=<span class="str">"กรอกชื่อ"</span> <span class="jsx">/&gt;</span></pre>
+  </div>
+</section>
+
+<!-- ===================== SECTION 5: State ===================== -->
+<section id="state">
+  <div class="chapter-header ch-purple">
+    <div class="ch-num">05</div>
+    <div>
+      <h2>State — ข้อมูลที่เปลี่ยนแปลงได้</h2>
+      <p>จัดการข้อมูลภายใน Component ด้วย useState Hook</p>
+    </div>
+  </div>
+
+  <div class="callout react">
+    <span class="ci">⚛️</span>
+    <div>เมื่อ State เปลี่ยน React จะ <strong>re-render Component นั้น</strong> และ Children ของมันอัตโนมัติ — นี่คือหัวใจของ React</div>
+  </div>
+
+  <div class="card">
+    <h3><span class="hook">useState</span> — Hook พื้นฐานที่สุด</h3>
+    <pre><span class="kw">import</span> { useState } <span class="kw">from</span> <span class="str">'react'</span>
+
+<span class="kw">function</span> <span class="fn">Counter</span>() {
+  <span class="cm">// [ค่าปัจจุบัน, ฟังก์ชันอัปเดต] = useState(ค่าเริ่มต้น)</span>
+  <span class="kw">const</span> [count, setCount] <span class="op">=</span> <span class="fn">useState</span>(<span class="num">0</span>)
+  <span class="kw">const</span> [name, setName] <span class="op">=</span> <span class="fn">useState</span>(<span class="str">'สวัสดี'</span>)
+  <span class="kw">const</span> [isOn, setIsOn] <span class="op">=</span> <span class="fn">useState</span>(<span class="bool">false</span>)
+
+  <span class="kw">return</span> (
+    <span class="jsx">&lt;div&gt;</span>
+      <span class="jsx">&lt;p&gt;</span>นับ: <span class="op">{</span>count<span class="op">}</span><span class="jsx">&lt;/p&gt;</span>
+      <span class="jsx">&lt;button</span> <span class="attr">onClick</span>=<span class="op">{</span>() <span class="arr">=&gt;</span> <span class="fn">setCount</span>(count <span class="op">+</span> <span class="num">1</span>)<span class="op">}</span><span class="jsx">&gt;</span>เพิ่ม<span class="jsx">&lt;/button&gt;</span>
+      <span class="jsx">&lt;button</span> <span class="attr">onClick</span>=<span class="op">{</span>() <span class="arr">=&gt;</span> <span class="fn">setCount</span>(count <span class="op">-</span> <span class="num">1</span>)<span class="op">}</span><span class="jsx">&gt;</span>ลด<span class="jsx">&lt;/button&gt;</span>
+      <span class="jsx">&lt;button</span> <span class="attr">onClick</span>=<span class="op">{</span>() <span class="arr">=&gt;</span> <span class="fn">setCount</span>(<span class="num">0</span>)<span class="op">}</span><span class="jsx">&gt;</span>รีเซต<span class="jsx">&lt;/button&gt;</span>
+    <span class="jsx">&lt;/div&gt;</span>
+  )
+}</pre>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>📦 State แบบ Object</h3>
+      <pre><span class="kw">const</span> [user, setUser] <span class="op">=</span> <span class="fn">useState</span>({
+  name: <span class="str">'สมชาย'</span>,
+  age: <span class="num">25</span>,
+  city: <span class="str">'กรุงเทพ'</span>
+})
+
+<span class="cm">// ❌ ผิด — แก้ไขตรงๆ ไม่ trigger re-render</span>
+user.name <span class="op">=</span> <span class="str">'สมหญิง'</span>
+
+<span class="cm">// ✅ ถูก — Spread แล้วแก้เฉพาะส่วนที่ต้องการ</span>
+<span class="fn">setUser</span>({ <span class="op">...</span>user, name: <span class="str">'สมหญิง'</span> })
+
+<span class="cm">// ✅ Functional Update (แนะนำ)</span>
+<span class="fn">setUser</span>(prev <span class="arr">=&gt;</span> ({ <span class="op">...</span>prev, age: prev.age <span class="op">+</span> <span class="num">1</span> }))</pre>
+    </div>
+
+    <div class="card">
+      <h3>📋 State แบบ Array</h3>
+      <pre><span class="kw">const</span> [items, setItems] <span class="op">=</span> <span class="fn">useState</span>([<span class="str">'A'</span>, <span class="str">'B'</span>])
+
+<span class="cm">// เพิ่มรายการ</span>
+<span class="fn">setItems</span>([<span class="op">...</span>items, <span class="str">'C'</span>])
+
+<span class="cm">// ลบรายการ (index 1)</span>
+<span class="fn">setItems</span>(items.<span class="fn">filter</span>((_, i) <span class="arr">=&gt;</span> i <span class="op">!==</span> <span class="num">1</span>))
+
+<span class="cm">// แก้ไขรายการ</span>
+<span class="fn">setItems</span>(items.<span class="fn">map</span>((item, i) <span class="arr">=&gt;</span>
+  i <span class="op">===</span> <span class="num">0</span> ? <span class="str">'Z'</span> : item
+))
+
+<span class="cm">// ❌ ห้ามใช้ push/splice โดยตรง!</span>
+items.<span class="fn">push</span>(<span class="str">'C'</span>)  <span class="cm">// ผิด! ไม่ trigger re-render</span></pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>⚡ Functional Update — สำคัญมาก</h3>
+    <pre><span class="cm">// ปัญหา: Stale State ใน async operations</span>
+<span class="kw">const</span> [count, setCount] <span class="op">=</span> <span class="fn">useState</span>(<span class="num">0</span>)
+
+<span class="cm">// ❌ อาจเกิด Bug ถ้าเรียกหลายครั้งรวดเร็ว</span>
+<span class="fn">setCount</span>(count <span class="op">+</span> <span class="num">1</span>)  <span class="cm">// ใช้ค่า count ณ ตอน render</span>
+
+<span class="cm">// ✅ ถูกต้อง — ใช้ค่าล่าสุดเสมอ</span>
+<span class="fn">setCount</span>(prev <span class="arr">=&gt;</span> prev <span class="op">+</span> <span class="num">1</span>)
+
+<span class="cm">// ตัวอย่างกรณีที่สำคัญ</span>
+<span class="kw">function</span> <span class="fn">tripleIncrement</span>() {
+  <span class="fn">setCount</span>(prev <span class="arr">=&gt;</span> prev <span class="op">+</span> <span class="num">1</span>)  <span class="cm">// 0→1</span>
+  <span class="fn">setCount</span>(prev <span class="arr">=&gt;</span> prev <span class="op">+</span> <span class="num">1</span>)  <span class="cm">// 1→2</span>
+  <span class="fn">setCount</span>(prev <span class="arr">=&gt;</span> prev <span class="op">+</span> <span class="num">1</span>)  <span class="cm">// 2→3 ✅</span>
+}</pre>
+  </div>
+</section>
+
+<!-- ===================== SECTION 6: useEffect ===================== -->
+<section id="useeffect">
+  <div class="chapter-header ch-teal">
+    <div class="ch-num">06</div>
+    <div>
+      <h2>useEffect — Side Effects</h2>
+      <p>จัดการ Side Effects เช่น fetch API, subscriptions, timers</p>
+    </div>
+  </div>
+
+  <div class="callout info">
+    <span class="ci">ℹ️</span>
+    <div>Side Effect คือสิ่งที่ "ออกนอก" Component เช่น fetch ข้อมูล, เปลี่ยน title, subscribe event, set timer — <code class="ic">useEffect</code> เป็นที่สำหรับสิ่งเหล่านี้</div>
+  </div>
+
+  <div class="card">
+    <h3><span class="hook">useEffect</span> — รูปแบบต่างๆ</h3>
+    <pre><span class="kw">import</span> { useState, useEffect } <span class="kw">from</span> <span class="str">'react'</span>
+
+<span class="kw">function</span> <span class="fn">MyComponent</span>() {
+  <span class="kw">const</span> [data, setData] <span class="op">=</span> <span class="fn">useState</span>(<span class="bool">null</span>)
+  <span class="kw">const</span> [count, setCount] <span class="op">=</span> <span class="fn">useState</span>(<span class="num">0</span>)
+
+  <span class="cm">// 1. ทำงานทุกครั้งที่ Component render (ไม่แนะนำ)</span>
+  <span class="fn">useEffect</span>(() <span class="arr">=&gt;</span> {
+    console.<span class="fn">log</span>(<span class="str">'render ทุกครั้ง'</span>)
+  })
+
+  <span class="cm">// 2. ทำงานครั้งเดียวตอน mount (Dependency Array ว่าง)</span>
+  <span class="fn">useEffect</span>(() <span class="arr">=&gt;</span> {
+    console.<span class="fn">log</span>(<span class="str">'mount ครั้งเดียว'</span>)
+    <span class="fn">fetchData</span>()    <span class="cm">// ✅ เหมาะสำหรับ API call ครั้งแรก</span>
+  }, [])
+
+  <span class="cm">// 3. ทำงานเมื่อ count เปลี่ยน</span>
+  <span class="fn">useEffect</span>(() <span class="arr">=&gt;</span> {
+    console.<span class="fn">log</span>(<span class="str">`count เปลี่ยนเป็น: </span><span class="op">${</span>count<span class="op">}</span><span class="str">`</span>)
+    document.title <span class="op">=</span> <span class="str">`Count: </span><span class="op">${</span>count<span class="op">}</span><span class="str">`</span>
+  }, [count])
+
+  <span class="cm">// 4. Cleanup Function — สำคัญมาก!</span>
+  <span class="fn">useEffect</span>(() <span class="arr">=&gt;</span> {
+    <span class="kw">const</span> timer <span class="op">=</span> <span class="fn">setInterval</span>(() <span class="arr">=&gt;</span> {
+      console.<span class="fn">log</span>(<span class="str">'tick'</span>)
+    }, <span class="num">1000</span>)
+
+    <span class="cm">// Cleanup: ทำงานก่อน effect ครั้งต่อไป หรือตอน unmount</span>
+    <span class="kw">return</span> () <span class="arr">=&gt;</span> <span class="fn">clearInterval</span>(timer)  <span class="cm">// ✅ ป้องกัน memory leak</span>
+  }, [])
+}</pre>
+  </div>
+
+  <div class="card">
+    <h3>🌐 Fetch API ใน useEffect</h3>
+    <pre><span class="kw">function</span> <span class="fn">UserList</span>() {
+  <span class="kw">const</span> [users, setUsers] <span class="op">=</span> <span class="fn">useState</span>([])
+  <span class="kw">const</span> [loading, setLoading] <span class="op">=</span> <span class="fn">useState</span>(<span class="bool">true</span>)
+  <span class="kw">const</span> [error, setError] <span class="op">=</span> <span class="fn">useState</span>(<span class="bool">null</span>)
+
+  <span class="fn">useEffect</span>(() <span class="arr">=&gt;</span> {
+    <span class="kw">let</span> cancelled <span class="op">=</span> <span class="bool">false</span>  <span class="cm">// ป้องกัน race condition</span>
+
+    <span class="kw">const</span> <span class="fn">fetchUsers</span> <span class="op">=</span> <span class="kw">async</span> () <span class="arr">=&gt;</span> {
+      <span class="kw">try</span> {
+        <span class="fn">setLoading</span>(<span class="bool">true</span>)
+        <span class="kw">const</span> res <span class="op">=</span> <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">'https://api.example.com/users'</span>)
+        <span class="kw">const</span> data <span class="op">=</span> <span class="kw">await</span> res.<span class="fn">json</span>()
+        <span class="kw">if</span> (<span class="op">!</span>cancelled) <span class="fn">setUsers</span>(data)
+      } <span class="kw">catch</span> (err) {
+        <span class="kw">if</span> (<span class="op">!</span>cancelled) <span class="fn">setError</span>(err.message)
+      } <span class="kw">finally</span> {
+        <span class="kw">if</span> (<span class="op">!</span>cancelled) <span class="fn">setLoading</span>(<span class="bool">false</span>)
+      }
+    }
+
+    <span class="fn">fetchUsers</span>()
+    <span class="kw">return</span> () <span class="arr">=&gt;</span> { cancelled <span class="op">=</span> <span class="bool">true</span> }  <span class="cm">// Cleanup</span>
+  }, [])
+
+  <span class="kw">if</span> (loading) <span class="kw">return</span> <span class="jsx">&lt;p&gt;</span>กำลังโหลด...<span class="jsx">&lt;/p&gt;</span>
+  <span class="kw">if</span> (error) <span class="kw">return</span> <span class="jsx">&lt;p&gt;</span>Error: <span class="op">{</span>error<span class="op">}</span><span class="jsx">&lt;/p&gt;</span>
+
+  <span class="kw">return</span> (
+    <span class="jsx">&lt;ul&gt;</span>
+      <span class="op">{</span>users.<span class="fn">map</span>(user <span class="arr">=&gt;</span> (
+        <span class="jsx">&lt;li</span> <span class="attr">key</span>=<span class="op">{</span>user.id<span class="op">}</span><span class="jsx">&gt;</span><span class="op">{</span>user.name<span class="op">}</span><span class="jsx">&lt;/li&gt;</span>
+      ))<span class="op">}</span>
+    <span class="jsx">&lt;/ul&gt;</span>
+  )
+}</pre>
+  </div>
+</section>
+
+<!-- ===================== SECTION 7: Events ===================== -->
+<section id="events">
+  <div class="chapter-header ch-orange">
+    <div class="ch-num">07</div>
+    <div>
+      <h2>Event Handling — จัดการ Event</h2>
+      <p>การจัดการ Event ใน React ต่างจาก HTML ธรรมดาอย่างไร</p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>🖱️ Event พื้นฐาน</h3>
+      <pre><span class="kw">function</span> <span class="fn">EventDemo</span>() {
+  <span class="kw">const</span> <span class="fn">handleClick</span> <span class="op">=</span> (e) <span class="arr">=&gt;</span> {
+    e.<span class="fn">preventDefault</span>()   <span class="cm">// หยุด default action</span>
+    console.<span class="fn">log</span>(<span class="str">'คลิกแล้ว!'</span>, e.target)
+  }
+
+  <span class="kw">const</span> <span class="fn">handleChange</span> <span class="op">=</span> (e) <span class="arr">=&gt;</span> {
+    console.<span class="fn">log</span>(e.target.value)  <span class="cm">// ค่าใน input</span>
+  }
+
+  <span class="kw">const</span> <span class="fn">handleSubmit</span> <span class="op">=</span> (e) <span class="arr">=&gt;</span> {
+    e.<span class="fn">preventDefault</span>()  <span class="cm">// ป้องกันหน้า reload</span>
+  }
+
+  <span class="kw">return</span> (
+    <span class="jsx">&lt;form</span> <span class="attr">onSubmit</span>=<span class="op">{</span>handleSubmit<span class="op">}</span><span class="jsx">&gt;</span>
+      <span class="jsx">&lt;button</span> <span class="attr">onClick</span>=<span class="op">{</span>handleClick<span class="op">}</span><span class="jsx">&gt;</span>คลิก<span class="jsx">&lt;/button&gt;</span>
+      <span class="jsx">&lt;input</span> <span class="attr">onChange</span>=<span class="op">{</span>handleChange<span class="op">}</span> <span class="jsx">/&gt;</span>
+      <span class="jsx">&lt;input</span> <span class="attr">type</span>=<span class="str">"submit"</span> <span class="jsx">/&gt;</span>
+    <span class="jsx">&lt;/form&gt;</span>
+  )
+}</pre>
+    </div>
+
+    <div class="card">
+      <h3>📋 Events ที่ใช้บ่อย</h3>
+      <table>
+        <thead><tr><th>Event</th><th>เมื่อ</th></tr></thead>
+        <tbody>
+          <tr><td><code>onClick</code></td><td>คลิกเมาส์</td></tr>
+          <tr><td><code>onChange</code></td><td>ค่าใน input เปลี่ยน</td></tr>
+          <tr><td><code>onSubmit</code></td><td>ส่ง form</td></tr>
+          <tr><td><code>onKeyDown</code></td><td>กดคีย์บอร์ด</td></tr>
+          <tr><td><code>onFocus</code></td><td>input ถูก focus</td></tr>
+          <tr><td><code>onBlur</code></td><td>ออกจาก input</td></tr>
+          <tr><td><code>onMouseEnter</code></td><td>เมาส์ชี้เข้า</td></tr>
+          <tr><td><code>onMouseLeave</code></td><td>เมาส์ออก</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>⬆️ Lifting State Up — ส่ง Event ขึ้น Parent</h3>
+    <pre><span class="cm">// Child ส่ง event ขึ้นไปยัง Parent ผ่าน callback prop</span>
+<span class="kw">function</span> <span class="fn">ChildButton</span>({ onAdd }) {
+  <span class="kw">return</span> (
+    <span class="jsx">&lt;button</span> <span class="attr">onClick</span>=<span class="op">{</span>() <span class="arr">=&gt;</span> <span class="fn">onAdd</span>(<span class="str">'รายการใหม่'</span>)<span class="op">}</span><span class="jsx">&gt;</span>
+      เพิ่มรายการ
+    <span class="jsx">&lt;/button&gt;</span>
+  )
+}
+
+<span class="kw">function</span> <span class="fn">Parent</span>() {
+  <span class="kw">const</span> [items, setItems] <span class="op">=</span> <span class="fn">useState</span>([])
+
+  <span class="kw">const</span> <span class="fn">handleAdd</span> <span class="op">=</span> (newItem) <span class="arr">=&gt;</span> {
+    <span class="fn">setItems</span>(prev <span class="arr">=&gt;</span> [...prev, newItem])
+  }
+
+  <span class="kw">return</span> (
+    <span class="jsx">&lt;div&gt;</span>
+      <span class="jsx">&lt;ChildButton</span> <span class="attr">onAdd</span>=<span class="op">{</span>handleAdd<span class="op">}</span> <span class="jsx">/&gt;</span>
+      <span class="jsx">&lt;ul&gt;</span>
+        <span class="op">{</span>items.<span class="fn">map</span>((item, i) <span class="arr">=&gt;</span> <span class="jsx">&lt;li</span> <span class="attr">key</span>=<span class="op">{</span>i<span class="op">}</span><span class="jsx">&gt;</span><span class="op">{</span>item<span class="op">}</span><span class="jsx">&lt;/li&gt;</span>)<span class="op">}</span>
+      <span class="jsx">&lt;/ul&gt;</span>
+    <span class="jsx">&lt;/div&gt;</span>
+  )
+}</pre>
+  </div>
+</section>
+
+<!-- ===================== SECTION 8: Lists & Keys ===================== -->
+<section id="lists">
+  <div class="chapter-header ch-green">
+    <div class="ch-num">08</div>
+    <div>
+      <h2>Lists &amp; Keys — แสดงรายการข้อมูล</h2>
+      <p>การ render รายการข้อมูลและความสำคัญของ key</p>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <span class="ci">⚠️</span>
+    <div><strong>key</strong> ต้องไม่ซ้ำกันใน list เดียวกัน และไม่ควรใช้ <code class="ic">index</code> เป็น key ถ้า list มีการเพิ่ม/ลบ/เรียงลำดับ เพราะจะทำให้ React เกิด bug ได้</div>
+  </div>
+
+  <div class="card">
+    <h3>📝 render รายการด้วย .map()</h3>
+    <pre><span class="kw">function</span> <span class="fn">ProductList</span>() {
+  <span class="kw">const</span> products <span class="op">=</span> [
+    { id: <span class="num">1</span>, name: <span class="str">'แอปเปิ้ล'</span>, price: <span class="num">20</span> },
+    { id: <span class="num">2</span>, name: <span class="str">'กล้วย'</span>, price: <span class="num">10</span> },
+    { id: <span class="num">3</span>, name: <span class="str">'ส้ม'</span>, price: <span class="num">15</span> },
+  ]
+
+  <span class="kw">return</span> (
+    <span class="jsx">&lt;ul&gt;</span>
+      <span class="op">{</span>products.<span class="fn">map</span>(product <span class="arr">=&gt;</span> (
+        <span class="cm">{/* ✅ ใช้ id ที่ unique เป็น key */}</span>
+        <span class="jsx">&lt;li</span> <span class="attr">key</span>=<span class="op">{</span>product.id<span class="op">}</span><span class="jsx">&gt;</span>
+          <span class="op">{</span>product.name<span class="op">}</span> — <span class="op">{</span>product.price<span class="op">}</span> บาท
+        <span class="jsx">&lt;/li&gt;</span>
+      ))<span class="op">}</span>
+    <span class="jsx">&lt;/ul&gt;</span>
+  )
+}
+
+<span class="cm">// Component แยกสำหรับแต่ละ item (แนะนำ)</span>
+<span class="kw">function</span> <span class="fn">ProductItem</span>({ product }) {
+  <span class="kw">return</span> (
+    <span class="jsx">&lt;li&gt;</span>
+      <span class="jsx">&lt;strong&gt;</span><span class="op">{</span>product.name<span class="op">}</span><span class="jsx">&lt;/strong&gt;</span>
+      <span class="jsx">&lt;span&gt;</span><span class="op">{</span>product.price<span class="op">}</span> บาท<span class="jsx">&lt;/span&gt;</span>
+    <span class="jsx">&lt;/li&gt;</span>
+  )
+}
+
+<span class="cm">// ใช้ Component แยก (key อยู่ที่ดีที่สุด)</span>
+<span class="op">{</span>products.<span class="fn">map</span>(p <span class="arr">=&gt;</span> <span class="jsx">&lt;ProductItem</span> <span class="attr">key</span>=<span class="op">{</span>p.id<span class="op">}</span> <span class="attr">product</span>=<span class="op">{</span>p<span class="op">}</span> <span class="jsx">/&gt;</span>)<span class="op">}</span></pre>
+  </div>
+
+  <div class="card">
+    <h3>🔍 Filter + Map — กรองก่อน render</h3>
+    <pre><span class="kw">function</span> <span class="fn">FilteredList</span>() {
+  <span class="kw">const</span> [search, setSearch] <span class="op">=</span> <span class="fn">useState</span>(<span class="str">''</span>)
+  <span class="kw">const</span> fruits <span class="op">=</span> [<span class="str">'แอปเปิ้ล'</span>, <span class="str">'กล้วย'</span>, <span class="str">'องุ่น'</span>, <span class="str">'มะม่วง'</span>, <span class="str">'ส้ม'</span>]
+
+  <span class="kw">const</span> filtered <span class="op">=</span> fruits.<span class="fn">filter</span>(f <span class="arr">=&gt;</span> f.<span class="fn">includes</span>(search))
+
+  <span class="kw">return</span> (
+    <span class="jsx">&lt;div&gt;</span>
+      <span class="jsx">&lt;input</span>
+        <span class="attr">value</span>=<span class="op">{</span>search<span class="op">}</span>
+        <span class="attr">onChange</span>=<span class="op">{</span>e <span class="arr">=&gt;</span> <span class="fn">setSearch</span>(e.target.value)<span class="op">}</span>
+        <span class="attr">placeholder</span>=<span class="str">"ค้นหาผลไม้..."</span>
+      <span class="jsx">/&gt;</span>
+      <span class="jsx">&lt;ul&gt;</span>
+        <span class="op">{</span>filtered.<span class="fn">map</span>((fruit, i) <span class="arr">=&gt;</span> (
+          <span class="jsx">&lt;li</span> <span class="attr">key</span>=<span class="op">{</span>fruit<span class="op">}</span><span class="jsx">&gt;</span><span class="op">{</span>fruit<span class="op">}</span><span class="jsx">&lt;/li&gt;</span>
+        ))<span class="op">}</span>
+      <span class="jsx">&lt;/ul&gt;</span>
+      <span class="jsx">&lt;p&gt;</span>พบ <span class="op">{</span>filtered.length<span class="op">}</span> รายการ<span class="jsx">&lt;/p&gt;</span>
+    <span class="jsx">&lt;/div&gt;</span>
+  )
+}</pre>
+  </div>
+</section>
+
+<!-- ===================== SECTION 9: Forms ===================== -->
+<section id="forms">
+  <div class="chapter-header ch-blue">
+    <div class="ch-num">09</div>
+    <div>
+      <h2>Forms — จัดการ Form Input</h2>
+      <p>Controlled vs Uncontrolled Components และการจัดการ Form</p>
+    </div>
+  </div>
+
+  <div class="compare">
+    <div class="compare-col">
+      <div class="compare-head bad">❌ Uncontrolled (DOM จัดการ)</div>
+      <pre><span class="kw">function</span> <span class="fn">BadForm</span>() {
+  <span class="kw">const</span> <span class="fn">handleSubmit</span> <span class="op">=</span> (e) <span class="arr">=&gt;</span> {
+    e.<span class="fn">preventDefault</span>()
+    <span class="cm">// ต้องไปดึงค่าจาก DOM</span>
+    <span class="kw">const</span> name <span class="op">=</span> e.target.name.value
+  }
+  <span class="kw">return</span> (
+    <span class="jsx">&lt;form</span> <span class="attr">onSubmit</span>=<span class="op">{</span>handleSubmit<span class="op">}</span><span class="jsx">&gt;</span>
+      <span class="jsx">&lt;input</span> <span class="attr">name</span>=<span class="str">"name"</span> <span class="jsx">/&gt;</span>
+    <span class="jsx">&lt;/form&gt;</span>
+  )
+}</pre>
+    </div>
+    <div class="compare-col">
+      <div class="compare-head good">✅ Controlled (React จัดการ)</div>
+      <pre><span class="kw">function</span> <span class="fn">GoodForm</span>() {
+  <span class="kw">const</span> [name, setName] <span class="op">=</span> <span class="fn">useState</span>(<span class="str">''</span>)
+
+  <span class="kw">const</span> <span class="fn">handleSubmit</span> <span class="op">=</span> (e) <span class="arr">=&gt;</span> {
+    e.<span class="fn">preventDefault</span>()
+    console.<span class="fn">log</span>(name)  <span class="cm">// ✅ ง่ายมาก</span>
+  }
+  <span class="kw">return</span> (
+    <span class="jsx">&lt;form</span> <span class="attr">onSubmit</span>=<span class="op">{</span>handleSubmit<span class="op">}</span><span class="jsx">&gt;</span>
+      <span class="jsx">&lt;input</span>
+        <span class="attr">value</span>=<span class="op">{</span>name<span class="op">}</span>
+        <span class="attr">onChange</span>=<span class="op">{</span>e <span class="arr">=&gt;</span> <span class="fn">setName</span>(e.target.value)<span class="op">}</span>
+      <span class="jsx">/&gt;</span>
+    <span class="jsx">&lt;/form&gt;</span>
+  )
+}</pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📋 Form ครบถ้วน — หลายประเภท Input</h3>
+    <pre><span class="kw">function</span> <span class="fn">FullForm</span>() {
+  <span class="kw">const</span> [form, setForm] <span class="op">=</span> <span class="fn">useState</span>({
+    name: <span class="str">''</span>, email: <span class="str">''</span>, gender: <span class="str">'male'</span>, agree: <span class="bool">false</span>, role: <span class="str">'user'</span>
+  })
+
+  <span class="cm">// Handler เดียวสำหรับทุก input</span>
+  <span class="kw">const</span> <span class="fn">handleChange</span> <span class="op">=</span> (e) <span class="arr">=&gt;</span> {
+    <span class="kw">const</span> { name, value, type, checked } <span class="op">=</span> e.target
+    <span class="fn">setForm</span>(prev <span class="arr">=&gt;</span> ({
+      <span class="op">...</span>prev,
+      [name]: type <span class="op">===</span> <span class="str">'checkbox'</span> ? checked : value
+    }))
+  }
+
+  <span class="kw">const</span> <span class="fn">handleSubmit</span> <span class="op">=</span> (e) <span class="arr">=&gt;</span> {
+    e.<span class="fn">preventDefault</span>()
+    console.<span class="fn">log</span>(form)
+  }
+
+  <span class="kw">return</span> (
+    <span class="jsx">&lt;form</span> <span class="attr">onSubmit</span>=<span class="op">{</span>handleSubmit<span class="op">}</span><span class="jsx">&gt;</span>
+      <span class="cm">{/* Text Input */}</span>
+      <span class="jsx">&lt;input</span> <span class="attr">name</span>=<span class="str">"name"</span> <span class="attr">value</span>=<span class="op">{</span>form.name<span class="op">}</span> <span class="attr">onChange</span>=<span class="op">{</span>handleChange<span class="op">}</span> <span class="jsx">/&gt;</span>
+
+      <span class="cm">{/* Email Input */}</span>
+      <span class="jsx">&lt;input</span> <span class="attr">type</span>=<span class="str">"email"</span> <span class="attr">name</span>=<span class="str">"email"</span> <span class="attr">value</span>=<span class="op">{</span>form.email<span class="op">}</span> <span class="attr">onChange</span>=<span class="op">{</span>handleChange<span class="op">}</span> <span class="jsx">/&gt;</span>
+
+      <span class="cm">{/* Radio */}</span>
+      <span class="jsx">&lt;input</span> <span class="attr">type</span>=<span class="str">"radio"</span> <span class="attr">name</span>=<span class="str">"gender"</span> <span class="attr">value</span>=<span class="str">"male"</span>
+        <span class="attr">checked</span>=<span class="op">{</span>form.gender <span class="op">===</span> <span class="str">'male'</span><span class="op">}</span> <span class="attr">onChange</span>=<span class="op">{</span>handleChange<span class="op">}</span> <span class="jsx">/&gt;</span> ชาย
+
+      <span class="cm">{/* Select */}</span>
+      <span class="jsx">&lt;select</span> <span class="attr">name</span>=<span class="str">"role"</span> <span class="attr">value</span>=<span class="op">{</span>form.role<span class="op">}</span> <span class="attr">onChange</span>=<span class="op">{</span>handleChange<span class="op">}</span><span class="jsx">&gt;</span>
+        <span class="jsx">&lt;option</span> <span class="attr">value</span>=<span class="str">"user"</span><span class="jsx">&gt;</span>User<span class="jsx">&lt;/option&gt;</span>
+        <span class="jsx">&lt;option</span> <span class="attr">value</span>=<span class="str">"admin"</span><span class="jsx">&gt;</span>Admin<span class="jsx">&lt;/option&gt;</span>
+      <span class="jsx">&lt;/select&gt;</span>
+
+      <span class="cm">{/* Checkbox */}</span>
+      <span class="jsx">&lt;input</span> <span class="attr">type</span>=<span class="str">"checkbox"</span> <span class="attr">name</span>=<span class="str">"agree"</span>
+        <span class="attr">checked</span>=<span class="op">{</span>form.agree<span class="op">}</span> <span class="attr">onChange</span>=<span class="op">{</span>handleChange<span class="op">}</span> <span class="jsx">/&gt;</span> ยอมรับเงื่อนไข
+
+      <span class="jsx">&lt;button</span> <span class="attr">type</span>=<span class="str">"submit"</span> <span class="attr">disabled</span>=<span class="op">{!</span>form.agree<span class="op">}</span><span class="jsx">&gt;</span>ส่ง<span class="jsx">&lt;/button&gt;</span>
+    <span class="jsx">&lt;/form&gt;</span>
+  )
+}</pre>
+  </div>
+</section>
+
+<!-- ===================== SECTION 10: useContext ===================== -->
+<section id="context">
+  <div class="chapter-header ch-pink">
+    <div class="ch-num">10</div>
+    <div>
+      <h2>useContext — แชร์ข้อมูลทั่วแอป</h2>
+      <p>หลีกเลี่ยง Props Drilling ด้วย Context API</p>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <span class="ci">⚠️</span>
+    <div><strong>Props Drilling</strong> คือการส่ง props ผ่านหลายชั้น Component ที่ไม่ได้ใช้ข้อมูลนั้น — Context แก้ปัญหานี้ได้ แต่ควรใช้เฉพาะข้อมูลที่ "global" จริงๆ เช่น user, theme, language</div>
+  </div>
+
+  <div class="card">
+    <h3><span class="hook">useContext</span> — 3 ขั้นตอน</h3>
+    <pre><span class="kw">import</span> { createContext, useContext, useState } <span class="kw">from</span> <span class="str">'react'</span>
+
+<span class="cm">// ขั้นที่ 1: สร้าง Context</span>
+<span class="kw">const</span> ThemeContext <span class="op">=</span> <span class="fn">createContext</span>(<span class="bool">null</span>)
+
+<span class="cm">// ขั้นที่ 2: Provider — ครอบ Component ที่ต้องการใช้ข้อมูล</span>
+<span class="kw">function</span> <span class="fn">ThemeProvider</span>({ children }) {
+  <span class="kw">const</span> [theme, setTheme] <span class="op">=</span> <span class="fn">useState</span>(<span class="str">'dark'</span>)
+
+  <span class="kw">const</span> <span class="fn">toggleTheme</span> <span class="op">=</span> () <span class="arr">=&gt;</span> {
+    <span class="fn">setTheme</span>(prev <span class="arr">=&gt;</span> prev <span class="op">===</span> <span class="str">'dark'</span> ? <span class="str">'light'</span> : <span class="str">'dark'</span>)
+  }
+
+  <span class="kw">return</span> (
+    <span class="jsx">&lt;ThemeContext.Provider</span> <span class="attr">value</span>=<span class="op">{{</span> theme, toggleTheme <span class="op">}}</span><span class="jsx">&gt;</span>
+      <span class="op">{</span>children<span class="op">}</span>
+    <span class="jsx">&lt;/ThemeContext.Provider&gt;</span>
+  )
+}
+
+<span class="cm">// ขั้นที่ 3: ใช้งานใน Component ใดก็ได้ที่อยู่ใน Provider</span>
+<span class="kw">function</span> <span class="fn">ThemeButton</span>() {
+  <span class="kw">const</span> { theme, toggleTheme } <span class="op">=</span> <span class="fn">useContext</span>(ThemeContext)
+
+  <span class="kw">return</span> (
+    <span class="jsx">&lt;button</span> <span class="attr">onClick</span>=<span class="op">{</span>toggleTheme<span class="op">}</span><span class="jsx">&gt;</span>
+      โหมดปัจจุบัน: <span class="op">{</span>theme<span class="op">}</span>
+    <span class="jsx">&lt;/button&gt;</span>
+  )
+}
+
+<span class="cm">// App.jsx — ครอบ Provider ที่ root</span>
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">return</span> (
+    <span class="jsx">&lt;ThemeProvider&gt;</span>
+      <span class="jsx">&lt;Header /&gt;</span>    <span class="cm">{/* ทุก Component ใน Provider เข้าถึง context ได้ */}</span>
+      <span class="jsx">&lt;Main /&gt;</span>
+      <span class="jsx">&lt;Footer /&gt;</span>
+    <span class="jsx">&lt;/ThemeProvider&gt;</span>
+  )
+}</pre>
+  </div>
+
+  <div class="callout tip">
+    <span class="ci">💡</span>
+    <div>สร้าง Custom Hook สำหรับ Context เพื่อป้องกันการใช้งานนอก Provider:<br><code class="ic">const useTheme = () => useContext(ThemeContext)</code></div>
+  </div>
+</section>
+
+<!-- ===================== SECTION 11: useRef ===================== -->
+<section id="useref">
+  <div class="chapter-header ch-slate">
+    <div class="ch-num">11</div>
+    <div>
+      <h2>useRef — อ้างอิง DOM และค่าถาวร</h2>
+      <p>เข้าถึง DOM โดยตรงและเก็บค่าที่ไม่ trigger re-render</p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3><span class="hook">useRef</span> — เข้าถึง DOM</h3>
+      <pre><span class="kw">import</span> { useRef } <span class="kw">from</span> <span class="str">'react'</span>
+
+<span class="kw">function</span> <span class="fn">FocusInput</span>() {
+  <span class="kw">const</span> inputRef <span class="op">=</span> <span class="fn">useRef</span>(<span class="bool">null</span>)
+
+  <span class="kw">const</span> <span class="fn">handleFocus</span> <span class="op">=</span> () <span class="arr">=&gt;</span> {
+    <span class="cm">// เข้าถึง DOM element โดยตรง</span>
+    inputRef.current.<span class="fn">focus</span>()
+    inputRef.current.value <span class="op">=</span> <span class="str">''</span>
+  }
+
+  <span class="kw">return</span> (
+    <span class="jsx">&lt;div&gt;</span>
+      <span class="jsx">&lt;input</span> <span class="attr">ref</span>=<span class="op">{</span>inputRef<span class="op">}</span> <span class="attr">type</span>=<span class="str">"text"</span> <span class="jsx">/&gt;</span>
+      <span class="jsx">&lt;button</span> <span class="attr">onClick</span>=<span class="op">{</span>handleFocus<span class="op">}</span><span class="jsx">&gt;</span>
+        Focus Input
+      <span class="jsx">&lt;/button&gt;</span>
+    <span class="jsx">&lt;/div&gt;</span>
+  )
+}</pre>
+    </div>
+
+    <div class="card">
+      <h3><span class="hook">useRef</span> — เก็บค่าไม่ trigger re-render</h3>
+      <pre><span class="kw">function</span> <span class="fn">Timer</span>() {
+  <span class="kw">const</span> [seconds, setSeconds] <span class="op">=</span> <span class="fn">useState</span>(<span class="num">0</span>)
+  <span class="kw">const</span> timerRef <span class="op">=</span> <span class="fn">useRef</span>(<span class="bool">null</span>)
+
+  <span class="kw">const</span> <span class="fn">start</span> <span class="op">=</span> () <span class="arr">=&gt;</span> {
+    <span class="cm">// เก็บ timer ID ใน ref (ไม่ต้องการ re-render)</span>
+    timerRef.current <span class="op">=</span> <span class="fn">setInterval</span>(() <span class="arr">=&gt;</span> {
+      <span class="fn">setSeconds</span>(s <span class="arr">=&gt;</span> s <span class="op">+</span> <span class="num">1</span>)
+    }, <span class="num">1000</span>)
+  }
+
+  <span class="kw">const</span> <span class="fn">stop</span> <span class="op">=</span> () <span class="arr">=&gt;</span> {
+    <span class="fn">clearInterval</span>(timerRef.current)
+  }
+
+  <span class="kw">return</span> (
+    <span class="jsx">&lt;div&gt;</span>
+      <span class="jsx">&lt;p&gt;</span><span class="op">{</span>seconds<span class="op">}</span> วินาที<span class="jsx">&lt;/p&gt;</span>
+      <span class="jsx">&lt;button</span> <span class="attr">onClick</span>=<span class="op">{</span>start<span class="op">}</span><span class="jsx">&gt;</span>เริ่ม<span class="jsx">&lt;/button&gt;</span>
+      <span class="jsx">&lt;button</span> <span class="attr">onClick</span>=<span class="op">{</span>stop<span class="op">}</span><span class="jsx">&gt;</span>หยุด<span class="jsx">&lt;/button&gt;</span>
+    <span class="jsx">&lt;/div&gt;</span>
+  )
+}</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SECTION 12: useMemo & useCallback ===================== -->
+<section id="usememo">
+  <div class="chapter-header ch-orange">
+    <div class="ch-num">12</div>
+    <div>
+      <h2>useMemo &amp; useCallback — Performance</h2>
+      <p>Memoization เพื่อป้องกันการคำนวณซ้ำโดยไม่จำเป็น</p>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <span class="ci">⚠️</span>
+    <div>อย่าใช้ useMemo/useCallback ทุกที่! ใช้เฉพาะเมื่อมีปัญหา performance จริงๆ เพราะ Memoization เองก็มีค่าใช้จ่าย</div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3><span class="hook">useMemo</span> — Cache ผลลัพธ์การคำนวณ</h3>
+      <pre><span class="kw">import</span> { useMemo, useState } <span class="kw">from</span> <span class="str">'react'</span>
+
+<span class="kw">function</span> <span class="fn">ExpensiveCalc</span>({ numbers }) {
+  <span class="kw">const</span> [filter, setFilter] <span class="op">=</span> <span class="fn">useState</span>(<span class="str">''</span>)
+
+  <span class="cm">// คำนวณใหม่เฉพาะเมื่อ numbers เปลี่ยน</span>
+  <span class="kw">const</span> total <span class="op">=</span> <span class="fn">useMemo</span>(() <span class="arr">=&gt;</span> {
+    console.<span class="fn">log</span>(<span class="str">'คำนวณ...'</span>)
+    <span class="kw">return</span> numbers.<span class="fn">reduce</span>((sum, n) <span class="arr">=&gt;</span> sum <span class="op">+</span> n, <span class="num">0</span>)
+  }, [numbers])   <span class="cm">// Dependency</span>
+
+  <span class="cm">// กรอง list — คำนวณใหม่เมื่อ numbers หรือ filter เปลี่ยน</span>
+  <span class="kw">const</span> filtered <span class="op">=</span> <span class="fn">useMemo</span>(() <span class="arr">=&gt;</span>
+    numbers.<span class="fn">filter</span>(n <span class="arr">=&gt;</span> n.<span class="fn">toString</span>().<span class="fn">includes</span>(filter))
+  , [numbers, filter])
+
+  <span class="kw">return</span> <span class="jsx">&lt;div&gt;</span>ผลรวม: <span class="op">{</span>total<span class="op">}</span><span class="jsx">&lt;/div&gt;</span>
+}</pre>
+    </div>
+
+    <div class="card">
+      <h3><span class="hook">useCallback</span> — Cache ฟังก์ชัน</h3>
+      <pre><span class="kw">import</span> { useCallback, useState } <span class="kw">from</span> <span class="str">'react'</span>
+
+<span class="kw">function</span> <span class="fn">Parent</span>() {
+  <span class="kw">const</span> [count, setCount] <span class="op">=</span> <span class="fn">useState</span>(<span class="num">0</span>)
+  <span class="kw">const</span> [text, setText] <span class="op">=</span> <span class="fn">useState</span>(<span class="str">''</span>)
+
+  <span class="cm">// ไม่สร้างฟังก์ชันใหม่ทุกครั้ง Parent re-render</span>
+  <span class="cm">// สร้างใหม่เฉพาะเมื่อ count เปลี่ยน</span>
+  <span class="kw">const</span> <span class="fn">handleAdd</span> <span class="op">=</span> <span class="fn">useCallback</span>(() <span class="arr">=&gt;</span> {
+    <span class="fn">setCount</span>(c <span class="arr">=&gt;</span> c <span class="op">+</span> <span class="num">1</span>)
+  }, [])  <span class="cm">// ไม่มี dependency → สร้างครั้งเดียว</span>
+
+  <span class="kw">return</span> (
+    <span class="jsx">&lt;div&gt;</span>
+      <span class="jsx">&lt;input</span> <span class="attr">onChange</span>=<span class="op">{</span>e <span class="arr">=&gt;</span> <span class="fn">setText</span>(e.target.value)<span class="op">}</span> <span class="jsx">/&gt;</span>
+      <span class="cm">{/* Child ไม่ re-render เมื่อ text เปลี่ยน */}</span>
+      <span class="jsx">&lt;ExpensiveChild</span> <span class="attr">onAdd</span>=<span class="op">{</span>handleAdd<span class="op">}</span> <span class="jsx">/&gt;</span>
+    <span class="jsx">&lt;/div&gt;</span>
+  )
+}</pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📊 เปรียบเทียบ Hook Memoization</h3>
+    <table>
+      <thead><tr><th>Hook</th><th>Cache อะไร</th><th>ใช้เมื่อ</th></tr></thead>
+      <tbody>
+        <tr><td><code>useMemo</code></td><td>ค่า (value/object)</td><td>คำนวณหนัก หรือ object ที่ส่งเป็น dep</td></tr>
+        <tr><td><code>useCallback</code></td><td>ฟังก์ชัน</td><td>ส่งให้ child component ที่ใช้ React.memo</td></tr>
+        <tr><td><code>React.memo</code></td><td>Component</td><td>Component ที่ re-render บ่อยโดยไม่จำเป็น</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ===================== SECTION 13: Custom Hooks ===================== -->
+<section id="custom-hooks">
+  <div class="chapter-header ch-react">
+    <div class="ch-num">13</div>
+    <div>
+      <h2>Custom Hooks — นำ Logic กลับมาใช้ซ้ำ</h2>
+      <p>สร้าง Hook ของตัวเองเพื่อแยก Logic ออกจาก UI</p>
+    </div>
+  </div>
+
+  <div class="callout tip">
+    <span class="ci">💡</span>
+    <div>Custom Hook คือฟังก์ชัน JavaScript ปกติที่ชื่อ<strong>ขึ้นต้นด้วย "use"</strong> และสามารถเรียก Hook อื่นๆ ได้ — ทำให้แชร์ Logic ระหว่าง Component ได้โดยไม่ต้อง copy โค้ด</div>
+  </div>
+
+  <div class="card">
+    <h3>🔧 useFetch — Fetch ข้อมูลจาก API</h3>
+    <pre><span class="cm">// hooks/useFetch.js</span>
+<span class="kw">import</span> { useState, useEffect } <span class="kw">from</span> <span class="str">'react'</span>
+
+<span class="kw">export function</span> <span class="fn">useFetch</span>(url) {
+  <span class="kw">const</span> [data, setData] <span class="op">=</span> <span class="fn">useState</span>(<span class="bool">null</span>)
+  <span class="kw">const</span> [loading, setLoading] <span class="op">=</span> <span class="fn">useState</span>(<span class="bool">true</span>)
+  <span class="kw">const</span> [error, setError] <span class="op">=</span> <span class="fn">useState</span>(<span class="bool">null</span>)
+
+  <span class="fn">useEffect</span>(() <span class="arr">=&gt;</span> {
+    <span class="kw">let</span> cancelled <span class="op">=</span> <span class="bool">false</span>
+    <span class="fn">setLoading</span>(<span class="bool">true</span>)
+
+    <span class="fn">fetch</span>(url)
+      .<span class="fn">then</span>(res <span class="arr">=&gt;</span> res.<span class="fn">json</span>())
+      .<span class="fn">then</span>(data <span class="arr">=&gt;</span> { <span class="kw">if</span> (<span class="op">!</span>cancelled) { <span class="fn">setData</span>(data); <span class="fn">setLoading</span>(<span class="bool">false</span>) } })
+      .<span class="fn">catch</span>(err <span class="arr">=&gt;</span> { <span class="kw">if</span> (<span class="op">!</span>cancelled) { <span class="fn">setError</span>(err.message); <span class="fn">setLoading</span>(<span class="bool">false</span>) } })
+
+    <span class="kw">return</span> () <span class="arr">=&gt;</span> { cancelled <span class="op">=</span> <span class="bool">true</span> }
+  }, [url])
+
+  <span class="kw">return</span> { data, loading, error }
+}
+
+<span class="cm">// ใช้งานใน Component — สะอาดมาก!</span>
+<span class="kw">function</span> <span class="fn">UserProfile</span>({ userId }) {
+  <span class="kw">const</span> { data: user, loading, error } <span class="op">=</span> <span class="fn">useFetch</span>(<span class="str">`/api/users/</span><span class="op">${</span>userId<span class="op">}</span><span class="str">`</span>)
+
+  <span class="kw">if</span> (loading) <span class="kw">return</span> <span class="jsx">&lt;p&gt;</span>กำลังโหลด...<span class="jsx">&lt;/p&gt;</span>
+  <span class="kw">if</span> (error) <span class="kw">return</span> <span class="jsx">&lt;p&gt;</span>Error: <span class="op">{</span>error<span class="op">}</span><span class="jsx">&lt;/p&gt;</span>
+  <span class="kw">return</span> <span class="jsx">&lt;h1&gt;</span><span class="op">{</span>user.name<span class="op">}</span><span class="jsx">&lt;/h1&gt;</span>
+}</pre>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>🔧 useLocalStorage</h3>
+      <pre><span class="kw">function</span> <span class="fn">useLocalStorage</span>(key, initial) {
+  <span class="kw">const</span> [value, setValue] <span class="op">=</span> <span class="fn">useState</span>(() <span class="arr">=&gt;</span> {
+    <span class="kw">try</span> {
+      <span class="kw">const</span> saved <span class="op">=</span> localStorage.<span class="fn">getItem</span>(key)
+      <span class="kw">return</span> saved ? <span class="fn">JSON</span>.<span class="fn">parse</span>(saved) : initial
+    } <span class="kw">catch</span> {
+      <span class="kw">return</span> initial
+    }
+  })
+
+  <span class="kw">const</span> <span class="fn">setStored</span> <span class="op">=</span> (newVal) <span class="arr">=&gt;</span> {
+    localStorage.<span class="fn">setItem</span>(key, <span class="fn">JSON</span>.<span class="fn">stringify</span>(newVal))
+    <span class="fn">setValue</span>(newVal)
+  }
+
+  <span class="kw">return</span> [value, setStored]
+}
+
+<span class="cm">// ใช้งาน</span>
+<span class="kw">const</span> [theme, setTheme] <span class="op">=</span> <span class="fn">useLocalStorage</span>(<span class="str">'theme'</span>, <span class="str">'dark'</span>)</pre>
+    </div>
+
+    <div class="card">
+      <h3>🔧 useDebounce</h3>
+      <pre><span class="kw">function</span> <span class="fn">useDebounce</span>(value, delay <span class="op">=</span> <span class="num">500</span>) {
+  <span class="kw">const</span> [debounced, setDebounced] <span class="op">=</span> <span class="fn">useState</span>(value)
+
+  <span class="fn">useEffect</span>(() <span class="arr">=&gt;</span> {
+    <span class="kw">const</span> timer <span class="op">=</span> <span class="fn">setTimeout</span>(() <span class="arr">=&gt;</span> {
+      <span class="fn">setDebounced</span>(value)
+    }, delay)
+
+    <span class="kw">return</span> () <span class="arr">=&gt;</span> <span class="fn">clearTimeout</span>(timer)
+  }, [value, delay])
+
+  <span class="kw">return</span> debounced
+}
+
+<span class="cm">// ใช้งาน — ค้นหาหลังหยุดพิมพ์ 500ms</span>
+<span class="kw">function</span> <span class="fn">Search</span>() {
+  <span class="kw">const</span> [query, setQuery] <span class="op">=</span> <span class="fn">useState</span>(<span class="str">''</span>)
+  <span class="kw">const</span> debounced <span class="op">=</span> <span class="fn">useDebounce</span>(query, <span class="num">500</span>)
+
+  <span class="fn">useEffect</span>(() <span class="arr">=&gt;</span> {
+    <span class="kw">if</span> (debounced) <span class="fn">fetchSearch</span>(debounced)
+  }, [debounced])  <span class="cm">// เรียก API เฉพาะค่า debounced</span>
+}</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SECTION 14: Patterns ===================== -->
+<section id="patterns">
+  <div class="chapter-header ch-purple">
+    <div class="ch-num">14</div>
+    <div>
+      <h2>Patterns &amp; Best Practices</h2>
+      <p>รูปแบบที่ดีในการเขียน React และ Conditional Rendering</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🎨 Conditional Rendering รูปแบบต่างๆ</h3>
+    <pre><span class="kw">function</span> <span class="fn">Dashboard</span>({ isLoggedIn, role, count, error }) {
+  <span class="cm">// 1. Early Return</span>
+  <span class="kw">if</span> (<span class="op">!</span>isLoggedIn) <span class="kw">return</span> <span class="jsx">&lt;Login /&gt;</span>
+
+  <span class="kw">return</span> (
+    <span class="jsx">&lt;div&gt;</span>
+      <span class="cm">{/* 2. && operator */}</span>
+      <span class="op">{</span>error <span class="op">&amp;&amp;</span> <span class="jsx">&lt;ErrorBanner</span> <span class="attr">message</span>=<span class="op">{</span>error<span class="op">}</span> <span class="jsx">/&gt;</span><span class="op">}</span>
+
+      <span class="cm">{/* 3. Ternary */}</span>
+      <span class="op">{</span>role <span class="op">===</span> <span class="str">'admin'</span> ? <span class="jsx">&lt;AdminPanel /&gt;</span> : <span class="jsx">&lt;UserPanel /&gt;</span><span class="op">}</span>
+
+      <span class="cm">{/* 4. Nullish Coalescing */}</span>
+      <span class="op">{</span>count <span class="op">??</span> <span class="jsx">&lt;p&gt;</span>ไม่มีข้อมูล<span class="jsx">&lt;/p&gt;</span><span class="op">}</span>
+
+      <span class="cm">{/* 5. Switch ใน function */}</span>
+      <span class="op">{</span><span class="fn">renderStatus</span>(role)<span class="op">}</span>
+    <span class="jsx">&lt;/div&gt;</span>
+  )
+}
+
+<span class="cm">// Switch แบบแยกฟังก์ชัน — ชัดเจนกว่า nested ternary</span>
+<span class="kw">function</span> <span class="fn">renderStatus</span>(role) {
+  <span class="kw">switch</span> (role) {
+    <span class="kw">case</span> <span class="str">'admin'</span>: <span class="kw">return</span> <span class="jsx">&lt;span&gt;</span>👑 Admin<span class="jsx">&lt;/span&gt;</span>
+    <span class="kw">case</span> <span class="str">'mod'</span>: <span class="kw">return</span> <span class="jsx">&lt;span&gt;</span>🛡️ Moderator<span class="jsx">&lt;/span&gt;</span>
+    <span class="kw">default</span>: <span class="kw">return</span> <span class="jsx">&lt;span&gt;</span>👤 User<span class="jsx">&lt;/span&gt;</span>
+  }
+}</pre>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>📁 โครงสร้างไฟล์ที่ดี</h3>
+      <pre>src/
+├── components/
+│   ├── ui/           <span class="cm"># Reusable UI</span>
+│   │   ├── Button.jsx
+│   │   ├── Modal.jsx
+│   │   └── Input.jsx
+│   └── features/     <span class="cm"># Feature Components</span>
+│       ├── auth/
+│       └── dashboard/
+├── hooks/            <span class="cm"># Custom Hooks</span>
+│   ├── useFetch.js
+│   └── useAuth.js
+├── context/          <span class="cm"># Context Providers</span>
+├── utils/            <span class="cm"># Helper functions</span>
+├── constants/        <span class="cm"># Constants</span>
+└── pages/            <span class="cm"># Page Components</span></pre>
+    </div>
+
+    <div class="card">
+      <h3>✅ Best Practices สรุป</h3>
+      <ul>
+        <li>ใช้ <strong style="color:#61dafb">Functional Components</strong> เสมอ (ไม่ใช้ Class)</li>
+        <li>ชื่อ Component <strong style="color:#f59e0b">ขึ้นต้นด้วยตัวพิมพ์ใหญ่</strong></li>
+        <li>1 Component ต่อ 1 ไฟล์ (Single Responsibility)</li>
+        <li>State ไว้ต่ำที่สุดเท่าที่จำเป็น (Lift only when needed)</li>
+        <li>ใช้ <strong style="color:#10b981">Functional Update</strong> เมื่อ state ขึ้นกับค่าเก่า</li>
+        <li>เสมอ <strong style="color:#ec4899">Cleanup</strong> ใน useEffect</li>
+        <li>ใช้ <strong style="color:#8b5cf6">key</strong> ที่ unique ใน list</li>
+        <li>ไม่แก้ไข state โดยตรง (Immutability)</li>
+        <li>แยก Logic ออกเป็น <strong style="color:#61dafb">Custom Hooks</strong></li>
+        <li>ใช้ useMemo/useCallback เฉพาะเมื่อจำเป็น</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🗺️ React Learning Path</h3>
+    <div class="flow" style="flex-wrap:wrap;justify-content:flex-start">
+      <span class="fb fb-c">JSX</span><span class="fa">→</span>
+      <span class="fb fb-c">Components</span><span class="fa">→</span>
+      <span class="fb fb-c">Props</span><span class="fa">→</span>
+      <span class="fb fb-c">useState</span><span class="fa">→</span>
+      <span class="fb fb-b">useEffect</span><span class="fa">→</span>
+      <span class="fb fb-b">Events</span><span class="fa">→</span>
+      <span class="fb fb-b">Forms</span><span class="fa">→</span>
+      <span class="fb fb-p">useContext</span><span class="fa">→</span>
+      <span class="fb fb-p">useRef</span><span class="fa">→</span>
+      <span class="fb fb-p">useMemo</span><span class="fa">→</span>
+      <span class="fb fb-g">Custom Hooks</span><span class="fa">→</span>
+      <span class="fb fb-g">React Router</span><span class="fa">→</span>
+      <span class="fb fb-o">State Management</span>
+    </div>
+    <div class="callout info" style="margin-top:12px">
+      <span class="ci">ℹ️</span>
+      <div>หลังจาก React พื้นฐาน แนะนำเรียน <strong>React Router</strong> (Routing), <strong>Zustand หรือ Redux Toolkit</strong> (State Management), และ <strong>React Query / TanStack Query</strong> (Server State)</div>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<footer>
+  <strong>React Teaching Material</strong> — FullStack 101 Learning Hub<br>
+  <span style="margin-top:6px;display:block">⚛️ React 18+ | Hooks | Function Components</span>
+</footer>
+
+<script>
+// Active nav highlight on scroll
+const sections = document.querySelectorAll('section[id]')
+const navLinks = document.querySelectorAll('.nav-sticky a[href^="#"]')
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(a => a.classList.remove('active'))
+      const active = document.querySelector(`.nav-sticky a[href="#${entry.target.id}"]`)
+      if (active) active.classList.add('active')
+    }
+  })
+}, { threshold: 0.3 })
+
+sections.forEach(s => observer.observe(s))
+</script>
+</body>
+</html>

@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>สื่อการสอน Docker</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --docker:#2496ed;--blue:#3b82f6;--green:#10b981;--orange:#f59e0b;
+  --red:#ef4444;--purple:#8b5cf6;--cyan:#06b6d4;--pink:#ec4899;
+  --dark:#0f172a;--card:#1c2128;--border:#30363d;--code:#0d1117;
+  --radius:12px;--shadow:0 4px 20px rgba(0,0,0,.3);
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#0d1117;color:#c9d1d9;line-height:1.75}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#0d1117 0%,#071828 60%,#001a2e 100%);border-bottom:2px solid #2496ed33;text-align:center;padding:68px 24px 52px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% -20%,rgba(36,150,237,.14),transparent 65%)}
+.hero h1{font-size:clamp(2rem,5vw,3.6rem);font-weight:900;color:#fff;margin-bottom:12px;position:relative;letter-spacing:-1px}
+.hero h1 .dk{background:#2496ed;color:#fff;padding:2px 16px;border-radius:8px;display:inline-block}
+.hero h1 .sub{color:#2496ed}
+.hero p{font-size:1.1rem;color:#8b949e;max-width:640px;margin:0 auto;position:relative}
+.badge-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:20px;position:relative}
+.badge{background:rgba(36,150,237,.1);border:1px solid rgba(36,150,237,.3);color:#60b4f5;padding:4px 14px;border-radius:999px;font-size:.8rem;font-weight:700}
+
+/* NAV */
+.nav-sticky{position:sticky;top:0;z-index:100;background:#161b22;border-bottom:1px solid #30363d;padding:0 10px;overflow-x:auto;white-space:nowrap}
+.nav-sticky a{display:inline-block;padding:11px 12px;font-size:.79rem;font-weight:600;color:#8b949e;text-decoration:none;border-bottom:2px solid transparent;transition:.2s}
+.nav-sticky a:hover,.nav-sticky a.active{color:#2496ed;border-color:#2496ed}
+
+/* LAYOUT */
+.container{max-width:1150px;margin:0 auto;padding:40px 20px}
+section{margin-bottom:62px}
+
+/* CHAPTER HEADER */
+.chapter-header{border-radius:var(--radius);padding:22px 28px;margin-bottom:22px;display:flex;align-items:center;gap:18px;border:1px solid #30363d;position:relative;overflow:hidden}
+.chapter-header::before{content:'';position:absolute;top:0;right:0;width:200px;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.03));pointer-events:none}
+.ch-num{font-size:3rem;font-weight:900;opacity:.18;line-height:1;min-width:60px;color:#fff;font-family:monospace}
+.chapter-header h2{font-size:1.38rem;font-weight:800;color:#fff;margin:0}
+.chapter-header p{font-size:.87rem;color:#8b949e;margin-top:5px}
+.ch-docker{background:linear-gradient(135deg,#001828,#002d4a);border-color:#2496ed33}
+.ch-green{background:linear-gradient(135deg,#052e16,#064e3b);border-color:#10b98133}
+.ch-blue{background:linear-gradient(135deg,#0c1445,#1e3a8a);border-color:#3b82f633}
+.ch-purple{background:linear-gradient(135deg,#2e1065,#4c1d95);border-color:#8b5cf633}
+.ch-orange{background:linear-gradient(135deg,#431407,#7c2d12);border-color:#f59e0b33}
+.ch-cyan{background:linear-gradient(135deg,#0a2540,#155e75);border-color:#06b6d433}
+.ch-red{background:linear-gradient(135deg,#450a0a,#7f1d1d);border-color:#ef444433}
+.ch-pink{background:linear-gradient(135deg,#2d0a1e,#831843);border-color:#ec489933}
+.ch-teal{background:linear-gradient(135deg,#042f2e,#134e4a);border-color:#0d948433}
+.ch-slate{background:linear-gradient(135deg,#0f172a,#1e293b);border-color:#64748b33}
+.ch-yellow{background:linear-gradient(135deg,#1c1400,#3d2e00);border-color:#eab30833}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px 24px;margin-bottom:18px;box-shadow:var(--shadow)}
+.card h3{font-size:1.05rem;font-weight:700;color:#e6edf3;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.card p,.card li{font-size:.92rem;color:#8b949e;line-height:1.7}
+.card ul,.card ol{padding-left:18px;display:flex;flex-direction:column;gap:5px}
+
+/* CODE */
+pre{background:var(--code);color:#c9d1d9;border-radius:8px;padding:18px 20px;overflow-x:auto;font-size:.84rem;line-height:1.75;margin:10px 0;font-family:'Cascadia Code','Fira Code','Consolas',monospace;border:1px solid #21262d}
+.inline-code,.ic{background:#21262d;color:#79c0ff;padding:2px 7px;border-radius:5px;font-family:'Cascadia Code','Fira Code',monospace;font-size:.85em}
+
+/* SYNTAX COLORS */
+.kw{color:#ff7b72}
+.str{color:#a5d6ff}
+.fn{color:#d2a8ff}
+.cm{color:#484f58;font-style:italic}
+.num{color:#79c0ff}
+.bool{color:#ff7b72}
+.op{color:#ff7b72}
+.type{color:#ffa657}
+.prop{color:#79c0ff}
+.flag{color:#ffa657}
+.val{color:#a5d6ff}
+.out{color:#7ee787}
+.err{color:#ef4444}
+.cmd{color:#2496ed}
+.hl{background:rgba(36,150,237,.1);border-left:3px solid #2496ed;padding-left:8px;display:block;margin:-1px 0}
+.hl2{background:rgba(16,185,129,.08);border-left:3px solid #10b981;padding-left:8px;display:block;margin:-1px 0}
+
+/* GRIDS */
+.grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
+.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+
+/* CALLOUT */
+.callout{border-radius:8px;padding:13px 17px;margin:12px 0;display:flex;gap:10px;font-size:.9rem;line-height:1.6}
+.callout.info{background:rgba(59,130,246,.08);border-left:3px solid #3b82f6;color:#93c5fd}
+.callout.tip{background:rgba(16,185,129,.08);border-left:3px solid #10b981;color:#6ee7b7}
+.callout.warn{background:rgba(247,223,30,.08);border-left:3px solid #f7df1e;color:#fef08a}
+.callout.danger{background:rgba(239,68,68,.08);border-left:3px solid #ef4444;color:#fca5a5}
+.callout.docker{background:rgba(36,150,237,.08);border-left:3px solid #2496ed;color:#93c5fd}
+.callout .ci{font-size:1.05rem;flex-shrink:0;margin-top:1px}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:12px 0}
+th{background:#1c2128;padding:9px 13px;text-align:left;font-weight:700;color:#8b949e;border:1px solid #30363d}
+td{padding:9px 13px;border:1px solid #30363d;vertical-align:top;color:#c9d1d9}
+tr:nth-child(even) td{background:#161b22}
+td code{color:#79c0ff;font-family:'Cascadia Code','Fira Code',monospace;font-size:.85em}
+
+/* COMPARE */
+.compare{display:grid;grid-template-columns:1fr 1fr;border:1px solid #30363d;border-radius:var(--radius);overflow:hidden;margin:12px 0}
+.compare-col:first-child{border-right:1px solid #30363d}
+.compare-head{padding:8px 16px;font-size:.82rem;font-weight:700;text-align:center}
+.compare-head.bad{background:rgba(239,68,68,.15);color:#fca5a5}
+.compare-head.good{background:rgba(16,185,129,.15);color:#6ee7b7}
+.compare-head.old{background:rgba(100,116,139,.15);color:#94a3b8}
+.compare-head.new{background:rgba(36,150,237,.15);color:#60b4f5}
+.compare-col pre{margin:0;border-radius:0;border:none;border-top:1px solid #30363d;font-size:.82rem}
+
+/* FLOW */
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:6px;padding:14px 16px;background:#0d1117;border:1px solid #30363d;border-radius:8px;margin:10px 0;font-family:'Cascadia Code',monospace;font-size:.85rem}
+.fb{padding:7px 14px;border-radius:6px;font-weight:700;text-align:center}
+.fb-d{background:#003356;color:#60b4f5;border:1px solid #2496ed44}
+.fb-g{background:#065f46;color:#6ee7b7}
+.fb-b{background:#1e3a8a;color:#93c5fd}
+.fb-p{background:#4c1d95;color:#ddd6fe}
+.fb-r{background:#7f1d1d;color:#fca5a5}
+.fb-o{background:#78350f;color:#fed7aa}
+.fb-c{background:#155e75;color:#67e8f9}
+.fa{color:#2496ed;font-size:1.1rem;padding:0 4px}
+
+/* DIAGRAM BOX */
+.diag{border:1px solid #30363d;border-radius:var(--radius);overflow:hidden;margin:12px 0}
+.diag-title{background:#161b22;padding:8px 16px;font-size:.82rem;font-weight:700;color:#8b949e;border-bottom:1px solid #30363d}
+.diag-body{padding:16px;background:#0d1117}
+.layer{border:1px solid;border-radius:8px;padding:10px 14px;margin:6px 0;font-size:.85rem;font-weight:600;text-align:center}
+.layer-app{border-color:#2496ed44;background:rgba(36,150,237,.08);color:#60b4f5}
+.layer-docker{border-color:#10b98144;background:rgba(16,185,129,.08);color:#6ee7b7}
+.layer-os{border-color:#8b5cf644;background:rgba(139,92,246,.08);color:#c4b5fd}
+.layer-hw{border-color:#64748b44;background:rgba(100,116,139,.08);color:#94a3b8}
+.vm-box{border:2px solid #ef444433;border-radius:8px;padding:10px;margin:4px}
+.vm-title{text-align:center;font-size:.75rem;font-weight:700;color:#fca5a5;margin-bottom:6px}
+
+/* BADGE */
+.tag{display:inline-block;padding:1px 8px;border-radius:4px;font-size:.75rem;font-weight:700;font-family:monospace;margin:2px}
+.tag-d{background:rgba(36,150,237,.15);color:#60b4f5;border:1px solid rgba(36,150,237,.3)}
+.tag-g{background:rgba(16,185,129,.15);color:#6ee7b7;border:1px solid rgba(16,185,129,.3)}
+.tag-o{background:rgba(245,158,11,.15);color:#fcd34d;border:1px solid rgba(245,158,11,.3)}
+.tag-r{background:rgba(239,68,68,.15);color:#fca5a5;border:1px solid rgba(239,68,68,.3)}
+
+/* FOOTER */
+footer{background:#0d1117;border-top:1px solid #21262d;color:#484f58;text-align:center;padding:32px;font-size:.85rem}
+footer strong{color:#8b949e}
+
+@media(max-width:600px){
+  .grid-2,.grid-3{grid-template-columns:1fr}
+  .compare{grid-template-columns:1fr}
+  .compare-col:first-child{border-right:none;border-bottom:1px solid #30363d}
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <h1><span class="dk">🐳 Docker</span> &nbsp;<span class="sub">Containerization</span></h1>
+  <p>สื่อการสอน Docker ฉบับสมบูรณ์ — ตั้งแต่แนวคิด Container ไปจนถึง Docker Compose และ Best Practices</p>
+  <div class="badge-row">
+    <span class="badge">Container</span>
+    <span class="badge">Image</span>
+    <span class="badge">Dockerfile</span>
+    <span class="badge">Volume</span>
+    <span class="badge">Network</span>
+    <span class="badge">Docker Compose</span>
+    <span class="badge">Registry</span>
+    <span class="badge">Multi-stage Build</span>
+    <span class="badge">Environment Variables</span>
+    <span class="badge">Health Check</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav-sticky" id="main-nav">
+  <a href="index.html">🏠 หน้าหลัก</a>
+  <a href="#intro">Docker คืออะไร</a>
+  <a href="#install">ติดตั้ง</a>
+  <a href="#image">Image</a>
+  <a href="#container">Container</a>
+  <a href="#dockerfile">Dockerfile</a>
+  <a href="#volume">Volume</a>
+  <a href="#network">Network</a>
+  <a href="#compose">Docker Compose</a>
+  <a href="#registry">Registry</a>
+  <a href="#multistage">Multi-stage</a>
+  <a href="#envvars">Env Variables</a>
+  <a href="#bestpractice">Best Practices</a>
+</nav>
+
+<div class="container">
+
+<!-- ===================== SECTION 1: Docker คืออะไร ===================== -->
+<section id="intro">
+  <div class="chapter-header ch-docker">
+    <div class="ch-num">01</div>
+    <div>
+      <h2>Docker คืออะไร?</h2>
+      <p>ทำความเข้าใจ Container, Image และความแตกต่างจาก Virtual Machine</p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>🐳 Docker คืออะไร?</h3>
+      <p>Docker คือแพลตฟอร์มสำหรับพัฒนา, ส่ง, และรันแอปพลิเคชันใน <strong style="color:#2496ed">Container</strong> ซึ่งเป็นสภาพแวดล้อมที่แยกอิสระ (isolated environment)</p>
+      <ul style="margin-top:10px">
+        <li><strong style="color:#2496ed">Portable</strong> — รันได้ทุกที่ที่มี Docker ติดตั้ง</li>
+        <li><strong style="color:#10b981">Consistent</strong> — "works on my machine" หมดปัญหา!</li>
+        <li><strong style="color:#f59e0b">Lightweight</strong> — เบากว่า VM มาก ใช้ทรัพยากรน้อยกว่า</li>
+        <li><strong style="color:#8b5cf6">Fast</strong> — เริ่มต้นใน milliseconds ไม่ใช่ minutes</li>
+        <li><strong style="color:#ec4899">Scalable</strong> — ขยายได้ง่ายด้วย Docker Compose/K8s</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>🧱 แนวคิดหลัก 3 อย่าง</h3>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px">
+        <div style="border:1px solid #2496ed44;border-radius:8px;padding:12px;background:rgba(36,150,237,.05)">
+          <div style="font-weight:700;color:#60b4f5;margin-bottom:4px">🖼️ Image</div>
+          <div style="font-size:.88rem;color:#8b949e">แม่แบบ (blueprint) ของ Container — read-only, เปรียบได้กับ "คลาส" ใน OOP</div>
+        </div>
+        <div style="border:1px solid #10b98144;border-radius:8px;padding:12px;background:rgba(16,185,129,.05)">
+          <div style="font-weight:700;color:#34d399;margin-bottom:4px">📦 Container</div>
+          <div style="font-size:.88rem;color:#8b949e">Instance ที่รันได้จาก Image — เปรียบได้กับ "object" ที่สร้างจากคลาส</div>
+        </div>
+        <div style="border:1px solid #8b5cf644;border-radius:8px;padding:12px;background:rgba(139,92,246,.05)">
+          <div style="font-weight:700;color:#c4b5fd;margin-bottom:4px">📋 Dockerfile</div>
+          <div style="font-size:.88rem;color:#8b949e">สคริปต์คำสั่งสำหรับสร้าง Image — ทีละขั้นตอน</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🆚 Docker Container vs Virtual Machine</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px">
+      <div class="diag">
+        <div class="diag-title" style="color:#fca5a5">❌ Virtual Machine (หนัก)</div>
+        <div class="diag-body" style="display:flex;flex-direction:column;gap:6px">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+            <div class="vm-box"><div class="vm-title">VM 1</div><div class="layer layer-app" style="font-size:.75rem">App A</div><div class="layer layer-os" style="font-size:.75rem">OS (2-4 GB)</div></div>
+            <div class="vm-box"><div class="vm-title">VM 2</div><div class="layer layer-app" style="font-size:.75rem">App B</div><div class="layer layer-os" style="font-size:.75rem">OS (2-4 GB)</div></div>
+          </div>
+          <div class="layer layer-docker" style="font-size:.78rem">Hypervisor (VMware/VirtualBox)</div>
+          <div class="layer layer-os" style="font-size:.78rem">Host OS</div>
+          <div class="layer layer-hw" style="font-size:.78rem">Hardware</div>
+        </div>
+      </div>
+      <div class="diag">
+        <div class="diag-title" style="color:#6ee7b7">✅ Docker Container (เบา)</div>
+        <div class="diag-body" style="display:flex;flex-direction:column;gap:6px">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+            <div style="border:1px solid #2496ed33;border-radius:6px;padding:8px;background:rgba(36,150,237,.05)">
+              <div style="font-size:.75rem;text-align:center;color:#60b4f5;margin-bottom:4px">Container A</div>
+              <div class="layer layer-app" style="font-size:.75rem">App A</div>
+            </div>
+            <div style="border:1px solid #2496ed33;border-radius:6px;padding:8px;background:rgba(36,150,237,.05)">
+              <div style="font-size:.75rem;text-align:center;color:#60b4f5;margin-bottom:4px">Container B</div>
+              <div class="layer layer-app" style="font-size:.75rem">App B</div>
+            </div>
+          </div>
+          <div class="layer layer-docker" style="font-size:.78rem">Docker Engine</div>
+          <div class="layer layer-os" style="font-size:.78rem">Host OS (ใช้ร่วมกัน)</div>
+          <div class="layer layer-hw" style="font-size:.78rem">Hardware</div>
+        </div>
+      </div>
+    </div>
+    <table style="margin-top:14px">
+      <thead><tr><th>เปรียบเทียบ</th><th>Virtual Machine</th><th>Docker Container</th></tr></thead>
+      <tbody>
+        <tr><td>ขนาด</td><td>หลาย GB (มี OS เต็ม)</td><td>MB - ไม่กี่ร้อย MB</td></tr>
+        <tr><td>เวลาเริ่ม</td><td>นาที</td><td>วินาที / milliseconds</td></tr>
+        <tr><td>Isolation</td><td>แยกขาดสมบูรณ์</td><td>Process-level isolation</td></tr>
+        <tr><td>Performance</td><td>มี overhead สูง</td><td>เกือบ native performance</td></tr>
+        <tr><td>OS</td><td>แต่ละ VM มี OS ของตัวเอง</td><td>ใช้ Host OS kernel ร่วมกัน</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>🔄 Docker Architecture</h3>
+    <div class="flow" style="flex-direction:column;align-items:flex-start;gap:8px">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <span class="fb fb-b">Docker CLI<br><small>คำสั่งที่พิมพ์</small></span>
+        <span class="fa">→</span>
+        <span class="fb fb-d">Docker Daemon<br><small>(dockerd)</small></span>
+        <span class="fa">→</span>
+        <span class="fb fb-g">Container<br><small>ที่รันอยู่</small></span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <span class="fb fb-d">Docker Daemon</span>
+        <span class="fa">↔</span>
+        <span class="fb fb-p">Registry<br><small>Docker Hub / ECR</small></span>
+        <span style="color:#8b949e;font-size:.82rem">← pull/push images</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SECTION 2: ติดตั้ง ===================== -->
+<section id="install">
+  <div class="chapter-header ch-green">
+    <div class="ch-num">02</div>
+    <div>
+      <h2>ติดตั้งและตั้งค่า Docker</h2>
+      <p>ติดตั้ง Docker Desktop และทดสอบว่าทำงานได้</p>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <div class="card" style="border-color:#2496ed33">
+      <h3>🍎 macOS</h3>
+      <pre style="font-size:.8rem"><span class="cm"># ติดตั้งด้วย Homebrew</span>
+brew install --cask docker
+
+<span class="cm"># หรือดาวน์โหลดจาก</span>
+<span class="cm"># docs.docker.com/desktop/mac/</span></pre>
+    </div>
+    <div class="card" style="border-color:#2496ed33">
+      <h3>🪟 Windows</h3>
+      <pre style="font-size:.8rem"><span class="cm"># ดาวน์โหลด Docker Desktop</span>
+<span class="cm"># docs.docker.com/desktop/windows/</span>
+
+<span class="cm"># ต้องเปิด WSL2 ก่อน</span>
+wsl --install</pre>
+    </div>
+    <div class="card" style="border-color:#2496ed33">
+      <h3>🐧 Linux (Ubuntu)</h3>
+      <pre style="font-size:.8rem"><span class="cm"># ติดตั้ง Docker Engine</span>
+curl -fsSL https://get.docker.com | sh
+
+<span class="cm"># เพิ่ม user เข้า group</span>
+sudo usermod -aG docker $USER</pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>✅ ทดสอบการติดตั้ง</h3>
+    <pre><span class="cm"># ตรวจสอบ version</span>
+docker --version
+<span class="out">Docker version 27.x.x, build xxxxxxx</span>
+
+<span class="cm"># ทดสอบรัน Container แรก</span>
+docker run hello-world
+<span class="out">Hello from Docker!
+This message shows that your installation appears to be working correctly.</span>
+
+<span class="cm"># ดู Docker info ทั้งหมด</span>
+docker info
+
+<span class="cm"># ดู Container ที่รันอยู่</span>
+docker ps
+
+<span class="cm"># ดู Container ทั้งหมด (รวมหยุดแล้ว)</span>
+docker ps -a</pre>
+  </div>
+</section>
+
+<!-- ===================== SECTION 3: Image ===================== -->
+<section id="image">
+  <div class="chapter-header ch-blue">
+    <div class="ch-num">03</div>
+    <div>
+      <h2>Docker Image — แม่แบบของ Container</h2>
+      <p>ทำความเข้าใจ Image, Layers และคำสั่งจัดการ Image</p>
+    </div>
+  </div>
+
+  <div class="callout docker">
+    <span class="ci">🐳</span>
+    <div>Image ประกอบด้วย <strong>Layers</strong> ที่ซ้อนกัน แต่ละ Instruction ใน Dockerfile สร้าง Layer ใหม่ — Layer ที่เหมือนกันจะถูก <strong>Cache</strong> และแชร์กันระหว่าง Image ต่างๆ ทำให้ประหยัด disk space</div>
+  </div>
+
+  <div class="card">
+    <h3>📦 Image Layers</h3>
+    <div style="display:flex;flex-direction:column;gap:4px;margin:12px 0">
+      <div class="layer layer-app">Layer 4: COPY app files <span style="color:#484f58;font-size:.8rem;margin-left:8px">← เปลี่ยนบ่อย</span></div>
+      <div class="layer" style="border-color:#f59e0b44;background:rgba(245,158,11,.05);color:#fcd34d">Layer 3: RUN npm install</div>
+      <div class="layer" style="border-color:#8b5cf644;background:rgba(139,92,246,.05);color:#c4b5fd">Layer 2: COPY package.json</div>
+      <div class="layer layer-docker">Layer 1: FROM node:20-alpine <span style="color:#484f58;font-size:.8rem;margin-left:8px">← Base image, เปลี่ยนน้อย</span></div>
+    </div>
+    <p style="font-size:.85rem;color:#8b949e">แต่ละ Layer จะถูก Cache ไว้ ถ้า Layer ล่างไม่เปลี่ยน Layer บนจะใช้ Cache — ทำให้ build เร็วขึ้นมาก</p>
+  </div>
+
+  <div class="card">
+    <h3>🛠️ คำสั่งจัดการ Image</h3>
+    <pre><span class="cm"># ดาวน์โหลด Image จาก Docker Hub</span>
+docker pull nginx
+docker pull node:20-alpine
+docker pull postgres:16
+
+<span class="cm"># ดู Image ทั้งหมดที่มี</span>
+docker images
+docker image ls
+
+<span class="cm"># ดูรายละเอียด Image</span>
+docker inspect nginx
+docker image inspect nginx
+
+<span class="cm"># ดู Layer ของ Image</span>
+docker history nginx
+
+<span class="cm"># ลบ Image</span>
+docker rmi nginx
+docker image rm nginx
+
+<span class="cm"># ลบ Image ที่ไม่ได้ใช้ทั้งหมด (dangling)</span>
+docker image prune
+
+<span class="cm"># ลบ Image ที่ไม่ได้ใช้ทั้งหมด (รวม unreferenced)</span>
+docker image prune -a
+
+<span class="cm"># Tag Image</span>
+docker tag myapp:latest myapp:v1.0.0
+docker tag myapp:latest registry.example.com/myapp:latest</pre>
+  </div>
+
+  <div class="card">
+    <h3>🔍 Image Naming Convention</h3>
+    <pre><span class="cm"># รูปแบบชื่อ Image</span>
+[registry/][username/]image-name[:tag]
+
+<span class="cm"># ตัวอย่าง</span>
+nginx                          <span class="cm"># Official image, tag = latest</span>
+nginx:1.25                     <span class="cm"># Official image, tag = 1.25</span>
+node:20-alpine                 <span class="cm"># Official image, alpine variant</span>
+username/myapp:v1.0            <span class="cm"># User image บน Docker Hub</span>
+ghcr.io/org/app:sha-abc123     <span class="cm"># GitHub Container Registry</span>
+localhost:5000/myapp:dev       <span class="cm"># Local registry</span></pre>
+    <div class="callout tip">
+      <span class="ci">💡</span>
+      <div>แนะนำใช้ <strong>tag เฉพาะเจาะจง</strong> เสมอ เช่น <code class="ic">node:20-alpine</code> แทน <code class="ic">node:latest</code> เพื่อให้ build reproducible และปลอดภัยกว่า</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SECTION 4: Container ===================== -->
+<section id="container">
+  <div class="chapter-header ch-cyan">
+    <div class="ch-num">04</div>
+    <div>
+      <h2>Docker Container — รัน Application</h2>
+      <p>คำสั่ง docker run และการจัดการ Container</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🚀 docker run — คำสั่งสำคัญที่สุด</h3>
+    <pre><span class="cm"># รูปแบบพื้นฐาน</span>
+docker run [OPTIONS] IMAGE [COMMAND]
+
+<span class="cm"># ตัวอย่างพื้นฐาน</span>
+docker run nginx
+
+<span class="cm"># -d : รันเบื้องหลัง (detached mode)</span>
+docker run <span class="flag">-d</span> nginx
+
+<span class="cm"># -p : map port [host]:[container]</span>
+docker run <span class="flag">-d</span> <span class="flag">-p</span> <span class="val">8080:80</span> nginx
+
+<span class="cm"># --name : ตั้งชื่อ Container</span>
+docker run <span class="flag">-d</span> <span class="flag">-p</span> <span class="val">8080:80</span> <span class="flag">--name</span> <span class="val">my-nginx</span> nginx
+
+<span class="cm"># -e : ส่ง Environment Variable</span>
+docker run <span class="flag">-d</span> <span class="flag">-e</span> <span class="val">MYSQL_ROOT_PASSWORD=secret</span> mysql:8
+
+<span class="cm"># -v : Mount Volume [host-path]:[container-path]</span>
+docker run <span class="flag">-d</span> <span class="flag">-v</span> <span class="val">./data:/var/lib/mysql</span> mysql:8
+
+<span class="cm"># --rm : ลบ Container อัตโนมัติเมื่อหยุด</span>
+docker run <span class="flag">--rm</span> ubuntu echo "Hello"
+
+<span class="cm"># -it : Interactive + TTY (เข้า shell ได้)</span>
+docker run <span class="flag">-it</span> ubuntu bash
+
+<span class="cm"># --network : เชื่อม Network</span>
+docker run <span class="flag">--network</span> <span class="val">my-network</span> myapp
+
+<span class="cm"># รวมหลาย flag</span>
+docker run <span class="flag">-d</span> <span class="flag">--name</span> <span class="val">webserver</span> <span class="flag">-p</span> <span class="val">8080:80</span> <span class="flag">-v</span> <span class="val">./html:/usr/share/nginx/html</span> nginx</pre>
+  </div>
+
+  <div class="card">
+    <h3>🛠️ คำสั่งจัดการ Container</h3>
+    <pre><span class="cm"># ดู Container ที่รันอยู่</span>
+docker ps
+docker ps <span class="flag">--format</span> <span class="str">"table {{.Names}}\t{{.Status}}\t{{.Ports}}"</span>
+
+<span class="cm"># ดู Container ทั้งหมด (รวมที่หยุดแล้ว)</span>
+docker ps <span class="flag">-a</span>
+
+<span class="cm"># หยุด Container</span>
+docker stop my-nginx
+
+<span class="cm"># เริ่ม Container ที่หยุด</span>
+docker start my-nginx
+
+<span class="cm"># Restart Container</span>
+docker restart my-nginx
+
+<span class="cm"># ลบ Container (ต้องหยุดก่อน)</span>
+docker rm my-nginx
+
+<span class="cm"># หยุดและลบพร้อมกัน</span>
+docker rm <span class="flag">-f</span> my-nginx
+
+<span class="cm"># ดู Log ของ Container</span>
+docker logs my-nginx
+docker logs <span class="flag">-f</span> my-nginx        <span class="cm"># Follow (realtime)</span>
+docker logs <span class="flag">--tail</span> <span class="val">50</span> my-nginx  <span class="cm"># แสดง 50 บรรทัดล่าสุด</span>
+
+<span class="cm"># เข้าไปใน Container ที่รันอยู่</span>
+docker exec <span class="flag">-it</span> my-nginx bash
+docker exec <span class="flag">-it</span> my-nginx sh    <span class="cm"># สำหรับ Alpine (ไม่มี bash)</span>
+
+<span class="cm"># รันคำสั่งใน Container</span>
+docker exec my-nginx nginx <span class="flag">-t</span>   <span class="cm"># ทดสอบ config nginx</span>
+
+<span class="cm"># ดูสถิติการใช้ทรัพยากร</span>
+docker stats
+docker stats my-nginx
+
+<span class="cm"># Copy ไฟล์ระหว่าง host กับ container</span>
+docker cp my-nginx:/etc/nginx/nginx.conf ./nginx.conf
+docker cp ./nginx.conf my-nginx:/etc/nginx/nginx.conf
+
+<span class="cm"># ลบ Container ที่หยุดทั้งหมด</span>
+docker container prune</pre>
+  </div>
+
+  <div class="card">
+    <h3>📊 Lifecycle ของ Container</h3>
+    <div class="flow" style="justify-content:center;flex-wrap:wrap">
+      <span class="fb fb-d">Created<br><small>docker create</small></span>
+      <span class="fa">→</span>
+      <span class="fb fb-g">Running<br><small>docker start/run</small></span>
+      <span class="fa">→</span>
+      <span class="fb fb-o">Paused<br><small>docker pause</small></span>
+      <span class="fa">→</span>
+      <span class="fb fb-g">Running<br><small>docker unpause</small></span>
+      <br style="width:100%">
+      <span class="fb fb-g">Running</span>
+      <span class="fa">→</span>
+      <span class="fb fb-r">Stopped<br><small>docker stop</small></span>
+      <span class="fa">→</span>
+      <span class="fb fb-b">Removed<br><small>docker rm</small></span>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SECTION 5: Dockerfile ===================== -->
+<section id="dockerfile">
+  <div class="chapter-header ch-docker">
+    <div class="ch-num">05</div>
+    <div>
+      <h2>Dockerfile — สร้าง Image ของตัวเอง</h2>
+      <p>Instruction ทั้งหมดใน Dockerfile และตัวอย่างจริง</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📋 Dockerfile Instructions ทั้งหมด</h3>
+    <table>
+      <thead><tr><th>Instruction</th><th>ความหมาย</th><th>ตัวอย่าง</th></tr></thead>
+      <tbody>
+        <tr><td><code>FROM</code></td><td>Base Image (ต้องมีเป็น Instruction แรก)</td><td><code>FROM node:20-alpine</code></td></tr>
+        <tr><td><code>WORKDIR</code></td><td>ตั้ง Working Directory ภายใน Container</td><td><code>WORKDIR /app</code></td></tr>
+        <tr><td><code>COPY</code></td><td>Copy ไฟล์จาก host → container</td><td><code>COPY . .</code></td></tr>
+        <tr><td><code>ADD</code></td><td>เหมือน COPY แต่รองรับ URL และ .tar</td><td><code>ADD app.tar.gz /app</code></td></tr>
+        <tr><td><code>RUN</code></td><td>รันคำสั่งตอน build (สร้าง layer)</td><td><code>RUN npm install</code></td></tr>
+        <tr><td><code>CMD</code></td><td>คำสั่ง default เมื่อ Container เริ่ม (override ได้)</td><td><code>CMD ["node","server.js"]</code></td></tr>
+        <tr><td><code>ENTRYPOINT</code></td><td>คำสั่งหลักของ Container (override ยากกว่า)</td><td><code>ENTRYPOINT ["npm"]</code></td></tr>
+        <tr><td><code>ENV</code></td><td>ตั้ง Environment Variable</td><td><code>ENV NODE_ENV=production</code></td></tr>
+        <tr><td><code>ARG</code></td><td>ตัวแปรตอน build เท่านั้น</td><td><code>ARG APP_VERSION=1.0</code></td></tr>
+        <tr><td><code>EXPOSE</code></td><td>ประกาศ port (เป็นแค่ documentation)</td><td><code>EXPOSE 3000</code></td></tr>
+        <tr><td><code>VOLUME</code></td><td>สร้าง mount point สำหรับ volume</td><td><code>VOLUME ["/data"]</code></td></tr>
+        <tr><td><code>USER</code></td><td>ตั้ง user ที่รันคำสั่ง</td><td><code>USER node</code></td></tr>
+        <tr><td><code>HEALTHCHECK</code></td><td>ตรวจสอบสุขภาพ Container</td><td><code>HEALTHCHECK CMD curl -f http://localhost/</code></td></tr>
+        <tr><td><code>LABEL</code></td><td>เพิ่ม metadata ให้ Image</td><td><code>LABEL version="1.0"</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>🟢 Dockerfile สำหรับ Node.js App</h3>
+    <pre><span class="cm"># ใช้ Alpine เพื่อให้ Image เล็ก</span>
+<span class="kw">FROM</span> node:20-alpine
+
+<span class="cm"># ตั้ง Working Directory</span>
+<span class="kw">WORKDIR</span> /app
+
+<span class="cm"># Copy package files ก่อน (ใช้ประโยชน์จาก Layer Cache)</span>
+<span class="kw">COPY</span> package.json package-lock.json ./
+
+<span class="cm"># ติดตั้ง dependencies</span>
+<span class="kw">RUN</span> npm ci --only=production
+
+<span class="cm"># Copy source code</span>
+<span class="kw">COPY</span> . .
+
+<span class="cm"># ประกาศ port</span>
+<span class="kw">EXPOSE</span> 3000
+
+<span class="cm"># Health Check</span>
+<span class="kw">HEALTHCHECK</span> --interval=30s --timeout=3s \
+  CMD wget -qO- http://localhost:3000/health || exit 1
+
+<span class="cm"># ใช้ non-root user (Security Best Practice)</span>
+<span class="kw">USER</span> node
+
+<span class="cm"># คำสั่งเริ่มต้น</span>
+<span class="kw">CMD</span> ["node", "server.js"]</pre>
+
+    <pre><span class="cm"># Build Image จาก Dockerfile</span>
+docker build <span class="flag">-t</span> <span class="val">myapp:latest</span> .
+
+<span class="cm"># Build พร้อมระบุ Dockerfile</span>
+docker build <span class="flag">-f</span> <span class="val">Dockerfile.prod</span> <span class="flag">-t</span> <span class="val">myapp:prod</span> .
+
+<span class="cm"># Build พร้อม ARG</span>
+docker build <span class="flag">--build-arg</span> <span class="val">APP_VERSION=2.0</span> <span class="flag">-t</span> <span class="val">myapp:v2.0</span> .
+
+<span class="cm"># Build โดยไม่ใช้ Cache</span>
+docker build <span class="flag">--no-cache</span> <span class="flag">-t</span> <span class="val">myapp:latest</span> .</pre>
+  </div>
+
+  <div class="card">
+    <h3>🐍 Dockerfile สำหรับ Python (FastAPI)</h3>
+    <pre><span class="kw">FROM</span> python:3.12-slim
+
+<span class="kw">WORKDIR</span> /app
+
+<span class="cm"># ติดตั้ง system dependencies</span>
+<span class="kw">RUN</span> apt-get update && apt-get install -y \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+<span class="cm"># Copy requirements ก่อน (layer cache)</span>
+<span class="kw">COPY</span> requirements.txt .
+<span class="kw">RUN</span> pip install --no-cache-dir -r requirements.txt
+
+<span class="kw">COPY</span> . .
+
+<span class="kw">EXPOSE</span> 8000
+
+<span class="kw">CMD</span> ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]</pre>
+  </div>
+
+  <div class="card">
+    <h3>🚫 .dockerignore — ไฟล์ที่ไม่ต้อง Copy</h3>
+    <pre><span class="cm"># .dockerignore — เหมือน .gitignore</span>
+node_modules
+npm-debug.log
+.git
+.gitignore
+*.md
+.env
+.env.*
+dist
+build
+coverage
+.nyc_output
+.DS_Store
+Dockerfile
+docker-compose*.yml</pre>
+    <div class="callout tip">
+      <span class="ci">💡</span>
+      <div>การมี <code class="ic">.dockerignore</code> ที่ดีทำให้ Build Context เล็กลง → Build เร็วขึ้น และ Image เล็กลง และยังป้องกันข้อมูลสำคัญเช่น <code class="ic">.env</code> รั่วเข้า Image</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SECTION 6: Volume ===================== -->
+<section id="volume">
+  <div class="chapter-header ch-purple">
+    <div class="ch-num">06</div>
+    <div>
+      <h2>Volume — จัดการข้อมูลถาวร</h2>
+      <p>เก็บข้อมูลให้อยู่รอดแม้ Container จะถูกลบ</p>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <span class="ci">⚠️</span>
+    <div>ข้อมูลใน Container จะ<strong>หายไปทันที</strong>เมื่อ Container ถูกลบ ถ้าต้องการเก็บข้อมูลถาวร (เช่น database) ต้องใช้ <strong>Volume</strong></div>
+  </div>
+
+  <div class="card">
+    <h3>📦 ประเภทของ Volume/Mount</h3>
+    <div class="grid-3">
+      <div style="border:1px solid #2496ed44;border-radius:8px;padding:14px;background:rgba(36,150,237,.04)">
+        <div style="font-weight:700;color:#60b4f5;margin-bottom:6px">🗂️ Named Volume</div>
+        <div style="font-size:.85rem;color:#8b949e">Docker จัดการตำแหน่งเอง<br>แชร์ระหว่าง Container ได้<br>→ แนะนำสำหรับ Database</div>
+      </div>
+      <div style="border:1px solid #10b98144;border-radius:8px;padding:14px;background:rgba(16,185,129,.04)">
+        <div style="font-weight:700;color:#34d399;margin-bottom:6px">📁 Bind Mount</div>
+        <div style="font-size:.85rem;color:#8b949e">Map folder บน host<br>เห็นการเปลี่ยนแปลง real-time<br>→ แนะนำสำหรับ Development</div>
+      </div>
+      <div style="border:1px solid #8b5cf644;border-radius:8px;padding:14px;background:rgba(139,92,246,.04)">
+        <div style="font-weight:700;color:#c4b5fd;margin-bottom:6px">💾 tmpfs Mount</div>
+        <div style="font-size:.85rem;color:#8b949e">เก็บใน RAM<br>เร็วมาก แต่หายเมื่อหยุด<br>→ สำหรับข้อมูลชั่วคราว</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🛠️ คำสั่งจัดการ Volume</h3>
+    <pre><span class="cm"># สร้าง Named Volume</span>
+docker volume create my-data
+
+<span class="cm"># ดู Volume ทั้งหมด</span>
+docker volume ls
+
+<span class="cm"># ดูรายละเอียด Volume</span>
+docker volume inspect my-data
+
+<span class="cm"># ลบ Volume</span>
+docker volume rm my-data
+
+<span class="cm"># ลบ Volume ที่ไม่ได้ใช้</span>
+docker volume prune</pre>
+  </div>
+
+  <div class="card">
+    <h3>💡 การใช้งาน Volume จริง</h3>
+    <pre><span class="cm"># Named Volume — สำหรับ MySQL</span>
+docker run <span class="flag">-d</span> \
+  --name mysql-db \
+  <span class="flag">-e</span> <span class="val">MYSQL_ROOT_PASSWORD=secret</span> \
+  <span class="flag">-e</span> <span class="val">MYSQL_DATABASE=myapp</span> \
+  <span class="flag">-v</span> <span class="val">mysql-data:/var/lib/mysql</span> \   <span class="cm"># Named Volume</span>
+  <span class="flag">-p</span> <span class="val">3306:3306</span> \
+  mysql:8
+
+<span class="cm"># Bind Mount — สำหรับ Development (Hot Reload)</span>
+docker run <span class="flag">-d</span> \
+  --name myapp-dev \
+  <span class="flag">-v</span> <span class="val">$(pwd):/app</span> \                <span class="cm"># Bind Mount</span>
+  <span class="flag">-v</span> <span class="val">/app/node_modules</span> \          <span class="cm"># Anonymous Volume (ไม่ทับ node_modules)</span>
+  <span class="flag">-p</span> <span class="val">3000:3000</span> \
+  myapp:dev
+
+<span class="cm"># Read-only Bind Mount (ปลอดภัยกว่า)</span>
+docker run <span class="flag">-v</span> <span class="val">$(pwd)/config:/app/config:ro</span> myapp
+
+<span class="cm"># tmpfs Mount</span>
+docker run <span class="flag">--tmpfs</span> /tmp myapp</pre>
+  </div>
+</section>
+
+<!-- ===================== SECTION 7: Network ===================== -->
+<section id="network">
+  <div class="chapter-header ch-orange">
+    <div class="ch-num">07</div>
+    <div>
+      <h2>Docker Network — เชื่อมต่อ Container</h2>
+      <p>ทำให้ Container คุยกันได้และควบคุม Network</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🌐 ประเภทของ Network Driver</h3>
+    <table>
+      <thead><tr><th>Driver</th><th>ลักษณะ</th><th>ใช้เมื่อ</th></tr></thead>
+      <tbody>
+        <tr><td><code>bridge</code> (default)</td><td>Virtual network บน host, Container คุยกันได้ผ่าน container name</td><td>Container หลายตัวบน host เดียว</td></tr>
+        <tr><td><code>host</code></td><td>ใช้ network ของ host โดยตรง ไม่ isolate</td><td>Performance สูงสุด, Linux เท่านั้น</td></tr>
+        <tr><td><code>none</code></td><td>ไม่มี network เลย</td><td>Container ที่ไม่ต้องการ network</td></tr>
+        <tr><td><code>overlay</code></td><td>เชื่อม Docker Swarm หลาย host</td><td>Multi-host container orchestration</td></tr>
+        <tr><td><code>macvlan</code></td><td>Container มี MAC address ของตัวเอง</td><td>Legacy apps ที่ต้องการ IP จริง</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>🛠️ คำสั่ง Network</h3>
+    <pre><span class="cm"># ดู Network ทั้งหมด</span>
+docker network ls
+
+<span class="cm"># สร้าง Network</span>
+docker network create my-network
+docker network create --driver bridge my-network
+
+<span class="cm"># ดูรายละเอียด Network</span>
+docker network inspect my-network
+
+<span class="cm"># เพิ่ม Container เข้า Network</span>
+docker network connect my-network my-container
+
+<span class="cm"># ถอด Container ออกจาก Network</span>
+docker network disconnect my-network my-container
+
+<span class="cm"># ลบ Network</span>
+docker network rm my-network
+docker network prune  <span class="cm"># ลบที่ไม่ได้ใช้</span></pre>
+  </div>
+
+  <div class="card">
+    <h3>🔗 Container คุยกันผ่าน Network</h3>
+    <pre><span class="cm"># สร้าง network ก่อน</span>
+docker network create app-network
+
+<span class="cm"># รัน database ใน network</span>
+docker run <span class="flag">-d</span> \
+  --name postgres-db \
+  --network app-network \
+  <span class="flag">-e</span> POSTGRES_PASSWORD=secret \
+  postgres:16
+
+<span class="cm"># รัน app ใน network เดียวกัน</span>
+<span class="cm"># สามารถใช้ "postgres-db" เป็น hostname ได้เลย!</span>
+docker run <span class="flag">-d</span> \
+  --name myapp \
+  --network app-network \
+  <span class="flag">-e</span> <span class="val">DATABASE_URL=postgresql://postgres:secret@postgres-db:5432/mydb</span> \
+  <span class="flag">-p</span> <span class="val">3000:3000</span> \
+  myapp:latest
+
+<span class="cm"># Container ใน network เดียวกัน ใช้ชื่อ container เป็น hostname ได้</span>
+<span class="cm"># postgres-db → resolves to container's IP อัตโนมัติ</span></pre>
+    <div class="callout tip">
+      <span class="ci">💡</span>
+      <div>ใน Custom Bridge Network (ไม่ใช่ default bridge) Docker จะ resolve ชื่อ Container เป็น IP อัตโนมัติ (<strong>DNS-based service discovery</strong>) — ไม่ต้องรู้ IP จริงของ Container</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SECTION 8: Docker Compose ===================== -->
+<section id="compose">
+  <div class="chapter-header ch-green">
+    <div class="ch-num">08</div>
+    <div>
+      <h2>Docker Compose — จัดการหลาย Container</h2>
+      <p>นิยาม Application Stack ด้วยไฟล์ YAML ไฟล์เดียว</p>
+    </div>
+  </div>
+
+  <div class="callout docker">
+    <span class="ci">🐳</span>
+    <div>Docker Compose ช่วยให้นิยาม Service ทั้งหมด (web, database, cache, queue) ไว้ในไฟล์ <code class="ic">docker-compose.yml</code> เดียว และรัน/หยุดทั้งหมดด้วยคำสั่งเดียว</div>
+  </div>
+
+  <div class="card">
+    <h3>📄 docker-compose.yml พื้นฐาน</h3>
+    <pre><span class="cm"># docker-compose.yml</span>
+version: <span class="str">'3.9'</span>
+
+services:
+  <span class="cm"># Service ที่ 1: Web App (Node.js)</span>
+  web:
+    build: .                      <span class="cm"># Build จาก Dockerfile ในโฟลเดอร์ปัจจุบัน</span>
+    ports:
+      - <span class="str">"3000:3000"</span>
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://user:pass@db:5432/mydb
+    volumes:
+      - .:/app                    <span class="cm"># Bind Mount สำหรับ Dev</span>
+      - /app/node_modules
+    depends_on:
+      db:
+        condition: service_healthy  <span class="cm"># รอ db healthy ก่อน</span>
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  <span class="cm"># Service ที่ 2: PostgreSQL</span>
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: mydb
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql  <span class="cm"># รัน SQL ตอนเริ่ม</span>
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d mydb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  <span class="cm"># Service ที่ 3: Redis Cache</span>
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+volumes:
+  postgres-data:   <span class="cm"># Named Volume</span>
+  redis-data:
+
+networks:
+  app-network:
+    driver: bridge</pre>
+  </div>
+
+  <div class="card">
+    <h3>🛠️ คำสั่ง Docker Compose</h3>
+    <pre><span class="cm"># เริ่ม services ทั้งหมด (พร้อม build)</span>
+docker compose up
+docker compose up <span class="flag">-d</span>                <span class="cm"># Background mode</span>
+docker compose up <span class="flag">--build</span>           <span class="cm"># Force rebuild</span>
+docker compose up <span class="flag">-d --build</span>        <span class="cm"># Background + rebuild</span>
+
+<span class="cm"># หยุด services</span>
+docker compose down
+docker compose down <span class="flag">-v</span>             <span class="cm"># หยุดพร้อมลบ Volume ด้วย!</span>
+docker compose down <span class="flag">--rmi all</span>     <span class="cm"># หยุดพร้อมลบ Image</span>
+
+<span class="cm"># รัน service เฉพาะตัว</span>
+docker compose up <span class="flag">-d</span> db redis
+
+<span class="cm"># ดู Logs</span>
+docker compose logs
+docker compose logs <span class="flag">-f</span>             <span class="cm"># Follow</span>
+docker compose logs <span class="flag">-f</span> web        <span class="cm"># Log เฉพาะ service</span>
+
+<span class="cm"># เข้า Shell ใน Service</span>
+docker compose exec web bash
+docker compose exec db psql <span class="flag">-U</span> user <span class="flag">-d</span> mydb
+
+<span class="cm"># รัน one-off command</span>
+docker compose run <span class="flag">--rm</span> web npm test
+docker compose run <span class="flag">--rm</span> web npx prisma migrate
+
+<span class="cm"># ดูสถานะ Services</span>
+docker compose ps
+
+<span class="cm"># Restart service</span>
+docker compose restart web
+
+<span class="cm"># Scale service</span>
+docker compose up <span class="flag">--scale</span> web=3  <span class="cm"># รัน 3 instances</span></pre>
+  </div>
+
+  <div class="card">
+    <h3>🗂️ หลาย Compose File (Dev vs Prod)</h3>
+    <pre><span class="cm"># docker-compose.yml — Base config</span>
+services:
+  web:
+    image: myapp:latest
+    environment:
+      - NODE_ENV=production
+
+<span class="cm"># docker-compose.override.yml — Dev overrides (อ่านอัตโนมัติ)</span>
+services:
+  web:
+    build: .
+    volumes:
+      - .:/app
+    environment:
+      - NODE_ENV=development
+
+<span class="cm"># docker-compose.prod.yml — Production config</span>
+services:
+  web:
+    restart: always
+    deploy:
+      replicas: 3</pre>
+    <pre><span class="cm"># Development (อ่าน base + override อัตโนมัติ)</span>
+docker compose up
+
+<span class="cm"># Production (ระบุไฟล์เอง)</span>
+docker compose <span class="flag">-f</span> docker-compose.yml <span class="flag">-f</span> docker-compose.prod.yml up <span class="flag">-d</span></pre>
+  </div>
+</section>
+
+<!-- ===================== SECTION 9: Registry ===================== -->
+<section id="registry">
+  <div class="chapter-header ch-teal">
+    <div class="ch-num">09</div>
+    <div>
+      <h2>Docker Registry — แชร์ Image</h2>
+      <p>Push และ Pull Image ไปยัง Docker Hub และ Registry อื่นๆ</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🌐 Docker Hub — Registry สาธารณะ</h3>
+    <pre><span class="cm"># Login เข้า Docker Hub</span>
+docker login
+<span class="cm"># กรอก Username และ Password / Access Token</span>
+
+<span class="cm"># Tag Image สำหรับ push</span>
+docker tag myapp:latest username/myapp:latest
+docker tag myapp:latest username/myapp:v1.0.0
+
+<span class="cm"># Push ขึ้น Docker Hub</span>
+docker push username/myapp:latest
+docker push username/myapp:v1.0.0
+
+<span class="cm"># Pull จาก Docker Hub</span>
+docker pull username/myapp:latest
+
+<span class="cm"># Logout</span>
+docker logout</pre>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>🔐 GitHub Container Registry (GHCR)</h3>
+      <pre style="font-size:.8rem"><span class="cm"># Login ด้วย GitHub Token</span>
+echo $GITHUB_TOKEN | docker login \
+  ghcr.io <span class="flag">-u</span> USERNAME \
+  --password-stdin
+
+<span class="cm"># Tag</span>
+docker tag myapp:latest \
+  ghcr.io/username/myapp:latest
+
+<span class="cm"># Push</span>
+docker push ghcr.io/username/myapp:latest</pre>
+    </div>
+    <div class="card">
+      <h3>☁️ AWS ECR</h3>
+      <pre style="font-size:.8rem"><span class="cm"># Login ด้วย AWS CLI</span>
+aws ecr get-login-password \
+  --region ap-southeast-1 | \
+  docker login --username AWS \
+  --password-stdin \
+  ACCOUNT.dkr.ecr.REGION.amazonaws.com
+
+<span class="cm"># Tag และ Push</span>
+docker tag myapp:latest \
+  ACCOUNT.dkr.ecr.REGION.amazonaws.com/myapp:latest
+
+docker push \
+  ACCOUNT.dkr.ecr.REGION.amazonaws.com/myapp:latest</pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🏠 Local Registry (Self-hosted)</h3>
+    <pre><span class="cm"># รัน Local Registry บน port 5000</span>
+docker run <span class="flag">-d</span> \
+  --name registry \
+  <span class="flag">-p</span> <span class="val">5000:5000</span> \
+  <span class="flag">-v</span> <span class="val">registry-data:/var/lib/registry</span> \
+  registry:2
+
+<span class="cm"># Tag สำหรับ Local Registry</span>
+docker tag myapp:latest localhost:5000/myapp:latest
+
+<span class="cm"># Push ไป Local Registry</span>
+docker push localhost:5000/myapp:latest
+
+<span class="cm"># Pull จาก Local Registry</span>
+docker pull localhost:5000/myapp:latest</pre>
+  </div>
+</section>
+
+<!-- ===================== SECTION 10: Multi-stage Build ===================== -->
+<section id="multistage">
+  <div class="chapter-header ch-pink">
+    <div class="ch-num">10</div>
+    <div>
+      <h2>Multi-stage Build — Image เล็กและปลอดภัย</h2>
+      <p>แยก Build Environment ออกจาก Production Environment</p>
+    </div>
+  </div>
+
+  <div class="callout tip">
+    <span class="ci">💡</span>
+    <div>Multi-stage Build ทำให้ Production Image <strong>ไม่มี build tools, source code, dependencies ที่ไม่จำเป็น</strong> — ทำให้ Image เล็กลงมาก และปลอดภัยกว่า</div>
+  </div>
+
+  <div class="card">
+    <h3>🔨 Multi-stage สำหรับ Node.js</h3>
+    <div class="compare">
+      <div class="compare-col">
+        <div class="compare-head old">❌ Single-stage (ใหญ่)</div>
+        <pre><span class="kw">FROM</span> node:20
+
+<span class="kw">WORKDIR</span> /app
+<span class="kw">COPY</span> . .
+<span class="kw">RUN</span> npm install
+<span class="kw">RUN</span> npm run build
+
+<span class="kw">CMD</span> ["node", "dist/server.js"]
+
+<span class="cm"># ขนาด Image: ~1.2 GB 😱</span>
+<span class="cm"># มี devDependencies ทั้งหมด</span>
+<span class="cm"># มี source code</span>
+<span class="cm"># มี compiler/tools</span></pre>
+      </div>
+      <div class="compare-col">
+        <div class="compare-head good">✅ Multi-stage (เล็ก)</div>
+        <pre><span class="cm"># Stage 1: Build</span>
+<span class="kw">FROM</span> node:20-alpine <span class="kw">AS</span> builder
+
+<span class="kw">WORKDIR</span> /app
+<span class="kw">COPY</span> package*.json ./
+<span class="kw">RUN</span> npm ci
+<span class="kw">COPY</span> . .
+<span class="kw">RUN</span> npm run build
+
+<span class="cm"># Stage 2: Production</span>
+<span class="kw">FROM</span> node:20-alpine <span class="kw">AS</span> production
+
+<span class="kw">WORKDIR</span> /app
+<span class="kw">COPY</span> package*.json ./
+<span class="kw">RUN</span> npm ci --only=production
+<span class="kw">COPY</span> --from=builder /app/dist ./dist
+<span class="kw">USER</span> node
+<span class="kw">CMD</span> ["node", "dist/server.js"]
+
+<span class="cm"># ขนาด Image: ~180 MB ✅</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🦀 Multi-stage สำหรับ Go / Compiled Languages</h3>
+    <pre><span class="cm"># Stage 1: Build (มี compiler)</span>
+<span class="kw">FROM</span> golang:1.22-alpine <span class="kw">AS</span> builder
+
+<span class="kw">WORKDIR</span> /app
+<span class="kw">COPY</span> go.mod go.sum ./
+<span class="kw">RUN</span> go mod download
+
+<span class="kw">COPY</span> . .
+<span class="kw">RUN</span> CGO_ENABLED=0 GOOS=linux go build -o server ./cmd/server
+
+<span class="cm"># Stage 2: Production (แค่ binary ไฟล์เดียว!)</span>
+<span class="kw">FROM</span> scratch                           <span class="cm"># Image ว่างเปล่า 0 bytes!</span>
+
+<span class="kw">COPY</span> --from=builder /app/server /server
+<span class="kw">COPY</span> --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+
+<span class="kw">EXPOSE</span> 8080
+<span class="kw">ENTRYPOINT</span> ["/server"]
+
+<span class="cm"># ขนาด Image: ~15 MB 🎉 (แค่ binary + SSL certs)</span></pre>
+  </div>
+
+  <div class="card">
+    <h3>⚛️ Multi-stage สำหรับ React (Frontend)</h3>
+    <pre><span class="cm"># Stage 1: Build React app</span>
+<span class="kw">FROM</span> node:20-alpine <span class="kw">AS</span> builder
+
+<span class="kw">WORKDIR</span> /app
+<span class="kw">COPY</span> package*.json ./
+<span class="kw">RUN</span> npm ci
+<span class="kw">COPY</span> . .
+<span class="kw">ARG</span> VITE_API_URL
+<span class="kw">RUN</span> npm run build
+
+<span class="cm"># Stage 2: Serve ด้วย Nginx</span>
+<span class="kw">FROM</span> nginx:alpine
+
+<span class="cm"># Copy เฉพาะ static files ที่ build แล้ว</span>
+<span class="kw">COPY</span> --from=builder /app/dist /usr/share/nginx/html
+
+<span class="cm"># Custom nginx config สำหรับ SPA routing</span>
+<span class="kw">COPY</span> nginx.conf /etc/nginx/conf.d/default.conf
+
+<span class="kw">EXPOSE</span> 80
+<span class="kw">CMD</span> ["nginx", "-g", "daemon off;"]
+
+<span class="cm"># ขนาด Image: ~50 MB (nginx + static files เท่านั้น)</span></pre>
+  </div>
+</section>
+
+<!-- ===================== SECTION 11: Environment Variables ===================== -->
+<section id="envvars">
+  <div class="chapter-header ch-yellow">
+    <div class="ch-num">11</div>
+    <div>
+      <h2>Environment Variables — ตั้งค่า Container</h2>
+      <p>จัดการ Configuration อย่างปลอดภัยด้วย Env Vars และ Secrets</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔧 วิธีส่ง Environment Variable</h3>
+    <pre><span class="cm"># วิธีที่ 1: -e flag (inline)</span>
+docker run <span class="flag">-e</span> <span class="val">NODE_ENV=production</span> <span class="flag">-e</span> <span class="val">PORT=3000</span> myapp
+
+<span class="cm"># วิธีที่ 2: --env-file (แนะนำ)</span>
+docker run <span class="flag">--env-file</span> <span class="val">.env</span> myapp
+
+<span class="cm"># .env file</span>
+NODE_ENV=production
+PORT=3000
+DATABASE_URL=postgresql://user:pass@localhost:5432/mydb
+JWT_SECRET=super-secret-key
+REDIS_URL=redis://localhost:6379</pre>
+  </div>
+
+  <div class="card">
+    <h3>📄 Env Vars ใน Docker Compose</h3>
+    <pre><span class="cm"># docker-compose.yml</span>
+services:
+  web:
+    image: myapp:latest
+    <span class="hl">environment:           # วิธีที่ 1: กำหนดตรงๆ</span>
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: ${DATABASE_URL}  <span class="cm"># อ่านจาก .env ของ host</span>
+
+    <span class="hl2">env_file:             # วิธีที่ 2: อ่านจากไฟล์</span>
+      - .env
+      - .env.production
+
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}      <span class="cm"># Default value</span>
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?error} <span class="cm"># Required! Error ถ้าไม่มี</span>
+      POSTGRES_DB: ${DB_NAME:-myapp}</pre>
+
+    <pre><span class="cm"># .env — ไม่ commit ขึ้น Git!</span>
+DB_USER=myuser
+DB_PASSWORD=supersecret
+DB_NAME=myapp
+DATABASE_URL=postgresql://myuser:supersecret@db:5432/myapp</pre>
+    <div class="callout danger">
+      <span class="ci">🚨</span>
+      <div>เพิ่ม <code class="ic">.env</code> ใน <code class="ic">.gitignore</code> เสมอ! อย่า commit ข้อมูล sensitive ขึ้น Git เด็ดขาด สร้าง <code class="ic">.env.example</code> ที่ไม่มีค่าจริงแทน</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔒 Docker Secrets (Production)</h3>
+    <pre><span class="cm"># สร้าง Secret (Docker Swarm)</span>
+echo "my-super-secret" | docker secret create db_password -
+
+<span class="cm"># ใช้ใน docker-compose.yml</span>
+services:
+  db:
+    image: postgres:16
+    secrets:
+      - db_password
+    environment:
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+
+secrets:
+  db_password:
+    external: true  <span class="cm"># ใช้ secret ที่สร้างไว้แล้ว</span></pre>
+  </div>
+</section>
+
+<!-- ===================== SECTION 12: Best Practices ===================== -->
+<section id="bestpractice">
+  <div class="chapter-header ch-slate">
+    <div class="ch-num">12</div>
+    <div>
+      <h2>Best Practices &amp; เทคนิคที่ควรรู้</h2>
+      <p>วิธีปฏิบัติที่ดีเพื่อ Image เล็ก, ปลอดภัย และ Maintainable</p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>📦 Best Practices: Image</h3>
+      <ul>
+        <li>ใช้ <strong style="color:#2496ed">Official Image</strong> เป็น Base เสมอ</li>
+        <li>ใช้ <strong style="color:#10b981">Alpine/slim variant</strong> เพื่อลดขนาด</li>
+        <li>ระบุ <strong style="color:#f59e0b">tag เฉพาะ</strong> ไม่ใช้ <code class="ic">:latest</code> ใน production</li>
+        <li>ใช้ <strong style="color:#8b5cf6">Multi-stage Build</strong> สำหรับ compiled languages</li>
+        <li>รวม <code class="ic">RUN</code> commands ด้วย <code class="ic">&&</code> เพื่อลด Layer</li>
+        <li>ลบ cache หลังติดตั้ง package</li>
+        <li>เพิ่ม <strong style="color:#ec4899">.dockerignore</strong> ทุกโปรเจค</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>🔐 Best Practices: Security</h3>
+      <ul>
+        <li>ไม่ run container เป็น <strong style="color:#ef4444">root user</strong></li>
+        <li>ไม่ hardcode <strong style="color:#ef4444">secrets/passwords</strong> ใน Dockerfile</li>
+        <li>ใช้ <code class="ic">USER</code> instruction เพื่อ non-root user</li>
+        <li>Scan Image ด้วย <code class="ic">docker scout</code> หรือ Trivy</li>
+        <li>ใช้ <strong style="color:#10b981">Read-only filesystem</strong>: <code class="ic">--read-only</code></li>
+        <li>จำกัด capabilities: <code class="ic">--cap-drop ALL</code></li>
+        <li>อัปเดต Base Image สม่ำเสมอ</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>⚡ เทคนิค Optimize Layer Cache</h3>
+    <div class="compare">
+      <div class="compare-col">
+        <div class="compare-head bad">❌ Cache miss ทุกครั้ง</div>
+        <pre><span class="kw">FROM</span> node:20-alpine
+<span class="kw">WORKDIR</span> /app
+<span class="cm"># Copy ทุกอย่างก่อน</span>
+<span class="kw">COPY</span> . .
+<span class="cm"># install หลัง — invalidate cache</span>
+<span class="cm"># ทุกครั้งที่โค้ดเปลี่ยน!</span>
+<span class="kw">RUN</span> npm install
+<span class="kw">CMD</span> ["node", "server.js"]</pre>
+      </div>
+      <div class="compare-col">
+        <div class="compare-head good">✅ ใช้ Cache ได้ดี</div>
+        <pre><span class="kw">FROM</span> node:20-alpine
+<span class="kw">WORKDIR</span> /app
+<span class="cm"># Copy package files ก่อน</span>
+<span class="kw">COPY</span> package*.json ./
+<span class="cm"># Install — Cache ถ้า package ไม่เปลี่ยน</span>
+<span class="kw">RUN</span> npm ci
+<span class="cm"># Copy code หลังสุด</span>
+<span class="kw">COPY</span> . .
+<span class="kw">CMD</span> ["node", "server.js"]</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🧹 ทำความสะอาดทรัพยากร</h3>
+    <pre><span class="cm"># ดูขนาด disk ที่ Docker ใช้</span>
+docker system df
+
+<span class="cm"># ลบทุกอย่างที่ไม่ได้ใช้ (Container, Image, Volume, Network)</span>
+docker system prune
+docker system prune <span class="flag">-a</span>         <span class="cm"># รวม unused images</span>
+docker system prune <span class="flag">-a --volumes</span> <span class="cm"># รวม volumes ด้วย!</span>
+
+<span class="cm"># ลบแยกตามประเภท</span>
+docker container prune  <span class="cm"># Container ที่หยุดแล้ว</span>
+docker image prune -a   <span class="cm"># Image ที่ไม่ได้ใช้</span>
+docker volume prune     <span class="cm"># Volume ที่ไม่ได้ใช้</span>
+docker network prune    <span class="cm"># Network ที่ไม่ได้ใช้</span></pre>
+  </div>
+
+  <div class="card">
+    <h3>🗺️ Docker Learning Path &amp; Cheatsheet</h3>
+    <div class="flow" style="flex-wrap:wrap;justify-content:flex-start">
+      <span class="fb fb-d">Install<br>Docker</span><span class="fa">→</span>
+      <span class="fb fb-d">docker run<br>hello-world</span><span class="fa">→</span>
+      <span class="fb fb-b">docker pull/<br>images/ps</span><span class="fa">→</span>
+      <span class="fb fb-b">Dockerfile<br>basics</span><span class="fa">→</span>
+      <span class="fb fb-g">docker build/<br>run/logs</span><span class="fa">→</span>
+      <span class="fb fb-g">Volume &amp;<br>Network</span><span class="fa">→</span>
+      <span class="fb fb-p">Docker<br>Compose</span><span class="fa">→</span>
+      <span class="fb fb-p">Registry/<br>Push/Pull</span><span class="fa">→</span>
+      <span class="fb fb-o">Multi-stage<br>Build</span><span class="fa">→</span>
+      <span class="fb fb-o">Best<br>Practices</span>
+    </div>
+
+    <table style="margin-top:16px">
+      <thead><tr><th>คำสั่ง</th><th>ความหมาย</th></tr></thead>
+      <tbody>
+        <tr><td><code>docker run -d -p 8080:80 nginx</code></td><td>รัน nginx เบื้องหลัง port 8080</td></tr>
+        <tr><td><code>docker ps -a</code></td><td>ดู Container ทั้งหมด</td></tr>
+        <tr><td><code>docker exec -it CONTAINER bash</code></td><td>เข้า Shell ใน Container</td></tr>
+        <tr><td><code>docker logs -f CONTAINER</code></td><td>ดู Log realtime</td></tr>
+        <tr><td><code>docker build -t myapp:v1 .</code></td><td>Build Image จาก Dockerfile</td></tr>
+        <tr><td><code>docker compose up -d --build</code></td><td>รัน Stack ทั้งหมด (rebuild)</td></tr>
+        <tr><td><code>docker compose down -v</code></td><td>หยุดและลบ Volume</td></tr>
+        <tr><td><code>docker system prune -a</code></td><td>ล้างทุกอย่างที่ไม่ได้ใช้</td></tr>
+        <tr><td><code>docker stats</code></td><td>ดูการใช้ทรัพยากร realtime</td></tr>
+        <tr><td><code>docker inspect CONTAINER</code></td><td>ดูรายละเอียดทั้งหมด</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+</div>
+
+<footer>
+  <strong>Docker Teaching Material</strong> — FullStack 101 Learning Hub<br>
+  <span style="margin-top:6px;display:block">🐳 Docker 27+ | Compose V2 | Multi-stage Build</span>
+</footer>
+
+<script>
+const sections = document.querySelectorAll('section[id]')
+const navLinks = document.querySelectorAll('.nav-sticky a[href^="#"]')
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(a => a.classList.remove('active'))
+      const active = document.querySelector(`.nav-sticky a[href="#${entry.target.id}"]`)
+      if (active) active.classList.add('active')
+    }
+  })
+}, { threshold: 0.25 })
+
+sections.forEach(s => observer.observe(s))
+</script>
+</body>
+</html>

@@ -1,0 +1,1659 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>สื่อการสอน Ruby on Rails</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ruby:#cc0000;--rails:#d30000;--green:#10b981;--blue:#3b82f6;
+  --orange:#f59e0b;--purple:#8b5cf6;--cyan:#06b6d4;--pink:#ec4899;
+  --card:#1c2128;--border:#30363d;--code:#0d1117;--radius:12px;--shadow:0 4px 20px rgba(0,0,0,.3);
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#0d1117;color:#c9d1d9;line-height:1.75}
+
+.hero{background:linear-gradient(135deg,#0d1117 0%,#1a0000 60%,#2a0000 100%);border-bottom:2px solid #cc000033;text-align:center;padding:68px 24px 52px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% -20%,rgba(204,0,0,.15),transparent 65%)}
+.hero h1{font-size:clamp(2rem,5vw,3.4rem);font-weight:900;color:#fff;margin-bottom:12px;position:relative;letter-spacing:-1px}
+.hero h1 .rb{background:#cc0000;color:#fff;padding:2px 16px;border-radius:8px;display:inline-block}
+.hero h1 .sub{color:#f87171}
+.hero p{font-size:1.1rem;color:#8b949e;max-width:640px;margin:0 auto}
+.badge-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:20px}
+.badge{background:rgba(204,0,0,.1);border:1px solid rgba(204,0,0,.3);color:#fca5a5;padding:4px 14px;border-radius:999px;font-size:.8rem;font-weight:700}
+
+.nav-sticky{position:sticky;top:0;z-index:100;background:#161b22;border-bottom:1px solid #30363d;padding:0 10px;overflow-x:auto;white-space:nowrap}
+.nav-sticky a{display:inline-block;padding:11px 12px;font-size:.79rem;font-weight:600;color:#8b949e;text-decoration:none;border-bottom:2px solid transparent;transition:.2s}
+.nav-sticky a:hover,.nav-sticky a.active{color:#f87171;border-color:#cc0000}
+
+.container{max-width:1150px;margin:0 auto;padding:40px 20px}
+section{margin-bottom:62px}
+
+.chapter-header{border-radius:var(--radius);padding:22px 28px;margin-bottom:22px;display:flex;align-items:center;gap:18px;border:1px solid #30363d;position:relative;overflow:hidden}
+.chapter-header::before{content:'';position:absolute;top:0;right:0;width:200px;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.03));pointer-events:none}
+.ch-num{font-size:3rem;font-weight:900;opacity:.18;line-height:1;min-width:60px;color:#fff;font-family:monospace}
+.chapter-header h2{font-size:1.38rem;font-weight:800;color:#fff;margin:0}
+.chapter-header p{font-size:.87rem;color:#8b949e;margin-top:5px}
+.ch-ruby{background:linear-gradient(135deg,#2a0000,#4a0000);border-color:#cc000033}
+.ch-green{background:linear-gradient(135deg,#052e16,#064e3b);border-color:#10b98133}
+.ch-blue{background:linear-gradient(135deg,#0c1445,#1e3a8a);border-color:#3b82f633}
+.ch-purple{background:linear-gradient(135deg,#2e1065,#4c1d95);border-color:#8b5cf633}
+.ch-orange{background:linear-gradient(135deg,#431407,#7c2d12);border-color:#f59e0b33}
+.ch-cyan{background:linear-gradient(135deg,#0a2540,#155e75);border-color:#06b6d433}
+.ch-red{background:linear-gradient(135deg,#450a0a,#7f1d1d);border-color:#ef444433}
+.ch-pink{background:linear-gradient(135deg,#2d0a1e,#831843);border-color:#ec489933}
+.ch-teal{background:linear-gradient(135deg,#042f2e,#134e4a);border-color:#0d948433}
+.ch-slate{background:linear-gradient(135deg,#0f172a,#1e293b);border-color:#64748b33}
+.ch-yellow{background:linear-gradient(135deg,#1c1400,#3d2e00);border-color:#eab30833}
+.ch-project{background:linear-gradient(135deg,#0a1628,#0f2d4a);border-color:#2496ed55}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px 24px;margin-bottom:18px;box-shadow:var(--shadow)}
+.card h3{font-size:1.05rem;font-weight:700;color:#e6edf3;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.card p,.card li{font-size:.92rem;color:#8b949e;line-height:1.7}
+.card ul,.card ol{padding-left:18px;display:flex;flex-direction:column;gap:5px}
+
+pre{background:var(--code);color:#c9d1d9;border-radius:8px;padding:18px 20px;overflow-x:auto;font-size:.84rem;line-height:1.75;margin:10px 0;font-family:'Cascadia Code','Fira Code','Consolas',monospace;border:1px solid #21262d}
+.ic{background:#21262d;color:#79c0ff;padding:2px 7px;border-radius:5px;font-family:'Cascadia Code','Fira Code',monospace;font-size:.85em}
+
+.kw{color:#ff7b72}.str{color:#a5d6ff}.fn{color:#d2a8ff}.cm{color:#484f58;font-style:italic}
+.num{color:#79c0ff}.bool{color:#ff7b72}.op{color:#ff7b72}.type{color:#ffa657}
+.prop{color:#79c0ff}.sym{color:#f87171}.out{color:#7ee787}.err{color:#ef4444}
+.rb-kw{color:#f87171}.rb-str{color:#a5d6ff}.rb-sym{color:#ffa657}.rb-fn{color:#d2a8ff}
+.rb-cm{color:#484f58;font-style:italic}.rb-num{color:#79c0ff}.rb-cls{color:#ffa657}
+.hl{background:rgba(204,0,0,.08);border-left:3px solid #cc0000;padding-left:8px;display:block;margin:-1px 0}
+.hl2{background:rgba(16,185,129,.08);border-left:3px solid #10b981;padding-left:8px;display:block;margin:-1px 0}
+.hl3{background:rgba(59,130,246,.08);border-left:3px solid #3b82f6;padding-left:8px;display:block;margin:-1px 0}
+
+.grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
+.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+
+.callout{border-radius:8px;padding:13px 17px;margin:12px 0;display:flex;gap:10px;font-size:.9rem;line-height:1.6}
+.callout.info{background:rgba(59,130,246,.08);border-left:3px solid #3b82f6;color:#93c5fd}
+.callout.tip{background:rgba(16,185,129,.08);border-left:3px solid #10b981;color:#6ee7b7}
+.callout.warn{background:rgba(247,223,30,.08);border-left:3px solid #f7df1e;color:#fef08a}
+.callout.danger{background:rgba(239,68,68,.08);border-left:3px solid #ef4444;color:#fca5a5}
+.callout.ruby{background:rgba(204,0,0,.08);border-left:3px solid #cc0000;color:#fca5a5}
+.callout .ci{font-size:1.05rem;flex-shrink:0;margin-top:1px}
+
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:12px 0}
+th{background:#1c2128;padding:9px 13px;text-align:left;font-weight:700;color:#8b949e;border:1px solid #30363d}
+td{padding:9px 13px;border:1px solid #30363d;vertical-align:top;color:#c9d1d9}
+tr:nth-child(even) td{background:#161b22}
+td code{color:#79c0ff;font-family:'Cascadia Code','Fira Code',monospace;font-size:.85em}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;border:1px solid #30363d;border-radius:var(--radius);overflow:hidden;margin:12px 0}
+.compare-col:first-child{border-right:1px solid #30363d}
+.compare-head{padding:8px 16px;font-size:.82rem;font-weight:700;text-align:center}
+.compare-head.bad{background:rgba(239,68,68,.15);color:#fca5a5}
+.compare-head.good{background:rgba(16,185,129,.15);color:#6ee7b7}
+.compare-col pre{margin:0;border-radius:0;border:none;border-top:1px solid #30363d;font-size:.82rem}
+
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:6px;padding:14px 16px;background:#0d1117;border:1px solid #30363d;border-radius:8px;margin:10px 0;font-size:.85rem}
+.fb{padding:7px 14px;border-radius:6px;font-weight:700;text-align:center}
+.fb-r{background:#4a0000;color:#fca5a5;border:1px solid #cc000044}
+.fb-g{background:#065f46;color:#6ee7b7}
+.fb-b{background:#1e3a8a;color:#93c5fd}
+.fb-p{background:#4c1d95;color:#ddd6fe}
+.fb-o{background:#78350f;color:#fed7aa}
+.fb-c{background:#155e75;color:#67e8f9}
+.fb-y{background:#3d2e00;color:#fef08a}
+.fa{color:#f87171;font-size:1.1rem;padding:0 4px}
+
+.step{display:flex;gap:16px;margin-bottom:16px;align-items:flex-start}
+.step-num{min-width:36px;height:36px;border-radius:50%;background:#cc0000;color:#fff;font-weight:900;font-size:.95rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.step-body{flex:1}
+.step-body h4{color:#e6edf3;font-size:.95rem;margin-bottom:4px}
+
+.file-tree{background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:16px 20px;font-family:'Cascadia Code','Fira Code',monospace;font-size:.83rem;line-height:1.9}
+.ft-dir{color:#2496ed;font-weight:700}
+.ft-file{color:#c9d1d9}
+.ft-imp{color:#f87171;font-weight:700}
+.ft-cm{color:#484f58;font-style:italic}
+
+.mvc-box{border:2px solid;border-radius:10px;padding:14px 18px;position:relative;margin:6px 0}
+.mvc-box .mvc-label{position:absolute;top:-11px;left:14px;background:#0d1117;padding:0 8px;font-weight:700;font-size:.82rem;font-family:monospace}
+.mvc-m{border-color:#10b98144;background:rgba(16,185,129,.04)}.mvc-m .mvc-label{color:#34d399}
+.mvc-v{border-color:#3b82f644;background:rgba(59,130,246,.04)}.mvc-v .mvc-label{color:#60a5fa}
+.mvc-c{border-color:#cc000044;background:rgba(204,0,0,.04)}.mvc-c .mvc-label{color:#f87171}
+
+.project-step{background:#0d1117;border:1px solid #2496ed33;border-radius:10px;padding:20px;margin-bottom:16px;position:relative}
+.project-step::before{content:attr(data-step);position:absolute;top:-1px;right:16px;background:#2496ed;color:#fff;font-size:.75rem;font-weight:700;padding:2px 10px;border-radius:0 0 6px 6px}
+
+footer{background:#0d1117;border-top:1px solid #21262d;color:#484f58;text-align:center;padding:32px;font-size:.85rem}
+footer strong{color:#8b949e}
+
+@media(max-width:600px){
+  .grid-2,.grid-3{grid-template-columns:1fr}
+  .compare{grid-template-columns:1fr}
+  .compare-col:first-child{border-right:none;border-bottom:1px solid #30363d}
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1><span class="rb">💎 Ruby</span> &nbsp;<span class="sub">on Rails</span></h1>
+  <p>สื่อการสอน Ruby on Rails ฉบับสมบูรณ์ — ตั้งแต่ติดตั้งจนสร้าง Blog App จริงได้</p>
+  <div class="badge-row">
+    <span class="badge">MVC</span><span class="badge">Active Record</span><span class="badge">Migrations</span>
+    <span class="badge">Routes</span><span class="badge">Controllers</span><span class="badge">Views & ERB</span>
+    <span class="badge">Validations</span><span class="badge">Associations</span><span class="badge">Forms</span>
+    <span class="badge">Authentication</span><span class="badge">Mini Project</span>
+  </div>
+</div>
+
+<nav class="nav-sticky" id="main-nav">
+  <a href="index.html">🏠 หน้าหลัก</a>
+  <a href="#intro">Rails คืออะไร</a>
+  <a href="#install">ติดตั้ง</a>
+  <a href="#new-project">New Project</a>
+  <a href="#structure">โครงสร้าง</a>
+  <a href="#ruby-basics">Ruby พื้นฐาน</a>
+  <a href="#mvc">MVC</a>
+  <a href="#routes">Routes</a>
+  <a href="#controller">Controller</a>
+  <a href="#model">Model & ActiveRecord</a>
+  <a href="#migration">Migration</a>
+  <a href="#views">Views & ERB</a>
+  <a href="#forms">Forms</a>
+  <a href="#associations">Associations</a>
+  <a href="#project">🚀 Mini Project</a>
+  <a href="#gems">Gems</a>
+</nav>
+
+<div class="container">
+
+<!-- ===== 01: Rails คืออะไร ===== -->
+<section id="intro">
+  <div class="chapter-header ch-ruby">
+    <div class="ch-num">01</div>
+    <div>
+      <h2>Ruby on Rails คืออะไร?</h2>
+      <p>แนวคิดหลัก, MVC Pattern, Convention over Configuration</p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>💎 Rails คืออะไร?</h3>
+      <p>Ruby on Rails (Rails) คือ <strong style="color:#f87171">Web Application Framework</strong> เขียนด้วยภาษา Ruby เน้นความเร็วในการพัฒนา มีหลักการสำคัญ 2 ข้อ:</p>
+      <div style="margin-top:12px;display:flex;flex-direction:column;gap:10px">
+        <div style="border:1px solid #cc000044;border-radius:8px;padding:12px;background:rgba(204,0,0,.04)">
+          <div style="font-weight:700;color:#f87171;margin-bottom:4px">📐 Convention over Configuration (CoC)</div>
+          <div style="font-size:.87rem;color:#8b949e">Rails กำหนดมาตรฐานให้แล้ว — ไม่ต้องตั้งค่าอะไรมาก แค่ทำตาม convention ก็ทำงานได้เลย</div>
+        </div>
+        <div style="border:1px solid #10b98144;border-radius:8px;padding:12px;background:rgba(16,185,129,.04)">
+          <div style="font-weight:700;color:#34d399;margin-bottom:4px">🔁 Don't Repeat Yourself (DRY)</div>
+          <div style="font-size:.87rem;color:#8b949e">เขียนโค้ดครั้งเดียว นำมาใช้ซ้ำได้หลายที่ — Rails มี helper, partial, concern ช่วยให้โค้ดไม่ซ้ำซ้อน</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>⚡ Rails ทำอะไรได้บ้าง?</h3>
+      <ul>
+        <li>🌐 <strong style="color:#60a5fa">Web Application</strong> — สร้างเว็บครบทั้ง Frontend + Backend</li>
+        <li>🗄️ <strong style="color:#34d399">Database ORM</strong> — Active Record จัดการ DB โดยไม่ต้องเขียน SQL</li>
+        <li>📋 <strong style="color:#ffa657">REST API</strong> — สร้าง JSON API ได้ด้วย API-only mode</li>
+        <li>📧 <strong style="color:#f87171">Email</strong> — Action Mailer ส่ง email ได้ในตัว</li>
+        <li>⚡ <strong style="color:#c4b5fd">Real-time</strong> — Action Cable สำหรับ WebSocket</li>
+        <li>🔐 <strong style="color:#67e8f9">Auth</strong> — Devise gem ทำ Authentication ได้ง่าย</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔄 Rails Request Lifecycle — ขั้นตอน Request → Response</h3>
+    <div class="flow" style="flex-direction:column;align-items:flex-start;gap:8px">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span class="fb fb-b">Browser<br><small>GET /articles</small></span>
+        <span class="fa">→</span>
+        <span class="fb fb-r">Router<br><small>routes.rb</small></span>
+        <span class="fa">→</span>
+        <span class="fb fb-r">Controller<br><small>articles#index</small></span>
+        <span class="fa">→</span>
+        <span class="fb fb-g">Model<br><small>Article.all</small></span>
+        <span class="fa">→</span>
+        <span class="fb fb-c">Database<br><small>SQL Query</small></span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span class="fb fb-c">Database</span>
+        <span class="fa">→</span>
+        <span class="fb fb-g">Model<br><small>return data</small></span>
+        <span class="fa">→</span>
+        <span class="fb fb-r">Controller<br><small>@articles</small></span>
+        <span class="fa">→</span>
+        <span class="fb fb-b">View<br><small>index.html.erb</small></span>
+        <span class="fa">→</span>
+        <span class="fb fb-p">HTML<br><small>→ Browser</small></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 02: ติดตั้ง ===== -->
+<section id="install">
+  <div class="chapter-header ch-green">
+    <div class="ch-num">02</div>
+    <div>
+      <h2>ติดตั้ง Ruby & Rails</h2>
+      <p>ติดตั้ง rbenv, Ruby, Rails และ PostgreSQL</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🍎 macOS / Linux — ด้วย rbenv (แนะนำ)</h3>
+    <pre><span class="cm"># 1. ติดตั้ง rbenv (Ruby version manager)</span>
+brew install rbenv ruby-build        <span class="cm"># macOS</span>
+curl -fsSL https://rbenv.org/install.sh | bash  <span class="cm"># Linux</span>
+
+<span class="cm"># เพิ่มใน ~/.zshrc หรือ ~/.bashrc</span>
+<span class="rb-kw">eval</span> <span class="rb-str">"$(rbenv init - zsh)"</span>
+
+<span class="cm"># 2. ติดตั้ง Ruby</span>
+rbenv install 3.3.0
+rbenv global 3.3.0
+ruby --version
+<span class="out">ruby 3.3.0 ...</span>
+
+<span class="cm"># 3. ติดตั้ง Rails</span>
+gem install rails
+rails --version
+<span class="out">Rails 7.x.x</span>
+
+<span class="cm"># 4. ติดตั้ง Node.js (สำหรับ Asset Pipeline)</span>
+brew install node        <span class="cm"># macOS</span>
+sudo apt install nodejs  <span class="cm"># Ubuntu</span></pre>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>🪟 Windows — ด้วย RubyInstaller</h3>
+      <pre style="font-size:.8rem"><span class="cm"># 1. ดาวน์โหลด RubyInstaller</span>
+<span class="cm"># rubyinstaller.org → Ruby+Devkit 3.x</span>
+
+<span class="cm"># 2. ติดตั้ง MSYS2 (ตามที่ installer บอก)</span>
+
+<span class="cm"># 3. ติดตั้ง Rails</span>
+gem install rails
+
+<span class="cm"># 4. ตรวจสอบ</span>
+ruby --version
+rails --version</pre>
+    </div>
+    <div class="card">
+      <h3>🐳 Docker (ทางเลือก)</h3>
+      <pre style="font-size:.8rem"><span class="cm"># ใช้ Official Ruby Image</span>
+docker run -it ruby:3.3 bash
+
+<span class="cm"># หรือสร้าง Dockerfile</span>
+FROM ruby:3.3-slim
+RUN gem install rails
+WORKDIR /app</pre>
+      <div class="callout tip" style="margin-top:10px">
+        <span class="ci">💡</span>
+        <div>Docker เหมาะถ้าไม่อยากติดตั้งอะไรบนเครื่อง</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🗄️ ติดตั้ง Database</h3>
+    <pre><span class="cm"># PostgreSQL (แนะนำสำหรับ Production)</span>
+brew install postgresql@16   <span class="cm"># macOS</span>
+sudo apt install postgresql  <span class="cm"># Ubuntu</span>
+brew services start postgresql@16
+
+<span class="cm"># SQLite (ใช้สำหรับ Development/Learning — ไม่ต้องติดตั้งเพิ่ม)</span>
+<span class="cm"># Rails ใช้ SQLite เป็น default</span></pre>
+  </div>
+</section>
+
+<!-- ===== 03: New Project ===== -->
+<section id="new-project">
+  <div class="chapter-header ch-blue">
+    <div class="ch-num">03</div>
+    <div>
+      <h2>สร้างโปรเจค Rails แรก</h2>
+      <p>คำสั่ง rails new และ options ที่สำคัญ</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🚀 rails new — สร้างโปรเจค</h3>
+    <pre><span class="cm"># สร้างโปรเจคพื้นฐาน (SQLite - ดีสำหรับเรียน)</span>
+rails new myblog
+
+<span class="cm"># สร้างโปรเจคด้วย PostgreSQL</span>
+rails new myblog --database=postgresql
+
+<span class="cm"># สร้าง API-only (ไม่มี View)</span>
+rails new myblog --api
+
+<span class="cm"># สร้างพร้อม CSS framework</span>
+rails new myblog --css=tailwind
+
+<span class="cm"># เข้าโฟลเดอร์โปรเจค</span>
+cd myblog
+
+<span class="cm"># สร้าง Database</span>
+rails db:create
+<span class="out">Created database 'db/development.sqlite3'
+Created database 'db/test.sqlite3'</span>
+
+<span class="cm"># รันเซิร์ฟเวอร์</span>
+rails server          <span class="cm"># หรือ rails s</span>
+rails s -p 4000       <span class="cm"># กำหนด port</span>
+<span class="out">=> Booting Puma
+=> Rails 7.x application starting in development
+=> http://127.0.0.1:3000</span></pre>
+    <div class="callout tip">
+      <span class="ci">💡</span>
+      <div>เปิด <code class="ic">http://localhost:3000</code> ใน browser — เห็นหน้า "Yay! You're on Rails!" แปลว่าสำเร็จ!</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 04: โครงสร้าง ===== -->
+<section id="structure">
+  <div class="chapter-header ch-purple">
+    <div class="ch-num">04</div>
+    <div>
+      <h2>โครงสร้างโปรเจค Rails</h2>
+      <p>ทำความรู้จักกับทุก Folder และ File สำคัญ</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📁 Rails Directory Structure</h3>
+    <div class="file-tree">
+myblog/<br>
+├── <span class="ft-dir">app/</span>                  <span class="ft-cm"># โค้ดหลักของแอป</span><br>
+│   ├── <span class="ft-imp">controllers/</span>      <span class="ft-cm"># จัดการ Request/Response</span><br>
+│   ├── <span class="ft-imp">models/</span>           <span class="ft-cm"># Logic + Database</span><br>
+│   ├── <span class="ft-imp">views/</span>            <span class="ft-cm"># HTML Templates (ERB)</span><br>
+│   ├── <span class="ft-dir">helpers/</span>          <span class="ft-cm"># Helper methods สำหรับ Views</span><br>
+│   ├── <span class="ft-dir">mailers/</span>          <span class="ft-cm"># Email templates</span><br>
+│   └── <span class="ft-dir">assets/</span>           <span class="ft-cm"># CSS, JS, รูปภาพ</span><br>
+├── <span class="ft-dir">config/</span>               <span class="ft-cm"># การตั้งค่าทั้งหมด</span><br>
+│   ├── <span class="ft-imp">routes.rb</span>         <span class="ft-cm"># กำหนด URL → Controller</span><br>
+│   ├── <span class="ft-dir">environments/</span>     <span class="ft-cm"># dev / test / production</span><br>
+│   └── <span class="ft-file">database.yml</span>      <span class="ft-cm"># Database config</span><br>
+├── <span class="ft-dir">db/</span>                   <span class="ft-cm"># Database files</span><br>
+│   ├── <span class="ft-imp">migrate/</span>          <span class="ft-cm"># Migration files</span><br>
+│   └── <span class="ft-file">schema.rb</span>         <span class="ft-cm"># สถานะปัจจุบันของ DB</span><br>
+├── <span class="ft-dir">lib/</span>                  <span class="ft-cm"># Reusable code</span><br>
+├── <span class="ft-dir">spec/ / test/</span>         <span class="ft-cm"># Tests</span><br>
+├── <span class="ft-file">Gemfile</span>               <span class="ft-cm"># Dependencies (เหมือน package.json)</span><br>
+├── <span class="ft-file">Gemfile.lock</span>          <span class="ft-cm"># Lock versions</span><br>
+└── <span class="ft-file">Rakefile</span>             <span class="ft-cm"># Task runner</span>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <div class="card">
+      <h3>📜 Gemfile</h3>
+      <pre style="font-size:.8rem"><span class="rb-cm"># Gemfile</span>
+source <span class="rb-str">'https://rubygems.org'</span>
+ruby <span class="rb-str">'3.3.0'</span>
+
+gem <span class="rb-str">'rails'</span>, <span class="rb-str">'~> 7.1'</span>
+gem <span class="rb-str">'sqlite3'</span>
+gem <span class="rb-str">'puma'</span>
+
+group <span class="rb-sym">:development</span> <span class="rb-kw">do</span>
+  gem <span class="rb-str">'web-console'</span>
+<span class="rb-kw">end</span></pre>
+      <pre style="font-size:.8rem"><span class="cm"># ติดตั้ง gems</span>
+bundle install</pre>
+    </div>
+    <div class="card">
+      <h3>⚙️ config/database.yml</h3>
+      <pre style="font-size:.8rem"><span class="rb-cm"># SQLite (default)</span>
+default: &amp;default
+  adapter: sqlite3
+  pool: 5
+
+development:
+  &lt;&lt;: *default
+  database: db/development.sqlite3
+
+<span class="rb-cm"># PostgreSQL</span>
+default: &amp;default
+  adapter: postgresql
+  host: localhost
+  username: postgres</pre>
+    </div>
+    <div class="card">
+      <h3>🛠️ Rails Commands</h3>
+      <pre style="font-size:.8rem"><span class="cm"># เรียกดูคำสั่งทั้งหมด</span>
+rails --help
+
+<span class="cm"># รัน server</span>
+rails s
+
+<span class="cm"># Rails console (REPL)</span>
+rails c
+
+<span class="cm"># Generate code</span>
+rails generate
+rails g  <span class="cm"># ย่อ</span>
+
+<span class="cm"># Database tasks</span>
+rails db:migrate
+rails db:rollback
+rails db:seed</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 05: Ruby Basics ===== -->
+<section id="ruby-basics">
+  <div class="chapter-header ch-orange">
+    <div class="ch-num">05</div>
+    <div>
+      <h2>Ruby พื้นฐานที่ต้องรู้</h2>
+      <p>Syntax สำคัญของ Ruby ที่ใช้งานใน Rails บ่อยมาก</p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>📝 Variables, String, Number</h3>
+      <pre><span class="rb-cm"># ตัวแปร — ไม่ต้องประกาศ type</span>
+name = <span class="rb-str">"สมชาย"</span>
+age  = <span class="rb-num">25</span>
+price = <span class="rb-num">99.99</span>
+is_admin = <span class="rb-kw">true</span>
+
+<span class="rb-cm"># String interpolation</span>
+puts <span class="rb-str">"สวัสดี #{name} อายุ #{age} ปี"</span>
+<span class="out">สวัสดี สมชาย อายุ 25 ปี</span>
+
+<span class="rb-cm"># String methods ที่ใช้บ่อย</span>
+<span class="rb-str">"hello"</span>.upcase        <span class="cm"># "HELLO"</span>
+<span class="rb-str">"HELLO"</span>.downcase      <span class="cm"># "hello"</span>
+<span class="rb-str">"hello world"</span>.split  <span class="cm"># ["hello", "world"]</span>
+<span class="rb-str">"  hello  "</span>.strip    <span class="cm"># "hello"</span>
+<span class="rb-str">"hello"</span>.length        <span class="cm"># 5</span>
+<span class="rb-str">"hello"</span>.include?(<span class="rb-str">"ell"</span>) <span class="cm"># true</span></pre>
+    </div>
+    <div class="card">
+      <h3>📦 Array & Hash</h3>
+      <pre><span class="rb-cm"># Array</span>
+fruits = [<span class="rb-str">"apple"</span>, <span class="rb-str">"banana"</span>, <span class="rb-str">"orange"</span>]
+fruits.first        <span class="cm"># "apple"</span>
+fruits.last         <span class="cm"># "orange"</span>
+fruits.length       <span class="cm"># 3</span>
+fruits.push(<span class="rb-str">"grape"</span>)
+fruits.map { |f| f.upcase }  <span class="cm"># ["APPLE", ...]</span>
+fruits.select { |f| f.length > <span class="rb-num">5</span> }
+
+<span class="rb-cm"># Hash (เหมือน Object ใน JS)</span>
+user = {
+  name: <span class="rb-str">"สมชาย"</span>,
+  age: <span class="rb-num">25</span>,
+  admin: <span class="rb-kw">false</span>
+}
+user[:name]         <span class="cm"># "สมชาย"</span>
+user[:age] = <span class="rb-num">26</span>    <span class="cm"># แก้ไขค่า</span>
+user.keys           <span class="cm"># [:name, :age, :admin]</span></pre>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>🔁 Loops & Conditionals</h3>
+      <pre><span class="rb-cm"># if / elsif / else</span>
+<span class="rb-kw">if</span> age >= <span class="rb-num">18</span>
+  puts <span class="rb-str">"ผู้ใหญ่"</span>
+<span class="rb-kw">elsif</span> age >= <span class="rb-num">13</span>
+  puts <span class="rb-str">"วัยรุ่น"</span>
+<span class="rb-kw">else</span>
+  puts <span class="rb-str">"เด็ก"</span>
+<span class="rb-kw">end</span>
+
+<span class="rb-cm"># Inline if (เจอบ่อยใน Rails)</span>
+render <span class="rb-sym">:new</span> <span class="rb-kw">unless</span> @article.save
+redirect_to root_path <span class="rb-kw">if</span> current_user.nil?
+
+<span class="rb-cm"># each loop</span>
+[<span class="rb-num">1</span>, <span class="rb-num">2</span>, <span class="rb-num">3</span>].each <span class="rb-kw">do</span> |n|
+  puts n
+<span class="rb-kw">end</span>
+
+<span class="rb-num">3</span>.times { puts <span class="rb-str">"hello"</span> }
+(<span class="rb-num">1</span>..<span class="rb-num">5</span>).each { |i| puts i }</pre>
+    </div>
+    <div class="card">
+      <h3>🔧 Methods & Symbols</h3>
+      <pre><span class="rb-cm"># Method definition</span>
+<span class="rb-kw">def</span> <span class="rb-fn">greet</span>(name, greeting: <span class="rb-str">"สวัสดี"</span>)
+  <span class="rb-str">"#{greeting}, #{name}!"</span>
+<span class="rb-kw">end</span>
+
+greet(<span class="rb-str">"สมชาย"</span>)              <span class="cm"># "สวัสดี, สมชาย!"</span>
+greet(<span class="rb-str">"Bob"</span>, greeting: <span class="rb-str">"Hi"</span>) <span class="cm"># "Hi, Bob!"</span>
+
+<span class="rb-cm"># Ruby คืนค่าสุดท้ายอัตโนมัติ</span>
+<span class="rb-kw">def</span> <span class="rb-fn">double</span>(n)
+  n * <span class="rb-num">2</span>   <span class="cm"># ไม่ต้องเขียน return</span>
+<span class="rb-kw">end</span>
+
+<span class="rb-cm"># Symbol — เหมือน string แต่ immutable</span>
+<span class="rb-sym">:name</span>       <span class="cm"># ใช้บ่อยมากใน Rails</span>
+<span class="rb-sym">:admin</span>
+<span class="rb-sym">:belongs_to</span></pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🏛️ Class — สิ่งที่ Rails ใช้เยอะมาก</h3>
+    <pre><span class="rb-kw">class</span> <span class="rb-cls">Animal</span>
+  <span class="rb-fn">attr_accessor</span> <span class="rb-sym">:name</span>, <span class="rb-sym">:age</span>    <span class="rb-cm"># สร้าง getter/setter อัตโนมัติ</span>
+
+  <span class="rb-kw">def</span> <span class="rb-fn">initialize</span>(name, age)
+    @name = name    <span class="rb-cm"># Instance variable</span>
+    @age  = age
+  <span class="rb-kw">end</span>
+
+  <span class="rb-kw">def</span> <span class="rb-fn">speak</span>
+    <span class="rb-str">"#{@name} พูดอะไรบางอย่าง"</span>
+  <span class="rb-kw">end</span>
+<span class="rb-kw">end</span>
+
+<span class="rb-kw">class</span> <span class="rb-cls">Dog</span> &lt; <span class="rb-cls">Animal</span>    <span class="rb-cm"># Inheritance</span>
+  <span class="rb-kw">def</span> <span class="rb-fn">speak</span>
+    <span class="rb-str">"#{@name} พูดว่า: โฮ่ง!"</span>
+  <span class="rb-kw">end</span>
+<span class="rb-kw">end</span>
+
+dog = Dog.new(<span class="rb-str">"บุญมี"</span>, <span class="rb-num">3</span>)
+dog.speak    <span class="cm"># "บุญมี พูดว่า: โฮ่ง!"</span>
+dog.name     <span class="cm"># "บุญมี"</span>
+dog.age = <span class="rb-num">4</span> <span class="cm"># setter จาก attr_accessor</span></pre>
+  </div>
+</section>
+
+<!-- ===== 06: MVC ===== -->
+<section id="mvc">
+  <div class="chapter-header ch-ruby">
+    <div class="ch-num">06</div>
+    <div>
+      <h2>MVC Pattern</h2>
+      <p>Model, View, Controller — หัวใจของ Rails</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🏗️ MVC คือการแบ่งหน้าที่</h3>
+    <div style="display:flex;flex-direction:column;gap:12px;margin-top:8px">
+      <div class="mvc-box mvc-m">
+        <div class="mvc-label">MODEL — app/models/</div>
+        <p style="font-size:.88rem;color:#8b949e;margin-top:4px"><strong style="color:#34d399">ข้อมูลและ Logic</strong> — ติดต่อกับ Database, Validation, Association ระหว่างตาราง ไม่รู้จัก View หรือ Controller</p>
+        <pre style="margin-top:8px;font-size:.82rem"><span class="rb-kw">class</span> <span class="rb-cls">Article</span> &lt; <span class="rb-cls">ApplicationRecord</span>
+  validates <span class="rb-sym">:title</span>, presence: <span class="rb-kw">true</span>
+  has_many <span class="rb-sym">:comments</span>
+<span class="rb-kw">end</span></pre>
+      </div>
+      <div class="mvc-box mvc-c">
+        <div class="mvc-label">CONTROLLER — app/controllers/</div>
+        <p style="font-size:.88rem;color:#8b949e;margin-top:4px"><strong style="color:#f87171">ตัวกลาง</strong> — รับ Request จาก Router, ถาม Model ขอข้อมูล, ส่งข้อมูลให้ View แสดงผล</p>
+        <pre style="margin-top:8px;font-size:.82rem"><span class="rb-kw">class</span> <span class="rb-cls">ArticlesController</span> &lt; <span class="rb-cls">ApplicationController</span>
+  <span class="rb-kw">def</span> <span class="rb-fn">index</span>
+    @articles = Article.all   <span class="rb-cm"># ดึงข้อมูลจาก Model</span>
+  <span class="rb-kw">end</span>
+<span class="rb-kw">end</span></pre>
+      </div>
+      <div class="mvc-box mvc-v">
+        <div class="mvc-label">VIEW — app/views/</div>
+        <p style="font-size:.88rem;color:#8b949e;margin-top:4px"><strong style="color:#60a5fa">แสดงผล</strong> — รับข้อมูลจาก Controller แปลงเป็น HTML ด้วย ERB template</p>
+        <pre style="margin-top:8px;font-size:.82rem"><span class="rb-cm">&lt;!-- index.html.erb --&gt;</span>
+&lt;% @articles.each do |article| %&gt;
+  &lt;h2&gt;&lt;%= article.title %&gt;&lt;/h2&gt;
+&lt;% end %&gt;</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 07: Routes ===== -->
+<section id="routes">
+  <div class="chapter-header ch-cyan">
+    <div class="ch-num">07</div>
+    <div>
+      <h2>Routes — กำหนด URL</h2>
+      <p>config/routes.rb, RESTful Resources, Named Routes</p>
+    </div>
+  </div>
+
+  <div class="callout ruby">
+    <span class="ci">💎</span>
+    <div>Rails ใช้หลัก <strong>RESTful Routing</strong> — แต่ละ Resource มี 7 actions มาตรฐาน: index, new, create, show, edit, update, destroy</div>
+  </div>
+
+  <div class="card">
+    <h3>🗺️ config/routes.rb</h3>
+    <pre><span class="rb-cm"># config/routes.rb</span>
+Rails.application.routes.draw <span class="rb-kw">do</span>
+
+  <span class="hl">  <span class="rb-cm"># resources — สร้าง 7 routes อัตโนมัติ!</span></span>
+  <span class="hl">  resources <span class="rb-sym">:articles</span></span>
+
+  <span class="rb-cm"># Manual routes</span>
+  get  <span class="rb-str">'/about'</span>, to: <span class="rb-str">'pages#about'</span>
+  post <span class="rb-str">'/login'</span>, to: <span class="rb-str">'sessions#create'</span>
+
+  <span class="rb-cm"># Root path (หน้าแรก)</span>
+  root <span class="rb-str">'articles#index'</span>
+
+  <span class="rb-cm"># Nested routes (article มี comments)</span>
+  resources <span class="rb-sym">:articles</span> <span class="rb-kw">do</span>
+    resources <span class="rb-sym">:comments</span>
+  <span class="rb-kw">end</span>
+
+<span class="rb-kw">end</span></pre>
+    <pre><span class="cm"># ดู routes ทั้งหมด</span>
+rails routes
+<span class="out">      Prefix Verb   URI Pattern                  Controller#Action
+    articles GET    /articles(.:format)          articles#index
+             POST   /articles(.:format)          articles#create
+ new_article GET    /articles/new(.:format)      articles#new
+edit_article GET    /articles/:id/edit(.:format) articles#edit
+     article GET    /articles/:id(.:format)      articles#show
+             PATCH  /articles/:id(.:format)      articles#update
+             DELETE /articles/:id(.:format)      articles#destroy</span></pre>
+  </div>
+
+  <div class="card">
+    <h3>🔗 Route Helpers — ใช้ใน View และ Controller</h3>
+    <table>
+      <thead><tr><th>Helper</th><th>URL ที่ได้</th><th>ใช้เมื่อ</th></tr></thead>
+      <tbody>
+        <tr><td><code>articles_path</code></td><td>/articles</td><td>ลิสต์ article ทั้งหมด</td></tr>
+        <tr><td><code>new_article_path</code></td><td>/articles/new</td><td>หน้าสร้าง article ใหม่</td></tr>
+        <tr><td><code>article_path(@article)</code></td><td>/articles/1</td><td>หน้า article นั้นๆ</td></tr>
+        <tr><td><code>edit_article_path(@article)</code></td><td>/articles/1/edit</td><td>หน้าแก้ไข article</td></tr>
+        <tr><td><code>root_path</code></td><td>/</td><td>หน้าแรก</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ===== 08: Controller ===== -->
+<section id="controller">
+  <div class="chapter-header ch-red">
+    <div class="ch-num">08</div>
+    <div>
+      <h2>Controller — ควบคุม Logic</h2>
+      <p>Actions, params, render, redirect_to, before_action</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>⚙️ สร้าง Controller ด้วย Generator</h3>
+    <pre><span class="cm"># Generate Controller</span>
+rails generate controller Articles index show new edit
+rails g controller Articles index show new edit  <span class="cm"># ย่อ</span>
+
+<span class="cm"># Generate Controller + Model + Migration (Scaffold)</span>
+rails g scaffold Article title:string body:text
+rails db:migrate</pre>
+  </div>
+
+  <div class="card">
+    <h3>📋 CRUD Controller สมบูรณ์</h3>
+    <pre><span class="rb-cm"># app/controllers/articles_controller.rb</span>
+<span class="rb-kw">class</span> <span class="rb-cls">ArticlesController</span> &lt; <span class="rb-cls">ApplicationController</span>
+  <span class="hl">  before_action <span class="rb-sym">:set_article</span>, only: [<span class="rb-sym">:show</span>, <span class="rb-sym">:edit</span>, <span class="rb-sym">:update</span>, <span class="rb-sym">:destroy</span>]</span>
+
+  <span class="rb-cm"># GET /articles</span>
+  <span class="rb-kw">def</span> <span class="rb-fn">index</span>
+    @articles = Article.all.order(created_at: <span class="rb-sym">:desc</span>)
+  <span class="rb-kw">end</span>
+
+  <span class="rb-cm"># GET /articles/:id</span>
+  <span class="rb-kw">def</span> <span class="rb-fn">show</span>
+  <span class="rb-kw">end</span>
+
+  <span class="rb-cm"># GET /articles/new</span>
+  <span class="rb-kw">def</span> <span class="rb-fn">new</span>
+    @article = Article.new
+  <span class="rb-kw">end</span>
+
+  <span class="rb-cm"># POST /articles</span>
+  <span class="rb-kw">def</span> <span class="rb-fn">create</span>
+    @article = Article.new(article_params)
+    <span class="rb-kw">if</span> @article.save
+      redirect_to @article, notice: <span class="rb-str">"สร้างบทความสำเร็จ!"</span>
+    <span class="rb-kw">else</span>
+      render <span class="rb-sym">:new</span>, status: <span class="rb-sym">:unprocessable_entity</span>
+    <span class="rb-kw">end</span>
+  <span class="rb-kw">end</span>
+
+  <span class="rb-cm"># GET /articles/:id/edit</span>
+  <span class="rb-kw">def</span> <span class="rb-fn">edit</span>
+  <span class="rb-kw">end</span>
+
+  <span class="rb-cm"># PATCH /articles/:id</span>
+  <span class="rb-kw">def</span> <span class="rb-fn">update</span>
+    <span class="rb-kw">if</span> @article.update(article_params)
+      redirect_to @article, notice: <span class="rb-str">"แก้ไขสำเร็จ!"</span>
+    <span class="rb-kw">else</span>
+      render <span class="rb-sym">:edit</span>, status: <span class="rb-sym">:unprocessable_entity</span>
+    <span class="rb-kw">end</span>
+  <span class="rb-kw">end</span>
+
+  <span class="rb-cm"># DELETE /articles/:id</span>
+  <span class="rb-kw">def</span> <span class="rb-fn">destroy</span>
+    @article.destroy
+    redirect_to articles_path, notice: <span class="rb-str">"ลบบทความแล้ว"</span>
+  <span class="rb-kw">end</span>
+
+  <span class="rb-kw">private</span>
+
+  <span class="hl2">  <span class="rb-kw">def</span> <span class="rb-fn">set_article</span>
+    @article = Article.find(params[<span class="rb-sym">:id</span>])
+  <span class="rb-kw">end</span></span>
+
+  <span class="hl2">  <span class="rb-kw">def</span> <span class="rb-fn">article_params</span>   <span class="rb-cm"># Strong Parameters — กันช่องโหว่</span>
+    params.require(<span class="rb-sym">:article</span>).permit(<span class="rb-sym">:title</span>, <span class="rb-sym">:body</span>)
+  <span class="rb-kw">end</span></span>
+<span class="rb-kw">end</span></pre>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>📤 render vs redirect_to</h3>
+      <table>
+        <thead><tr><th>Method</th><th>ทำอะไร</th><th>ใช้เมื่อ</th></tr></thead>
+        <tbody>
+          <tr><td><code>render :new</code></td><td>แสดง view โดยไม่เปลี่ยน URL</td><td>Form มี error</td></tr>
+          <tr><td><code>redirect_to @article</code></td><td>ส่ง HTTP 302 → browser ไปหน้าใหม่</td><td>บันทึก/ลบสำเร็จ</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <h3>🔒 Strong Parameters</h3>
+      <pre style="font-size:.82rem"><span class="rb-cm"># ป้องกัน Mass Assignment Attack</span>
+<span class="rb-cm"># ถ้าไม่มี Strong Params user อาจส่ง</span>
+<span class="rb-cm"># { admin: true } มาได้!</span>
+
+<span class="rb-kw">def</span> <span class="rb-fn">article_params</span>
+  params
+    .require(<span class="rb-sym">:article</span>)
+    .permit(<span class="rb-sym">:title</span>, <span class="rb-sym">:body</span>, <span class="rb-sym">:published</span>)
+<span class="rb-kw">end</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 09: Model ===== -->
+<section id="model">
+  <div class="chapter-header ch-green">
+    <div class="ch-num">09</div>
+    <div>
+      <h2>Model & Active Record</h2>
+      <p>ORM, Validations, Queries, Callbacks</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔍 Active Record Queries — ไม่ต้องเขียน SQL!</h3>
+    <pre><span class="rb-cm"># ดึงข้อมูลทั้งหมด</span>
+Article.all
+Article.all.order(created_at: <span class="rb-sym">:desc</span>)
+Article.all.limit(<span class="rb-num">10</span>)
+
+<span class="rb-cm"># ดึงด้วย ID</span>
+Article.find(<span class="rb-num">1</span>)           <span class="cm"># error ถ้าไม่เจอ</span>
+Article.find_by(id: <span class="rb-num">1</span>)   <span class="cm"># nil ถ้าไม่เจอ</span>
+
+<span class="rb-cm"># WHERE condition</span>
+Article.where(published: <span class="rb-kw">true</span>)
+Article.where(<span class="rb-str">"title LIKE ?"</span>, <span class="rb-str">"%Rails%"</span>)
+Article.where(created_at: <span class="rb-num">1</span>.week.ago..)
+
+<span class="rb-cm"># Count / Exists</span>
+Article.count
+Article.where(published: <span class="rb-kw">true</span>).count
+Article.exists?(<span class="rb-num">1</span>)
+
+<span class="rb-cm"># สร้างข้อมูล</span>
+Article.create(title: <span class="rb-str">"ทดสอบ"</span>, body: <span class="rb-str">"เนื้อหา"</span>)
+article = Article.new(title: <span class="rb-str">"ทดสอบ"</span>)
+article.save  <span class="cm"># คืน true/false</span>
+
+<span class="rb-cm"># อัปเดตข้อมูล</span>
+article = Article.find(<span class="rb-num">1</span>)
+article.update(title: <span class="rb-str">"ชื่อใหม่"</span>)
+
+<span class="rb-cm"># ลบข้อมูล</span>
+article.destroy
+Article.destroy_all</pre>
+  </div>
+
+  <div class="card">
+    <h3>✅ Validations — ตรวจสอบข้อมูลก่อนบันทึก</h3>
+    <pre><span class="rb-kw">class</span> <span class="rb-cls">Article</span> &lt; <span class="rb-cls">ApplicationRecord</span>
+  <span class="rb-cm"># ต้องมีค่า</span>
+  validates <span class="rb-sym">:title</span>, presence: <span class="rb-kw">true</span>
+  validates <span class="rb-sym">:body</span>,  presence: <span class="rb-kw">true</span>
+
+  <span class="rb-cm"># ความยาว</span>
+  validates <span class="rb-sym">:title</span>, length: { minimum: <span class="rb-num">5</span>, maximum: <span class="rb-num">100</span> }
+
+  <span class="rb-cm"># ห้ามซ้ำ</span>
+  validates <span class="rb-sym">:title</span>, uniqueness: <span class="rb-kw">true</span>
+
+  <span class="rb-cm"># รูปแบบ (regex)</span>
+  validates <span class="rb-sym">:email</span>, format: { with: URI::MailTo::EMAIL_REGEXP }
+
+  <span class="rb-cm"># ตัวเลข</span>
+  validates <span class="rb-sym">:views</span>, numericality: { greater_than_or_equal_to: <span class="rb-num">0</span> }
+
+  <span class="rb-cm"># รวมหลาย validation</span>
+  validates <span class="rb-sym">:title</span>,
+    presence: <span class="rb-kw">true</span>,
+    length: { minimum: <span class="rb-num">5</span>, maximum: <span class="rb-num">100</span> },
+    uniqueness: { case_sensitive: <span class="rb-kw">false</span> }
+<span class="rb-kw">end</span>
+
+<span class="rb-cm"># ตรวจสอบ validation ใน console</span>
+article = Article.new
+article.valid?        <span class="cm"># false</span>
+article.errors.full_messages
+<span class="cm"># ["Title can't be blank", "Body can't be blank"]</span></pre>
+  </div>
+
+  <div class="card">
+    <h3>🔔 Callbacks — Hook ก่อน/หลังบันทึก</h3>
+    <pre><span class="rb-kw">class</span> <span class="rb-cls">Article</span> &lt; <span class="rb-cls">ApplicationRecord</span>
+  before_save  <span class="rb-sym">:set_slug</span>
+  after_create <span class="rb-sym">:send_notification</span>
+
+  <span class="rb-kw">private</span>
+
+  <span class="rb-kw">def</span> <span class="rb-fn">set_slug</span>
+    self.slug = title.parameterize  <span class="cm"># "Hello World" → "hello-world"</span>
+  <span class="rb-kw">end</span>
+
+  <span class="rb-kw">def</span> <span class="rb-fn">send_notification</span>
+    <span class="rb-cm"># ส่ง email แจ้งเตือน</span>
+  <span class="rb-kw">end</span>
+<span class="rb-kw">end</span></pre>
+  </div>
+</section>
+
+<!-- ===== 10: Migration ===== -->
+<section id="migration">
+  <div class="chapter-header ch-purple">
+    <div class="ch-num">10</div>
+    <div>
+      <h2>Migration — จัดการโครงสร้าง Database</h2>
+      <p>สร้าง แก้ไข และ Rollback ตาราง Database</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🗄️ สร้าง Migration</h3>
+    <pre><span class="cm"># Generate model + migration</span>
+rails g model Article title:string body:text published:boolean views:integer
+rails g model User name:string email:string:uniq password_digest:string
+
+<span class="cm"># Generate migration เพิ่ม column</span>
+rails g migration AddSlugToArticles slug:string:uniq
+rails g migration AddUserToArticles user:references
+
+<span class="cm"># Generate migration ลบ column</span>
+rails g migration RemovePublishedFromArticles published:boolean</pre>
+  </div>
+
+  <div class="card">
+    <h3>📋 Migration File ตัวอย่าง</h3>
+    <pre><span class="rb-cm"># db/migrate/20240101000000_create_articles.rb</span>
+<span class="rb-kw">class</span> <span class="rb-cls">CreateArticles</span> &lt; <span class="rb-cls">ActiveRecord::Migration</span>[<span class="rb-num">7.1</span>]
+  <span class="rb-kw">def</span> <span class="rb-fn">change</span>
+    create_table <span class="rb-sym">:articles</span> <span class="rb-kw">do</span> |t|
+      t.string  <span class="rb-sym">:title</span>,     null: <span class="rb-kw">false</span>
+      t.text    <span class="rb-sym">:body</span>,      null: <span class="rb-kw">false</span>
+      t.boolean <span class="rb-sym">:published</span>, default: <span class="rb-kw">false</span>
+      t.integer <span class="rb-sym">:views</span>,     default: <span class="rb-num">0</span>
+      t.string  <span class="rb-sym">:slug</span>
+
+      <span class="hl">      t.timestamps   <span class="rb-cm"># สร้าง created_at และ updated_at อัตโนมัติ</span></span>
+    <span class="rb-kw">end</span>
+
+    add_index <span class="rb-sym">:articles</span>, <span class="rb-sym">:slug</span>, unique: <span class="rb-kw">true</span>
+  <span class="rb-kw">end</span>
+<span class="rb-kw">end</span></pre>
+
+    <pre><span class="cm"># รัน migrations</span>
+rails db:migrate
+<span class="out">== CreateArticles: migrating ==
+-- create_table(:articles)
+== CreateArticles: migrated (0.0030s) ==</span>
+
+<span class="cm"># ย้อนกลับ migration ล่าสุด</span>
+rails db:rollback
+
+<span class="cm"># ดูสถานะ migrations</span>
+rails db:migrate:status</pre>
+  </div>
+
+  <div class="card">
+    <h3>📊 Data Types ที่ใช้บ่อย</h3>
+    <table>
+      <thead><tr><th>Type</th><th>ใช้สำหรับ</th><th>ตัวอย่าง</th></tr></thead>
+      <tbody>
+        <tr><td><code>string</code></td><td>ข้อความสั้น (max 255)</td><td>title, name, email</td></tr>
+        <tr><td><code>text</code></td><td>ข้อความยาว</td><td>body, description</td></tr>
+        <tr><td><code>integer</code></td><td>จำนวนเต็ม</td><td>views, age, quantity</td></tr>
+        <tr><td><code>decimal</code></td><td>ทศนิยม (แม่นยำ)</td><td>price, weight</td></tr>
+        <tr><td><code>boolean</code></td><td>true / false</td><td>published, active</td></tr>
+        <tr><td><code>datetime</code></td><td>วันที่และเวลา</td><td>published_at</td></tr>
+        <tr><td><code>references</code></td><td>Foreign key</td><td>user:references</td></tr>
+        <tr><td><code>jsonb</code></td><td>JSON (PostgreSQL)</td><td>metadata, settings</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ===== 11: Views ===== -->
+<section id="views">
+  <div class="chapter-header ch-blue">
+    <div class="ch-num">11</div>
+    <div>
+      <h2>Views & ERB Templates</h2>
+      <p>ไฟล์ .html.erb, Layout, Partial, Helpers</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📝 ERB Syntax — 3 แบบ</h3>
+    <pre><span class="rb-cm">&lt;!-- 1. &lt;%= %&gt; — แสดงผลลัพธ์ --&gt;</span>
+&lt;h1&gt;&lt;%= @article.title %&gt;&lt;/h1&gt;
+&lt;p&gt;&lt;%= Time.now %&gt;&lt;/p&gt;
+
+<span class="rb-cm">&lt;!-- 2. &lt;% %&gt; — รันโค้ด ไม่แสดงผล --&gt;</span>
+&lt;% @articles.each do |article| %&gt;
+  &lt;div&gt;&lt;%= article.title %&gt;&lt;/div&gt;
+&lt;% end %&gt;
+
+&lt;% if current_user %&gt;
+  &lt;%= link_to "ออกจากระบบ", logout_path %&gt;
+&lt;% end %&gt;
+
+<span class="rb-cm">&lt;!-- 3. &lt;%# %&gt; — Comment (ไม่แสดงใน HTML) --&gt;</span>
+&lt;%# นี่คือ comment ใน ERB %&gt;</pre>
+  </div>
+
+  <div class="card">
+    <h3>🏗️ Layout — app/views/layouts/application.html.erb</h3>
+    <pre>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;&lt;%= content_for?(:title) ? yield(:title) : "MyBlog" %&gt;&lt;/title&gt;
+  &lt;%= csrf_meta_tags %&gt;
+  &lt;%= stylesheet_link_tag "application" %&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;nav&gt;
+    &lt;%= link_to "🏠 หน้าแรก", root_path %&gt;
+    &lt;%= link_to "บทความ", articles_path %&gt;
+  &lt;/nav&gt;
+
+  <span class="hl">  &lt;% if notice %&gt;
+    &lt;div class="notice"&gt;&lt;%= notice %&gt;&lt;/div&gt;
+  &lt;% end %&gt;</span>
+
+  <span class="hl2">  &lt;%= yield %&gt;    &lt;!-- เนื้อหาของแต่ละ View จะใส่ตรงนี้ --&gt;</span>
+
+  &lt;footer&gt;&lt;p&gt;&amp;copy; 2024 MyBlog&lt;/p&gt;&lt;/footer&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>🧩 Partial — แบ่ง View ย่อยๆ</h3>
+      <pre><span class="rb-cm">&lt;!-- ชื่อไฟล์ต้องขึ้นต้นด้วย _ --&gt;</span>
+<span class="rb-cm">&lt;!-- app/views/articles/_article.html.erb --&gt;</span>
+&lt;div class="article"&gt;
+  &lt;h2&gt;&lt;%= article.title %&gt;&lt;/h2&gt;
+  &lt;p&gt;&lt;%= truncate(article.body, length: 100) %&gt;&lt;/p&gt;
+  &lt;%= link_to "อ่านเพิ่ม", article %&gt;
+&lt;/div&gt;
+
+<span class="rb-cm">&lt;!-- ใช้งาน partial --&gt;</span>
+&lt;%= render @articles %&gt;
+&lt;%# Rails ฉลาดพอหา _article partial เอง %&gt;
+
+&lt;%# หรือระบุชัดเจน %&gt;
+&lt;%= render partial: "article",
+           locals: { article: @article } %&gt;</pre>
+    </div>
+    <div class="card">
+      <h3>🔗 View Helpers ที่ใช้บ่อย</h3>
+      <pre style="font-size:.82rem"><span class="rb-cm">&lt;!-- Link --&gt;</span>
+&lt;%= link_to "แก้ไข", edit_article_path(@article) %&gt;
+&lt;%= link_to "ลบ", @article, data: {
+  turbo_method: :delete,
+  turbo_confirm: "แน่ใจไหม?"
+} %&gt;
+
+<span class="rb-cm">&lt;!-- Image --&gt;</span>
+&lt;%= image_tag "logo.png", alt: "Logo" %&gt;
+
+<span class="rb-cm">&lt;!-- วันที่ --&gt;</span>
+&lt;%= time_ago_in_words(@article.created_at) %&gt;
+&lt;%= l @article.created_at, format: :short %&gt;
+
+<span class="rb-cm">&lt;!-- ตัดข้อความ --&gt;</span>
+&lt;%= truncate(@article.body, length: 150) %&gt;
+
+<span class="rb-cm">&lt;!-- content_for --&gt;</span>
+&lt;% content_for :title, @article.title %&gt;</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 12: Forms ===== -->
+<section id="forms">
+  <div class="chapter-header ch-teal">
+    <div class="ch-num">12</div>
+    <div>
+      <h2>Forms — รับข้อมูลจากผู้ใช้</h2>
+      <p>form_with, Form Helpers, แสดง Errors</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📋 form_with — Rails Way</h3>
+    <pre><span class="rb-cm">&lt;!-- app/views/articles/_form.html.erb --&gt;</span>
+&lt;%= form_with model: @article <span class="rb-kw">do</span> |form| %&gt;
+
+  <span class="hl">  &lt;%# แสดง Error messages --&gt;
+  &lt;% if @article.errors.any? %&gt;
+    &lt;div class="errors"&gt;
+      &lt;% @article.errors.full_messages.each do |msg| %&gt;
+        &lt;p&gt;&lt;%= msg %&gt;&lt;/p&gt;
+      &lt;% end %&gt;
+    &lt;/div&gt;
+  &lt;% end %&gt;</span>
+
+  &lt;div&gt;
+    &lt;%= form.label :title, "หัวข้อ" %&gt;
+    &lt;%= form.text_field :title,
+          placeholder: "กรอกหัวข้อ",
+          class: "form-input" %&gt;
+  &lt;/div&gt;
+
+  &lt;div&gt;
+    &lt;%= form.label :body, "เนื้อหา" %&gt;
+    &lt;%= form.text_area :body, rows: 8 %&gt;
+  &lt;/div&gt;
+
+  &lt;div&gt;
+    &lt;%= form.check_box :published %&gt;
+    &lt;%= form.label :published, "เผยแพร่" %&gt;
+  &lt;/div&gt;
+
+  &lt;div&gt;
+    &lt;%= form.label :category, "หมวดหมู่" %&gt;
+    &lt;%= form.select :category,
+          ["เทคโนโลยี", "การเดินทาง", "อาหาร"],
+          include_blank: "-- เลือกหมวดหมู่ --" %&gt;
+  &lt;/div&gt;
+
+  &lt;%= form.submit "บันทึก", class: "btn-primary" %&gt;
+&lt;% end %&gt;</pre>
+
+    <div class="callout ruby">
+      <span class="ci">💎</span>
+      <div><code class="ic">form_with model: @article</code> — ถ้า @article ใหม่ (new record) จะ POST ไป <code class="ic">/articles</code> ถ้าแก้ไขอยู่จะ PATCH ไป <code class="ic">/articles/:id</code> อัตโนมัติ!</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 13: Associations ===== -->
+<section id="associations">
+  <div class="chapter-header ch-yellow">
+    <div class="ch-num">13</div>
+    <div>
+      <h2>Associations — ความสัมพันธ์ระหว่างตาราง</h2>
+      <p>belongs_to, has_many, has_one, has_many :through</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔗 ประเภท Association</h3>
+    <table>
+      <thead><tr><th>Association</th><th>ความสัมพันธ์</th><th>ตัวอย่าง</th></tr></thead>
+      <tbody>
+        <tr><td><code>belongs_to</code></td><td>ฝั่งที่มี foreign key</td><td>Comment belongs_to Article</td></tr>
+        <tr><td><code>has_many</code></td><td>มีหลายอัน</td><td>Article has_many Comments</td></tr>
+        <tr><td><code>has_one</code></td><td>มีแค่อันเดียว</td><td>User has_one Profile</td></tr>
+        <tr><td><code>has_many :through</code></td><td>Many-to-Many ผ่านตารางกลาง</td><td>Article has_many Tags through Taggings</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>💡 ตัวอย่าง User → Article → Comment</h3>
+    <pre><span class="rb-cm"># app/models/user.rb</span>
+<span class="rb-kw">class</span> <span class="rb-cls">User</span> &lt; <span class="rb-cls">ApplicationRecord</span>
+  has_many <span class="rb-sym">:articles</span>, dependent: <span class="rb-sym">:destroy</span>
+  has_many <span class="rb-sym">:comments</span>, dependent: <span class="rb-sym">:destroy</span>
+<span class="rb-kw">end</span>
+
+<span class="rb-cm"># app/models/article.rb</span>
+<span class="rb-kw">class</span> <span class="rb-cls">Article</span> &lt; <span class="rb-cls">ApplicationRecord</span>
+  belongs_to <span class="rb-sym">:user</span>
+  has_many   <span class="rb-sym">:comments</span>, dependent: <span class="rb-sym">:destroy</span>
+<span class="rb-kw">end</span>
+
+<span class="rb-cm"># app/models/comment.rb</span>
+<span class="rb-kw">class</span> <span class="rb-cls">Comment</span> &lt; <span class="rb-cls">ApplicationRecord</span>
+  belongs_to <span class="rb-sym">:article</span>
+  belongs_to <span class="rb-sym">:user</span>
+<span class="rb-kw">end</span>
+
+<span class="rb-cm"># ใช้งาน Association ใน Rails console</span>
+user = User.find(<span class="rb-num">1</span>)
+user.articles          <span class="cm"># ดู articles ทั้งหมดของ user</span>
+user.articles.create(title: <span class="rb-str">"บทความใหม่"</span>, body: <span class="rb-str">"..."</span>)
+
+article = Article.find(<span class="rb-num">1</span>)
+article.user           <span class="cm"># ดูว่าใครเขียน</span>
+article.comments       <span class="cm"># ดู comments ทั้งหมด</span>
+article.comments.count <span class="cm"># นับ comments</span></pre>
+  </div>
+</section>
+
+<!-- ===== 14: MINI PROJECT ===== -->
+<section id="project">
+  <div class="chapter-header ch-project">
+    <div class="ch-num">🚀</div>
+    <div>
+      <h2>Mini Project: Blog App</h2>
+      <p>สร้าง Blog ครบถ้วน — Articles + Comments + Authentication</p>
+    </div>
+  </div>
+
+  <div class="callout info">
+    <span class="ci">🎯</span>
+    <div>เราจะสร้าง Blog App ที่มี: <strong>สมัครสมาชิก / Login</strong>, <strong>CRUD บทความ</strong>, <strong>แสดงความคิดเห็น</strong> ตั้งแต่ต้นจนจบ</div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="project-step" data-step="STEP 1">
+    <h3 style="color:#60a5fa;margin-bottom:12px">📦 สร้างโปรเจคและติดตั้ง Gems</h3>
+    <pre><span class="cm"># สร้างโปรเจค</span>
+rails new myblog --css=tailwind
+cd myblog</pre>
+    <p style="color:#8b949e;font-size:.9rem;margin:8px 0">แก้ไข <code class="ic">Gemfile</code> เพิ่ม gems:</p>
+    <pre><span class="rb-cm"># Gemfile</span>
+gem <span class="rb-str">'devise'</span>          <span class="cm"># Authentication</span>
+gem <span class="rb-str">'kaminari'</span>        <span class="cm"># Pagination</span>
+
+group <span class="rb-sym">:development</span>, <span class="rb-sym">:test</span> <span class="rb-kw">do</span>
+  gem <span class="rb-str">'faker'</span>           <span class="cm"># สร้าง fake data</span>
+<span class="rb-kw">end</span></pre>
+    <pre><span class="cm"># ติดตั้ง</span>
+bundle install</pre>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="project-step" data-step="STEP 2">
+    <h3 style="color:#60a5fa;margin-bottom:12px">🔐 ติดตั้ง Devise (Authentication)</h3>
+    <pre><span class="cm"># Generate Devise</span>
+rails generate devise:install
+rails generate devise User
+
+<span class="cm"># Generate Devise Views (เพื่อแก้ไข)</span>
+rails generate devise:views
+
+<span class="cm"># รัน migration</span>
+rails db:migrate</pre>
+    <p style="color:#8b949e;font-size:.9rem;margin:8px 0">เพิ่ม alert ใน <code class="ic">app/views/layouts/application.html.erb</code>:</p>
+    <pre>&lt;body&gt;
+  &lt;% if notice %&gt;&lt;p class="notice"&gt;&lt;%= notice %&gt;&lt;/p&gt;&lt;% end %&gt;
+  &lt;% if alert  %&gt;&lt;p class="alert"&gt;&lt;%= alert  %&gt;&lt;/p&gt;&lt;% end %&gt;
+  &lt;%= yield %&gt;
+&lt;/body&gt;</pre>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="project-step" data-step="STEP 3">
+    <h3 style="color:#60a5fa;margin-bottom:12px">📝 สร้าง Article Model + Controller</h3>
+    <pre><span class="cm"># Generate Model</span>
+rails g model Article title:string body:text user:references published:boolean
+
+<span class="cm"># Generate Controller</span>
+rails g controller Articles index show new edit
+
+rails db:migrate</pre>
+
+    <p style="color:#8b949e;font-size:.9rem;margin:8px 0"><code class="ic">app/models/article.rb</code></p>
+    <pre><span class="rb-kw">class</span> <span class="rb-cls">Article</span> &lt; <span class="rb-cls">ApplicationRecord</span>
+  belongs_to <span class="rb-sym">:user</span>
+  has_many   <span class="rb-sym">:comments</span>, dependent: <span class="rb-sym">:destroy</span>
+
+  validates <span class="rb-sym">:title</span>, presence: <span class="rb-kw">true</span>, length: { minimum: <span class="rb-num">5</span>, maximum: <span class="rb-num">100</span> }
+  validates <span class="rb-sym">:body</span>,  presence: <span class="rb-kw">true</span>, length: { minimum: <span class="rb-num">20</span> }
+
+  scope <span class="rb-sym">:published</span>, <span class="rb-kw">-></span> { where(published: <span class="rb-kw">true</span>) }
+  scope <span class="rb-sym">:recent</span>,    <span class="rb-kw">-></span> { order(created_at: <span class="rb-sym">:desc</span>) }
+<span class="rb-kw">end</span>
+
+<span class="rb-cm"># app/models/user.rb — เพิ่ม association</span>
+<span class="rb-kw">class</span> <span class="rb-cls">User</span> &lt; <span class="rb-cls">ApplicationRecord</span>
+  devise <span class="rb-sym">:database_authenticatable</span>, <span class="rb-sym">:registerable</span>,
+         <span class="rb-sym">:recoverable</span>, <span class="rb-sym">:rememberable</span>, <span class="rb-sym">:validatable</span>
+
+  has_many <span class="rb-sym">:articles</span>, dependent: <span class="rb-sym">:destroy</span>
+<span class="rb-kw">end</span></pre>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="project-step" data-step="STEP 4">
+    <h3 style="color:#60a5fa;margin-bottom:12px">⚙️ Articles Controller สมบูรณ์</h3>
+    <pre><span class="rb-cm"># app/controllers/articles_controller.rb</span>
+<span class="rb-kw">class</span> <span class="rb-cls">ArticlesController</span> &lt; <span class="rb-cls">ApplicationController</span>
+  before_action <span class="rb-sym">:authenticate_user!</span>, except: [<span class="rb-sym">:index</span>, <span class="rb-sym">:show</span>]
+  before_action <span class="rb-sym">:set_article</span>,        only:   [<span class="rb-sym">:show</span>, <span class="rb-sym">:edit</span>, <span class="rb-sym">:update</span>, <span class="rb-sym">:destroy</span>]
+  before_action <span class="rb-sym">:authorize_user!</span>,     only:   [<span class="rb-sym">:edit</span>, <span class="rb-sym">:update</span>, <span class="rb-sym">:destroy</span>]
+
+  <span class="rb-kw">def</span> <span class="rb-fn">index</span>
+    @articles = Article.published.recent.page(params[<span class="rb-sym">:page</span>]).per(<span class="rb-num">10</span>)
+  <span class="rb-kw">end</span>
+
+  <span class="rb-kw">def</span> <span class="rb-fn">show</span>
+    @comment = Comment.new
+  <span class="rb-kw">end</span>
+
+  <span class="rb-kw">def</span> <span class="rb-fn">new</span>
+    @article = Article.new
+  <span class="rb-kw">end</span>
+
+  <span class="rb-kw">def</span> <span class="rb-fn">create</span>
+    @article = current_user.articles.new(article_params)
+    <span class="rb-kw">if</span> @article.save
+      redirect_to @article, notice: <span class="rb-str">"✅ สร้างบทความสำเร็จ!"</span>
+    <span class="rb-kw">else</span>
+      render <span class="rb-sym">:new</span>, status: <span class="rb-sym">:unprocessable_entity</span>
+    <span class="rb-kw">end</span>
+  <span class="rb-kw">end</span>
+
+  <span class="rb-kw">def</span> <span class="rb-fn">edit</span>; <span class="rb-kw">end</span>
+
+  <span class="rb-kw">def</span> <span class="rb-fn">update</span>
+    <span class="rb-kw">if</span> @article.update(article_params)
+      redirect_to @article, notice: <span class="rb-str">"✅ แก้ไขสำเร็จ!"</span>
+    <span class="rb-kw">else</span>
+      render <span class="rb-sym">:edit</span>, status: <span class="rb-sym">:unprocessable_entity</span>
+    <span class="rb-kw">end</span>
+  <span class="rb-kw">end</span>
+
+  <span class="rb-kw">def</span> <span class="rb-fn">destroy</span>
+    @article.destroy
+    redirect_to articles_path, notice: <span class="rb-str">"🗑️ ลบบทความแล้ว"</span>
+  <span class="rb-kw">end</span>
+
+  <span class="rb-kw">private</span>
+
+  <span class="rb-kw">def</span> <span class="rb-fn">set_article</span>
+    @article = Article.find(params[<span class="rb-sym">:id</span>])
+  <span class="rb-kw">end</span>
+
+  <span class="rb-kw">def</span> <span class="rb-fn">article_params</span>
+    params.require(<span class="rb-sym">:article</span>).permit(<span class="rb-sym">:title</span>, <span class="rb-sym">:body</span>, <span class="rb-sym">:published</span>)
+  <span class="rb-kw">end</span>
+
+  <span class="rb-kw">def</span> <span class="rb-fn">authorize_user!</span>
+    redirect_to root_path, alert: <span class="rb-str">"ไม่มีสิทธิ์!"</span> <span class="rb-kw">unless</span> @article.user == current_user
+  <span class="rb-kw">end</span>
+<span class="rb-kw">end</span></pre>
+  </div>
+
+  <!-- STEP 5 -->
+  <div class="project-step" data-step="STEP 5">
+    <h3 style="color:#60a5fa;margin-bottom:12px">💬 Comment Model + Controller</h3>
+    <pre><span class="cm"># Generate</span>
+rails g model Comment body:text user:references article:references
+rails g controller Comments create destroy
+rails db:migrate</pre>
+
+    <pre><span class="rb-cm"># app/models/comment.rb</span>
+<span class="rb-kw">class</span> <span class="rb-cls">Comment</span> &lt; <span class="rb-cls">ApplicationRecord</span>
+  belongs_to <span class="rb-sym">:user</span>
+  belongs_to <span class="rb-sym">:article</span>
+  validates <span class="rb-sym">:body</span>, presence: <span class="rb-kw">true</span>, length: { minimum: <span class="rb-num">2</span> }
+<span class="rb-kw">end</span></pre>
+
+    <pre><span class="rb-cm"># app/controllers/comments_controller.rb</span>
+<span class="rb-kw">class</span> <span class="rb-cls">CommentsController</span> &lt; <span class="rb-cls">ApplicationController</span>
+  before_action <span class="rb-sym">:authenticate_user!</span>
+
+  <span class="rb-kw">def</span> <span class="rb-fn">create</span>
+    @article = Article.find(params[<span class="rb-sym">:article_id</span>])
+    @comment = @article.comments.new(comment_params)
+    @comment.user = current_user
+    <span class="rb-kw">if</span> @comment.save
+      redirect_to @article, notice: <span class="rb-str">"💬 เพิ่มความคิดเห็นแล้ว"</span>
+    <span class="rb-kw">else</span>
+      redirect_to @article, alert: @comment.errors.full_messages.to_sentence
+    <span class="rb-kw">end</span>
+  <span class="rb-kw">end</span>
+
+  <span class="rb-kw">def</span> <span class="rb-fn">destroy</span>
+    @comment = Comment.find(params[<span class="rb-sym">:id</span>])
+    @comment.destroy <span class="rb-kw">if</span> @comment.user == current_user
+    redirect_to @comment.article, notice: <span class="rb-str">"ลบความคิดเห็นแล้ว"</span>
+  <span class="rb-kw">end</span>
+
+  <span class="rb-kw">private</span>
+  <span class="rb-kw">def</span> <span class="rb-fn">comment_params</span>
+    params.require(<span class="rb-sym">:comment</span>).permit(<span class="rb-sym">:body</span>)
+  <span class="rb-kw">end</span>
+<span class="rb-kw">end</span></pre>
+  </div>
+
+  <!-- STEP 6 -->
+  <div class="project-step" data-step="STEP 6">
+    <h3 style="color:#60a5fa;margin-bottom:12px">🗺️ Routes ครบถ้วน</h3>
+    <pre><span class="rb-cm"># config/routes.rb</span>
+Rails.application.routes.draw <span class="rb-kw">do</span>
+  devise_for <span class="rb-sym">:users</span>
+
+  resources <span class="rb-sym">:articles</span> <span class="rb-kw">do</span>
+    resources <span class="rb-sym">:comments</span>, only: [<span class="rb-sym">:create</span>, <span class="rb-sym">:destroy</span>]
+  <span class="rb-kw">end</span>
+
+  root <span class="rb-str">'articles#index'</span>
+<span class="rb-kw">end</span></pre>
+  </div>
+
+  <!-- STEP 7 -->
+  <div class="project-step" data-step="STEP 7">
+    <h3 style="color:#60a5fa;margin-bottom:12px">🖼️ Views ครบถ้วน</h3>
+    <p style="color:#8b949e;font-size:.9rem;margin-bottom:8px"><code class="ic">app/views/articles/index.html.erb</code></p>
+    <pre>&lt;div class="container"&gt;
+  &lt;div style="display:flex;justify-content:space-between"&gt;
+    &lt;h1&gt;บทความทั้งหมด&lt;/h1&gt;
+    &lt;% if user_signed_in? %&gt;
+      &lt;%= link_to "✏️ เขียนบทความ", new_article_path %&gt;
+    &lt;% end %&gt;
+  &lt;/div&gt;
+
+  &lt;% @articles.each do |article| %&gt;
+    &lt;div class="article-card"&gt;
+      &lt;h2&gt;&lt;%= link_to article.title, article %&gt;&lt;/h2&gt;
+      &lt;p&gt;&lt;%= truncate(article.body, length: 150) %&gt;&lt;/p&gt;
+      &lt;small&gt;
+        โดย &lt;%= article.user.email %&gt; •
+        &lt;%= time_ago_in_words(article.created_at) %&gt; ที่แล้ว •
+        💬 &lt;%= article.comments.count %&gt; ความคิดเห็น
+      &lt;/small&gt;
+    &lt;/div&gt;
+  &lt;% end %&gt;
+
+  &lt;%= paginate @articles %&gt;
+&lt;/div&gt;</pre>
+
+    <p style="color:#8b949e;font-size:.9rem;margin:14px 0 8px"><code class="ic">app/views/articles/show.html.erb</code></p>
+    <pre>&lt;article&gt;
+  &lt;h1&gt;&lt;%= @article.title %&gt;&lt;/h1&gt;
+  &lt;p&gt;&lt;small&gt;โดย &lt;%= @article.user.email %&gt; • &lt;%= l @article.created_at %&gt;&lt;/small&gt;&lt;/p&gt;
+  &lt;div&gt;&lt;%= simple_format @article.body %&gt;&lt;/div&gt;
+
+  &lt;% if current_user == @article.user %&gt;
+    &lt;%= link_to "✏️ แก้ไข", edit_article_path(@article) %&gt;
+    &lt;%= link_to "🗑️ ลบ", @article,
+          data: { turbo_method: :delete, turbo_confirm: "แน่ใจไหม?" } %&gt;
+  &lt;% end %&gt;
+&lt;/article&gt;
+
+&lt;hr&gt;
+&lt;!-- Comments Section --&gt;
+&lt;h2&gt;💬 ความคิดเห็น (&lt;%= @article.comments.count %&gt;)&lt;/h2&gt;
+
+&lt;% @article.comments.each do |comment| %&gt;
+  &lt;div class="comment"&gt;
+    &lt;strong&gt;&lt;%= comment.user.email %&gt;&lt;/strong&gt;
+    &lt;p&gt;&lt;%= comment.body %&gt;&lt;/p&gt;
+    &lt;small&gt;&lt;%= time_ago_in_words(comment.created_at) %&gt; ที่แล้ว&lt;/small&gt;
+    &lt;% if current_user == comment.user %&gt;
+      &lt;%= link_to "ลบ", article_comment_path(@article, comment),
+            data: { turbo_method: :delete, turbo_confirm: "ลบใช่ไหม?" } %&gt;
+    &lt;% end %&gt;
+  &lt;/div&gt;
+&lt;% end %&gt;
+
+&lt;% if user_signed_in? %&gt;
+  &lt;h3&gt;เพิ่มความคิดเห็น&lt;/h3&gt;
+  &lt;%= form_with model: [@article, @comment] do |f| %&gt;
+    &lt;%= f.text_area :body, placeholder: "พิมพ์ความคิดเห็น...", rows: 3 %&gt;
+    &lt;%= f.submit "ส่งความคิดเห็น" %&gt;
+  &lt;% end %&gt;
+&lt;% else %&gt;
+  &lt;p&gt;&lt;%= link_to "เข้าสู่ระบบ", new_user_session_path %&gt; เพื่อแสดงความคิดเห็น&lt;/p&gt;
+&lt;% end %&gt;</pre>
+
+    <p style="color:#8b949e;font-size:.9rem;margin:14px 0 8px"><code class="ic">app/views/articles/_form.html.erb</code></p>
+    <pre>&lt;%= form_with model: @article do |f| %&gt;
+  &lt;% if @article.errors.any? %&gt;
+    &lt;div class="errors"&gt;
+      &lt;% @article.errors.full_messages.each do |msg| %&gt;
+        &lt;li&gt;&lt;%= msg %&gt;&lt;/li&gt;
+      &lt;% end %&gt;
+    &lt;/div&gt;
+  &lt;% end %&gt;
+
+  &lt;div&gt;
+    &lt;%= f.label :title, "หัวข้อบทความ" %&gt;
+    &lt;%= f.text_field :title, placeholder: "กรอกหัวข้อ (5-100 ตัวอักษร)" %&gt;
+  &lt;/div&gt;
+  &lt;div&gt;
+    &lt;%= f.label :body, "เนื้อหา" %&gt;
+    &lt;%= f.text_area :body, rows: 12, placeholder: "เขียนเนื้อหาบทความ..." %&gt;
+  &lt;/div&gt;
+  &lt;div&gt;
+    &lt;%= f.check_box :published %&gt;
+    &lt;%= f.label :published, "เผยแพร่ทันที" %&gt;
+  &lt;/div&gt;
+  &lt;%= f.submit "💾 บันทึก" %&gt;
+&lt;% end %&gt;</pre>
+  </div>
+
+  <!-- STEP 8 -->
+  <div class="project-step" data-step="STEP 8">
+    <h3 style="color:#60a5fa;margin-bottom:12px">🌱 Seed Data — เพิ่มข้อมูลทดสอบ</h3>
+    <pre><span class="rb-cm"># db/seeds.rb</span>
+<span class="rb-kw">require</span> <span class="rb-str">'faker'</span>
+
+<span class="rb-cm"># สร้าง User ทดสอบ</span>
+user = User.find_or_create_by(email: <span class="rb-str">'test@example.com'</span>) <span class="rb-kw">do</span> |u|
+  u.password = <span class="rb-str">'password123'</span>
+<span class="rb-kw">end</span>
+
+<span class="rb-cm"># สร้าง Articles</span>
+<span class="rb-num">10</span>.times <span class="rb-kw">do</span>
+  article = user.articles.create!(
+    title:     Faker::Lorem.sentence(word_count: <span class="rb-num">5</span>),
+    body:      Faker::Lorem.paragraphs(number: <span class="rb-num">3</span>).join(<span class="rb-str">"\n\n"</span>),
+    published: <span class="rb-kw">true</span>
+  )
+  <span class="rb-cm"># เพิ่ม comments</span>
+  <span class="rb-num">3</span>.times <span class="rb-kw">do</span>
+    article.comments.create!(
+      body: Faker::Lorem.sentence,
+      user: user
+    )
+  <span class="rb-kw">end</span>
+<span class="rb-kw">end</span>
+
+puts <span class="rb-str">"✅ Seed เสร็จแล้ว! #{Article.count} บทความ, #{Comment.count} ความคิดเห็น"</span></pre>
+    <pre><span class="cm"># รัน seed</span>
+rails db:seed
+
+<span class="cm"># Reset และ seed ใหม่</span>
+rails db:reset    <span class="cm"># drop + create + migrate + seed</span></pre>
+  </div>
+
+  <!-- STEP 9 -->
+  <div class="project-step" data-step="STEP 9">
+    <h3 style="color:#60a5fa;margin-bottom:12px">🚀 รันและทดสอบ</h3>
+    <pre><span class="cm"># รันทุกอย่าง (ใช้ Procfile.dev สำหรับ tailwind)</span>
+bin/dev
+
+<span class="cm"># หรือรันแยก</span>
+rails s                <span class="cm"># Web server</span>
+rails tailwindcss:watch  <span class="cm"># CSS watcher</span></pre>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:12px">
+      <div style="border:1px solid #2496ed33;border-radius:8px;padding:12px;background:rgba(36,150,237,.04)">
+        <div style="font-weight:700;color:#60b4f5;font-size:.85rem;margin-bottom:6px">🌐 URL ที่ใช้ได้</div>
+        <div style="font-size:.82rem;color:#8b949e;line-height:2">
+          <code class="ic">/ </code> — หน้าแรก<br>
+          <code class="ic">/articles</code> — ลิสต์<br>
+          <code class="ic">/articles/new</code> — เขียนใหม่<br>
+          <code class="ic">/articles/1</code> — อ่านบทความ<br>
+          <code class="ic">/users/sign_up</code> — สมัคร<br>
+          <code class="ic">/users/sign_in</code> — Login
+        </div>
+      </div>
+      <div style="border:1px solid #10b98133;border-radius:8px;padding:12px;background:rgba(16,185,129,.04)">
+        <div style="font-weight:700;color:#34d399;font-size:.85rem;margin-bottom:6px">✅ ฟีเจอร์ที่ได้</div>
+        <div style="font-size:.82rem;color:#8b949e;line-height:2">
+          ✓ สมัครสมาชิก / Login<br>
+          ✓ เขียน / แก้ไข / ลบบทความ<br>
+          ✓ แสดงความคิดเห็น<br>
+          ✓ เจ้าของเท่านั้นแก้ไขได้<br>
+          ✓ Pagination<br>
+          ✓ Validations + Error messages
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 15: Gems ===== -->
+<section id="gems">
+  <div class="chapter-header ch-slate">
+    <div class="ch-num">15</div>
+    <div>
+      <h2>Gems สำคัญ &amp; Best Practices</h2>
+      <p>Gems ที่ควรรู้และวิธีปฏิบัติที่ดีในการเขียน Rails</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>💎 Gems ที่นิยมใช้</h3>
+    <table>
+      <thead><tr><th>Gem</th><th>ใช้ทำอะไร</th><th>ติดตั้ง</th></tr></thead>
+      <tbody>
+        <tr><td><code>devise</code></td><td>Authentication (Login/Register)</td><td><code>gem 'devise'</code></td></tr>
+        <tr><td><code>pundit / cancancan</code></td><td>Authorization (สิทธิ์การเข้าถึง)</td><td><code>gem 'pundit'</code></td></tr>
+        <tr><td><code>kaminari / pagy</code></td><td>Pagination</td><td><code>gem 'pagy'</code></td></tr>
+        <tr><td><code>ransack</code></td><td>Search &amp; Filter</td><td><code>gem 'ransack'</code></td></tr>
+        <tr><td><code>carrierwave / active_storage</code></td><td>File Upload (built-in)</td><td>built-in Rails</td></tr>
+        <tr><td><code>sidekiq</code></td><td>Background Jobs</td><td><code>gem 'sidekiq'</code></td></tr>
+        <tr><td><code>rspec-rails</code></td><td>Testing Framework</td><td><code>gem 'rspec-rails'</code></td></tr>
+        <tr><td><code>factory_bot_rails</code></td><td>Test Fixtures</td><td><code>gem 'factory_bot_rails'</code></td></tr>
+        <tr><td><code>bullet</code></td><td>ตรวจจับ N+1 Query</td><td><code>gem 'bullet'</code></td></tr>
+        <tr><td><code>rack-cors</code></td><td>CORS สำหรับ API</td><td><code>gem 'rack-cors'</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>⚡ แก้ N+1 Query ด้วย includes</h3>
+      <div class="compare">
+        <div class="compare-col">
+          <div class="compare-head bad">❌ N+1 Problem</div>
+          <pre style="font-size:.8rem"><span class="rb-cm"># Controller</span>
+@articles = Article.all
+
+<span class="rb-cm"># View</span>
+@articles.each do |a|
+  a.user.email  <span class="rb-cm"># Query ใหม่ทุก row!</span>
+end
+<span class="rb-cm"># 1 + N queries</span></pre>
+        </div>
+        <div class="compare-col">
+          <div class="compare-head good">✅ Eager Loading</div>
+          <pre style="font-size:.8rem"><span class="rb-cm"># Controller</span>
+@articles = Article
+  .includes(:user, :comments)
+  .all
+
+<span class="rb-cm"># View</span>
+@articles.each do |a|
+  a.user.email  <span class="rb-cm"># ไม่ query เพิ่ม</span>
+end
+<span class="rb-cm"># แค่ 2-3 queries</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>✅ Best Practices สรุป</h3>
+      <ul>
+        <li><strong style="color:#f87171">Fat Model, Skinny Controller</strong> — Logic ใน Model ไม่ใช่ Controller</li>
+        <li><strong style="color:#34d399">Strong Parameters</strong> — ใช้ทุกครั้งที่รับ params</li>
+        <li><strong style="color:#60a5fa">includes()</strong> — แก้ N+1 query เสมอ</li>
+        <li><strong style="color:#c4b5fd">before_action</strong> — หลีกเลี่ยงโค้ดซ้ำใน actions</li>
+        <li><strong style="color:#fcd34d">Scope</strong> — Named queries ที่นำมาใช้ซ้ำ</li>
+        <li><strong style="color:#67e8f9">Partial</strong> — แบ่ง View ให้เล็กลง</li>
+        <li>เขียน <strong style="color:#f87171">Tests</strong> ด้วย RSpec</li>
+        <li>ใช้ <strong style="color:#34d399">database index</strong> บน columns ที่ query บ่อย</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🗺️ Rails Learning Path</h3>
+    <div class="flow" style="flex-wrap:wrap;justify-content:flex-start">
+      <span class="fb fb-r">Ruby<br>Basics</span><span class="fa">→</span>
+      <span class="fb fb-r">Rails<br>Intro</span><span class="fa">→</span>
+      <span class="fb fb-b">MVC +<br>Routes</span><span class="fa">→</span>
+      <span class="fb fb-b">Active<br>Record</span><span class="fa">→</span>
+      <span class="fb fb-g">Views<br>ERB</span><span class="fa">→</span>
+      <span class="fb fb-g">Forms<br>Validation</span><span class="fa">→</span>
+      <span class="fb fb-p">Auth<br>Devise</span><span class="fa">→</span>
+      <span class="fb fb-p">Mini<br>Project</span><span class="fa">→</span>
+      <span class="fb fb-o">Testing<br>RSpec</span><span class="fa">→</span>
+      <span class="fb fb-o">Deploy<br>Render/Fly</span>
+    </div>
+    <div class="callout tip" style="margin-top:12px">
+      <span class="ci">💡</span>
+      <div>หลังจาก Blog App แนะนำลอง deploy ด้วย <strong>Render.com</strong> (free tier) หรือ <strong>Fly.io</strong> — รองรับ Rails ได้ดีมาก</div>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<footer>
+  <strong>Ruby on Rails Teaching Material</strong> — FullStack 101 Learning Hub<br>
+  <span style="margin-top:6px;display:block">💎 Ruby 3.3 | Rails 7.1 | Devise | Active Record</span>
+</footer>
+
+<script>
+const sections = document.querySelectorAll('section[id]')
+const navLinks = document.querySelectorAll('.nav-sticky a[href^="#"]')
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(a => a.classList.remove('active'))
+      const a = document.querySelector(`.nav-sticky a[href="#${entry.target.id}"]`)
+      if (a) a.classList.add('active')
+    }
+  })
+}, { threshold: 0.25 })
+sections.forEach(s => observer.observe(s))
+</script>
+</body>
+</html>

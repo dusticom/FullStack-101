@@ -211,6 +211,18 @@
         .card.rails { color: #f87171; }
         .card.rails .icon-container { background: linear-gradient(135deg, #4a0000, #cc0000); }
 
+        .card.nestjs { color: #f9a8b8; }
+        .card.nestjs .icon-container { background: linear-gradient(135deg, #3a0018, #e0234e); }
+
+        .card.laravel { color: #FF2D20; }
+        .card.laravel .icon-container { background: linear-gradient(135deg, #7f1212, #FF2D20); }
+
+        .card:nth-child(9)  { animation-delay: 0.9s; }
+        .card:nth-child(10) { animation-delay: 1.0s; }
+        .card:nth-child(11) { animation-delay: 1.1s; }
+        .card:nth-child(12) { animation-delay: 1.2s; }
+        .card:nth-child(13) { animation-delay: 1.3s; }
+
         @keyframes fadeInDown {
             from {
                 opacity: 0;
@@ -253,6 +265,13 @@
     <div class="container">
         
         <a href="html-teaching.html" class="card css" style="display: none;"></a> <!-- Placeholder -->
+
+        <a href="nestjs-teaching.html" class="card nestjs">
+            <div class="icon-container">🔺</div>
+            <h2 class="card-title">NestJS</h2>
+            <p class="card-desc">เรียนรู้ NestJS ตั้งแต่ Modules, Controllers, Services, DTOs, Guards ไปจนถึง JWT Auth และ TypeORM</p>
+            <div class="card-arrow">เริ่มเรียน <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></div>
+        </a>
 
         <a href="ruby-on-rails-teaching.html" class="card rails">
             <div class="icon-container">💎</div>
@@ -331,7 +350,15 @@
             <div class="card-arrow">เริ่มเรียน <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></div>
         </a>
 
+        <a href="laravel-teaching.html" class="card laravel">
+            <div class="icon-container">🔥</div>
+            <h2 class="card-title">Laravel</h2>
+            <p class="card-desc">เรียนรู้ Laravel PHP Framework ตั้งแต่พื้นฐาน MVC, Eloquent ORM, Blade, REST API จนถึง Queue & Jobs</p>
+            <div class="card-arrow">เริ่มเรียน <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></div>
+        </a>
+
     </div>
 
 </body>
 </html>
+

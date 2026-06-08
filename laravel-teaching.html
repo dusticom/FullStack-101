@@ -1,0 +1,1545 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>สื่อการสอน Laravel ฉบับสมบูรณ์</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#ef4444;--orange:#f97316;--green:#22c55e;--blue:#3b82f6;
+  --indigo:#6366f1;--purple:#a855f7;--pink:#ec4899;--teal:#14b8a6;
+  --cyan:#06b6d4;--dark:#0f172a;--card:#ffffff;--border:#e2e8f0;
+  --code-bg:#0d1117;--light:#f8fafc;--radius:12px;
+  --shadow:0 4px 24px rgba(0,0,0,.08);
+  --laravel:#FF2D20;--laravel-dark:#c0120b;
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--light);color:var(--dark);line-height:1.75}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#1a0000 0%,#3d0000 30%,#1a0000 70%,#2d0000 100%);color:#fff;text-align:center;padding:76px 24px 58px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(255,45,32,.25),transparent 65%)}
+.hero h1{font-size:clamp(2rem,5vw,3.6rem);font-weight:900;margin-bottom:14px;letter-spacing:-1px;position:relative}
+.hero h1 .laravel-text{color:#FF2D20}
+.hero p{font-size:1.15rem;opacity:.85;max-width:620px;margin:0 auto;position:relative}
+.badge-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:24px;position:relative}
+.badge{background:rgba(255,45,32,.15);border:1px solid rgba(255,45,32,.4);color:#ffb3ae;padding:5px 16px;border-radius:999px;font-size:.82rem;font-weight:700}
+
+/* NAV */
+.nav-sticky{position:sticky;top:0;z-index:100;background:#fff;border-bottom:2px solid var(--border);padding:0 12px;overflow-x:auto;white-space:nowrap;box-shadow:0 2px 12px rgba(0,0,0,.07)}
+.nav-sticky a{display:inline-block;padding:13px 14px;font-size:.82rem;font-weight:600;color:#64748b;text-decoration:none;border-bottom:3px solid transparent;transition:.2s}
+.nav-sticky a:hover,.nav-sticky a.active{color:var(--laravel);border-color:var(--laravel)}
+
+/* LAYOUT */
+.container{max-width:1120px;margin:0 auto;padding:44px 20px}
+section{margin-bottom:64px;scroll-margin-top:60px}
+
+/* CHAPTER HEADER */
+.chapter-header{border-radius:var(--radius);padding:26px 30px;margin-bottom:26px;display:flex;align-items:center;gap:18px;color:#fff}
+.chapter-header .ch-num{font-size:3rem;font-weight:900;opacity:.22;line-height:1;min-width:60px;font-family:monospace}
+.chapter-header h2{font-size:1.45rem;font-weight:800;margin:0}
+.chapter-header p{font-size:.9rem;opacity:.75;margin-top:5px}
+.ch-red{background:linear-gradient(135deg,#7f1d1d,#dc2626)}
+.ch-orange{background:linear-gradient(135deg,#7c2d12,#ea580c)}
+.ch-green{background:linear-gradient(135deg,#14532d,#16a34a)}
+.ch-blue{background:linear-gradient(135deg,#1e3a8a,#2563eb)}
+.ch-purple{background:linear-gradient(135deg,#4c1d95,#7c3aed)}
+.ch-indigo{background:linear-gradient(135deg,#312e81,#4f46e5)}
+.ch-teal{background:linear-gradient(135deg,#134e4a,#0d9488)}
+.ch-pink{background:linear-gradient(135deg,#831843,#db2777)}
+.ch-cyan{background:linear-gradient(135deg,#164e63,#0891b2)}
+.ch-slate{background:linear-gradient(135deg,#1e293b,#475569)}
+.ch-rose{background:linear-gradient(135deg,#881337,#e11d48)}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:26px 28px;margin-bottom:20px;box-shadow:var(--shadow)}
+.card h3{font-size:1.1rem;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.card p,.card li{font-size:.94rem;color:#334155}
+.card ul{padding-left:20px;display:flex;flex-direction:column;gap:6px}
+
+/* CODE */
+pre{background:var(--code-bg);color:#c9d1d9;border-radius:10px;padding:20px 22px;overflow-x:auto;font-size:.84rem;line-height:1.75;margin:14px 0;font-family:'Cascadia Code','Fira Code','Consolas',monospace;border:1px solid #21262d}
+.inline-code{background:#fef2f2;color:#c0120b;padding:2px 7px;border-radius:5px;font-family:monospace;font-size:.87em;border:1px solid #fecaca}
+
+/* SYNTAX */
+.kw{color:#ff7b72}
+.str{color:#a5d6ff}
+.fn{color:#d2a8ff}
+.cm{color:#8b949e;font-style:italic}
+.type{color:#ffa657}
+.num{color:#79c0ff}
+.var{color:#e6edf3}
+.prop{color:#79c0ff}
+.tag{color:#7ee787}
+.op{color:#ff7b72}
+.php{color:#FF2D20}
+
+/* GRID */
+.grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+
+/* CALLOUT */
+.callout{border-radius:10px;padding:15px 20px;margin:14px 0;display:flex;gap:12px;align-items:flex-start;font-size:.93rem;line-height:1.6}
+.callout.info{background:#eff6ff;border-left:4px solid var(--blue);color:#1e40af}
+.callout.tip{background:#f0fdf4;border-left:4px solid var(--green);color:#166534}
+.callout.warn{background:#fffbeb;border-left:4px solid var(--orange);color:#92400e}
+.callout.danger{background:#fef2f2;border-left:4px solid var(--red);color:#991b1b}
+.callout.laravel{background:#fff1f0;border-left:4px solid #FF2D20;color:#9f1239}
+.callout .ci{font-size:1.1rem;margin-top:1px;flex-shrink:0}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:14px 0}
+th{background:#f1f5f9;padding:10px 14px;text-align:left;font-weight:700;color:#475569;border:1px solid var(--border)}
+td{padding:10px 14px;border:1px solid var(--border);vertical-align:top}
+tr:nth-child(even) td{background:#f8fafc}
+
+/* FLOW */
+.flow{display:flex;align-items:center;gap:0;flex-wrap:wrap;margin:16px 0;padding:18px;background:#f8fafc;border-radius:10px;border:1px solid var(--border)}
+.flow-box{padding:10px 16px;border-radius:8px;font-weight:700;font-size:.82rem;text-align:center;color:#fff;min-width:90px}
+.flow-arr{padding:0 8px;color:#94a3b8;font-size:1.4rem}
+.fb-red{background:#dc2626}.fb-orange{background:#ea580c}.fb-green{background:#16a34a}
+.fb-blue{background:#2563eb}.fb-purple{background:#7c3aed}.fb-teal{background:#0d9488}
+.fb-indigo{background:#4f46e5}.fb-slate{background:#475569}.fb-pink{background:#db2777}
+
+/* METHOD */
+.method{display:inline-block;padding:3px 10px;border-radius:5px;font-size:.78rem;font-weight:800;margin-right:6px;font-family:monospace}
+.get{background:#dcfce7;color:#166534}.post{background:#dbeafe;color:#1e40af}
+.put{background:#fef9c3;color:#854d0e}.patch{background:#fff7ed;color:#9a3412}
+.delete{background:#fee2e2;color:#991b1b}
+
+/* STEP */
+.step-list{display:flex;flex-direction:column;gap:14px}
+.step{display:flex;gap:14px;align-items:flex-start}
+.step-num{min-width:34px;height:34px;border-radius:50%;background:#FF2D20;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.88rem;flex-shrink:0}
+.step-body h4{font-weight:700;margin-bottom:3px;font-size:.95rem}
+.step-body p,.step-body pre{font-size:.9rem}
+
+/* TREE */
+.tree{background:var(--code-bg);border:1px solid #21262d;border-radius:10px;padding:20px 22px;font-family:'Cascadia Code','Fira Code',monospace;font-size:.84rem;color:#c9d1d9;line-height:1.9}
+.tree .folder{color:#ffa657;font-weight:700}.tree .file{color:#79c0ff}.tree .cm2{color:#8b949e;font-style:italic}
+
+/* ARTISAN */
+.artisan-cmd{display:flex;align-items:center;gap:10px;padding:10px 16px;background:#0d1117;border-radius:8px;margin:6px 0;border:1px solid #21262d}
+.artisan-cmd code{color:#7ee787;font-family:'Cascadia Code',monospace;font-size:.85rem;flex:1}
+.artisan-cmd .desc{color:#8b949e;font-size:.82rem;white-space:nowrap}
+
+/* FOOTER */
+footer{background:var(--dark);color:#94a3b8;text-align:center;padding:36px;font-size:.88rem}
+footer strong{color:#FF2D20}
+footer span{color:#fff}
+
+@media(max-width:640px){
+  .grid-2,.grid-3{grid-template-columns:1fr}
+  .flow{flex-direction:column;align-items:flex-start}
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>🔥 <span class="laravel-text">Laravel</span></h1>
+  <p>สื่อการสอนฉบับสมบูรณ์ — ตั้งแต่ติดตั้งจนถึง Production API</p>
+  <div class="badge-row">
+    <span class="badge">Laravel 11</span>
+    <span class="badge">PHP 8.3+</span>
+    <span class="badge">Eloquent ORM</span>
+    <span class="badge">Blade Template</span>
+    <span class="badge">Artisan CLI</span>
+    <span class="badge">REST API</span>
+    <span class="badge">Authentication</span>
+    <span class="badge">Queue & Jobs</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav-sticky" id="main-nav">
+  <a href="index.html">🏠 หน้าหลัก</a>
+  <a href="#intro">Laravel คืออะไร</a>
+  <a href="#install">ติดตั้ง</a>
+  <a href="#structure">โครงสร้าง</a>
+  <a href="#routing">Routing</a>
+  <a href="#controller">Controller</a>
+  <a href="#eloquent">Eloquent ORM</a>
+  <a href="#migration">Migration</a>
+  <a href="#blade">Blade</a>
+  <a href="#middleware">Middleware</a>
+  <a href="#validation">Validation</a>
+  <a href="#auth">Authentication</a>
+  <a href="#api">REST API</a>
+  <a href="#queue">Queue & Jobs</a>
+  <a href="#artisan">Artisan CLI</a>
+</nav>
+
+<div class="container">
+
+<!-- ============================================================ -->
+<!-- 01: Laravel คืออะไร -->
+<!-- ============================================================ -->
+<section id="intro">
+  <div class="chapter-header ch-red">
+    <div class="ch-num">01</div>
+    <div>
+      <h2>Laravel คืออะไร?</h2>
+      <p>PHP Framework ที่สวยงาม ทรงพลัง และได้รับความนิยมสูงสุดในโลก</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔥 ทำไมต้อง Laravel?</h3>
+    <p style="margin-bottom:16px">Laravel คือ PHP framework แบบ MVC (Model-View-Controller) ที่ออกแบบมาเพื่อทำให้ Web Development ง่าย รวดเร็ว และสนุกมากขึ้น</p>
+    <div class="grid-3">
+      <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:18px;text-align:center">
+        <div style="font-size:2rem;margin-bottom:8px">⚡</div>
+        <div style="font-weight:700;color:#dc2626;margin-bottom:6px">รวดเร็ว</div>
+        <div style="font-size:.83rem;color:#64748b">Artisan CLI, Scaffold อัตโนมัติ, Hot Reload</div>
+      </div>
+      <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:18px;text-align:center">
+        <div style="font-size:2rem;margin-bottom:8px">🛡️</div>
+        <div style="font-weight:700;color:#16a34a;margin-bottom:6px">ปลอดภัย</div>
+        <div style="font-size:.83rem;color:#64748b">CSRF, XSS, SQL Injection Protection ในตัว</div>
+      </div>
+      <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:18px;text-align:center">
+        <div style="font-size:2rem;margin-bottom:8px">📦</div>
+        <div style="font-weight:700;color:#2563eb;margin-bottom:6px">Ecosystem</div>
+        <div style="font-size:.83rem;color:#64748b">Sanctum, Passport, Horizon, Telescope</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🏗️ Laravel ทำงานแบบ MVC</h3>
+    <div class="flow">
+      <div class="flow-box fb-slate">Browser<br><small>HTTP Request</small></div>
+      <div class="flow-arr">→</div>
+      <div class="flow-box fb-red">Router<br><small>จับ URL</small></div>
+      <div class="flow-arr">→</div>
+      <div class="flow-box fb-orange">Middleware<br><small>Auth, CORS</small></div>
+      <div class="flow-arr">→</div>
+      <div class="flow-box fb-blue">Controller<br><small>Logic</small></div>
+      <div class="flow-arr">→</div>
+      <div class="flow-box fb-green">Model<br><small>Database</small></div>
+      <div class="flow-arr">→</div>
+      <div class="flow-box fb-purple">View<br><small>Blade/JSON</small></div>
+    </div>
+    <table>
+      <tr><th>ส่วน</th><th>หน้าที่</th><th>ตำแหน่งในโปรเจกต์</th></tr>
+      <tr><td><strong>Model</strong></td><td>ติดต่อฐานข้อมูล ผ่าน Eloquent ORM</td><td><span class="inline-code">app/Models/</span></td></tr>
+      <tr><td><strong>View</strong></td><td>แสดงผลหน้าเว็บ ผ่าน Blade Template</td><td><span class="inline-code">resources/views/</span></td></tr>
+      <tr><td><strong>Controller</strong></td><td>จัดการ Logic รับ request → return response</td><td><span class="inline-code">app/Http/Controllers/</span></td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>📋 Laravel vs Frameworks อื่น</h3>
+    <table>
+      <tr><th>ฟีเจอร์</th><th>Laravel</th><th>Symfony</th><th>CodeIgniter</th></tr>
+      <tr><td>Learning Curve</td><td>⭐⭐⭐ ปานกลาง</td><td>⭐ สูงมาก</td><td>⭐⭐⭐⭐ ง่าย</td></tr>
+      <tr><td>Eloquent ORM</td><td>✅ มีในตัว</td><td>✅ Doctrine</td><td>⚠️ Active Record</td></tr>
+      <tr><td>Authentication</td><td>✅ พร้อมใช้</td><td>⚠️ ต้อง Config</td><td>❌ ต้อง Setup เอง</td></tr>
+      <tr><td>Queue / Jobs</td><td>✅ Built-in</td><td>✅ Messenger</td><td>❌ ไม่มี</td></tr>
+      <tr><td>Community</td><td>🌍 ใหญ่ที่สุด</td><td>🌍 ใหญ่</td><td>🌏 ปานกลาง</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 02: ติดตั้ง -->
+<!-- ============================================================ -->
+<section id="install">
+  <div class="chapter-header ch-orange">
+    <div class="ch-num">02</div>
+    <div>
+      <h2>ติดตั้งและสร้างโปรเจกต์</h2>
+      <p>ตั้งแต่ติดตั้ง PHP, Composer จนถึง Laravel 11</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📋 Requirements</h3>
+    <table>
+      <tr><th>ซอฟต์แวร์</th><th>Version ที่ต้องการ</th><th>ดาวน์โหลด</th></tr>
+      <tr><td>PHP</td><td>8.2+ (แนะนำ 8.3)</td><td><span class="inline-code">php.net</span></td></tr>
+      <tr><td>Composer</td><td>2.x</td><td><span class="inline-code">getcomposer.org</span></td></tr>
+      <tr><td>MySQL / PostgreSQL</td><td>8.0+ / 15+</td><td>Database server</td></tr>
+      <tr><td>Node.js (optional)</td><td>18+ (สำหรับ Vite)</td><td><span class="inline-code">nodejs.org</span></td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>🚀 สร้างโปรเจกต์</h3>
+    <div class="step-list">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h4>ติดตั้งผ่าน Composer</h4>
+<pre><span class="cm"># สร้างโปรเจกต์ใหม่</span>
+composer create-project laravel/laravel my-app
+
+<span class="cm"># หรือใช้ Laravel Installer (ต้องติดตั้งก่อน)</span>
+composer global require laravel/installer
+laravel new my-app</pre>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h4>ตั้งค่า .env</h4>
+<pre><span class="cm"># คัดลอก env template</span>
+cp .env.example .env
+
+<span class="cm"># สร้าง Application Key (สำคัญมาก!)</span>
+php artisan key:generate</pre>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h4>ตั้งค่าฐานข้อมูลใน .env</h4>
+<pre>DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=<span class="str">my_app</span>
+DB_USERNAME=<span class="str">root</span>
+DB_PASSWORD=<span class="str">secret</span></pre>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <h4>รัน Migration และเริ่ม Server</h4>
+<pre><span class="cm"># รัน migration (สร้าง tables)</span>
+php artisan migrate
+
+<span class="cm"># เริ่ม development server</span>
+php artisan serve
+<span class="cm"># เปิด http://localhost:8000</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout tip">
+    <span class="ci">💡</span>
+    <div>ใช้ <strong>Laravel Herd</strong> (laravel.com/herd) สำหรับ macOS/Windows เพื่อตั้งค่า PHP + Nginx + MySQL ได้ในคลิกเดียว — ง่ายกว่า XAMPP มาก</div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 03: โครงสร้าง -->
+<!-- ============================================================ -->
+<section id="structure">
+  <div class="chapter-header ch-green">
+    <div class="ch-num">03</div>
+    <div>
+      <h2>โครงสร้างโปรเจกต์</h2>
+      <p>เข้าใจแต่ละโฟลเดอร์และไฟล์สำคัญ</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📁 Directory Structure</h3>
+    <div class="tree">
+<span class="folder">my-app/</span>
+├── <span class="folder">app/</span>                    <span class="cm2">← โค้ดหลักของแอป</span>
+│   ├── <span class="folder">Http/</span>
+│   │   ├── <span class="folder">Controllers/</span>    <span class="cm2">← รับ Request, return Response</span>
+│   │   ├── <span class="folder">Middleware/</span>      <span class="cm2">← กรอง Request ก่อนถึง Controller</span>
+│   │   └── <span class="folder">Requests/</span>        <span class="cm2">← Form Request Validation</span>
+│   ├── <span class="folder">Models/</span>              <span class="cm2">← Eloquent Models (Database)</span>
+│   ├── <span class="folder">Services/</span>            <span class="cm2">← Business Logic (สร้างเอง)</span>
+│   └── <span class="folder">Providers/</span>           <span class="cm2">← Service Providers (Bootstrap)</span>
+├── <span class="folder">bootstrap/</span>              <span class="cm2">← Application bootstrapping</span>
+├── <span class="folder">config/</span>                  <span class="cm2">← config files (database, mail...)</span>
+├── <span class="folder">database/</span>
+│   ├── <span class="folder">migrations/</span>          <span class="cm2">← สร้าง/แก้ไข table schema</span>
+│   ├── <span class="folder">factories/</span>           <span class="cm2">← สร้างข้อมูล fake สำหรับ test</span>
+│   └── <span class="folder">seeders/</span>             <span class="cm2">← ใส่ข้อมูลเริ่มต้น</span>
+├── <span class="folder">public/</span>                  <span class="cm2">← Document Root (index.php อยู่ที่นี่)</span>
+├── <span class="folder">resources/</span>
+│   ├── <span class="folder">views/</span>               <span class="cm2">← Blade templates (.blade.php)</span>
+│   ├── <span class="folder">css/</span>                 <span class="cm2">← CSS source files</span>
+│   └── <span class="folder">js/</span>                  <span class="cm2">← JavaScript source files</span>
+├── <span class="folder">routes/</span>
+│   ├── <span class="file">web.php</span>              <span class="cm2">← Routes สำหรับ web (มี session/cookie)</span>
+│   ├── <span class="file">api.php</span>              <span class="cm2">← Routes สำหรับ API (/api/...)</span>
+│   └── <span class="file">console.php</span>          <span class="cm2">← Artisan commands</span>
+├── <span class="folder">storage/</span>                 <span class="cm2">← Logs, Cache, Uploaded files</span>
+├── <span class="folder">tests/</span>                   <span class="cm2">← Unit & Feature tests</span>
+├── <span class="file">.env</span>                     <span class="cm2">← Environment variables (ไม่ commit!)</span>
+├── <span class="file">artisan</span>                  <span class="cm2">← CLI tool ของ Laravel</span>
+└── <span class="file">composer.json</span>            <span class="cm2">← PHP dependencies</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 04: Routing -->
+<!-- ============================================================ -->
+<section id="routing">
+  <div class="chapter-header ch-blue">
+    <div class="ch-num">04</div>
+    <div>
+      <h2>Routing</h2>
+      <p>กำหนด URL ว่าแต่ละ path จะไปที่ Controller ไหน</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🗺️ Basic Routes (routes/web.php)</h3>
+<pre><span class="tag">&lt;?php</span>
+<span class="kw">use</span> Illuminate\Support\Facades\<span class="type">Route</span>;
+<span class="kw">use</span> App\Http\Controllers\<span class="type">PostController</span>;
+
+<span class="cm">// ─── HTTP Verbs ───────────────────────────────────</span>
+Route::<span class="fn">get</span>(<span class="str">'/hello'</span>, <span class="kw">function</span>() {
+    <span class="kw">return</span> <span class="str">'สวัสดี Laravel!'</span>;
+});
+
+Route::<span class="fn">post</span>(<span class="str">'/submit'</span>, [<span class="type">FormController</span>::class, <span class="str">'store'</span>]);
+Route::<span class="fn">put</span>(<span class="str">'/users/{id}'</span>, [<span class="type">UserController</span>::class, <span class="str">'update'</span>]);
+Route::<span class="fn">delete</span>(<span class="str">'/users/{id}'</span>, [<span class="type">UserController</span>::class, <span class="str">'destroy'</span>]);
+
+<span class="cm">// ─── Route Parameters ─────────────────────────────</span>
+Route::<span class="fn">get</span>(<span class="str">'/users/{id}'</span>, <span class="kw">function</span>(<span class="type">string</span> <span class="var">$id</span>) {
+    <span class="kw">return</span> <span class="str">"User ID: {$id}"</span>;
+});
+
+<span class="cm">// Optional parameter (?)</span>
+Route::<span class="fn">get</span>(<span class="str">'/posts/{slug?}'</span>, <span class="kw">function</span>(<span class="type">string</span> <span class="var">$slug</span> = <span class="str">'all'</span>) {
+    <span class="kw">return</span> <span class="var">$slug</span>;
+});
+
+<span class="cm">// ─── Route Naming ─────────────────────────────────</span>
+Route::<span class="fn">get</span>(<span class="str">'/profile'</span>, [<span class="type">ProfileController</span>::class, <span class="str">'show'</span>])
+    -><span class="fn">name</span>(<span class="str">'profile.show'</span>);
+
+<span class="cm">// ใช้ชื่อ route สร้าง URL</span>
+<span class="var">$url</span> = <span class="fn">route</span>(<span class="str">'profile.show'</span>);  <span class="cm">// → /profile</span>
+
+<span class="cm">// ─── Route Groups ─────────────────────────────────</span>
+Route::<span class="fn">prefix</span>(<span class="str">'admin'</span>)-><span class="fn">middleware</span>(<span class="str">'auth'</span>)-><span class="fn">group</span>(<span class="kw">function</span>() {
+    Route::<span class="fn">get</span>(<span class="str">'/dashboard'</span>, [<span class="type">AdminController</span>::class, <span class="str">'index'</span>]);
+    Route::<span class="fn">get</span>(<span class="str">'/users'</span>, [<span class="type">AdminController</span>::class, <span class="str">'users'</span>]);
+});
+<span class="cm">// URL: /admin/dashboard, /admin/users</span></pre>
+  </div>
+
+  <div class="card">
+    <h3>📦 Resource Routes (CRUD ครบ 7 routes)</h3>
+<pre><span class="cm">// สร้าง routes CRUD ครบทุกตัวในบรรทัดเดียว</span>
+Route::<span class="fn">resource</span>(<span class="str">'posts'</span>, <span class="type">PostController</span>::class);
+
+<span class="cm">/*
+ URL             Method    Action         Route Name
+ /posts          GET       index()        posts.index
+ /posts/create   GET       create()       posts.create
+ /posts          POST      store()        posts.store
+ /posts/{id}     GET       show()         posts.show
+ /posts/{id}/edit GET      edit()         posts.edit
+ /posts/{id}     PUT/PATCH update()       posts.update
+ /posts/{id}     DELETE    destroy()      posts.destroy
+*/</span>
+
+<span class="cm">// จำกัดเฉพาะบาง actions</span>
+Route::<span class="fn">resource</span>(<span class="str">'photos'</span>, <span class="type">PhotoController</span>::class)
+    -><span class="fn">only</span>([<span class="str">'index'</span>, <span class="str">'show'</span>]);
+
+<span class="cm">// ยกเว้นบาง actions</span>
+Route::<span class="fn">resource</span>(<span class="str">'photos'</span>, <span class="type">PhotoController</span>::class)
+    -><span class="fn">except</span>([<span class="str">'create'</span>, <span class="str">'edit'</span>]);</pre>
+
+    <div class="callout tip">
+      <span class="ci">✨</span>
+      <div>สำหรับ API ที่ไม่มีหน้าเว็บ ใช้ <span class="inline-code">Route::apiResource()</span> จะสร้างแค่ 5 routes (ตัด create/edit ออก)</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 05: Controller -->
+<!-- ============================================================ -->
+<section id="controller">
+  <div class="chapter-header ch-purple">
+    <div class="ch-num">05</div>
+    <div>
+      <h2>Controller</h2>
+      <p>จัดการ Logic ในการรับ Request และส่ง Response กลับ</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🎮 สร้าง Controller</h3>
+<pre><span class="cm"># สร้าง Controller ว่างเปล่า</span>
+php artisan make:controller PostController
+
+<span class="cm"># สร้าง Resource Controller (มีทุก method)</span>
+php artisan make:controller PostController --resource
+
+<span class="cm"># สร้าง API Resource Controller (ไม่มี create/edit)</span>
+php artisan make:controller PostController --api</pre>
+  </div>
+
+  <div class="card">
+    <h3>📋 Resource Controller ตัวอย่าง</h3>
+<pre><span class="tag">&lt;?php</span>
+<span class="kw">namespace</span> App\Http\Controllers;
+
+<span class="kw">use</span> App\Models\<span class="type">Post</span>;
+<span class="kw">use</span> App\Http\Requests\<span class="type">StorePostRequest</span>;
+<span class="kw">use</span> Illuminate\Http\<span class="type">Request</span>;
+<span class="kw">use</span> Illuminate\Http\<span class="type">Response</span>;
+
+<span class="kw">class</span> <span class="type">PostController</span> <span class="kw">extends</span> <span class="type">Controller</span>
+{
+    <span class="cm">// GET /posts — แสดงรายการทั้งหมด</span>
+    <span class="kw">public function</span> <span class="fn">index</span>()
+    {
+        <span class="var">$posts</span> = <span class="type">Post</span>::<span class="fn">latest</span>()-><span class="fn">paginate</span>(<span class="num">10</span>);
+        <span class="kw">return</span> <span class="fn">view</span>(<span class="str">'posts.index'</span>, <span class="fn">compact</span>(<span class="str">'posts'</span>));
+    }
+
+    <span class="cm">// GET /posts/create — แสดงฟอร์มสร้าง</span>
+    <span class="kw">public function</span> <span class="fn">create</span>()
+    {
+        <span class="kw">return</span> <span class="fn">view</span>(<span class="str">'posts.create'</span>);
+    }
+
+    <span class="cm">// POST /posts — บันทึกข้อมูลใหม่</span>
+    <span class="kw">public function</span> <span class="fn">store</span>(<span class="type">StorePostRequest</span> <span class="var">$request</span>)
+    {
+        <span class="var">$post</span> = <span class="type">Post</span>::<span class="fn">create</span>(<span class="var">$request</span>-><span class="fn">validated</span>());
+        <span class="kw">return</span> <span class="fn">redirect</span>()-><span class="fn">route</span>(<span class="str">'posts.show'</span>, <span class="var">$post</span>)
+            -><span class="fn">with</span>(<span class="str">'success'</span>, <span class="str">'สร้างโพสต์เรียบร้อย!'</span>);
+    }
+
+    <span class="cm">// GET /posts/{post} — แสดงรายการเดียว (Route Model Binding)</span>
+    <span class="kw">public function</span> <span class="fn">show</span>(<span class="type">Post</span> <span class="var">$post</span>)
+    {
+        <span class="kw">return</span> <span class="fn">view</span>(<span class="str">'posts.show'</span>, <span class="fn">compact</span>(<span class="str">'post'</span>));
+    }
+
+    <span class="cm">// PUT /posts/{post} — อัปเดต</span>
+    <span class="kw">public function</span> <span class="fn">update</span>(<span class="type">StorePostRequest</span> <span class="var">$request</span>, <span class="type">Post</span> <span class="var">$post</span>)
+    {
+        <span class="var">$post</span>-><span class="fn">update</span>(<span class="var">$request</span>-><span class="fn">validated</span>());
+        <span class="kw">return</span> <span class="fn">back</span>()-><span class="fn">with</span>(<span class="str">'success'</span>, <span class="str">'อัปเดตเรียบร้อย!'</span>);
+    }
+
+    <span class="cm">// DELETE /posts/{post} — ลบ</span>
+    <span class="kw">public function</span> <span class="fn">destroy</span>(<span class="type">Post</span> <span class="var">$post</span>)
+    {
+        <span class="var">$post</span>-><span class="fn">delete</span>();
+        <span class="kw">return</span> <span class="fn">redirect</span>()-><span class="fn">route</span>(<span class="str">'posts.index'</span>)
+            -><span class="fn">with</span>(<span class="str">'success'</span>, <span class="str">'ลบเรียบร้อย!'</span>);
+    }
+}</pre>
+
+    <div class="callout laravel">
+      <span class="ci">🪄</span>
+      <div><strong>Route Model Binding</strong> — Laravel ค้นหา Model โดยอัตโนมัติ! เมื่อ type-hint <span class="inline-code">Post $post</span> ใน method Laravel จะ query <span class="inline-code">Post::find($id)</span> ให้เองโดยอัตโนมัติ ถ้าไม่พบจะ return 404</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 06: Eloquent ORM -->
+<!-- ============================================================ -->
+<section id="eloquent">
+  <div class="chapter-header ch-indigo">
+    <div class="ch-num">06</div>
+    <div>
+      <h2>Eloquent ORM</h2>
+      <p>ติดต่อฐานข้อมูลด้วย Object แทน SQL — สวยงาม ทรงพลัง</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📦 สร้าง Model</h3>
+<pre><span class="cm"># สร้าง Model</span>
+php artisan make:model Post
+
+<span class="cm"># สร้าง Model + Migration + Factory + Seeder + Controller</span>
+php artisan make:model Post -mfsc
+
+<span class="cm"># สร้าง Model + Migration + Resource Controller</span>
+php artisan make:model Post -mr</pre>
+  </div>
+
+  <div class="card">
+    <h3>🏗️ Model ตัวอย่าง</h3>
+<pre><span class="tag">&lt;?php</span>
+<span class="kw">namespace</span> App\Models;
+
+<span class="kw">use</span> Illuminate\Database\Eloquent\<span class="type">Factories\HasFactory</span>;
+<span class="kw">use</span> Illuminate\Database\Eloquent\<span class="type">Model</span>;
+<span class="kw">use</span> Illuminate\Database\Eloquent\<span class="type">SoftDeletes</span>;
+
+<span class="kw">class</span> <span class="type">Post</span> <span class="kw">extends</span> <span class="type">Model</span>
+{
+    <span class="kw">use</span> <span class="type">HasFactory</span>, <span class="type">SoftDeletes</span>;
+
+    <span class="cm">// กำหนด fields ที่รับค่าได้ (ป้องกัน Mass Assignment)</span>
+    <span class="kw">protected</span> <span class="var">$fillable</span> = [<span class="str">'title'</span>, <span class="str">'body'</span>, <span class="str">'user_id'</span>, <span class="str">'published_at'</span>];
+
+    <span class="cm">// fields ที่ซ่อนจาก JSON output</span>
+    <span class="kw">protected</span> <span class="var">$hidden</span> = [<span class="str">'deleted_at'</span>];
+
+    <span class="cm">// Type casting</span>
+    <span class="kw">protected function</span> <span class="fn">casts</span>(): <span class="type">array</span>
+    {
+        <span class="kw">return</span> [
+            <span class="str">'published_at'</span> => <span class="str">'datetime'</span>,
+            <span class="str">'is_featured'</span>  => <span class="str">'boolean'</span>,
+            <span class="str">'metadata'</span>     => <span class="str">'array'</span>,      <span class="cm">// JSON → PHP array</span>
+        ];
+    }
+
+    <span class="cm">// ─── Relationships ───────────────────────────────</span>
+    <span class="cm">// Post belongsTo User</span>
+    <span class="kw">public function</span> <span class="fn">user</span>()
+    {
+        <span class="kw">return</span> <span class="var">$this</span>-><span class="fn">belongsTo</span>(<span class="type">User</span>::class);
+    }
+
+    <span class="cm">// Post hasMany Comment</span>
+    <span class="kw">public function</span> <span class="fn">comments</span>()
+    {
+        <span class="kw">return</span> <span class="var">$this</span>-><span class="fn">hasMany</span>(<span class="type">Comment</span>::class);
+    }
+
+    <span class="cm">// Post belongsToMany Tag (many-to-many)</span>
+    <span class="kw">public function</span> <span class="fn">tags</span>()
+    {
+        <span class="kw">return</span> <span class="var">$this</span>-><span class="fn">belongsToMany</span>(<span class="type">Tag</span>::class);
+    }
+
+    <span class="cm">// ─── Scope — query shortcut ───────────────────────</span>
+    <span class="kw">public function</span> <span class="fn">scopePublished</span>(<span class="var">$query</span>)
+    {
+        <span class="kw">return</span> <span class="var">$query</span>-><span class="fn">whereNotNull</span>(<span class="str">'published_at'</span>)
+                       -><span class="fn">where</span>(<span class="str">'published_at'</span>, <span class="str">'&lt;='</span>, <span class="fn">now</span>());
+    }
+
+    <span class="cm">// Accessor — แปลงค่าตอนดึงออกมา</span>
+    <span class="kw">public function</span> <span class="fn">getExcerptAttribute</span>(): <span class="type">string</span>
+    {
+        <span class="kw">return</span> <span class="fn">str</span>(<span class="var">$this</span>->body)-><span class="fn">limit</span>(<span class="num">150</span>);
+    }
+}</pre>
+  </div>
+
+  <div class="card">
+    <h3>🔍 Eloquent Query Methods</h3>
+    <div class="grid-2">
+<pre><span class="cm">// ─── CREATE ─────────────────────────────────</span>
+<span class="cm">// Mass create (ต้องมี $fillable)</span>
+<span class="var">$post</span> = <span class="type">Post</span>::<span class="fn">create</span>([
+    <span class="str">'title'</span> => <span class="str">'Hello World'</span>,
+    <span class="str">'body'</span>  => <span class="str">'เนื้อหา...'</span>,
+    <span class="str">'user_id'</span> => <span class="num">1</span>,
+]);
+
+<span class="cm">// สร้างแล้ว save ทีหลัง</span>
+<span class="var">$post</span> = <span class="kw">new</span> <span class="type">Post</span>();
+<span class="var">$post</span>->title = <span class="str">'Title'</span>;
+<span class="var">$post</span>-><span class="fn">save</span>();
+
+<span class="cm">// ─── READ ────────────────────────────────────</span>
+<span class="cm">// ดึงทั้งหมด</span>
+<span class="var">$posts</span> = <span class="type">Post</span>::<span class="fn">all</span>();
+
+<span class="cm">// ดึงด้วย ID</span>
+<span class="var">$post</span> = <span class="type">Post</span>::<span class="fn">find</span>(<span class="num">1</span>);
+<span class="var">$post</span> = <span class="type">Post</span>::<span class="fn">findOrFail</span>(<span class="num">1</span>);  <span class="cm">// → 404 ถ้าไม่เจอ</span>
+
+<span class="cm">// WHERE conditions</span>
+<span class="var">$posts</span> = <span class="type">Post</span>::<span class="fn">where</span>(<span class="str">'user_id'</span>, <span class="num">1</span>)
+    -><span class="fn">where</span>(<span class="str">'published_at'</span>, <span class="str">'!='</span>, <span class="kw">null</span>)
+    -><span class="fn">orderBy</span>(<span class="str">'created_at'</span>, <span class="str">'desc'</span>)
+    -><span class="fn">limit</span>(<span class="num">10</span>)
+    -><span class="fn">get</span>();
+
+<span class="cm">// ใช้ scope</span>
+<span class="var">$published</span> = <span class="type">Post</span>::<span class="fn">published</span>()-><span class="fn">get</span>();
+
+<span class="cm">// Pagination</span>
+<span class="var">$posts</span> = <span class="type">Post</span>::<span class="fn">paginate</span>(<span class="num">15</span>);</pre>
+
+<pre><span class="cm">// ─── UPDATE ─────────────────────────────────</span>
+<span class="cm">// อัปเดตผ่าน Model instance</span>
+<span class="var">$post</span>-><span class="fn">update</span>([<span class="str">'title'</span> => <span class="str">'ชื่อใหม่'</span>]);
+
+<span class="cm">// อัปเดตตาม condition</span>
+<span class="type">Post</span>::<span class="fn">where</span>(<span class="str">'user_id'</span>, <span class="num">1</span>)
+    -><span class="fn">update</span>([<span class="str">'published_at'</span> => <span class="fn">now</span>()]);
+
+<span class="cm">// ─── DELETE ─────────────────────────────────</span>
+<span class="var">$post</span>-><span class="fn">delete</span>();                    <span class="cm">// soft delete</span>
+<span class="var">$post</span>-><span class="fn">forceDelete</span>();               <span class="cm">// ลบจริง</span>
+<span class="type">Post</span>::<span class="fn">destroy</span>([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]);           <span class="cm">// ลบหลาย IDs</span>
+
+<span class="cm">// ─── RELATIONSHIPS ──────────────────────────</span>
+<span class="cm">// Eager Loading (ป้องกัน N+1 problem)</span>
+<span class="var">$posts</span> = <span class="type">Post</span>::<span class="fn">with</span>([<span class="str">'user'</span>, <span class="str">'comments'</span>])-><span class="fn">get</span>();
+
+<span class="cm">// Lazy Eager Loading</span>
+<span class="var">$posts</span>-><span class="fn">load</span>(<span class="str">'user'</span>);
+
+<span class="cm">// ดึง posts พร้อม user ที่มีชื่อ 'สมชาย'</span>
+<span class="var">$posts</span> = <span class="type">Post</span>::<span class="fn">whereHas</span>(<span class="str">'user'</span>, <span class="kw">function</span>(<span class="var">$q</span>) {
+    <span class="var">$q</span>-><span class="fn">where</span>(<span class="str">'name'</span>, <span class="str">'สมชาย'</span>);
+})-><span class="fn">get</span>();
+
+<span class="cm">// Many-to-Many</span>
+<span class="var">$post</span>->tags()-><span class="fn">attach</span>(<span class="num">1</span>);
+<span class="var">$post</span>->tags()-><span class="fn">detach</span>(<span class="num">1</span>);
+<span class="var">$post</span>->tags()-><span class="fn">sync</span>([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]);</pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔗 Relationships ทุกประเภท</h3>
+    <table>
+      <tr><th>ความสัมพันธ์</th><th>Method</th><th>ตัวอย่าง</th></tr>
+      <tr><td>One-to-One</td><td><span class="inline-code">hasOne / belongsTo</span></td><td>User มี Profile เดียว</td></tr>
+      <tr><td>One-to-Many</td><td><span class="inline-code">hasMany / belongsTo</span></td><td>User มีหลาย Post</td></tr>
+      <tr><td>Many-to-Many</td><td><span class="inline-code">belongsToMany</span></td><td>Post มีหลาย Tag</td></tr>
+      <tr><td>Has-Many-Through</td><td><span class="inline-code">hasManyThrough</span></td><td>Country มีหลาย Post ผ่าน User</td></tr>
+      <tr><td>Polymorphic</td><td><span class="inline-code">morphTo / morphMany</span></td><td>Comment ของทั้ง Post และ Video</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 07: Migration -->
+<!-- ============================================================ -->
+<section id="migration">
+  <div class="chapter-header ch-teal">
+    <div class="ch-num">07</div>
+    <div>
+      <h2>Migration & Seeder</h2>
+      <p>จัดการ Schema ฐานข้อมูลด้วย PHP Code แทน SQL ดิบ</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📄 Migration</h3>
+<pre><span class="cm"># สร้าง Migration</span>
+php artisan make:migration create_posts_table
+php artisan make:migration add_views_to_posts_table
+
+<span class="cm"># รัน Migration</span>
+php artisan migrate
+
+<span class="cm"># ย้อนกลับ (rollback)</span>
+php artisan migrate:rollback
+php artisan migrate:rollback --step=2
+
+<span class="cm"># Reset และรันใหม่ทั้งหมด</span>
+php artisan migrate:fresh
+php artisan migrate:fresh --seed   <span class="cm"># + run seeders</span></pre>
+  </div>
+
+  <div class="card">
+    <h3>📋 Migration File ตัวอย่าง</h3>
+<pre><span class="tag">&lt;?php</span>
+<span class="kw">use</span> Illuminate\Database\Migrations\<span class="type">Migration</span>;
+<span class="kw">use</span> Illuminate\Database\Schema\<span class="type">Blueprint</span>;
+<span class="kw">use</span> Illuminate\Support\Facades\<span class="type">Schema</span>;
+
+<span class="kw">return new class</span> <span class="kw">extends</span> <span class="type">Migration</span>
+{
+    <span class="kw">public function</span> <span class="fn">up</span>(): <span class="type">void</span>
+    {
+        <span class="type">Schema</span>::<span class="fn">create</span>(<span class="str">'posts'</span>, <span class="kw">function</span> (<span class="type">Blueprint</span> <span class="var">$table</span>) {
+            <span class="var">$table</span>-><span class="fn">id</span>();                              <span class="cm">// bigint auto increment PK</span>
+
+            <span class="var">$table</span>-><span class="fn">foreignId</span>(<span class="str">'user_id'</span>)              <span class="cm">// FK → users.id</span>
+                   -><span class="fn">constrained</span>()
+                   -><span class="fn">cascadeOnDelete</span>();
+
+            <span class="var">$table</span>-><span class="fn">string</span>(<span class="str">'title'</span>);                  <span class="cm">// VARCHAR(255)</span>
+            <span class="var">$table</span>-><span class="fn">string</span>(<span class="str">'slug'</span>)-><span class="fn">unique</span>();        <span class="cm">// unique index</span>
+            <span class="var">$table</span>-><span class="fn">text</span>(<span class="str">'body'</span>);                     <span class="cm">// TEXT</span>
+            <span class="var">$table</span>-><span class="fn">longText</span>(<span class="str">'content'</span>)-><span class="fn">nullable</span>();  <span class="cm">// LONGTEXT, null ได้</span>
+            <span class="var">$table</span>-><span class="fn">boolean</span>(<span class="str">'is_featured'</span>)-><span class="fn">default</span>(<span class="kw">false</span>);
+            <span class="var">$table</span>-><span class="fn">integer</span>(<span class="str">'views'</span>)-><span class="fn">default</span>(<span class="num">0</span>);
+            <span class="var">$table</span>-><span class="fn">decimal</span>(<span class="str">'price'</span>, <span class="num">10</span>, <span class="num">2</span>)-><span class="fn">nullable</span>(); <span class="cm">// DECIMAL(10,2)</span>
+            <span class="var">$table</span>-><span class="fn">json</span>(<span class="str">'metadata'</span>)-><span class="fn">nullable</span>();    <span class="cm">// JSON column</span>
+            <span class="var">$table</span>-><span class="fn">enum</span>(<span class="str">'status'</span>, [<span class="str">'draft'</span>,<span class="str">'published'</span>,<span class="str">'archived'</span>])
+                   -><span class="fn">default</span>(<span class="str">'draft'</span>);
+            <span class="var">$table</span>-><span class="fn">timestamp</span>(<span class="str">'published_at'</span>)-><span class="fn">nullable</span>();
+
+            <span class="var">$table</span>-><span class="fn">softDeletes</span>();                    <span class="cm">// deleted_at column</span>
+            <span class="var">$table</span>-><span class="fn">timestamps</span>();                     <span class="cm">// created_at, updated_at</span>
+
+            <span class="cm">// Indexes</span>
+            <span class="var">$table</span>-><span class="fn">index</span>([<span class="str">'user_id'</span>, <span class="str">'status'</span>]);
+            <span class="var">$table</span>-><span class="fn">fullText</span>([<span class="str">'title'</span>, <span class="str">'body'</span>]);      <span class="cm">// Full-text search</span>
+        });
+    }
+
+    <span class="kw">public function</span> <span class="fn">down</span>(): <span class="type">void</span>
+    {
+        <span class="type">Schema</span>::<span class="fn">dropIfExists</span>(<span class="str">'posts'</span>);
+    }
+};</pre>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>🌱 Seeder & Factory</h3>
+<pre><span class="cm"># สร้าง Seeder</span>
+php artisan make:seeder PostSeeder
+
+<span class="cm"># สร้าง Factory</span>
+php artisan make:factory PostFactory
+
+<span class="cm"># รัน Seeder</span>
+php artisan db:seed
+php artisan db:seed --class=PostSeeder</pre>
+
+<pre><span class="cm">// PostFactory.php</span>
+<span class="kw">class</span> <span class="type">PostFactory</span> <span class="kw">extends</span> <span class="type">Factory</span>
+{
+    <span class="kw">public function</span> <span class="fn">definition</span>(): <span class="type">array</span>
+    {
+        <span class="kw">return</span> [
+            <span class="str">'title'</span>  => <span class="var">$this</span>->faker-><span class="fn">sentence</span>(),
+            <span class="str">'slug'</span>   => <span class="var">$this</span>->faker-><span class="fn">slug</span>(),
+            <span class="str">'body'</span>   => <span class="var">$this</span>->faker-><span class="fn">paragraphs</span>(<span class="num">5</span>, <span class="kw">true</span>),
+            <span class="str">'user_id'</span> => <span class="type">User</span>::<span class="fn">factory</span>(),
+            <span class="str">'status'</span> => <span class="var">$this</span>->faker-><span class="fn">randomElement</span>([
+                <span class="str">'draft'</span>, <span class="str">'published'</span>
+            ]),
+        ];
+    }
+}
+
+<span class="cm">// ใช้สร้างข้อมูลใน Seeder</span>
+<span class="type">Post</span>::<span class="fn">factory</span>(<span class="num">50</span>)-><span class="fn">create</span>();</pre>
+    </div>
+    <div class="card">
+      <h3>⚙️ Column Types สำคัญ</h3>
+      <table>
+        <tr><th>Method</th><th>SQL Type</th></tr>
+        <tr><td><span class="inline-code">id()</span></td><td>BIGINT UNSIGNED AI PK</td></tr>
+        <tr><td><span class="inline-code">string('col')</span></td><td>VARCHAR(255)</td></tr>
+        <tr><td><span class="inline-code">string('col', 100)</span></td><td>VARCHAR(100)</td></tr>
+        <tr><td><span class="inline-code">text()</span></td><td>TEXT</td></tr>
+        <tr><td><span class="inline-code">integer()</span></td><td>INT</td></tr>
+        <tr><td><span class="inline-code">bigInteger()</span></td><td>BIGINT</td></tr>
+        <tr><td><span class="inline-code">decimal(8, 2)</span></td><td>DECIMAL(8,2)</td></tr>
+        <tr><td><span class="inline-code">boolean()</span></td><td>TINYINT(1)</td></tr>
+        <tr><td><span class="inline-code">timestamp()</span></td><td>TIMESTAMP</td></tr>
+        <tr><td><span class="inline-code">date()</span></td><td>DATE</td></tr>
+        <tr><td><span class="inline-code">json()</span></td><td>JSON</td></tr>
+        <tr><td><span class="inline-code">uuid()</span></td><td>CHAR(36)</td></tr>
+        <tr><td><span class="inline-code">foreignId()</span></td><td>BIGINT UNSIGNED FK</td></tr>
+        <tr><td><span class="inline-code">timestamps()</span></td><td>created_at, updated_at</td></tr>
+        <tr><td><span class="inline-code">softDeletes()</span></td><td>deleted_at TIMESTAMP NULL</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 08: Blade Template -->
+<!-- ============================================================ -->
+<section id="blade">
+  <div class="chapter-header ch-pink">
+    <div class="ch-num">08</div>
+    <div>
+      <h2>Blade Template</h2>
+      <p>Template Engine ทรงพลังของ Laravel — ง่ายและรวดเร็ว</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📄 Blade Directives พื้นฐาน</h3>
+<pre><span class="cm">&lt;!-- resources/views/posts/index.blade.php --&gt;</span>
+<span class="tag">@extends</span>('layouts.app')   <span class="cm">&lt;!-- ต่อยอดจาก layout หลัก --&gt;</span>
+
+<span class="tag">@section</span>('title', 'รายการโพสต์')
+
+<span class="tag">@section</span>('content')
+  <span class="cm">&lt;!-- แสดงค่า (escape HTML อัตโนมัติ) --&gt;</span>
+  &lt;h1&gt;<span class="tag">{{ $title }}</span>&lt;/h1&gt;
+
+  <span class="cm">&lt;!-- แสดง HTML ดิบ (ระวัง XSS!) --&gt;</span>
+  &lt;div&gt;<span class="tag">{!! $rawHtml !!}</span>&lt;/div&gt;
+
+  <span class="cm">&lt;!-- Conditionals --&gt;</span>
+  <span class="tag">@if</span> (auth()-&gt;check())
+    &lt;p&gt;สวัสดี, <span class="tag">{{ auth()-&gt;user()-&gt;name }}</span>&lt;/p&gt;
+  <span class="tag">@elseif</span> ($guest)
+    &lt;p&gt;ยินดีต้อนรับแขก&lt;/p&gt;
+  <span class="tag">@else</span>
+    &lt;p&gt;กรุณาล็อกอิน&lt;/p&gt;
+  <span class="tag">@endif</span>
+
+  <span class="cm">&lt;!-- Loop --&gt;</span>
+  <span class="tag">@forelse</span> ($posts as $post)
+    &lt;article&gt;
+      &lt;h2&gt;<span class="tag">{{ $post-&gt;title }}</span>&lt;/h2&gt;
+      <span class="cm">&lt;!-- $loop variable --&gt;</span>
+      <span class="tag">@if</span> ($loop-&gt;first) &lt;span&gt;แรก!&lt;/span&gt; <span class="tag">@endif</span>
+      &lt;small&gt;ที่ <span class="tag">{{ $loop-&gt;iteration }}</span> จาก <span class="tag">{{ $loop-&gt;count }}</span>&lt;/small&gt;
+    &lt;/article&gt;
+  <span class="tag">@empty</span>
+    &lt;p&gt;ยังไม่มีโพสต์&lt;/p&gt;
+  <span class="tag">@endforelse</span>
+
+  <span class="cm">&lt;!-- Pagination --&gt;</span>
+  <span class="tag">{{ $posts-&gt;links() }}</span>
+<span class="tag">@endsection</span>
+
+<span class="cm">&lt;!-- CSRF Token (สำหรับ Form) --&gt;</span>
+&lt;form method="POST" action="/posts"&gt;
+  <span class="tag">@csrf</span>
+  <span class="tag">@method</span>('PUT')   <span class="cm">&lt;!-- spoofing สำหรับ PUT/PATCH/DELETE --&gt;</span>
+  &lt;input name="title"&gt;
+  &lt;button&gt;บันทึก&lt;/button&gt;
+&lt;/form&gt;</pre>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>🧱 Layout (layouts/app.blade.php)</h3>
+<pre>&lt;!DOCTYPE html&gt;
+&lt;html lang="th"&gt;
+&lt;head&gt;
+  &lt;title&gt;<span class="tag">@yield</span>('title', 'Default Title')&lt;/title&gt;
+  <span class="tag">@stack</span>('styles')   <span class="cm">&lt;!-- รับ CSS จากหน้าย่อย --&gt;</span>
+&lt;/head&gt;
+&lt;body&gt;
+  <span class="tag">@include</span>('partials.navbar')   <span class="cm">&lt;!-- include component --&gt;</span>
+
+  <span class="tag">@if</span> (session('success'))
+    &lt;div class="alert"&gt;<span class="tag">{{ session('success') }}</span>&lt;/div&gt;
+  <span class="tag">@endif</span>
+
+  &lt;main&gt;
+    <span class="tag">@yield</span>('content')   <span class="cm">&lt;!-- หน้าย่อยวางเนื้อหาที่นี่ --&gt;</span>
+  &lt;/main&gt;
+
+  <span class="tag">@stack</span>('scripts')   <span class="cm">&lt;!-- รับ JS จากหน้าย่อย --&gt;</span>
+&lt;/body&gt;
+&lt;/html&gt;
+
+<span class="cm">&lt;!-- หน้าย่อยส่ง CSS/JS --&gt;</span>
+<span class="tag">@push</span>('styles')
+  &lt;link rel="stylesheet" href="/custom.css"&gt;
+<span class="tag">@endpush</span>
+
+<span class="tag">@push</span>('scripts')
+  &lt;script src="/custom.js"&gt;&lt;/script&gt;
+<span class="tag">@endpush</span></pre>
+    </div>
+    <div class="card">
+      <h3>🧩 Blade Components</h3>
+<pre><span class="cm"># สร้าง Component</span>
+php artisan make:component Alert
+
+<span class="cm">&lt;!-- resources/views/components/alert.blade.php --&gt;</span>
+&lt;div class="alert alert-<span class="tag">{{ $type }}</span>"
+     <span class="tag">{{ $attributes }}</span>&gt;
+  <span class="tag">{{ $slot }}</span>
+&lt;/div&gt;
+
+<span class="cm">&lt;!-- ใช้งาน --&gt;</span>
+&lt;x-alert type="success" class="mb-4"&gt;
+  บันทึกสำเร็จ!
+&lt;/x-alert&gt;
+
+<span class="cm">&lt;!-- Named Slots --&gt;</span>
+<span class="tag">@props</span>(['title', 'type' =&gt; 'info'])
+&lt;div class="card"&gt;
+  &lt;div class="card-header"&gt;<span class="tag">{{ $title }}</span>&lt;/div&gt;
+  &lt;div class="card-body"&gt;<span class="tag">{{ $slot }}</span>&lt;/div&gt;
+  &lt;div class="card-footer"&gt;<span class="tag">{{ $footer }}</span>&lt;/div&gt;
+&lt;/div&gt;
+
+<span class="cm">&lt;!-- ใช้ Named Slot --&gt;</span>
+&lt;x-card title="โพสต์ใหม่"&gt;
+  &lt;p&gt;เนื้อหา...&lt;/p&gt;
+  &lt;x-slot:footer&gt;
+    &lt;a href="#"&gt;อ่านต่อ&lt;/a&gt;
+  &lt;/x-slot:footer&gt;
+&lt;/x-card&gt;</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 09: Middleware -->
+<!-- ============================================================ -->
+<section id="middleware">
+  <div class="chapter-header ch-cyan">
+    <div class="ch-num">09</div>
+    <div>
+      <h2>Middleware</h2>
+      <p>กรอง HTTP Request ก่อนถึง Controller</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔧 สร้างและใช้ Middleware</h3>
+<pre><span class="cm"># สร้าง Middleware</span>
+php artisan make:middleware EnsureUserIsAdmin</pre>
+
+<pre><span class="tag">&lt;?php</span>
+<span class="kw">namespace</span> App\Http\Middleware;
+
+<span class="kw">use</span> Closure;
+<span class="kw">use</span> Illuminate\Http\<span class="type">Request</span>;
+<span class="kw">use</span> Symfony\Component\HttpFoundation\<span class="type">Response</span>;
+
+<span class="kw">class</span> <span class="type">EnsureUserIsAdmin</span>
+{
+    <span class="kw">public function</span> <span class="fn">handle</span>(<span class="type">Request</span> <span class="var">$request</span>, <span class="type">Closure</span> <span class="var">$next</span>): <span class="type">Response</span>
+    {
+        <span class="cm">// ตรวจสอบก่อนถึง Controller</span>
+        <span class="kw">if</span> (! <span class="var">$request</span>-><span class="fn">user</span>() || <span class="var">$request</span>-><span class="fn">user</span>()->role !== <span class="str">'admin'</span>) {
+            <span class="kw">return</span> <span class="fn">redirect</span>(<span class="str">'/home'</span>)-><span class="fn">with</span>(<span class="str">'error'</span>, <span class="str">'ไม่มีสิทธิ์'</span>);
+        }
+
+        <span class="var">$response</span> = <span class="var">$next</span>(<span class="var">$request</span>);  <span class="cm">// ส่งต่อไป Controller</span>
+
+        <span class="cm">// ทำอะไรบางอย่างหลัง Response ก็ได้</span>
+        <span class="var">$response</span>-><span class="fn">headers</span>-><span class="fn">set</span>(<span class="str">'X-Powered-By'</span>, <span class="str">'Laravel'</span>);
+
+        <span class="kw">return</span> <span class="var">$response</span>;
+    }
+}</pre>
+
+    <div class="grid-2" style="margin-top:20px">
+<pre><span class="cm">// ใน routes/web.php</span>
+Route::<span class="fn">get</span>(<span class="str">'/admin'</span>, [<span class="type">AdminController</span>::class, <span class="str">'index'</span>])
+    -><span class="fn">middleware</span>(<span class="str">'auth'</span>)
+    -><span class="fn">middleware</span>(<span class="str">'admin'</span>);
+
+<span class="cm">// หรือจัดกลุ่ม</span>
+Route::<span class="fn">middleware</span>([<span class="str">'auth'</span>, <span class="str">'admin'</span>])
+    -><span class="fn">prefix</span>(<span class="str">'admin'</span>)
+    -><span class="fn">group</span>(<span class="kw">function</span> () {
+        Route::<span class="fn">get</span>(<span class="str">'/dashboard'</span>, ...);
+        Route::<span class="fn">resource</span>(<span class="str">'users'</span>, ...);
+    });</pre>
+
+<pre><span class="cm">// Middleware ในตัว Laravel</span>
+<span class="str">'auth'</span>          <span class="cm">// ต้อง login</span>
+<span class="str">'auth:sanctum'</span>  <span class="cm">// ต้มี API token</span>
+<span class="str">'guest'</span>         <span class="cm">// ต้องยัง login</span>
+<span class="str">'verified'</span>      <span class="cm">// ต้อง verify email</span>
+<span class="str">'throttle:60,1'</span> <span class="cm">// rate limit 60/นาที</span>
+<span class="str">'signed'</span>        <span class="cm">// ต้องมี signed URL</span>
+<span class="str">'can:create-post'</span> <span class="cm">// Authorization</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 10: Validation -->
+<!-- ============================================================ -->
+<section id="validation">
+  <div class="chapter-header ch-rose">
+    <div class="ch-num">10</div>
+    <div>
+      <h2>Validation</h2>
+      <p>ตรวจสอบข้อมูลขาเข้าอย่างปลอดภัยและครบครัน</p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>🛡️ Form Request Validation</h3>
+<pre><span class="cm"># สร้าง Form Request</span>
+php artisan make:request StorePostRequest</pre>
+
+<pre><span class="tag">&lt;?php</span>
+<span class="kw">namespace</span> App\Http\Requests;
+
+<span class="kw">class</span> <span class="type">StorePostRequest</span> <span class="kw">extends</span> <span class="type">FormRequest</span>
+{
+    <span class="cm">// กำหนดว่าใครมีสิทธิ์ submit</span>
+    <span class="kw">public function</span> <span class="fn">authorize</span>(): <span class="type">bool</span>
+    {
+        <span class="kw">return</span> <span class="var">$this</span>-><span class="fn">user</span>()-><span class="fn">can</span>(<span class="str">'create'</span>, <span class="type">Post</span>::class);
+    }
+
+    <span class="kw">public function</span> <span class="fn">rules</span>(): <span class="type">array</span>
+    {
+        <span class="kw">return</span> [
+            <span class="str">'title'</span>    => [<span class="str">'required'</span>, <span class="str">'string'</span>, <span class="str">'max:255'</span>],
+            <span class="str">'slug'</span>     => [<span class="str">'required'</span>, <span class="str">'unique:posts,slug'</span>],
+            <span class="str">'body'</span>     => [<span class="str">'required'</span>, <span class="str">'string'</span>, <span class="str">'min:10'</span>],
+            <span class="str">'status'</span>   => [<span class="str">'required'</span>, <span class="str">'in:draft,published'</span>],
+            <span class="str">'category_id'</span> => [<span class="str">'required'</span>, <span class="str">'exists:categories,id'</span>],
+            <span class="str">'tags'</span>     => [<span class="str">'nullable'</span>, <span class="str">'array'</span>],
+            <span class="str">'tags.*'</span>   => [<span class="str">'exists:tags,id'</span>],
+            <span class="str">'image'</span>    => [<span class="str">'nullable'</span>, <span class="str">'image'</span>, <span class="str">'max:2048'</span>],
+            <span class="str">'price'</span>    => [<span class="str">'nullable'</span>, <span class="str">'numeric'</span>, <span class="str">'min:0'</span>],
+        ];
+    }
+
+    <span class="cm">// Custom error messages</span>
+    <span class="kw">public function</span> <span class="fn">messages</span>(): <span class="type">array</span>
+    {
+        <span class="kw">return</span> [
+            <span class="str">'title.required'</span> => <span class="str">'กรุณาใส่ชื่อโพสต์'</span>,
+            <span class="str">'body.min'</span>       => <span class="str">'เนื้อหาต้องมีอย่างน้อย 10 ตัวอักษร'</span>,
+        ];
+    }
+}</pre>
+    </div>
+    <div class="card">
+      <h3>📋 Validation Rules ที่ใช้บ่อย</h3>
+      <table>
+        <tr><th>Rule</th><th>ความหมาย</th></tr>
+        <tr><td><span class="inline-code">required</span></td><td>ต้องมีค่า ห้ามว่าง</td></tr>
+        <tr><td><span class="inline-code">nullable</span></td><td>อนุญาตให้ว่างได้</td></tr>
+        <tr><td><span class="inline-code">string</span></td><td>ต้องเป็น string</td></tr>
+        <tr><td><span class="inline-code">integer</span></td><td>ต้องเป็น integer</td></tr>
+        <tr><td><span class="inline-code">numeric</span></td><td>ต้องเป็นตัวเลข</td></tr>
+        <tr><td><span class="inline-code">boolean</span></td><td>true/false/1/0/on/off</td></tr>
+        <tr><td><span class="inline-code">email</span></td><td>รูปแบบ email</td></tr>
+        <tr><td><span class="inline-code">url</span></td><td>รูปแบบ URL</td></tr>
+        <tr><td><span class="inline-code">min:5</span></td><td>ขั้นต่ำ 5 ตัว/5 หน่วย</td></tr>
+        <tr><td><span class="inline-code">max:255</span></td><td>สูงสุด 255 ตัว/255 หน่วย</td></tr>
+        <tr><td><span class="inline-code">unique:table,col</span></td><td>ไม่ซ้ำในฐานข้อมูล</td></tr>
+        <tr><td><span class="inline-code">exists:table,col</span></td><td>ต้องมีอยู่ในฐานข้อมูล</td></tr>
+        <tr><td><span class="inline-code">in:a,b,c</span></td><td>ต้องเป็นค่าใดค่าหนึ่ง</td></tr>
+        <tr><td><span class="inline-code">confirmed</span></td><td>ต้องมี _confirmation ตรงกัน</td></tr>
+        <tr><td><span class="inline-code">image</span></td><td>รูปภาพ (jpeg/png/gif/bmp/svg)</td></tr>
+        <tr><td><span class="inline-code">mimes:pdf,doc</span></td><td>ประเภทไฟล์</td></tr>
+        <tr><td><span class="inline-code">date</span></td><td>วันที่ที่ valid</td></tr>
+        <tr><td><span class="inline-code">after:today</span></td><td>วันที่หลังจาก today</td></tr>
+        <tr><td><span class="inline-code">regex:/^[a-z]+$/</span></td><td>ตรงกับ regex</td></tr>
+        <tr><td><span class="inline-code">array</span></td><td>ต้องเป็น array</td></tr>
+        <tr><td><span class="inline-code">json</span></td><td>ต้องเป็น JSON string</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📨 แสดง Validation Error ใน Blade</h3>
+<pre><span class="cm">&lt;!-- แสดง error ทั้งหมด --&gt;</span>
+<span class="tag">@if</span> ($errors-&gt;any())
+  &lt;div class="alert alert-danger"&gt;
+    &lt;ul&gt;
+      <span class="tag">@foreach</span> ($errors-&gt;all() as $error)
+        &lt;li&gt;<span class="tag">{{ $error }}</span>&lt;/li&gt;
+      <span class="tag">@endforeach</span>
+    &lt;/ul&gt;
+  &lt;/div&gt;
+<span class="tag">@endif</span>
+
+<span class="cm">&lt;!-- แสดง error ของ field เดียว --&gt;</span>
+&lt;input name="title" value="<span class="tag">{{ old('title') }}</span>"
+       class="<span class="tag">@error</span>('title') is-invalid <span class="tag">@enderror</span>"&gt;
+
+<span class="tag">@error</span>('title')
+  &lt;span class="invalid-feedback"&gt;<span class="tag">{{ $message }}</span>&lt;/span&gt;
+<span class="tag">@enderror</span></pre>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 11: Authentication -->
+<!-- ============================================================ -->
+<section id="auth">
+  <div class="chapter-header ch-indigo">
+    <div class="ch-num">11</div>
+    <div>
+      <h2>Authentication</h2>
+      <p>ระบบ Login ครบครัน ทั้งแบบ Web Session และ API Token</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔐 Laravel Breeze (Starter Kit)</h3>
+<pre><span class="cm"># ติดตั้ง Breeze (แนะนำสำหรับ Web)</span>
+composer require laravel/breeze --dev
+php artisan breeze:install
+
+<span class="cm"># เลือก stack: blade, react, vue, api</span>
+php artisan breeze:install blade
+
+npm install && npm run dev
+php artisan migrate</pre>
+
+    <div class="callout info">
+      <span class="ci">📦</span>
+      <div>Breeze ให้ระบบ Login, Register, Forgot Password, Email Verification พร้อม UI เรียบร้อย ในคำสั่งเดียว!</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>🔑 Auth Facade</h3>
+<pre><span class="kw">use</span> Illuminate\Support\Facades\<span class="type">Auth</span>;
+
+<span class="cm">// ตรวจว่า Login อยู่ไหม</span>
+<span class="fn">auth</span>()-><span class="fn">check</span>()    <span class="cm">// bool</span>
+<span class="fn">auth</span>()-><span class="fn">guest</span>()    <span class="cm">// bool</span>
+
+<span class="cm">// ดึง user ปัจจุบัน</span>
+<span class="var">$user</span> = <span class="fn">auth</span>()-><span class="fn">user</span>()   <span class="cm">// User model หรือ null</span>
+<span class="var">$id</span>   = <span class="fn">auth</span>()-><span class="fn">id</span>()     <span class="cm">// user id</span>
+
+<span class="cm">// Login ด้วยตัวเอง</span>
+<span class="fn">auth</span>()-><span class="fn">login</span>(<span class="var">$user</span>);
+<span class="fn">auth</span>()-><span class="fn">login</span>(<span class="var">$user</span>, <span class="kw">true</span>);   <span class="cm">// remember me</span>
+
+<span class="cm">// Login ด้วย credentials</span>
+<span class="fn">auth</span>()-><span class="fn">attempt</span>([
+    <span class="str">'email'</span>    => <span class="var">$request</span>->email,
+    <span class="str">'password'</span> => <span class="var">$request</span>->password,
+], <span class="var">$remember</span>);
+
+<span class="cm">// Logout</span>
+<span class="fn">auth</span>()-><span class="fn">logout</span>();
+<span class="var">$request</span>-><span class="fn">session</span>()-><span class="fn">invalidate</span>();
+<span class="var">$request</span>-><span class="fn">session</span>()-><span class="fn">regenerateToken</span>();</pre>
+    </div>
+    <div class="card">
+      <h3>🔒 Sanctum API Token</h3>
+<pre><span class="cm"># ติดตั้ง Sanctum</span>
+composer require laravel/sanctum
+php artisan vendor:publish --provider="Laravel\Sanctum\..."
+php artisan migrate
+
+<span class="cm"># เพิ่ม HasApiTokens ใน User Model</span></pre>
+<pre><span class="kw">use</span> Laravel\Sanctum\<span class="type">HasApiTokens</span>;
+
+<span class="kw">class</span> <span class="type">User</span> <span class="kw">extends</span> <span class="type">Authenticatable</span>
+{
+    <span class="kw">use</span> <span class="type">HasApiTokens</span>, <span class="type">HasFactory</span>, <span class="type">Notifiable</span>;
+}</pre>
+
+<pre><span class="cm">// API Login — สร้าง Token</span>
+<span class="kw">public function</span> <span class="fn">login</span>(<span class="type">Request</span> <span class="var">$request</span>)
+{
+    <span class="kw">if</span> (! <span class="fn">auth</span>()-><span class="fn">attempt</span>(<span class="var">$request</span>-><span class="fn">only</span>(<span class="str">'email'</span>, <span class="str">'password'</span>))) {
+        <span class="kw">return</span> <span class="fn">response</span>()-><span class="fn">json</span>([
+            <span class="str">'message'</span> => <span class="str">'Unauthorized'</span>
+        ], <span class="num">401</span>);
+    }
+
+    <span class="var">$user</span>  = <span class="fn">auth</span>()-><span class="fn">user</span>();
+    <span class="var">$token</span> = <span class="var">$user</span>-><span class="fn">createToken</span>(<span class="str">'auth-token'</span>)-><span class="fn">plainTextToken</span>;
+
+    <span class="kw">return</span> <span class="fn">response</span>()-><span class="fn">json</span>([
+        <span class="str">'user'</span>  => <span class="var">$user</span>,
+        <span class="str">'token'</span> => <span class="var">$token</span>,
+    ]);
+}
+
+<span class="cm">// API Logout — เพิกถอน Token</span>
+<span class="kw">public function</span> <span class="fn">logout</span>(<span class="type">Request</span> <span class="var">$request</span>)
+{
+    <span class="var">$request</span>-><span class="fn">user</span>()-><span class="fn">currentAccessToken</span>()-><span class="fn">delete</span>();
+    <span class="kw">return</span> <span class="fn">response</span>()-><span class="fn">json</span>([<span class="str">'message'</span> => <span class="str">'Logged out'</span>]);
+}</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 12: REST API -->
+<!-- ============================================================ -->
+<section id="api">
+  <div class="chapter-header ch-teal">
+    <div class="ch-num">12</div>
+    <div>
+      <h2>REST API</h2>
+      <p>สร้าง API ที่สมบูรณ์ด้วย Resource, Transformer และ Response</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📦 API Resource (Data Transformer)</h3>
+<pre><span class="cm"># สร้าง API Resource</span>
+php artisan make:resource PostResource
+php artisan make:resource PostCollection</pre>
+
+<pre><span class="tag">&lt;?php</span>
+<span class="cm">// app/Http/Resources/PostResource.php</span>
+<span class="kw">class</span> <span class="type">PostResource</span> <span class="kw">extends</span> <span class="type">JsonResource</span>
+{
+    <span class="kw">public function</span> <span class="fn">toArray</span>(<span class="type">Request</span> <span class="var">$request</span>): <span class="type">array</span>
+    {
+        <span class="kw">return</span> [
+            <span class="str">'id'</span>         => <span class="var">$this</span>->id,
+            <span class="str">'title'</span>      => <span class="var">$this</span>->title,
+            <span class="str">'excerpt'</span>    => <span class="fn">str</span>(<span class="var">$this</span>->body)-><span class="fn">limit</span>(<span class="num">100</span>),
+            <span class="str">'status'</span>     => <span class="var">$this</span>->status,
+            <span class="str">'created_at'</span> => <span class="var">$this</span>->created_at-><span class="fn">toIso8601String</span>(),
+            <span class="str">'author'</span>     => <span class="kw">new</span> <span class="type">UserResource</span>(<span class="var">$this</span>->whenLoaded(<span class="str">'user'</span>)),
+            <span class="str">'comments_count'</span> => <span class="var">$this</span>->whenCounted(<span class="str">'comments'</span>),
+            <span class="str">'url'</span>        => <span class="fn">route</span>(<span class="str">'posts.show'</span>, <span class="var">$this</span>->id),
+        ];
+    }
+}
+
+<span class="cm">// ใช้ใน Controller</span>
+<span class="kw">public function</span> <span class="fn">show</span>(<span class="type">Post</span> <span class="var">$post</span>)
+{
+    <span class="kw">return</span> <span class="kw">new</span> <span class="type">PostResource</span>(<span class="var">$post</span>-><span class="fn">load</span>(<span class="str">'user'</span>));
+}
+
+<span class="kw">public function</span> <span class="fn">index</span>()
+{
+    <span class="var">$posts</span> = <span class="type">Post</span>::<span class="fn">with</span>(<span class="str">'user'</span>)
+        -><span class="fn">withCount</span>(<span class="str">'comments'</span>)
+        -><span class="fn">latest</span>()
+        -><span class="fn">paginate</span>(<span class="num">15</span>);
+
+    <span class="kw">return</span> <span class="type">PostResource</span>::<span class="fn">collection</span>(<span class="var">$posts</span>);
+}</pre>
+  </div>
+
+  <div class="card">
+    <h3>🎯 API Controller ครบ CRUD</h3>
+<pre><span class="tag">&lt;?php</span>
+<span class="cm">// routes/api.php</span>
+Route::<span class="fn">apiResource</span>(<span class="str">'posts'</span>, <span class="type">PostController</span>::class);
+Route::<span class="fn">post</span>(<span class="str">'/auth/login'</span>,  [<span class="type">AuthController</span>::class, <span class="str">'login'</span>]);
+Route::<span class="fn">post</span>(<span class="str">'/auth/logout'</span>, [<span class="type">AuthController</span>::class, <span class="str">'logout'</span>])
+    -><span class="fn">middleware</span>(<span class="str">'auth:sanctum'</span>);
+
+Route::<span class="fn">middleware</span>(<span class="str">'auth:sanctum'</span>)-><span class="fn">group</span>(<span class="kw">function</span> () {
+    Route::<span class="fn">get</span>(<span class="str">'/user'</span>, <span class="kw">fn</span>(<span class="type">Request</span> <span class="var">$req</span>) => <span class="kw">new</span> <span class="type">UserResource</span>(<span class="var">$req</span>-><span class="fn">user</span>()));
+    Route::<span class="fn">apiResource</span>(<span class="str">'posts'</span>, <span class="type">PostController</span>::class)-><span class="fn">except</span>([<span class="str">'index'</span>, <span class="str">'show'</span>]);
+});</pre>
+
+    <div class="grid-2" style="margin-top:16px">
+      <div>
+        <p style="font-weight:700;margin-bottom:10px">📬 Request Format</p>
+        <table>
+          <tr><th>Header</th><th>Value</th></tr>
+          <tr><td>Accept</td><td>application/json</td></tr>
+          <tr><td>Content-Type</td><td>application/json</td></tr>
+          <tr><td>Authorization</td><td>Bearer {token}</td></tr>
+        </table>
+      </div>
+      <div>
+        <p style="font-weight:700;margin-bottom:10px">📤 Response Structure</p>
+<pre>{
+  <span class="str">"data"</span>: { ... },
+  <span class="str">"links"</span>: {
+    <span class="str">"first"</span>: <span class="str">"..."</span>,
+    <span class="str">"last"</span>: <span class="str">"..."</span>,
+    <span class="str">"next"</span>: <span class="str">"..."</span>
+  },
+  <span class="str">"meta"</span>: {
+    <span class="str">"current_page"</span>: <span class="num">1</span>,
+    <span class="str">"total"</span>: <span class="num">100</span>,
+    <span class="str">"per_page"</span>: <span class="num">15</span>
+  }
+}</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 13: Queue & Jobs -->
+<!-- ============================================================ -->
+<section id="queue">
+  <div class="chapter-header ch-slate">
+    <div class="ch-num">13</div>
+    <div>
+      <h2>Queue & Jobs</h2>
+      <p>ทำงานหนักในพื้นหลัง — ส่ง Email, Process ภาพ, Notification</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>⚙️ ตั้งค่า Queue</h3>
+<pre><span class="cm"># ใน .env</span>
+QUEUE_CONNECTION=database   <span class="cm"># หรือ redis, sqs, sync</span>
+
+<span class="cm"># สร้าง jobs table (สำหรับ database driver)</span>
+php artisan queue:table
+php artisan migrate
+
+<span class="cm"># สร้าง Job</span>
+php artisan make:job SendWelcomeEmail</pre>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>📦 Job Class</h3>
+<pre><span class="tag">&lt;?php</span>
+<span class="kw">namespace</span> App\Jobs;
+
+<span class="kw">use</span> App\Models\<span class="type">User</span>;
+<span class="kw">use</span> App\Mail\<span class="type">WelcomeMail</span>;
+<span class="kw">use</span> Illuminate\Bus\<span class="type">Queueable</span>;
+<span class="kw">use</span> Illuminate\Contracts\Queue\<span class="type">ShouldQueue</span>;
+<span class="kw">use</span> Illuminate\Foundation\Bus\<span class="type">Dispatchable</span>;
+<span class="kw">use</span> Illuminate\Support\Facades\<span class="type">Mail</span>;
+
+<span class="kw">class</span> <span class="type">SendWelcomeEmail</span> <span class="kw">implements</span> <span class="type">ShouldQueue</span>
+{
+    <span class="kw">use</span> <span class="type">Dispatchable</span>, <span class="type">Queueable</span>;
+
+    <span class="kw">public int</span> <span class="var">$tries</span> = <span class="num">3</span>;        <span class="cm">// ลองใหม่ 3 ครั้ง</span>
+    <span class="kw">public int</span> <span class="var">$timeout</span> = <span class="num">60</span>;    <span class="cm">// timeout 60 วินาที</span>
+
+    <span class="kw">public function</span> <span class="fn">__construct</span>(
+        <span class="kw">private readonly</span> <span class="type">User</span> <span class="var">$user</span>
+    ) {}
+
+    <span class="kw">public function</span> <span class="fn">handle</span>(): <span class="type">void</span>
+    {
+        <span class="type">Mail</span>::<span class="fn">to</span>(<span class="var">$this</span>->user)
+            -><span class="fn">send</span>(<span class="kw">new</span> <span class="type">WelcomeMail</span>(<span class="var">$this</span>->user));
+    }
+
+    <span class="cm">// เรียกเมื่อ job ล้มเหลวทุก retry</span>
+    <span class="kw">public function</span> <span class="fn">failed</span>(\<span class="type">Throwable</span> <span class="var">$e</span>): <span class="type">void</span>
+    {
+        <span class="cm">// Log, แจ้งเตือน admin ฯลฯ</span>
+    }
+}</pre>
+    </div>
+    <div class="card">
+      <h3>🚀 Dispatch Job</h3>
+<pre><span class="cm">// ส่งไปทำงานใน Queue</span>
+<span class="type">SendWelcomeEmail</span>::<span class="fn">dispatch</span>(<span class="var">$user</span>);
+
+<span class="cm">// ส่งหน่วงเวลา 5 นาที</span>
+<span class="type">SendWelcomeEmail</span>::<span class="fn">dispatch</span>(<span class="var">$user</span>)
+    -><span class="fn">delay</span>(<span class="fn">now</span>()-><span class="fn">addMinutes</span>(<span class="num">5</span>));
+
+<span class="cm">// ส่งไปที่ queue เฉพาะ</span>
+<span class="type">SendWelcomeEmail</span>::<span class="fn">dispatch</span>(<span class="var">$user</span>)
+    -><span class="fn">onQueue</span>(<span class="str">'emails'</span>);
+
+<span class="cm">// ทำทันที (ไม่ผ่าน Queue)</span>
+<span class="type">SendWelcomeEmail</span>::<span class="fn">dispatchSync</span>(<span class="var">$user</span>);
+
+<span class="cm">// รัน Worker ประมวลผล Queue</span></pre>
+<pre>php artisan queue:work
+
+<span class="cm"># ระบุ connection และ queue</span>
+php artisan queue:work redis --queue=emails,default
+
+<span class="cm"># รัน job เดียวแล้วหยุด</span>
+php artisan queue:work --once
+
+<span class="cm"># ดู status</span>
+php artisan queue:monitor
+php artisan queue:failed</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 14: Artisan CLI -->
+<!-- ============================================================ -->
+<section id="artisan">
+  <div class="chapter-header ch-red">
+    <div class="ch-num">14</div>
+    <div>
+      <h2>Artisan CLI</h2>
+      <p>เครื่องมือ Command-line ทรงพลังที่ช่วยเร่งการพัฒนา</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>⚡ คำสั่ง Artisan ที่ใช้บ่อย</h3>
+    <div class="grid-2">
+      <div>
+        <p style="font-weight:700;color:#FF2D20;margin-bottom:10px">📦 Make Commands</p>
+        <div class="artisan-cmd"><code>php artisan make:model Post</code><span class="desc">Model</span></div>
+        <div class="artisan-cmd"><code>php artisan make:controller PostController</code><span class="desc">Controller</span></div>
+        <div class="artisan-cmd"><code>php artisan make:migration create_posts_table</code><span class="desc">Migration</span></div>
+        <div class="artisan-cmd"><code>php artisan make:seeder PostSeeder</code><span class="desc">Seeder</span></div>
+        <div class="artisan-cmd"><code>php artisan make:factory PostFactory</code><span class="desc">Factory</span></div>
+        <div class="artisan-cmd"><code>php artisan make:middleware EnsureAdmin</code><span class="desc">Middleware</span></div>
+        <div class="artisan-cmd"><code>php artisan make:request StorePostRequest</code><span class="desc">Form Request</span></div>
+        <div class="artisan-cmd"><code>php artisan make:resource PostResource</code><span class="desc">API Resource</span></div>
+        <div class="artisan-cmd"><code>php artisan make:job SendEmail</code><span class="desc">Queue Job</span></div>
+        <div class="artisan-cmd"><code>php artisan make:mail WelcomeMail</code><span class="desc">Mailable</span></div>
+        <div class="artisan-cmd"><code>php artisan make:event UserRegistered</code><span class="desc">Event</span></div>
+        <div class="artisan-cmd"><code>php artisan make:listener SendWelcome</code><span class="desc">Listener</span></div>
+        <div class="artisan-cmd"><code>php artisan make:policy PostPolicy</code><span class="desc">Authorization</span></div>
+        <div class="artisan-cmd"><code>php artisan make:command SyncProducts</code><span class="desc">Custom Command</span></div>
+        <div class="artisan-cmd"><code>php artisan make:test PostTest</code><span class="desc">Test Class</span></div>
+      </div>
+      <div>
+        <p style="font-weight:700;color:#FF2D20;margin-bottom:10px">🔧 Dev & Database</p>
+        <div class="artisan-cmd"><code>php artisan serve</code><span class="desc">Dev Server</span></div>
+        <div class="artisan-cmd"><code>php artisan migrate</code><span class="desc">รัน Migrations</span></div>
+        <div class="artisan-cmd"><code>php artisan migrate:fresh --seed</code><span class="desc">Reset + Seed</span></div>
+        <div class="artisan-cmd"><code>php artisan db:seed</code><span class="desc">รัน Seeders</span></div>
+        <div class="artisan-cmd"><code>php artisan tinker</code><span class="desc">REPL (เล่น PHP)</span></div>
+        <p style="font-weight:700;color:#FF2D20;margin:10px 0">🚀 Production</p>
+        <div class="artisan-cmd"><code>php artisan config:cache</code><span class="desc">Cache config</span></div>
+        <div class="artisan-cmd"><code>php artisan route:cache</code><span class="desc">Cache routes</span></div>
+        <div class="artisan-cmd"><code>php artisan view:cache</code><span class="desc">Cache views</span></div>
+        <div class="artisan-cmd"><code>php artisan optimize</code><span class="desc">ทำทุกอย่างข้างบน</span></div>
+        <div class="artisan-cmd"><code>php artisan cache:clear</code><span class="desc">ล้าง Cache</span></div>
+        <div class="artisan-cmd"><code>php artisan queue:work</code><span class="desc">Queue Worker</span></div>
+        <div class="artisan-cmd"><code>php artisan schedule:run</code><span class="desc">รัน Scheduled Tasks</span></div>
+        <div class="artisan-cmd"><code>php artisan storage:link</code><span class="desc">Symlink storage/public</span></div>
+        <div class="artisan-cmd"><code>php artisan route:list</code><span class="desc">ดู Routes ทั้งหมด</span></div>
+        <div class="artisan-cmd"><code>php artisan key:generate</code><span class="desc">สร้าง App Key</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📝 Scheduled Tasks (Cron)</h3>
+<pre><span class="cm">// app/Console/Kernel.php (Laravel 10-)</span>
+<span class="cm">// routes/console.php (Laravel 11)</span>
+
+<span class="kw">use</span> Illuminate\Support\Facades\<span class="type">Schedule</span>;
+
+<span class="type">Schedule</span>::<span class="fn">command</span>(<span class="str">'emails:send'</span>)-><span class="fn">daily</span>();
+<span class="type">Schedule</span>::<span class="fn">command</span>(<span class="str">'backup:run'</span>)-><span class="fn">dailyAt</span>(<span class="str">'02:00'</span>);
+<span class="type">Schedule</span>::<span class="fn">command</span>(<span class="str">'stats:calculate'</span>)-><span class="fn">everyHour</span>();
+<span class="type">Schedule</span>::<span class="fn">job</span>(<span class="kw">new</span> <span class="type">SyncInventory</span>())-><span class="fn">everyFiveMinutes</span>();
+<span class="type">Schedule</span>::<span class="fn">call</span>(<span class="kw">function</span> () {
+    <span class="cm">// ทำอะไรก็ได้</span>
+    <span class="type">DB</span>::<span class="fn">table</span>(<span class="str">'logs'</span>)-><span class="fn">where</span>(<span class="str">'created_at'</span>, <span class="str">'&lt;'</span>, <span class="fn">now</span>()-><span class="fn">subMonth</span>())-><span class="fn">delete</span>();
+})-><span class="fn">monthly</span>();
+
+<span class="cm"># เพิ่มใน crontab ของ server</span>
+<span class="cm"># * * * * * php /path/to/artisan schedule:run >> /dev/null 2>&1</span></pre>
+  </div>
+</section>
+
+</div>
+
+<footer>
+  <p>🔥 สื่อการสอน <strong>Laravel</strong> ฉบับสมบูรณ์ — <span>FullStack 101</span></p>
+  <p style="margin-top:8px;opacity:.6">Laravel 11 · PHP 8.3 · Eloquent ORM · Sanctum API · Blade Template</p>
+</footer>
+
+<script>
+// Active nav highlight on scroll
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-sticky a[href^="#"]');
+
+function updateActiveNav() {
+  const scrollY = window.scrollY + 80;
+  let current = '';
+  sections.forEach(section => {
+    if (section.offsetTop <= scrollY) current = section.id;
+  });
+  navLinks.forEach(link => {
+    link.classList.toggle('active', link.getAttribute('href') === '#' + current);
+  });
+}
+
+window.addEventListener('scroll', updateActiveNav, { passive: true });
+updateActiveNav();
+</script>
+</body>
+</html>

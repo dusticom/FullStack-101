@@ -1,0 +1,1532 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>สื่อการสอน NestJS</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --nest:#e0234e;--blue:#3b82f6;--green:#10b981;--orange:#f59e0b;
+  --red:#ef4444;--purple:#8b5cf6;--cyan:#06b6d4;--pink:#ec4899;
+  --card:#1c2128;--border:#30363d;--code:#0d1117;--radius:12px;--shadow:0 4px 20px rgba(0,0,0,.3);
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#0d1117;color:#c9d1d9;line-height:1.75}
+
+.hero{background:linear-gradient(135deg,#0d1117 0%,#1a0008 60%,#200010 100%);border-bottom:2px solid #e0234e33;text-align:center;padding:68px 24px 52px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% -20%,rgba(224,35,78,.15),transparent 65%)}
+.hero h1{font-size:clamp(2rem,5vw,3.4rem);font-weight:900;color:#fff;margin-bottom:12px;position:relative;letter-spacing:-1px}
+.hero h1 .nest{background:#e0234e;color:#fff;padding:2px 16px;border-radius:8px;display:inline-block}
+.hero h1 .sub{color:#f9a8b8}
+.hero p{font-size:1.1rem;color:#8b949e;max-width:640px;margin:0 auto}
+.badge-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:20px}
+.badge{background:rgba(224,35,78,.1);border:1px solid rgba(224,35,78,.3);color:#fda4af;padding:4px 14px;border-radius:999px;font-size:.8rem;font-weight:700}
+
+.nav-sticky{position:sticky;top:0;z-index:100;background:#161b22;border-bottom:1px solid #30363d;padding:0 10px;overflow-x:auto;white-space:nowrap}
+.nav-sticky a{display:inline-block;padding:11px 12px;font-size:.79rem;font-weight:600;color:#8b949e;text-decoration:none;border-bottom:2px solid transparent;transition:.2s}
+.nav-sticky a:hover,.nav-sticky a.active{color:#f9a8b8;border-color:#e0234e}
+
+.container{max-width:1150px;margin:0 auto;padding:40px 20px}
+section{margin-bottom:62px}
+
+.chapter-header{border-radius:var(--radius);padding:22px 28px;margin-bottom:22px;display:flex;align-items:center;gap:18px;border:1px solid #30363d;position:relative;overflow:hidden}
+.chapter-header::before{content:'';position:absolute;top:0;right:0;width:200px;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.03));pointer-events:none}
+.ch-num{font-size:3rem;font-weight:900;opacity:.18;line-height:1;min-width:60px;color:#fff;font-family:monospace}
+.chapter-header h2{font-size:1.38rem;font-weight:800;color:#fff;margin:0}
+.chapter-header p{font-size:.87rem;color:#8b949e;margin-top:5px}
+.ch-nest{background:linear-gradient(135deg,#1a0008,#3a0018);border-color:#e0234e33}
+.ch-green{background:linear-gradient(135deg,#052e16,#064e3b);border-color:#10b98133}
+.ch-blue{background:linear-gradient(135deg,#0c1445,#1e3a8a);border-color:#3b82f633}
+.ch-purple{background:linear-gradient(135deg,#2e1065,#4c1d95);border-color:#8b5cf633}
+.ch-orange{background:linear-gradient(135deg,#431407,#7c2d12);border-color:#f59e0b33}
+.ch-cyan{background:linear-gradient(135deg,#0a2540,#155e75);border-color:#06b6d433}
+.ch-red{background:linear-gradient(135deg,#450a0a,#7f1d1d);border-color:#ef444433}
+.ch-pink{background:linear-gradient(135deg,#2d0a1e,#831843);border-color:#ec489933}
+.ch-teal{background:linear-gradient(135deg,#042f2e,#134e4a);border-color:#0d948433}
+.ch-slate{background:linear-gradient(135deg,#0f172a,#1e293b);border-color:#64748b33}
+.ch-yellow{background:linear-gradient(135deg,#1c1400,#3d2e00);border-color:#eab30833}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px 24px;margin-bottom:18px;box-shadow:var(--shadow)}
+.card h3{font-size:1.05rem;font-weight:700;color:#e6edf3;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.card p,.card li{font-size:.92rem;color:#8b949e;line-height:1.7}
+.card ul,.card ol{padding-left:18px;display:flex;flex-direction:column;gap:5px}
+
+pre{background:var(--code);color:#c9d1d9;border-radius:8px;padding:18px 20px;overflow-x:auto;font-size:.84rem;line-height:1.75;margin:10px 0;font-family:'Cascadia Code','Fira Code','Consolas',monospace;border:1px solid #21262d}
+.ic{background:#21262d;color:#79c0ff;padding:2px 7px;border-radius:5px;font-family:'Cascadia Code','Fira Code',monospace;font-size:.85em}
+
+/* syntax */
+.kw{color:#ff7b72}.str{color:#a5d6ff}.fn{color:#d2a8ff}.cm{color:#484f58;font-style:italic}
+.num{color:#79c0ff}.bool{color:#ff7b72}.op{color:#ff7b72}.type{color:#ffa657}
+.dec{color:#e0234e;font-weight:700} /* decorator */
+.iface{color:#ffa657}   /* interface/type */
+.cls{color:#ffa657}     /* class name */
+.prop{color:#79c0ff}
+.out{color:#7ee787}.err{color:#ef4444}
+.hl{background:rgba(224,35,78,.08);border-left:3px solid #e0234e;padding-left:8px;display:block;margin:-1px 0}
+.hl2{background:rgba(16,185,129,.08);border-left:3px solid #10b981;padding-left:8px;display:block;margin:-1px 0}
+.hl3{background:rgba(59,130,246,.08);border-left:3px solid #3b82f6;padding-left:8px;display:block;margin:-1px 0}
+
+.grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
+.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+
+.callout{border-radius:8px;padding:13px 17px;margin:12px 0;display:flex;gap:10px;font-size:.9rem;line-height:1.6}
+.callout.info{background:rgba(59,130,246,.08);border-left:3px solid #3b82f6;color:#93c5fd}
+.callout.tip{background:rgba(16,185,129,.08);border-left:3px solid #10b981;color:#6ee7b7}
+.callout.warn{background:rgba(247,223,30,.08);border-left:3px solid #f7df1e;color:#fef08a}
+.callout.danger{background:rgba(239,68,68,.08);border-left:3px solid #ef4444;color:#fca5a5}
+.callout.nest{background:rgba(224,35,78,.08);border-left:3px solid #e0234e;color:#fda4af}
+.callout .ci{font-size:1.05rem;flex-shrink:0;margin-top:1px}
+
+table{width:100%;border-collapse:collapse;font-size:.88rem;margin:12px 0}
+th{background:#1c2128;padding:9px 13px;text-align:left;font-weight:700;color:#8b949e;border:1px solid #30363d}
+td{padding:9px 13px;border:1px solid #30363d;vertical-align:top;color:#c9d1d9}
+tr:nth-child(even) td{background:#161b22}
+td code{color:#79c0ff;font-family:'Cascadia Code','Fira Code',monospace;font-size:.85em}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;border:1px solid #30363d;border-radius:var(--radius);overflow:hidden;margin:12px 0}
+.compare-col:first-child{border-right:1px solid #30363d}
+.compare-head{padding:8px 16px;font-size:.82rem;font-weight:700;text-align:center}
+.compare-head.bad{background:rgba(239,68,68,.15);color:#fca5a5}
+.compare-head.good{background:rgba(16,185,129,.15);color:#6ee7b7}
+.compare-col pre{margin:0;border-radius:0;border:none;border-top:1px solid #30363d;font-size:.82rem}
+
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:6px;padding:14px 16px;background:#0d1117;border:1px solid #30363d;border-radius:8px;margin:10px 0;font-size:.85rem}
+.fb{padding:7px 14px;border-radius:6px;font-weight:700;text-align:center}
+.fb-n{background:#3a0018;color:#fda4af;border:1px solid #e0234e44}
+.fb-g{background:#065f46;color:#6ee7b7}
+.fb-b{background:#1e3a8a;color:#93c5fd}
+.fb-p{background:#4c1d95;color:#ddd6fe}
+.fb-o{background:#78350f;color:#fed7aa}
+.fb-c{background:#155e75;color:#67e8f9}
+.fb-y{background:#3d2e00;color:#fef08a}
+.fa{color:#f9a8b8;font-size:1.1rem;padding:0 4px}
+
+.file-tree{background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:16px 20px;font-family:'Cascadia Code','Fira Code',monospace;font-size:.83rem;line-height:1.9}
+.ft-dir{color:#2496ed;font-weight:700}.ft-file{color:#c9d1d9}
+.ft-imp{color:#e0234e;font-weight:700}.ft-cm{color:#484f58;font-style:italic}
+
+/* Decorator Tag */
+.dtag{display:inline-block;background:rgba(224,35,78,.15);border:1px solid rgba(224,35,78,.3);color:#fda4af;padding:1px 9px;border-radius:5px;font-family:monospace;font-size:.8rem;font-weight:700;margin:2px}
+/* Lifecycle Badge */
+.lbadge{display:inline-block;background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.3);color:#93c5fd;padding:2px 10px;border-radius:5px;font-size:.8rem;font-weight:700;margin:2px;font-family:monospace}
+
+footer{background:#0d1117;border-top:1px solid #21262d;color:#484f58;text-align:center;padding:32px;font-size:.85rem}
+footer strong{color:#8b949e}
+
+@media(max-width:600px){
+  .grid-2,.grid-3{grid-template-columns:1fr}
+  .compare{grid-template-columns:1fr}
+  .compare-col:first-child{border-right:none;border-bottom:1px solid #30363d}
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <h1><span class="nest">NestJS</span> &nbsp;<span class="sub">Node.js Framework</span></h1>
+  <p>สื่อการสอน NestJS ฉบับสมบูรณ์ — ตั้งแต่ Modules จนถึง JWT Auth, TypeORM และ Best Practices</p>
+  <div class="badge-row">
+    <span class="badge">TypeScript</span>
+    <span class="badge">Decorators</span>
+    <span class="badge">Modules</span>
+    <span class="badge">Controllers</span>
+    <span class="badge">Services</span>
+    <span class="badge">DTOs</span>
+    <span class="badge">Pipes</span>
+    <span class="badge">Guards</span>
+    <span class="badge">Interceptors</span>
+    <span class="badge">TypeORM</span>
+    <span class="badge">JWT Auth</span>
+    <span class="badge">Swagger</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav-sticky" id="main-nav">
+  <a href="index.html">🏠 หน้าหลัก</a>
+  <a href="#intro">NestJS คืออะไร</a>
+  <a href="#install">ติดตั้ง</a>
+  <a href="#structure">โครงสร้าง</a>
+  <a href="#modules">Modules</a>
+  <a href="#controllers">Controllers</a>
+  <a href="#services">Services</a>
+  <a href="#dto">DTO & Validation</a>
+  <a href="#pipes">Pipes</a>
+  <a href="#guards">Guards</a>
+  <a href="#interceptors">Interceptors</a>
+  <a href="#middleware">Middleware</a>
+  <a href="#typeorm">TypeORM</a>
+  <a href="#auth">JWT Auth</a>
+  <a href="#exception">Exception Filters</a>
+  <a href="#config">Config & Swagger</a>
+  <a href="#bestpractice">Best Practices</a>
+</nav>
+
+<div class="container">
+
+<!-- ===== 01 ===== -->
+<section id="intro">
+  <div class="chapter-header ch-nest">
+    <div class="ch-num">01</div>
+    <div>
+      <h2>NestJS คืออะไร?</h2>
+      <p>แนวคิด, สถาปัตยกรรม และทำไมถึงควรใช้ NestJS</p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>🚀 NestJS คืออะไร?</h3>
+      <p>NestJS คือ <strong style="color:#fda4af">Progressive Node.js Framework</strong> สำหรับสร้าง Server-side Applications ที่มีประสิทธิภาพ, scale ได้, และดูแลง่าย — ใช้ TypeScript เป็นหลักและได้รับแรงบันดาลใจจาก Angular</p>
+      <ul style="margin-top:10px">
+        <li><strong style="color:#e0234e">TypeScript First</strong> — Type safety เต็มรูปแบบ</li>
+        <li><strong style="color:#10b981">Modular Architecture</strong> — แบ่งโค้ดเป็น Module</li>
+        <li><strong style="color:#3b82f6">Dependency Injection</strong> — DI Container ในตัว</li>
+        <li><strong style="color:#8b5cf6">Decorators</strong> — <code class="ic">@Controller</code>, <code class="ic">@Injectable</code>, ฯลฯ</li>
+        <li><strong style="color:#f59e0b">Built on Express/Fastify</strong> — เลือก HTTP engine ได้</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>🆚 NestJS vs Express.js</h3>
+      <table style="margin:0">
+        <thead><tr><th>ด้าน</th><th>Express</th><th>NestJS</th></tr></thead>
+        <tbody>
+          <tr><td>โครงสร้าง</td><td>ไม่มีกำหนด</td><td>Opinionated, ชัดเจน</td></tr>
+          <tr><td>TypeScript</td><td>ต้องตั้งค่าเอง</td><td>ใช้ได้เลย</td></tr>
+          <tr><td>DI</td><td>ไม่มี</td><td>มีในตัว</td></tr>
+          <tr><td>Testing</td><td>ต้องตั้งค่าเอง</td><td>ง่ายมาก</td></tr>
+          <tr><td>Learning Curve</td><td>ต่ำ</td><td>ปานกลาง</td></tr>
+          <tr><td>Enterprise</td><td>ยาก</td><td>เหมาะมาก</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔄 Request Lifecycle — ลำดับการประมวลผล</h3>
+    <div class="flow" style="justify-content:center;flex-wrap:wrap">
+      <span class="fb fb-b">Incoming<br>Request</span><span class="fa">→</span>
+      <span class="fb fb-o">Middleware</span><span class="fa">→</span>
+      <span class="fb fb-p">Guards</span><span class="fa">→</span>
+      <span class="fb fb-c">Interceptors<br><small>(before)</small></span><span class="fa">→</span>
+      <span class="fb fb-y">Pipes</span><span class="fa">→</span>
+      <span class="fb fb-n">Controller<br>Handler</span><span class="fa">→</span>
+      <span class="fb fb-g">Service</span><span class="fa">→</span>
+      <span class="fb fb-c">Interceptors<br><small>(after)</small></span><span class="fa">→</span>
+      <span class="fb fb-b">Response</span>
+    </div>
+    <p style="margin-top:10px;font-size:.87rem;color:#8b949e">ถ้าเกิด Exception → <strong style="color:#fca5a5">Exception Filters</strong> จะจัดการแทน</p>
+  </div>
+</section>
+
+<!-- ===== 02 ===== -->
+<section id="install">
+  <div class="chapter-header ch-green">
+    <div class="ch-num">02</div>
+    <div>
+      <h2>ติดตั้งและสร้างโปรเจค</h2>
+      <p>NestJS CLI, สร้างโปรเจคแรก, รันเซิร์ฟเวอร์</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📦 ติดตั้ง NestJS CLI</h3>
+    <pre><span class="cm"># ติดตั้ง NestJS CLI แบบ global</span>
+npm install -g @nestjs/cli
+
+<span class="cm"># ตรวจสอบ version</span>
+nest --version
+<span class="out">7.x.x</span>
+
+<span class="cm"># ดูคำสั่งทั้งหมด</span>
+nest --help</pre>
+  </div>
+
+  <div class="card">
+    <h3>🚀 สร้างโปรเจคใหม่</h3>
+    <pre><span class="cm"># สร้างโปรเจค</span>
+nest new my-api
+<span class="cm"># เลือก package manager: npm / yarn / pnpm</span>
+
+cd my-api
+
+<span class="cm"># รัน Development Server</span>
+npm run start:dev
+<span class="out">[Nest] LOG [NestFactory] Starting Nest application...
+[Nest] LOG [NestApplication] Nest application successfully started
+[Nest] LOG Application is running on: http://localhost:3000</span>
+
+<span class="cm"># Build Production</span>
+npm run build
+npm run start:prod</pre>
+  </div>
+
+  <div class="card">
+    <h3>⚡ NestJS CLI — Generate Code</h3>
+    <pre><span class="cm"># Generate Module</span>
+nest g module users
+nest g mo users           <span class="cm"># ย่อ</span>
+
+<span class="cm"># Generate Controller</span>
+nest g controller users
+nest g co users
+
+<span class="cm"># Generate Service</span>
+nest g service users
+nest g s users
+
+<span class="cm"># Generate Resource (Module + Controller + Service + DTOs)</span>
+nest g resource users
+<span class="cm"># เลือก: REST API / GraphQL / Microservice / WebSocket</span>
+<span class="cm"># เลือก: Generate CRUD entry points? Yes</span>
+
+<span class="cm"># Generate อื่นๆ</span>
+nest g guard   auth
+nest g pipe    validation
+nest g filter  http-exception
+nest g interceptor logging
+nest g middleware logger</pre>
+  </div>
+</section>
+
+<!-- ===== 03 ===== -->
+<section id="structure">
+  <div class="chapter-header ch-blue">
+    <div class="ch-num">03</div>
+    <div>
+      <h2>โครงสร้างโปรเจค NestJS</h2>
+      <p>ทำความรู้จักกับทุก File และ Folder</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📁 Project Structure</h3>
+    <div class="file-tree">
+my-api/<br>
+├── <span class="ft-dir">src/</span><br>
+│   ├── <span class="ft-imp">app.module.ts</span>      <span class="ft-cm"># Root Module</span><br>
+│   ├── <span class="ft-file">app.controller.ts</span>  <span class="ft-cm"># Root Controller</span><br>
+│   ├── <span class="ft-file">app.service.ts</span>     <span class="ft-cm"># Root Service</span><br>
+│   ├── <span class="ft-imp">main.ts</span>            <span class="ft-cm"># Entry point</span><br>
+│   ├── <span class="ft-dir">users/</span>             <span class="ft-cm"># Feature Module</span><br>
+│   │   ├── <span class="ft-file">users.module.ts</span><br>
+│   │   ├── <span class="ft-file">users.controller.ts</span><br>
+│   │   ├── <span class="ft-file">users.service.ts</span><br>
+│   │   ├── <span class="ft-dir">dto/</span><br>
+│   │   │   ├── <span class="ft-file">create-user.dto.ts</span><br>
+│   │   │   └── <span class="ft-file">update-user.dto.ts</span><br>
+│   │   └── <span class="ft-dir">entities/</span><br>
+│   │       └── <span class="ft-file">user.entity.ts</span><br>
+│   ├── <span class="ft-dir">auth/</span>              <span class="ft-cm"># Auth Module</span><br>
+│   ├── <span class="ft-dir">common/</span>            <span class="ft-cm"># Shared (Guards, Pipes, Filters)</span><br>
+│   └── <span class="ft-dir">config/</span>            <span class="ft-cm"># Configuration</span><br>
+├── <span class="ft-file">package.json</span><br>
+├── <span class="ft-file">tsconfig.json</span><br>
+└── <span class="ft-file">.env</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🚪 main.ts — Entry Point</h3>
+    <pre><span class="cm">// src/main.ts</span>
+<span class="kw">import</span> { NestFactory } <span class="kw">from</span> <span class="str">'@nestjs/core'</span>
+<span class="kw">import</span> { AppModule } <span class="kw">from</span> <span class="str">'./app.module'</span>
+<span class="kw">import</span> { ValidationPipe } <span class="kw">from</span> <span class="str">'@nestjs/common'</span>
+<span class="kw">import</span> { DocumentBuilder, SwaggerModule } <span class="kw">from</span> <span class="str">'@nestjs/swagger'</span>
+
+<span class="kw">async function</span> <span class="fn">bootstrap</span>() {
+  <span class="kw">const</span> app = <span class="kw">await</span> NestFactory.<span class="fn">create</span>(AppModule)
+
+  <span class="hl">  <span class="cm">// Global Validation Pipe</span>
+  app.<span class="fn">useGlobalPipes</span>(<span class="kw">new</span> <span class="cls">ValidationPipe</span>({
+    whitelist: <span class="bool">true</span>,       <span class="cm">// ตัด fields ที่ไม่ได้ defined ใน DTO</span>
+    transform: <span class="bool">true</span>,       <span class="cm">// แปลง type อัตโนมัติ</span>
+    forbidNonWhitelisted: <span class="bool">true</span>,
+  }))</span>
+
+  <span class="cm">// CORS</span>
+  app.<span class="fn">enableCors</span>()
+
+  <span class="cm">// Global prefix</span>
+  app.<span class="fn">setGlobalPrefix</span>(<span class="str">'api/v1'</span>)
+
+  <span class="cm">// Swagger Setup</span>
+  <span class="kw">const</span> config = <span class="kw">new</span> <span class="cls">DocumentBuilder</span>()
+    .<span class="fn">setTitle</span>(<span class="str">'My API'</span>)
+    .<span class="fn">setVersion</span>(<span class="str">'1.0'</span>)
+    .<span class="fn">addBearerAuth</span>()
+    .<span class="fn">build</span>()
+  <span class="kw">const</span> doc = SwaggerModule.<span class="fn">createDocument</span>(app, config)
+  SwaggerModule.<span class="fn">setup</span>(<span class="str">'docs'</span>, app, doc)
+
+  <span class="kw">await</span> app.<span class="fn">listen</span>(<span class="num">3000</span>)
+}
+<span class="fn">bootstrap</span>()</pre>
+  </div>
+</section>
+
+<!-- ===== 04 ===== -->
+<section id="modules">
+  <div class="chapter-header ch-nest">
+    <div class="ch-num">04</div>
+    <div>
+      <h2>Modules — หน่วยสร้างแอป</h2>
+      <p>แบ่งโค้ดเป็น Feature Modules, imports, exports</p>
+    </div>
+  </div>
+
+  <div class="callout nest">
+    <span class="ci">🔺</span>
+    <div>ทุกอย่างใน NestJS อยู่ใน <strong>Module</strong> — Module คือ Class ที่ใส่ <code class="ic">@Module()</code> decorator เป็นหน่วยจัดระเบียบโค้ดของ NestJS</div>
+  </div>
+
+  <div class="card">
+    <h3><span class="dtag">@Module()</span> — Decorator</h3>
+    <pre><span class="cm">// src/users/users.module.ts</span>
+<span class="kw">import</span> { Module } <span class="kw">from</span> <span class="str">'@nestjs/common'</span>
+<span class="kw">import</span> { TypeOrmModule } <span class="kw">from</span> <span class="str">'@nestjs/typeorm'</span>
+<span class="kw">import</span> { UsersController } <span class="kw">from</span> <span class="str">'./users.controller'</span>
+<span class="kw">import</span> { UsersService } <span class="kw">from</span> <span class="str">'./users.service'</span>
+<span class="kw">import</span> { User } <span class="kw">from</span> <span class="str">'./entities/user.entity'</span>
+
+<span class="hl"><span class="dec">@Module</span>({
+  imports:     [TypeOrmModule.<span class="fn">forFeature</span>([User])], <span class="cm">// import modules อื่น</span>
+  controllers: [UsersController],                   <span class="cm">// controllers ของ module นี้</span>
+  providers:   [UsersService],                      <span class="cm">// services, guards, pipes ฯลฯ</span>
+  exports:     [UsersService],                      <span class="cm">// expose ให้ modules อื่น</span>
+})</span>
+<span class="kw">export class</span> <span class="cls">UsersModule</span> {}
+
+<span class="cm">// ===================================</span>
+<span class="cm">// src/app.module.ts — Root Module</span>
+<span class="dec">@Module</span>({
+  imports: [
+    ConfigModule.<span class="fn">forRoot</span>({ isGlobal: <span class="bool">true</span> }),
+    TypeOrmModule.<span class="fn">forRootAsync</span>({ <span class="cm">/* ... */</span> }),
+    UsersModule,
+    AuthModule,
+    PostsModule,
+  ],
+})
+<span class="kw">export class</span> <span class="cls">AppModule</span> {}</pre>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>📦 Module Types</h3>
+      <table style="margin:0">
+        <thead><tr><th>ประเภท</th><th>ลักษณะ</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Feature Module</strong></td><td>Module สำหรับแต่ละ feature (Users, Auth)</td></tr>
+          <tr><td><strong>Shared Module</strong></td><td>Module ที่ export ให้หลาย Module ใช้</td></tr>
+          <tr><td><strong>Global Module</strong></td><td>ใส่ <code>@Global()</code> ไม่ต้อง import ทุกที่</td></tr>
+          <tr><td><strong>Dynamic Module</strong></td><td>Module ที่รับ config ตอน import</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <h3>🌐 Global Module</h3>
+      <pre style="font-size:.82rem"><span class="cm">// ใส่ @Global() ทำให้ไม่ต้อง import</span>
+<span class="cm">// ใน module อื่นๆ</span>
+<span class="dec">@Global</span>()
+<span class="dec">@Module</span>({
+  providers: [SharedService],
+  exports:   [SharedService],
+})
+<span class="kw">export class</span> <span class="cls">SharedModule</span> {}
+
+<span class="cm">// ใช้งานในโปรเจค</span>
+<span class="cm">// ไม่ต้อง imports: [SharedModule]</span>
+<span class="cm">// inject SharedService ได้เลย</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 05 ===== -->
+<section id="controllers">
+  <div class="chapter-header ch-blue">
+    <div class="ch-num">05</div>
+    <div>
+      <h2>Controllers — จัดการ HTTP Requests</h2>
+      <p>Route decorators, Route parameters, Request/Response</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3><span class="dtag">@Controller</span> — HTTP Decorators ทั้งหมด</h3>
+    <pre><span class="cm">// src/users/users.controller.ts</span>
+<span class="kw">import</span> { Controller, Get, Post, Put, Patch, Delete,
+         Param, Body, Query, Headers, Req, Res,
+         HttpCode, HttpStatus, ParseIntPipe } <span class="kw">from</span> <span class="str">'@nestjs/common'</span>
+<span class="kw">import</span> { ApiTags, ApiBearerAuth } <span class="kw">from</span> <span class="str">'@nestjs/swagger'</span>
+
+<span class="hl"><span class="dec">@ApiTags</span>(<span class="str">'Users'</span>)           <span class="cm">// Swagger group</span>
+<span class="dec">@Controller</span>(<span class="str">'users'</span>)         <span class="cm">// base path: /users</span></span>
+<span class="kw">export class</span> <span class="cls">UsersController</span> {
+  <span class="kw">constructor</span>(<span class="kw">private readonly</span> usersService: <span class="iface">UsersService</span>) {}
+
+  <span class="cm">// GET /users</span>
+  <span class="dec">@Get</span>()
+  <span class="fn">findAll</span>(<span class="dec">@Query</span>(<span class="str">'page'</span>) page: <span class="iface">string</span>, <span class="dec">@Query</span>(<span class="str">'limit'</span>) limit: <span class="iface">string</span>) {
+    <span class="kw">return</span> <span class="kw">this</span>.usersService.<span class="fn">findAll</span>({ page: +page, limit: +limit })
+  }
+
+  <span class="cm">// GET /users/:id</span>
+  <span class="dec">@Get</span>(<span class="str">':id'</span>)
+  <span class="fn">findOne</span>(<span class="dec">@Param</span>(<span class="str">'id'</span>, ParseIntPipe) id: <span class="iface">number</span>) {
+    <span class="kw">return</span> <span class="kw">this</span>.usersService.<span class="fn">findOne</span>(id)
+  }
+
+  <span class="cm">// POST /users</span>
+  <span class="dec">@Post</span>()
+  <span class="dec">@HttpCode</span>(HttpStatus.CREATED)
+  <span class="fn">create</span>(<span class="dec">@Body</span>() createUserDto: <span class="iface">CreateUserDto</span>) {
+    <span class="kw">return</span> <span class="kw">this</span>.usersService.<span class="fn">create</span>(createUserDto)
+  }
+
+  <span class="cm">// PATCH /users/:id</span>
+  <span class="dec">@Patch</span>(<span class="str">':id'</span>)
+  <span class="fn">update</span>(
+    <span class="dec">@Param</span>(<span class="str">'id'</span>, ParseIntPipe) id: <span class="iface">number</span>,
+    <span class="dec">@Body</span>() updateUserDto: <span class="iface">UpdateUserDto</span>
+  ) {
+    <span class="kw">return</span> <span class="kw">this</span>.usersService.<span class="fn">update</span>(id, updateUserDto)
+  }
+
+  <span class="cm">// DELETE /users/:id</span>
+  <span class="dec">@Delete</span>(<span class="str">':id'</span>)
+  <span class="dec">@HttpCode</span>(HttpStatus.NO_CONTENT)
+  <span class="fn">remove</span>(<span class="dec">@Param</span>(<span class="str">'id'</span>, ParseIntPipe) id: <span class="iface">number</span>) {
+    <span class="kw">return</span> <span class="kw">this</span>.usersService.<span class="fn">remove</span>(id)
+  }
+}</pre>
+  </div>
+
+  <div class="card">
+    <h3>🔧 Decorators ที่ใช้บ่อยใน Controller</h3>
+    <table>
+      <thead><tr><th>Decorator</th><th>ดึงอะไร</th><th>ตัวอย่าง</th></tr></thead>
+      <tbody>
+        <tr><td><code>@Param('id')</code></td><td>Route parameter</td><td><code>/users/:id</code></td></tr>
+        <tr><td><code>@Body()</code></td><td>Request body (JSON)</td><td>POST data</td></tr>
+        <tr><td><code>@Query('page')</code></td><td>Query string</td><td><code>?page=1&limit=10</code></td></tr>
+        <tr><td><code>@Headers('auth')</code></td><td>Request header</td><td>Authorization header</td></tr>
+        <tr><td><code>@Req()</code></td><td>Express Request object</td><td>req.user</td></tr>
+        <tr><td><code>@Res()</code></td><td>Express Response object</td><td>res.cookie()</td></tr>
+        <tr><td><code>@UploadedFile()</code></td><td>Uploaded file</td><td>Multipart form</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ===== 06 ===== -->
+<section id="services">
+  <div class="chapter-header ch-green">
+    <div class="ch-num">06</div>
+    <div>
+      <h2>Services & Dependency Injection</h2>
+      <p>Business Logic, @Injectable, DI Container</p>
+    </div>
+  </div>
+
+  <div class="callout tip">
+    <span class="ci">💡</span>
+    <div>Service คือ <strong>Provider</strong> ที่มี <code class="ic">@Injectable()</code> — NestJS DI Container จัดการ instantiation ให้อัตโนมัติ ไม่ต้อง <code class="ic">new UsersService()</code> เอง</div>
+  </div>
+
+  <div class="card">
+    <h3><span class="dtag">@Injectable()</span> — Service Pattern</h3>
+    <pre><span class="cm">// src/users/users.service.ts</span>
+<span class="kw">import</span> { Injectable, NotFoundException } <span class="kw">from</span> <span class="str">'@nestjs/common'</span>
+<span class="kw">import</span> { InjectRepository } <span class="kw">from</span> <span class="str">'@nestjs/typeorm'</span>
+<span class="kw">import</span> { Repository } <span class="kw">from</span> <span class="str">'typeorm'</span>
+
+<span class="hl"><span class="dec">@Injectable</span>()</span>
+<span class="kw">export class</span> <span class="cls">UsersService</span> {
+  <span class="kw">constructor</span>(
+    <span class="hl">    <span class="dec">@InjectRepository</span>(User)
+    <span class="kw">private</span> usersRepo: <span class="iface">Repository</span>&lt;<span class="iface">User</span>&gt;</span>
+  ) {}
+
+  <span class="kw">async</span> <span class="fn">findAll</span>(pagination: <span class="iface">PaginationDto</span>) {
+    <span class="kw">const</span> { page = <span class="num">1</span>, limit = <span class="num">10</span> } = pagination
+    <span class="kw">const</span> [users, total] = <span class="kw">await</span> <span class="kw">this</span>.usersRepo.<span class="fn">findAndCount</span>({
+      skip:  (page - <span class="num">1</span>) * limit,
+      take:  limit,
+      order: { createdAt: <span class="str">'DESC'</span> },
+    })
+    <span class="kw">return</span> { data: users, total, page, limit }
+  }
+
+  <span class="kw">async</span> <span class="fn">findOne</span>(id: <span class="iface">number</span>) {
+    <span class="kw">const</span> user = <span class="kw">await</span> <span class="kw">this</span>.usersRepo.<span class="fn">findOneBy</span>({ id })
+    <span class="hl">    <span class="kw">if</span> (!user) <span class="kw">throw new</span> <span class="cls">NotFoundException</span>(<span class="str">`User #${id} not found`</span>)</span>
+    <span class="kw">return</span> user
+  }
+
+  <span class="kw">async</span> <span class="fn">create</span>(dto: <span class="iface">CreateUserDto</span>) {
+    <span class="kw">const</span> user = <span class="kw">this</span>.usersRepo.<span class="fn">create</span>(dto)
+    <span class="kw">return</span> <span class="kw">this</span>.usersRepo.<span class="fn">save</span>(user)
+  }
+
+  <span class="kw">async</span> <span class="fn">update</span>(id: <span class="iface">number</span>, dto: <span class="iface">UpdateUserDto</span>) {
+    <span class="kw">await</span> <span class="kw">this</span>.<span class="fn">findOne</span>(id)  <span class="cm">// throw ถ้าไม่เจอ</span>
+    <span class="kw">await</span> <span class="kw">this</span>.usersRepo.<span class="fn">update</span>(id, dto)
+    <span class="kw">return</span> <span class="kw">this</span>.<span class="fn">findOne</span>(id)
+  }
+
+  <span class="kw">async</span> <span class="fn">remove</span>(id: <span class="iface">number</span>) {
+    <span class="kw">const</span> user = <span class="kw">await</span> <span class="kw">this</span>.<span class="fn">findOne</span>(id)
+    <span class="kw">return</span> <span class="kw">this</span>.usersRepo.<span class="fn">remove</span>(user)
+  }
+}</pre>
+  </div>
+</section>
+
+<!-- ===== 07 ===== -->
+<section id="dto">
+  <div class="chapter-header ch-purple">
+    <div class="ch-num">07</div>
+    <div>
+      <h2>DTO & Validation</h2>
+      <p>Data Transfer Objects, class-validator, class-transformer</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📦 ติดตั้ง Validation Libraries</h3>
+    <pre><span class="cm"># ติดตั้ง</span>
+npm install class-validator class-transformer
+npm install @nestjs/swagger</pre>
+  </div>
+
+  <div class="card">
+    <h3>📋 DTO พร้อม Validation</h3>
+    <pre><span class="cm">// src/users/dto/create-user.dto.ts</span>
+<span class="kw">import</span> { IsEmail, IsString, MinLength, MaxLength,
+         IsOptional, IsEnum, IsInt, Min, Max } <span class="kw">from</span> <span class="str">'class-validator'</span>
+<span class="kw">import</span> { ApiProperty, ApiPropertyOptional } <span class="kw">from</span> <span class="str">'@nestjs/swagger'</span>
+
+<span class="kw">export enum</span> <span class="cls">UserRole</span> {
+  ADMIN = <span class="str">'admin'</span>,
+  USER  = <span class="str">'user'</span>,
+}
+
+<span class="kw">export class</span> <span class="cls">CreateUserDto</span> {
+  <span class="hl">  <span class="dec">@ApiProperty</span>({ example: <span class="str">'สมชาย'</span> })
+  <span class="dec">@IsString</span>()
+  <span class="dec">@MinLength</span>(<span class="num">2</span>)
+  <span class="dec">@MaxLength</span>(<span class="num">50</span>)
+  name: <span class="iface">string</span></span>
+
+  <span class="hl">  <span class="dec">@ApiProperty</span>({ example: <span class="str">'user@example.com'</span> })
+  <span class="dec">@IsEmail</span>()
+  email: <span class="iface">string</span></span>
+
+  <span class="dec">@ApiProperty</span>({ example: <span class="str">'P@ssw0rd!'</span> })
+  <span class="dec">@IsString</span>()
+  <span class="dec">@MinLength</span>(<span class="num">8</span>)
+  password: <span class="iface">string</span>
+
+  <span class="dec">@ApiPropertyOptional</span>({ enum: UserRole, default: UserRole.USER })
+  <span class="dec">@IsOptional</span>()
+  <span class="dec">@IsEnum</span>(UserRole)
+  role?: <span class="iface">UserRole</span> = UserRole.USER
+
+  <span class="dec">@ApiPropertyOptional</span>()
+  <span class="dec">@IsOptional</span>()
+  <span class="dec">@IsInt</span>()
+  <span class="dec">@Min</span>(<span class="num">1</span>)
+  <span class="dec">@Max</span>(<span class="num">120</span>)
+  age?: <span class="iface">number</span>
+}</pre>
+
+    <pre><span class="cm">// src/users/dto/update-user.dto.ts</span>
+<span class="kw">import</span> { PartialType } <span class="kw">from</span> <span class="str">'@nestjs/swagger'</span>
+<span class="kw">import</span> { CreateUserDto } <span class="kw">from</span> <span class="str">'./create-user.dto'</span>
+
+<span class="cm">// PartialType ทำให้ทุก field เป็น optional อัตโนมัติ</span>
+<span class="kw">export class</span> <span class="cls">UpdateUserDto</span> <span class="kw">extends</span> <span class="cls">PartialType</span>(<span class="cls">CreateUserDto</span>) {}</pre>
+  </div>
+
+  <div class="card">
+    <h3>✅ class-validator Decorators ที่ใช้บ่อย</h3>
+    <div class="grid-2">
+      <div>
+        <table>
+          <thead><tr><th>String</th><th>ความหมาย</th></tr></thead>
+          <tbody>
+            <tr><td><code>@IsString()</code></td><td>ต้องเป็น string</td></tr>
+            <tr><td><code>@IsEmail()</code></td><td>ต้องเป็น email format</td></tr>
+            <tr><td><code>@IsUrl()</code></td><td>ต้องเป็น URL</td></tr>
+            <tr><td><code>@MinLength(n)</code></td><td>ความยาวขั้นต่ำ</td></tr>
+            <tr><td><code>@MaxLength(n)</code></td><td>ความยาวสูงสุด</td></tr>
+            <tr><td><code>@Matches(/regex/)</code></td><td>ตรงกับ pattern</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <table>
+          <thead><tr><th>Number/Other</th><th>ความหมาย</th></tr></thead>
+          <tbody>
+            <tr><td><code>@IsInt()</code></td><td>ต้องเป็น integer</td></tr>
+            <tr><td><code>@IsNumber()</code></td><td>ต้องเป็น number</td></tr>
+            <tr><td><code>@Min(n) / @Max(n)</code></td><td>ค่าต่ำสุด/สูงสุด</td></tr>
+            <tr><td><code>@IsBoolean()</code></td><td>ต้องเป็น boolean</td></tr>
+            <tr><td><code>@IsEnum(Enum)</code></td><td>ต้องเป็นค่าใน enum</td></tr>
+            <tr><td><code>@IsOptional()</code></td><td>ไม่จำเป็นต้องส่ง</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 08 ===== -->
+<section id="pipes">
+  <div class="chapter-header ch-orange">
+    <div class="ch-num">08</div>
+    <div>
+      <h2>Pipes — แปลงและ Validate ข้อมูล</h2>
+      <p>Built-in Pipes, Custom Pipe, Transformation</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔧 Built-in Pipes</h3>
+    <pre><span class="kw">import</span> { ParseIntPipe, ParseUUIDPipe, ParseBoolPipe,
+         ParseArrayPipe, DefaultValuePipe, ValidationPipe } <span class="kw">from</span> <span class="str">'@nestjs/common'</span>
+
+<span class="cm">// ParseIntPipe — แปลง string → number, throw ถ้าแปลงไม่ได้</span>
+<span class="dec">@Get</span>(<span class="str">':id'</span>)
+<span class="fn">findOne</span>(<span class="dec">@Param</span>(<span class="str">'id'</span>, ParseIntPipe) id: <span class="iface">number</span>) {}
+
+<span class="cm">// ParseUUIDPipe — ตรวจ UUID format</span>
+<span class="dec">@Get</span>(<span class="str">':uuid'</span>)
+<span class="fn">findOne</span>(<span class="dec">@Param</span>(<span class="str">'uuid'</span>, ParseUUIDPipe) uuid: <span class="iface">string</span>) {}
+
+<span class="cm">// DefaultValuePipe — กำหนดค่า default</span>
+<span class="dec">@Get</span>()
+<span class="fn">findAll</span>(
+  <span class="dec">@Query</span>(<span class="str">'page'</span>,  <span class="kw">new</span> <span class="cls">DefaultValuePipe</span>(<span class="num">1</span>),  ParseIntPipe) page: <span class="iface">number</span>,
+  <span class="dec">@Query</span>(<span class="str">'limit'</span>, <span class="kw">new</span> <span class="cls">DefaultValuePipe</span>(<span class="num">10</span>), ParseIntPipe) limit: <span class="iface">number</span>,
+) {}
+
+<span class="cm">// ValidationPipe ระดับ global (ใน main.ts)</span>
+app.<span class="fn">useGlobalPipes</span>(<span class="kw">new</span> <span class="cls">ValidationPipe</span>({ whitelist: <span class="bool">true</span>, transform: <span class="bool">true</span> }))</pre>
+  </div>
+
+  <div class="card">
+    <h3>🛠️ Custom Pipe</h3>
+    <pre><span class="cm">// src/common/pipes/parse-positive-int.pipe.ts</span>
+<span class="kw">import</span> { PipeTransform, Injectable, ArgumentMetadata,
+         BadRequestException } <span class="kw">from</span> <span class="str">'@nestjs/common'</span>
+
+<span class="dec">@Injectable</span>()
+<span class="kw">export class</span> <span class="cls">ParsePositiveIntPipe</span> <span class="kw">implements</span> <span class="iface">PipeTransform</span> {
+  <span class="fn">transform</span>(value: <span class="iface">any</span>, metadata: <span class="iface">ArgumentMetadata</span>) {
+    <span class="kw">const</span> val = <span class="fn">parseInt</span>(value, <span class="num">10</span>)
+    <span class="kw">if</span> (<span class="fn">isNaN</span>(val) || val &lt;= <span class="num">0</span>) {
+      <span class="kw">throw new</span> <span class="cls">BadRequestException</span>(<span class="str">`${metadata.data} must be a positive integer`</span>)
+    }
+    <span class="kw">return</span> val
+  }
+}
+
+<span class="cm">// ใช้งาน</span>
+<span class="dec">@Get</span>(<span class="str">':id'</span>)
+<span class="fn">findOne</span>(<span class="dec">@Param</span>(<span class="str">'id'</span>, ParsePositiveIntPipe) id: <span class="iface">number</span>) {}</pre>
+  </div>
+</section>
+
+<!-- ===== 09 ===== -->
+<section id="guards">
+  <div class="chapter-header ch-red">
+    <div class="ch-num">09</div>
+    <div>
+      <h2>Guards — ควบคุมการเข้าถึง</h2>
+      <p>Authentication Guard, Authorization, Role-based Guard</p>
+    </div>
+  </div>
+
+  <div class="callout info">
+    <span class="ci">🛡️</span>
+    <div>Guard คือ Class ที่ implement <code class="ic">CanActivate</code> — ทำงานหลัง Middleware แต่ก่อน Pipe และ Handler ใช้สำหรับ Authentication/Authorization</div>
+  </div>
+
+  <div class="card">
+    <h3>🔑 JWT Auth Guard</h3>
+    <pre><span class="cm">// src/auth/guards/jwt-auth.guard.ts</span>
+<span class="kw">import</span> { Injectable } <span class="kw">from</span> <span class="str">'@nestjs/common'</span>
+<span class="kw">import</span> { AuthGuard } <span class="kw">from</span> <span class="str">'@nestjs/passport'</span>
+
+<span class="dec">@Injectable</span>()
+<span class="kw">export class</span> <span class="cls">JwtAuthGuard</span> <span class="kw">extends</span> <span class="cls">AuthGuard</span>(<span class="str">'jwt'</span>) {}
+
+<span class="cm">// ใช้งานบน Controller</span>
+<span class="dec">@UseGuards</span>(JwtAuthGuard)    <span class="cm">// ป้องกันทั้ง Controller</span>
+<span class="dec">@Controller</span>(<span class="str">'users'</span>)
+<span class="kw">export class</span> <span class="cls">UsersController</span> { <span class="cm">/* ... */</span> }
+
+<span class="cm">// ใช้งานบน Method เดียว</span>
+<span class="dec">@UseGuards</span>(JwtAuthGuard)
+<span class="dec">@Get</span>(<span class="str">'profile'</span>)
+<span class="fn">getProfile</span>(<span class="dec">@Req</span>() req) {
+  <span class="kw">return</span> req.user
+}</pre>
+  </div>
+
+  <div class="card">
+    <h3>👑 Roles Guard — Authorization</h3>
+    <pre><span class="cm">// src/common/decorators/roles.decorator.ts</span>
+<span class="kw">import</span> { SetMetadata } <span class="kw">from</span> <span class="str">'@nestjs/common'</span>
+<span class="kw">export const</span> ROLES_KEY = <span class="str">'roles'</span>
+<span class="kw">export const</span> <span class="fn">Roles</span> = (...roles: <span class="iface">string</span>[]) =&gt; <span class="fn">SetMetadata</span>(ROLES_KEY, roles)
+
+<span class="cm">// -------------------------------------------------------</span>
+<span class="cm">// src/common/guards/roles.guard.ts</span>
+<span class="kw">import</span> { Injectable, CanActivate, ExecutionContext } <span class="kw">from</span> <span class="str">'@nestjs/common'</span>
+<span class="kw">import</span> { Reflector } <span class="kw">from</span> <span class="str">'@nestjs/core'</span>
+
+<span class="dec">@Injectable</span>()
+<span class="kw">export class</span> <span class="cls">RolesGuard</span> <span class="kw">implements</span> <span class="iface">CanActivate</span> {
+  <span class="kw">constructor</span>(<span class="kw">private</span> reflector: <span class="cls">Reflector</span>) {}
+
+  <span class="fn">canActivate</span>(context: <span class="iface">ExecutionContext</span>): <span class="iface">boolean</span> {
+    <span class="kw">const</span> requiredRoles = <span class="kw">this</span>.reflector.<span class="fn">getAllAndOverride</span>&lt;<span class="iface">string</span>[]&gt;(ROLES_KEY, [
+      context.<span class="fn">getHandler</span>(),
+      context.<span class="fn">getClass</span>(),
+    ])
+    <span class="kw">if</span> (!requiredRoles) <span class="kw">return true</span>
+    <span class="kw">const</span> { user } = context.<span class="fn">switchToHttp</span>().<span class="fn">getRequest</span>()
+    <span class="kw">return</span> requiredRoles.<span class="fn">some</span>(role =&gt; user?.roles?.includes(role))
+  }
+}
+
+<span class="cm">// ใช้งาน</span>
+<span class="dec">@Roles</span>(<span class="str">'admin'</span>)
+<span class="dec">@UseGuards</span>(JwtAuthGuard, RolesGuard)
+<span class="dec">@Delete</span>(<span class="str">':id'</span>)
+<span class="fn">remove</span>(<span class="dec">@Param</span>(<span class="str">'id'</span>, ParseIntPipe) id: <span class="iface">number</span>) {}</pre>
+  </div>
+</section>
+
+<!-- ===== 10 ===== -->
+<section id="interceptors">
+  <div class="chapter-header ch-cyan">
+    <div class="ch-num">10</div>
+    <div>
+      <h2>Interceptors — ดัก Request/Response</h2>
+      <p>Logging, Transform Response, Cache</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔄 Logging Interceptor</h3>
+    <pre><span class="cm">// src/common/interceptors/logging.interceptor.ts</span>
+<span class="kw">import</span> { Injectable, NestInterceptor, ExecutionContext,
+         CallHandler } <span class="kw">from</span> <span class="str">'@nestjs/common'</span>
+<span class="kw">import</span> { Observable } <span class="kw">from</span> <span class="str">'rxjs'</span>
+<span class="kw">import</span> { tap } <span class="kw">from</span> <span class="str">'rxjs/operators'</span>
+
+<span class="dec">@Injectable</span>()
+<span class="kw">export class</span> <span class="cls">LoggingInterceptor</span> <span class="kw">implements</span> <span class="iface">NestInterceptor</span> {
+  <span class="fn">intercept</span>(context: <span class="iface">ExecutionContext</span>, next: <span class="iface">CallHandler</span>): <span class="iface">Observable</span>&lt;<span class="iface">any</span>&gt; {
+    <span class="kw">const</span> req  = context.<span class="fn">switchToHttp</span>().<span class="fn">getRequest</span>()
+    <span class="kw">const</span> now  = Date.<span class="fn">now</span>()
+    console.<span class="fn">log</span>(<span class="str">`→ ${req.method} ${req.url}`</span>)
+
+    <span class="kw">return</span> next.<span class="fn">handle</span>().<span class="fn">pipe</span>(
+      <span class="fn">tap</span>(() =&gt; console.<span class="fn">log</span>(<span class="str">`← ${req.method} ${req.url} — ${Date.now() - now}ms`</span>))
+    )
+  }
+}</pre>
+  </div>
+
+  <div class="card">
+    <h3>📦 Transform Response Interceptor</h3>
+    <pre><span class="cm">// src/common/interceptors/transform.interceptor.ts</span>
+<span class="kw">import</span> { map } <span class="kw">from</span> <span class="str">'rxjs/operators'</span>
+
+<span class="kw">export interface</span> <span class="iface">Response</span>&lt;T&gt; {
+  success: <span class="iface">boolean</span>
+  data:    T
+  timestamp: <span class="iface">string</span>
+}
+
+<span class="dec">@Injectable</span>()
+<span class="kw">export class</span> <span class="cls">TransformInterceptor</span>&lt;T&gt; <span class="kw">implements</span> <span class="iface">NestInterceptor</span>&lt;T, <span class="iface">Response</span>&lt;T&gt;&gt; {
+  <span class="fn">intercept</span>(context: <span class="iface">ExecutionContext</span>, next: <span class="iface">CallHandler</span>): <span class="iface">Observable</span>&lt;<span class="iface">Response</span>&lt;T&gt;&gt; {
+    <span class="kw">return</span> next.<span class="fn">handle</span>().<span class="fn">pipe</span>(
+      <span class="fn">map</span>(data =&gt; ({
+        success:   <span class="bool">true</span>,
+        data,
+        timestamp: <span class="kw">new</span> Date().<span class="fn">toISOString</span>(),
+      }))
+    )
+  }
+}
+
+<span class="cm">// ลง Global ใน main.ts</span>
+app.<span class="fn">useGlobalInterceptors</span>(
+  <span class="kw">new</span> <span class="cls">LoggingInterceptor</span>(),
+  <span class="kw">new</span> <span class="cls">TransformInterceptor</span>()
+)</pre>
+    <div class="callout tip">
+      <span class="ci">💡</span>
+      <div>ผลลัพธ์: ทุก response จะถูก wrap ในรูปแบบ <code class="ic">{"success": true, "data": {...}, "timestamp": "..."}</code> อัตโนมัติ</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 11 ===== -->
+<section id="middleware">
+  <div class="chapter-header ch-teal">
+    <div class="ch-num">11</div>
+    <div>
+      <h2>Middleware — ก่อน Route Handler</h2>
+      <p>Request Logger, Helmet, Rate Limiting</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔧 Custom Middleware</h3>
+    <pre><span class="cm">// src/common/middleware/logger.middleware.ts</span>
+<span class="kw">import</span> { Injectable, NestMiddleware } <span class="kw">from</span> <span class="str">'@nestjs/common'</span>
+<span class="kw">import</span> { Request, Response, NextFunction } <span class="kw">from</span> <span class="str">'express'</span>
+
+<span class="dec">@Injectable</span>()
+<span class="kw">export class</span> <span class="cls">LoggerMiddleware</span> <span class="kw">implements</span> <span class="iface">NestMiddleware</span> {
+  <span class="fn">use</span>(req: <span class="iface">Request</span>, res: <span class="iface">Response</span>, next: <span class="iface">NextFunction</span>) {
+    console.<span class="fn">log</span>(<span class="str">`[${new Date().toISOString()}] ${req.method} ${req.path}`</span>)
+    next()
+  }
+}
+
+<span class="cm">// ลงทะเบียนใน Module</span>
+<span class="dec">@Module</span>({})
+<span class="kw">export class</span> <span class="cls">AppModule</span> <span class="kw">implements</span> <span class="iface">NestModule</span> {
+  <span class="fn">configure</span>(consumer: <span class="iface">MiddlewareConsumer</span>) {
+    consumer
+      .<span class="fn">apply</span>(LoggerMiddleware)
+      .<span class="fn">forRoutes</span>(<span class="str">'*'</span>)            <span class="cm">// ทุก route</span>
+      <span class="cm">// .forRoutes('users')      // เฉพาะ /users</span>
+      <span class="cm">// .forRoutes({ path: 'users', method: RequestMethod.GET })</span>
+  }
+}</pre>
+  </div>
+
+  <div class="card">
+    <h3>🛡️ Security Middleware (แนะนำ)</h3>
+    <pre><span class="cm"># ติดตั้ง</span>
+npm install helmet
+npm install @nestjs/throttler  <span class="cm"># Rate limiting</span>
+
+<span class="cm">// main.ts</span>
+<span class="kw">import</span> helmet <span class="kw">from</span> <span class="str">'helmet'</span>
+app.<span class="fn">use</span>(<span class="fn">helmet</span>())   <span class="cm">// Security headers</span>
+
+<span class="cm">// app.module.ts</span>
+<span class="kw">import</span> { ThrottlerModule, ThrottlerGuard } <span class="kw">from</span> <span class="str">'@nestjs/throttler'</span>
+
+<span class="dec">@Module</span>({
+  imports: [
+    ThrottlerModule.<span class="fn">forRoot</span>([{
+      ttl:   <span class="num">60000</span>,  <span class="cm">// 1 นาที</span>
+      limit: <span class="num">10</span>,     <span class="cm">// ไม่เกิน 10 requests</span>
+    }]),
+  ],
+  providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
+})</pre>
+  </div>
+</section>
+
+<!-- ===== 12 ===== -->
+<section id="typeorm">
+  <div class="chapter-header ch-yellow">
+    <div class="ch-num">12</div>
+    <div>
+      <h2>TypeORM — Database Integration</h2>
+      <p>Entity, Repository, Relations, Migrations</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📦 ติดตั้งและตั้งค่า TypeORM</h3>
+    <pre><span class="cm"># ติดตั้ง</span>
+npm install @nestjs/typeorm typeorm pg        <span class="cm"># PostgreSQL</span>
+npm install @nestjs/typeorm typeorm mysql2    <span class="cm"># MySQL</span>
+npm install @nestjs/typeorm typeorm sqlite3   <span class="cm"># SQLite</span></pre>
+
+    <pre><span class="cm">// app.module.ts</span>
+<span class="kw">import</span> { TypeOrmModule } <span class="kw">from</span> <span class="str">'@nestjs/typeorm'</span>
+<span class="kw">import</span> { ConfigModule, ConfigService } <span class="kw">from</span> <span class="str">'@nestjs/config'</span>
+
+<span class="dec">@Module</span>({
+  imports: [
+    ConfigModule.<span class="fn">forRoot</span>({ isGlobal: <span class="bool">true</span> }),
+    TypeOrmModule.<span class="fn">forRootAsync</span>({
+      <span class="fn">useFactory</span>: (config: <span class="iface">ConfigService</span>) =&gt; ({
+        type:        <span class="str">'postgres'</span>,
+        host:        config.<span class="fn">get</span>(<span class="str">'DB_HOST'</span>),
+        port:        config.<span class="fn">get</span>&lt;<span class="iface">number</span>&gt;(<span class="str">'DB_PORT'</span>),
+        username:    config.<span class="fn">get</span>(<span class="str">'DB_USER'</span>),
+        password:    config.<span class="fn">get</span>(<span class="str">'DB_PASS'</span>),
+        database:    config.<span class="fn">get</span>(<span class="str">'DB_NAME'</span>),
+        autoLoadEntities: <span class="bool">true</span>,
+        synchronize: config.<span class="fn">get</span>(<span class="str">'NODE_ENV'</span>) !== <span class="str">'production'</span>,
+      }),
+      inject: [ConfigService],
+    }),
+  ],
+})</pre>
+  </div>
+
+  <div class="card">
+    <h3>🏗️ Entity — ออกแบบ Database Table</h3>
+    <pre><span class="cm">// src/users/entities/user.entity.ts</span>
+<span class="kw">import</span> { Entity, PrimaryGeneratedColumn, Column,
+         CreateDateColumn, UpdateDateColumn,
+         OneToMany, BeforeInsert } <span class="kw">from</span> <span class="str">'typeorm'</span>
+<span class="kw">import</span> * <span class="kw">as</span> bcrypt <span class="kw">from</span> <span class="str">'bcrypt'</span>
+
+<span class="hl"><span class="dec">@Entity</span>(<span class="str">'users'</span>)    <span class="cm">// ชื่อตาราง</span></span>
+<span class="kw">export class</span> <span class="cls">User</span> {
+  <span class="dec">@PrimaryGeneratedColumn</span>()
+  id: <span class="iface">number</span>
+
+  <span class="dec">@Column</span>({ length: <span class="num">100</span> })
+  name: <span class="iface">string</span>
+
+  <span class="dec">@Column</span>({ unique: <span class="bool">true</span> })
+  email: <span class="iface">string</span>
+
+  <span class="hl2">  <span class="dec">@Column</span>({ select: <span class="bool">false</span> })  <span class="cm">// ไม่ดึง password มาด้วยตอน query</span>
+  password: <span class="iface">string</span></span>
+
+  <span class="dec">@Column</span>({
+    type: <span class="str">'enum'</span>,
+    enum: UserRole,
+    default: UserRole.USER,
+  })
+  role: <span class="iface">UserRole</span>
+
+  <span class="dec">@Column</span>({ default: <span class="bool">true</span> })
+  isActive: <span class="iface">boolean</span>
+
+  <span class="hl">  <span class="dec">@OneToMany</span>(() =&gt; Post, post =&gt; post.user)
+  posts: <span class="iface">Post</span>[]</span>
+
+  <span class="dec">@CreateDateColumn</span>()
+  createdAt: <span class="iface">Date</span>
+
+  <span class="dec">@UpdateDateColumn</span>()
+  updatedAt: <span class="iface">Date</span>
+
+  <span class="hl2">  <span class="dec">@BeforeInsert</span>()
+  <span class="kw">async</span> <span class="fn">hashPassword</span>() {
+    <span class="kw">this</span>.password = <span class="kw">await</span> bcrypt.<span class="fn">hash</span>(<span class="kw">this</span>.password, <span class="num">10</span>)
+  }</span>
+}</pre>
+  </div>
+
+  <div class="card">
+    <h3>🔗 Relations — TypeORM</h3>
+    <pre><span class="cm">// One-to-Many (User มีหลาย Post)</span>
+<span class="cm">// user.entity.ts</span>
+<span class="dec">@OneToMany</span>(() =&gt; Post, post =&gt; post.user)
+posts: <span class="iface">Post</span>[]
+
+<span class="cm">// Many-to-One (Post มี User เดียว)</span>
+<span class="cm">// post.entity.ts</span>
+<span class="dec">@ManyToOne</span>(() =&gt; User, user =&gt; user.posts)
+<span class="dec">@JoinColumn</span>({ name: <span class="str">'user_id'</span> })
+user: <span class="iface">User</span>
+
+<span class="cm">// Many-to-Many (Article มีหลาย Tag)</span>
+<span class="cm">// article.entity.ts</span>
+<span class="dec">@ManyToMany</span>(() =&gt; Tag)
+<span class="dec">@JoinTable</span>()
+tags: <span class="iface">Tag</span>[]
+
+<span class="cm">// Query ด้วย relations</span>
+<span class="kw">const</span> users = <span class="kw">await</span> <span class="kw">this</span>.usersRepo.<span class="fn">find</span>({
+  relations: { posts: <span class="bool">true</span> },
+  where: { isActive: <span class="bool">true</span> },
+  order: { createdAt: <span class="str">'DESC'</span> },
+})</pre>
+  </div>
+</section>
+
+<!-- ===== 13 ===== -->
+<section id="auth">
+  <div class="chapter-header ch-purple">
+    <div class="ch-num">13</div>
+    <div>
+      <h2>JWT Authentication</h2>
+      <p>Passport.js, JWT Strategy, Login/Register Flow</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📦 ติดตั้ง Auth Packages</h3>
+    <pre><span class="cm"># JWT + Passport</span>
+npm install @nestjs/passport passport passport-jwt passport-local
+npm install @nestjs/jwt
+npm install bcrypt
+npm install -D @types/passport-jwt @types/passport-local @types/bcrypt</pre>
+  </div>
+
+  <div class="card">
+    <h3>🗂️ Auth Module Structure</h3>
+    <pre><span class="cm">// src/auth/auth.module.ts</span>
+<span class="kw">import</span> { Module } <span class="kw">from</span> <span class="str">'@nestjs/common'</span>
+<span class="kw">import</span> { JwtModule } <span class="kw">from</span> <span class="str">'@nestjs/jwt'</span>
+<span class="kw">import</span> { PassportModule } <span class="kw">from</span> <span class="str">'@nestjs/passport'</span>
+
+<span class="dec">@Module</span>({
+  imports: [
+    UsersModule,
+    PassportModule,
+    JwtModule.<span class="fn">registerAsync</span>({
+      <span class="fn">useFactory</span>: (config: <span class="iface">ConfigService</span>) =&gt; ({
+        secret:      config.<span class="fn">get</span>(<span class="str">'JWT_SECRET'</span>),
+        signOptions: { expiresIn: config.<span class="fn">get</span>(<span class="str">'JWT_EXPIRES'</span>) || <span class="str">'7d'</span> },
+      }),
+      inject: [ConfigService],
+    }),
+  ],
+  providers: [AuthService, LocalStrategy, JwtStrategy],
+  exports:   [JwtModule],
+})
+<span class="kw">export class</span> <span class="cls">AuthModule</span> {}</pre>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>🔑 JWT Strategy</h3>
+      <pre style="font-size:.82rem"><span class="cm">// src/auth/strategies/jwt.strategy.ts</span>
+<span class="kw">import</span> { ExtractJwt, Strategy } <span class="kw">from</span> <span class="str">'passport-jwt'</span>
+<span class="kw">import</span> { PassportStrategy } <span class="kw">from</span> <span class="str">'@nestjs/passport'</span>
+
+<span class="dec">@Injectable</span>()
+<span class="kw">export class</span> <span class="cls">JwtStrategy</span> <span class="kw">extends</span> <span class="cls">PassportStrategy</span>(Strategy) {
+  <span class="kw">constructor</span>(config: <span class="iface">ConfigService</span>) {
+    <span class="kw">super</span>({
+      jwtFromRequest: ExtractJwt.<span class="fn">fromAuthHeaderAsBearerToken</span>(),
+      secretOrKey:    config.<span class="fn">get</span>(<span class="str">'JWT_SECRET'</span>),
+    })
+  }
+
+  <span class="kw">async</span> <span class="fn">validate</span>(payload: <span class="kw">any</span>) {
+    <span class="cm">// payload คือ JWT claims</span>
+    <span class="kw">return</span> { id: payload.sub, email: payload.email, role: payload.role }
+    <span class="cm">// req.user จะมีค่านี้</span>
+  }
+}</pre>
+    </div>
+    <div class="card">
+      <h3>🔐 Local Strategy (Email/Password)</h3>
+      <pre style="font-size:.82rem"><span class="cm">// src/auth/strategies/local.strategy.ts</span>
+<span class="kw">import</span> { Strategy } <span class="kw">from</span> <span class="str">'passport-local'</span>
+
+<span class="dec">@Injectable</span>()
+<span class="kw">export class</span> <span class="cls">LocalStrategy</span> <span class="kw">extends</span> <span class="cls">PassportStrategy</span>(Strategy) {
+  <span class="kw">constructor</span>(<span class="kw">private</span> authService: <span class="iface">AuthService</span>) {
+    <span class="kw">super</span>({ usernameField: <span class="str">'email'</span> })
+  }
+
+  <span class="kw">async</span> <span class="fn">validate</span>(email: <span class="iface">string</span>, password: <span class="iface">string</span>) {
+    <span class="kw">const</span> user = <span class="kw">await</span> <span class="kw">this</span>.authService.<span class="fn">validateUser</span>(email, password)
+    <span class="kw">if</span> (!user) <span class="kw">throw new</span> <span class="cls">UnauthorizedException</span>()
+    <span class="kw">return</span> user
+  }
+}</pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🚀 Auth Service & Controller</h3>
+    <pre><span class="cm">// src/auth/auth.service.ts</span>
+<span class="dec">@Injectable</span>()
+<span class="kw">export class</span> <span class="cls">AuthService</span> {
+  <span class="kw">constructor</span>(
+    <span class="kw">private</span> usersService: <span class="cls">UsersService</span>,
+    <span class="kw">private</span> jwtService:   <span class="cls">JwtService</span>,
+  ) {}
+
+  <span class="kw">async</span> <span class="fn">validateUser</span>(email: <span class="iface">string</span>, password: <span class="iface">string</span>) {
+    <span class="kw">const</span> user = <span class="kw">await</span> <span class="kw">this</span>.usersService.<span class="fn">findByEmail</span>(email)
+    <span class="kw">if</span> (user && <span class="kw">await</span> bcrypt.<span class="fn">compare</span>(password, user.password)) {
+      <span class="kw">const</span> { password: _, ...result } = user
+      <span class="kw">return</span> result
+    }
+    <span class="kw">return null</span>
+  }
+
+  <span class="fn">login</span>(user: <span class="iface">any</span>) {
+    <span class="kw">const</span> payload = { email: user.email, sub: user.id, role: user.role }
+    <span class="kw">return</span> {
+      access_token: <span class="kw">this</span>.jwtService.<span class="fn">sign</span>(payload),
+      user,
+    }
+  }
+
+  <span class="kw">async</span> <span class="fn">register</span>(dto: <span class="iface">CreateUserDto</span>) {
+    <span class="kw">return</span> <span class="kw">this</span>.usersService.<span class="fn">create</span>(dto)
+  }
+}
+
+<span class="cm">// -------------------------------------------------------</span>
+<span class="cm">// src/auth/auth.controller.ts</span>
+<span class="dec">@ApiTags</span>(<span class="str">'Auth'</span>)
+<span class="dec">@Controller</span>(<span class="str">'auth'</span>)
+<span class="kw">export class</span> <span class="cls">AuthController</span> {
+  <span class="kw">constructor</span>(<span class="kw">private</span> authService: <span class="cls">AuthService</span>) {}
+
+  <span class="cm">// POST /auth/register</span>
+  <span class="dec">@Post</span>(<span class="str">'register'</span>)
+  <span class="fn">register</span>(<span class="dec">@Body</span>() dto: <span class="iface">CreateUserDto</span>) {
+    <span class="kw">return</span> <span class="kw">this</span>.authService.<span class="fn">register</span>(dto)
+  }
+
+  <span class="cm">// POST /auth/login — ใช้ LocalAuthGuard validate ก่อน</span>
+  <span class="dec">@UseGuards</span>(LocalAuthGuard)
+  <span class="dec">@Post</span>(<span class="str">'login'</span>)
+  <span class="fn">login</span>(<span class="dec">@Req</span>() req) {
+    <span class="kw">return</span> <span class="kw">this</span>.authService.<span class="fn">login</span>(req.user)
+  }
+
+  <span class="cm">// GET /auth/profile — ต้อง JWT</span>
+  <span class="dec">@UseGuards</span>(JwtAuthGuard)
+  <span class="dec">@Get</span>(<span class="str">'profile'</span>)
+  <span class="fn">profile</span>(<span class="dec">@Req</span>() req) {
+    <span class="kw">return</span> req.user
+  }
+}</pre>
+  </div>
+</section>
+
+<!-- ===== 14 ===== -->
+<section id="exception">
+  <div class="chapter-header ch-red">
+    <div class="ch-num">14</div>
+    <div>
+      <h2>Exception Filters — จัดการ Error</h2>
+      <p>Built-in Exceptions, Custom Exception Filter</p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>🚨 Built-in HTTP Exceptions</h3>
+      <table style="margin:0">
+        <thead><tr><th>Exception Class</th><th>HTTP Status</th></tr></thead>
+        <tbody>
+          <tr><td><code>BadRequestException</code></td><td>400</td></tr>
+          <tr><td><code>UnauthorizedException</code></td><td>401</td></tr>
+          <tr><td><code>ForbiddenException</code></td><td>403</td></tr>
+          <tr><td><code>NotFoundException</code></td><td>404</td></tr>
+          <tr><td><code>ConflictException</code></td><td>409</td></tr>
+          <tr><td><code>UnprocessableEntityException</code></td><td>422</td></tr>
+          <tr><td><code>InternalServerErrorException</code></td><td>500</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <h3>💥 Throw Exceptions</h3>
+      <pre style="font-size:.82rem"><span class="cm">// ใน Service</span>
+<span class="kw">const</span> user = <span class="kw">await</span> <span class="kw">this</span>.usersRepo.<span class="fn">findOneBy</span>({ id })
+<span class="kw">if</span> (!user) {
+  <span class="kw">throw new</span> <span class="cls">NotFoundException</span>(<span class="str">`User #${id} not found`</span>)
+}
+
+<span class="kw">const</span> exists = <span class="kw">await</span> <span class="kw">this</span>.usersRepo.<span class="fn">findOneBy</span>({ email })
+<span class="kw">if</span> (exists) {
+  <span class="kw">throw new</span> <span class="cls">ConflictException</span>(<span class="str">'Email already exists'</span>)
+}
+
+<span class="cm">// Custom message</span>
+<span class="kw">throw new</span> <span class="cls">BadRequestException</span>({
+  message: <span class="str">'Validation failed'</span>,
+  errors:  validationErrors,
+})</pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🎯 Global Exception Filter</h3>
+    <pre><span class="cm">// src/common/filters/http-exception.filter.ts</span>
+<span class="kw">import</span> { ExceptionFilter, Catch, ArgumentsHost,
+         HttpException, HttpStatus } <span class="kw">from</span> <span class="str">'@nestjs/common'</span>
+
+<span class="hl"><span class="dec">@Catch</span>()   <span class="cm">// จับทุก exception</span></span>
+<span class="kw">export class</span> <span class="cls">AllExceptionsFilter</span> <span class="kw">implements</span> <span class="iface">ExceptionFilter</span> {
+  <span class="fn">catch</span>(exception: <span class="iface">unknown</span>, host: <span class="iface">ArgumentsHost</span>) {
+    <span class="kw">const</span> ctx    = host.<span class="fn">switchToHttp</span>()
+    <span class="kw">const</span> res    = ctx.<span class="fn">getResponse</span>()
+    <span class="kw">const</span> req    = ctx.<span class="fn">getRequest</span>()
+
+    <span class="kw">const</span> status = exception <span class="kw">instanceof</span> HttpException
+      ? exception.<span class="fn">getStatus</span>()
+      : HttpStatus.INTERNAL_SERVER_ERROR
+
+    <span class="kw">const</span> message = exception <span class="kw">instanceof</span> HttpException
+      ? exception.<span class="fn">getResponse</span>()
+      : <span class="str">'Internal server error'</span>
+
+    res.<span class="fn">status</span>(status).<span class="fn">json</span>({
+      success:   <span class="bool">false</span>,
+      statusCode: status,
+      message,
+      path:      req.url,
+      timestamp: <span class="kw">new</span> Date().<span class="fn">toISOString</span>(),
+    })
+  }
+}
+
+<span class="cm">// ลง Global ใน main.ts</span>
+app.<span class="fn">useGlobalFilters</span>(<span class="kw">new</span> <span class="cls">AllExceptionsFilter</span>())</pre>
+  </div>
+</section>
+
+<!-- ===== 15 ===== -->
+<section id="config">
+  <div class="chapter-header ch-slate">
+    <div class="ch-num">15</div>
+    <div>
+      <h2>Config & Swagger</h2>
+      <p>ConfigModule, Environment Variables, API Documentation</p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>⚙️ ConfigModule</h3>
+      <pre style="font-size:.82rem"><span class="cm"># ติดตั้ง</span>
+npm install @nestjs/config
+
+<span class="cm">// app.module.ts</span>
+<span class="kw">import</span> { ConfigModule } <span class="kw">from</span> <span class="str">'@nestjs/config'</span>
+
+<span class="dec">@Module</span>({
+  imports: [
+    ConfigModule.<span class="fn">forRoot</span>({
+      isGlobal:   <span class="bool">true</span>,    <span class="cm">// ใช้ได้ทุก module</span>
+      envFilePath: <span class="str">'.env'</span>, <span class="cm">// โหลด .env</span>
+      cache:       <span class="bool">true</span>,   <span class="cm">// cache config</span>
+    }),
+  ],
+})</span>
+
+<span class="cm">// ใช้งาน</span>
+<span class="kw">constructor</span>(<span class="kw">private</span> config: <span class="iface">ConfigService</span>) {}
+
+<span class="kw">const</span> port   = <span class="kw">this</span>.config.<span class="fn">get</span>&lt;<span class="iface">number</span>&gt;(<span class="str">'PORT'</span>, <span class="num">3000</span>)
+<span class="kw">const</span> secret = <span class="kw">this</span>.config.<span class="fn">getOrThrow</span>(<span class="str">'JWT_SECRET'</span>)</pre>
+    </div>
+    <div class="card">
+      <h3>📄 .env File</h3>
+      <pre style="font-size:.82rem"><span class="cm"># .env</span>
+NODE_ENV=development
+PORT=3000
+
+<span class="cm"># Database</span>
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=postgres
+DB_PASS=secret
+DB_NAME=myapp
+
+<span class="cm"># JWT</span>
+JWT_SECRET=your-super-secret-key-min-32chars
+JWT_EXPIRES=7d
+
+<span class="cm"># .env.example — commit ได้</span>
+NODE_ENV=development
+PORT=3000
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=
+DB_PASS=
+DB_NAME=
+JWT_SECRET=
+JWT_EXPIRES=7d</pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📖 Swagger — Auto API Documentation</h3>
+    <pre><span class="cm"># ติดตั้ง</span>
+npm install @nestjs/swagger
+
+<span class="cm">// main.ts</span>
+<span class="kw">import</span> { DocumentBuilder, SwaggerModule } <span class="kw">from</span> <span class="str">'@nestjs/swagger'</span>
+
+<span class="kw">const</span> config = <span class="kw">new</span> <span class="cls">DocumentBuilder</span>()
+  .<span class="fn">setTitle</span>(<span class="str">'My API'</span>)
+  .<span class="fn">setDescription</span>(<span class="str">'REST API documentation'</span>)
+  .<span class="fn">setVersion</span>(<span class="str">'1.0'</span>)
+  .<span class="fn">addBearerAuth</span>()      <span class="cm">// เพิ่ม JWT authorization</span>
+  .<span class="fn">build</span>()
+
+<span class="kw">const</span> document = SwaggerModule.<span class="fn">createDocument</span>(app, config)
+SwaggerModule.<span class="fn">setup</span>(<span class="str">'docs'</span>, app, document)
+<span class="cm">// เข้าได้ที่ http://localhost:3000/docs</span>
+
+<span class="cm">// ใน Controller เพิ่ม Swagger decorators</span>
+<span class="dec">@ApiTags</span>(<span class="str">'Users'</span>)             <span class="cm">// จัดกลุ่ม</span>
+<span class="dec">@ApiBearerAuth</span>()              <span class="cm">// ต้อง JWT</span>
+<span class="dec">@ApiOperation</span>({ summary: <span class="str">'ดึง user ทั้งหมด'</span> })
+<span class="dec">@ApiResponse</span>({ status: <span class="num">200</span>, description: <span class="str">'Success'</span>, type: [User] })
+<span class="dec">@ApiResponse</span>({ status: <span class="num">401</span>, description: <span class="str">'Unauthorized'</span> })
+<span class="dec">@Get</span>()
+<span class="fn">findAll</span>() {}</pre>
+  </div>
+</section>
+
+<!-- ===== 16 ===== -->
+<section id="bestpractice">
+  <div class="chapter-header ch-nest">
+    <div class="ch-num">16</div>
+    <div>
+      <h2>Best Practices &amp; Patterns</h2>
+      <p>โครงสร้างที่ดี, Performance, Security</p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>✅ Do's — สิ่งที่ควรทำ</h3>
+      <ul>
+        <li><strong style="color:#fda4af">Feature Modules</strong> — แบ่ง 1 feature = 1 module</li>
+        <li><strong style="color:#10b981">DTOs ทุก input</strong> — Validate ทุก request body</li>
+        <li><strong style="color:#60a5fa">Repository Pattern</strong> — Logic ใน Service ไม่ใช่ Controller</li>
+        <li><strong style="color:#c4b5fd">Global Pipes/Filters</strong> — ตั้งใน main.ts</li>
+        <li><strong style="color:#fcd34d">ConfigService</strong> — ไม่ hardcode config ในโค้ด</li>
+        <li><strong style="color:#67e8f9">Async/Await</strong> — ใช้ async ทุก I/O operation</li>
+        <li><strong style="color:#fda4af">Unit Tests</strong> — Test Service แยกจาก DB</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>❌ Don'ts — สิ่งที่ไม่ควรทำ</h3>
+      <ul>
+        <li>❌ Logic ใน Controller (แค่รับ-ส่งข้อมูล)</li>
+        <li>❌ Hardcode secrets ใน code</li>
+        <li>❌ ใช้ <code class="ic">synchronize: true</code> ใน production</li>
+        <li>❌ SELECT * โดยไม่จำเป็น — ระบุ fields</li>
+        <li>❌ ลืม <code class="ic">{ select: false }</code> กับ password</li>
+        <li>❌ ไม่ทำ Input validation</li>
+        <li>❌ ใช้ <code class="ic">any</code> type มากเกินไป</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🗺️ NestJS Learning Path</h3>
+    <div class="flow" style="flex-wrap:wrap;justify-content:flex-start">
+      <span class="fb fb-n">TypeScript<br>Basics</span><span class="fa">→</span>
+      <span class="fb fb-n">Module/<br>Controller/<br>Service</span><span class="fa">→</span>
+      <span class="fb fb-b">DTO &amp;<br>Validation</span><span class="fa">→</span>
+      <span class="fb fb-b">TypeORM<br>Entity</span><span class="fa">→</span>
+      <span class="fb fb-g">Guards &amp;<br>Pipes</span><span class="fa">→</span>
+      <span class="fb fb-g">JWT Auth</span><span class="fa">→</span>
+      <span class="fb fb-p">Interceptors<br>&amp; Filters</span><span class="fa">→</span>
+      <span class="fb fb-p">Swagger<br>Docs</span><span class="fa">→</span>
+      <span class="fb fb-o">Testing</span><span class="fa">→</span>
+      <span class="fb fb-o">Deploy<br>Docker</span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-top:14px">
+      <div style="border:1px solid #e0234e33;border-radius:8px;padding:14px;background:rgba(224,35,78,.04)">
+        <div style="font-weight:700;color:#fda4af;margin-bottom:8px">📦 Packages ที่ใช้บ่อย</div>
+        <div style="font-size:.83rem;color:#8b949e;line-height:2">
+          <code class="ic">@nestjs/typeorm</code> — Database ORM<br>
+          <code class="ic">@nestjs/jwt</code> — JWT Token<br>
+          <code class="ic">@nestjs/passport</code> — Auth strategies<br>
+          <code class="ic">@nestjs/config</code> — Env variables<br>
+          <code class="ic">@nestjs/swagger</code> — API docs<br>
+          <code class="ic">@nestjs/throttler</code> — Rate limiting<br>
+          <code class="ic">class-validator</code> — DTO validation<br>
+          <code class="ic">helmet</code> — Security headers
+        </div>
+      </div>
+      <div style="border:1px solid #10b98133;border-radius:8px;padding:14px;background:rgba(16,185,129,.04)">
+        <div style="font-weight:700;color:#34d399;margin-bottom:8px">🧪 Testing Commands</div>
+        <pre style="font-size:.8rem;margin:0">
+<span class="cm"># Unit tests</span>
+npm run test
+npm run test:watch
+
+<span class="cm"># E2E tests</span>
+npm run test:e2e
+
+<span class="cm"># Coverage</span>
+npm run test:cov</pre>
+      </div>
+      <div style="border:1px solid #3b82f633;border-radius:8px;padding:14px;background:rgba(59,130,246,.04)">
+        <div style="font-weight:700;color:#60a5fa;margin-bottom:8px">🐳 Docker Deployment</div>
+        <pre style="font-size:.8rem;margin:0">
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+FROM node:20-alpine
+WORKDIR /app
+COPY --from=builder /app/dist ./dist
+COPY package*.json ./
+RUN npm ci --only=production
+CMD ["node", "dist/main"]</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔄 Lifecycle Hooks — เรียงตามลำดับ</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px">
+      <span class="lbadge">onModuleInit()</span>
+      <span style="color:#8b949e">→</span>
+      <span class="lbadge">onApplicationBootstrap()</span>
+      <span style="color:#8b949e">→ Running →</span>
+      <span class="lbadge">onModuleDestroy()</span>
+      <span style="color:#8b949e">→</span>
+      <span class="lbadge">beforeApplicationShutdown()</span>
+      <span style="color:#8b949e">→</span>
+      <span class="lbadge">onApplicationShutdown()</span>
+    </div>
+    <pre style="margin-top:12px"><span class="kw">export class</span> <span class="cls">AppService</span> <span class="kw">implements</span> <span class="iface">OnModuleInit</span>, <span class="iface">OnModuleDestroy</span> {
+  <span class="fn">onModuleInit</span>()    { console.<span class="fn">log</span>(<span class="str">'App started!'</span>) }
+  <span class="fn">onModuleDestroy</span>() { console.<span class="fn">log</span>(<span class="str">'App shutting down...'</span>) }
+}</pre>
+  </div>
+</section>
+
+</div>
+
+<footer>
+  <strong>NestJS Teaching Material</strong> — FullStack 101 Learning Hub<br>
+  <span style="margin-top:6px;display:block">🔺 NestJS 10+ | TypeScript | TypeORM | Passport JWT</span>
+</footer>
+
+<script>
+const sections = document.querySelectorAll('section[id]')
+const navLinks = document.querySelectorAll('.nav-sticky a[href^="#"]')
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(a => a.classList.remove('active'))
+      const a = document.querySelector(`.nav-sticky a[href="#${entry.target.id}"]`)
+      if (a) a.classList.add('active')
+    }
+  })
+}, { threshold: 0.2 })
+sections.forEach(s => observer.observe(s))
+</script>
+</body>
+</html>

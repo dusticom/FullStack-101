@@ -137,6 +137,7 @@ footer strong{color:#8b949e}
     <span class="badge">Guards</span>
     <span class="badge">Interceptors</span>
     <span class="badge">TypeORM</span>
+    <span class="badge">PostgreSQL</span>
     <span class="badge">JWT Auth</span>
     <span class="badge">Swagger</span>
   </div>
@@ -948,8 +949,8 @@ app.<span class="fn">use</span>(<span class="fn">helmet</span>())   <span class=
   <div class="chapter-header ch-yellow">
     <div class="ch-num">12</div>
     <div>
-      <h2>TypeORM — Database Integration</h2>
-      <p>Entity, Repository, Relations, Migrations</p>
+      <h2>PostgreSQL + TypeORM</h2>
+      <p>เชื่อม PostgreSQL, Entity, Relations, JOIN และ Migrations</p>
     </div>
   </div>
 
@@ -982,6 +983,64 @@ npm install @nestjs/typeorm typeorm sqlite3   <span class="cm"># SQLite</span></
     }),
   ],
 })</pre>
+  </div>
+
+  <div class="card">
+    <h3>🐘 เริ่ม PostgreSQL ด้วย Docker Compose</h3>
+    <p>สร้างไฟล์ <code class="ic">docker-compose.yml</code> ไว้ที่ root ของโปรเจค แล้วสั่ง <code class="ic">docker compose up -d</code> จะได้ PostgreSQL ที่ port 5432 พร้อม database สำหรับ NestJS</p>
+    <pre><span class="cm"># docker-compose.yml</span>
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: nest-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: nest_learning
+    ports:
+      - <span class="str">'5432:5432'</span>
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+
+<span class="cm"># เริ่ม / ดู log / เข้า psql ภายใน container</span>
+docker compose up -d
+docker compose logs -f postgres
+docker compose exec postgres psql -U postgres -d nest_learning</pre>
+    <div class="callout tip"><span class="ci">💡</span><div>ใช้ volume เพื่อเก็บข้อมูลแม้ container ถูกหยุดแล้ว และอย่า commit รหัสผ่านจริงลง Git — ให้เก็บไว้ใน <code>.env</code> ซึ่งอยู่ใน <code>.gitignore</code></div></div>
+  </div>
+
+  <div class="card">
+    <h3>🔌 Environment และการเชื่อมต่อ PostgreSQL</h3>
+    <pre><span class="cm"># .env</span>
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=postgres
+DB_PASS=postgres
+DB_NAME=nest_learning
+
+<span class="cm"># ทดสอบว่า PostgreSQL ตอบสนอง</span>
+docker compose exec postgres pg_isready -U postgres -d nest_learning
+<span class="out">localhost:5432 - accepting connections</span>
+
+<span class="cm">// app.module.ts — ค่าพอร์ตจาก .env เป็น string จึงแปลงเป็น Number</span>
+TypeOrmModule.<span class="fn">forRootAsync</span>({
+  inject: [ConfigService],
+  useFactory: (config: <span class="iface">ConfigService</span>) =&gt; ({
+    type: <span class="str">'postgres'</span>,
+    host: config.<span class="fn">getOrThrow</span>(<span class="str">'DB_HOST'</span>),
+    port: Number(config.<span class="fn">getOrThrow</span>(<span class="str">'DB_PORT'</span>)),
+    username: config.<span class="fn">getOrThrow</span>(<span class="str">'DB_USER'</span>),
+    password: config.<span class="fn">getOrThrow</span>(<span class="str">'DB_PASS'</span>),
+    database: config.<span class="fn">getOrThrow</span>(<span class="str">'DB_NAME'</span>),
+    autoLoadEntities: <span class="bool">true</span>,
+    synchronize: <span class="bool">false</span>, <span class="cm">// ใช้ migration ควบคุม schema</span>
+  }),
+})</pre>
+    <div class="callout warn"><span class="ci">⚠️</span><div><code>synchronize: true</code> เหมาะแค่ทดลองในเครื่องเท่านั้น เพราะอาจแก้ schema จนข้อมูล production สูญหายได้ ให้ใช้ migration เมื่อทำงานเป็นทีมหรือ deploy</div></div>
   </div>
 
   <div class="card">
@@ -1033,30 +1092,140 @@ npm install @nestjs/typeorm typeorm sqlite3   <span class="cm"># SQLite</span></
   </div>
 
   <div class="card">
-    <h3>🔗 Relations — TypeORM</h3>
-    <pre><span class="cm">// One-to-Many (User มีหลาย Post)</span>
-<span class="cm">// user.entity.ts</span>
-<span class="dec">@OneToMany</span>(() =&gt; Post, post =&gt; post.user)
+    <h3>🔗 Relations — User, Post และ Comment</h3>
+    <p>ตัวอย่างนี้แปลงเป็น Foreign Key ใน PostgreSQL: <code class="ic">posts.author_id → users.id</code> และ <code class="ic">comments.post_id → posts.id</code> โดย <code class="ic">onDelete: 'CASCADE'</code> ให้ลบข้อมูลลูกเมื่อข้อมูลแม่ถูกลบ</p>
+    <div class="flow" style="justify-content:center">
+      <span class="fb fb-b">users<br><small>1 user</small></span><span class="fa">1 : N</span>
+      <span class="fb fb-n">posts<br><small>many posts</small></span><span class="fa">1 : N</span>
+      <span class="fb fb-g">comments<br><small>many comments</small></span>
+    </div>
+    <pre><span class="cm">// src/posts/entities/post.entity.ts</span>
+<span class="kw">import</span> { Entity, PrimaryGeneratedColumn, Column, ManyToOne,
+  OneToMany, JoinColumn, CreateDateColumn } <span class="kw">from</span> <span class="str">'typeorm'</span>
+<span class="kw">import</span> { User } <span class="kw">from</span> <span class="str">'../../users/entities/user.entity'</span>
+<span class="kw">import</span> { Comment } <span class="kw">from</span> <span class="str">'../../comments/entities/comment.entity'</span>
+
+<span class="dec">@Entity</span>(<span class="str">'posts'</span>)
+<span class="kw">export class</span> <span class="cls">Post</span> {
+  <span class="dec">@PrimaryGeneratedColumn</span>() id: <span class="iface">number</span>
+  <span class="dec">@Column</span>({ length: <span class="num">200</span> }) title: <span class="iface">string</span>
+  <span class="dec">@Column</span>({ type: <span class="str">'text'</span> }) content: <span class="iface">string</span>
+  <span class="dec">@CreateDateColumn</span>() createdAt: <span class="iface">Date</span>
+
+  <span class="dec">@ManyToOne</span>(() =&gt; User, user =&gt; user.posts, { onDelete: <span class="str">'CASCADE'</span> })
+  <span class="dec">@JoinColumn</span>({ name: <span class="str">'author_id'</span> })
+  author: <span class="iface">User</span>
+
+  <span class="dec">@OneToMany</span>(() =&gt; Comment, comment =&gt; comment.post)
+  comments: <span class="iface">Comment</span>[]
+}
+
+<span class="cm">// เพิ่มใน user.entity.ts</span>
+<span class="dec">@OneToMany</span>(() =&gt; Post, post =&gt; post.author)
 posts: <span class="iface">Post</span>[]
 
-<span class="cm">// Many-to-One (Post มี User เดียว)</span>
-<span class="cm">// post.entity.ts</span>
-<span class="dec">@ManyToOne</span>(() =&gt; User, user =&gt; user.posts)
-<span class="dec">@JoinColumn</span>({ name: <span class="str">'user_id'</span> })
-user: <span class="iface">User</span>
+<span class="cm">// comment.entity.ts: Comment อยู่ใน Post เดียว</span>
+<span class="dec">@ManyToOne</span>(() =&gt; Post, post =&gt; post.comments, { onDelete: <span class="str">'CASCADE'</span> })
+<span class="dec">@JoinColumn</span>({ name: <span class="str">'post_id'</span> })
+post: <span class="iface">Post</span></pre>
+  </div>
 
-<span class="cm">// Many-to-Many (Article มีหลาย Tag)</span>
-<span class="cm">// article.entity.ts</span>
-<span class="dec">@ManyToMany</span>(() =&gt; Tag)
-<span class="dec">@JoinTable</span>()
-tags: <span class="iface">Tag</span>[]
+  <div class="grid-2">
+    <div class="card">
+      <h3>🧩 Inject Repository ใน Module และ Service</h3>
+      <pre style="font-size:.81rem"><span class="cm">// posts.module.ts</span>
+<span class="dec">@Module</span>({
+  imports: [TypeOrmModule.<span class="fn">forFeature</span>([Post, User])],
+  providers: [PostsService],
+  controllers: [PostsController],
+})
+<span class="kw">export class</span> <span class="cls">PostsModule</span> {}
 
-<span class="cm">// Query ด้วย relations</span>
-<span class="kw">const</span> users = <span class="kw">await</span> <span class="kw">this</span>.usersRepo.<span class="fn">find</span>({
-  relations: { posts: <span class="bool">true</span> },
-  where: { isActive: <span class="bool">true</span> },
+<span class="cm">// posts.service.ts</span>
+<span class="kw">constructor</span>(
+  <span class="dec">@InjectRepository</span>(Post)
+  <span class="kw">private readonly</span> postsRepo: <span class="iface">Repository</span>&lt;Post&gt;,
+  <span class="dec">@InjectRepository</span>(User)
+  <span class="kw">private readonly</span> usersRepo: <span class="iface">Repository</span>&lt;User&gt;,
+) {}
+
+<span class="kw">async</span> <span class="fn">create</span>(dto: <span class="iface">CreatePostDto</span>, userId: <span class="iface">number</span>) {
+  <span class="kw">const</span> author = <span class="kw">await</span> <span class="kw">this</span>.usersRepo.<span class="fn">findOneByOrFail</span>({ id: userId })
+  <span class="kw">const</span> post = <span class="kw">this</span>.postsRepo.<span class="fn">create</span>({ ...dto, author })
+  <span class="kw">return</span> <span class="kw">this</span>.postsRepo.<span class="fn">save</span>(post)
+}</pre>
+    </div>
+    <div class="card">
+      <h3>📚 โหลด Relation แบบ Repository</h3>
+      <pre style="font-size:.81rem"><span class="cm">// GET /posts — TypeORM สร้าง JOIN ให้</span>
+<span class="kw">return</span> <span class="kw">this</span>.postsRepo.<span class="fn">find</span>({
+  relations: { author: <span class="bool">true</span>, comments: <span class="bool">true</span> },
+  select: {
+    id: <span class="bool">true</span>, title: <span class="bool">true</span>, createdAt: <span class="bool">true</span>,
+    author: { id: <span class="bool">true</span>, name: <span class="bool">true</span> },
+  },
   order: { createdAt: <span class="str">'DESC'</span> },
-})</pre>
+})
+
+<span class="cm">// GET /users/:id พร้อม posts</span>
+<span class="kw">return</span> <span class="kw">this</span>.usersRepo.<span class="fn">findOne</span>({
+  where: { id },
+  relations: { posts: <span class="bool">true</span> },
+})
+
+<span class="cm">// อย่าใช้ eager: true กับ relation ใหญ่ ๆ</span>
+<span class="cm">// เพราะทุก query จะโหลด relation โดยอัตโนมัติ</span></pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔎 JOIN แบบกำหนดเองด้วย QueryBuilder</h3>
+    <p>ใช้เมื่อจำเป็นต้อง filter, เลือก column และ aggregate อย่างละเอียด โดยใช้ parameter (<code class="ic">:search</code>) เพื่อไม่ต่อ SQL จาก input ของผู้ใช้โดยตรง</p>
+    <pre><span class="cm">// ค้นหา post พร้อมชื่อ author, จำนวน comments และ pagination</span>
+<span class="kw">async</span> <span class="fn">search</span>(search: <span class="iface">string</span>, page = <span class="num">1</span>) {
+  <span class="kw">return</span> <span class="kw">this</span>.postsRepo
+    .<span class="fn">createQueryBuilder</span>(<span class="str">'post'</span>)
+    .<span class="fn">innerJoin</span>(<span class="str">'post.author'</span>, <span class="str">'author'</span>)
+    .<span class="fn">leftJoin</span>(<span class="str">'post.comments'</span>, <span class="str">'comment'</span>)
+    .<span class="fn">select</span>([<span class="str">'post.id'</span>, <span class="str">'post.title'</span>, <span class="str">'author.name'</span>])
+    .<span class="fn">addSelect</span>(<span class="str">'COUNT(comment.id)'</span>, <span class="str">'commentCount'</span>)
+    .<span class="fn">where</span>(<span class="str">'post.title ILIKE :search'</span>, { search: <span class="str">`%${search}%`</span> })
+    .<span class="fn">groupBy</span>(<span class="str">'post.id'</span>)
+    .<span class="fn">addGroupBy</span>(<span class="str">'author.id'</span>)
+    .<span class="fn">orderBy</span>(<span class="str">'post.createdAt'</span>, <span class="str">'DESC'</span>)
+    .<span class="fn">take</span>(<span class="num">10</span>).<span class="fn">skip</span>((page - <span class="num">1</span>) * <span class="num">10</span>)
+    .<span class="fn">getRawAndEntities</span>()
+}
+
+<span class="cm">// SQL ที่แนวคิดเดียวกัน (รันใน psql เพื่อตรวจข้อมูล)</span>
+SELECT p.id, p.title, u.name, COUNT(c.id) AS comment_count
+FROM posts p JOIN users u ON u.id = p.author_id
+LEFT JOIN comments c ON c.post_id = p.id
+GROUP BY p.id, u.id ORDER BY p.created_at DESC;</pre>
+  </div>
+
+  <div class="card">
+    <h3>🧱 Migrations — เปลี่ยน Schema อย่างปลอดภัย</h3>
+    <pre><span class="cm"># src/database/data-source.ts สำหรับ TypeORM CLI</span>
+<span class="kw">import</span> <span class="str">'dotenv/config'</span>
+<span class="kw">import</span> { DataSource } <span class="kw">from</span> <span class="str">'typeorm'</span>
+
+<span class="kw">export default new</span> <span class="cls">DataSource</span>({
+  type: <span class="str">'postgres'</span>, host: process.env.DB_HOST, port: Number(process.env.DB_PORT),
+  username: process.env.DB_USER, password: process.env.DB_PASS,
+  database: process.env.DB_NAME,
+  entities: [<span class="str">'src/**/*.entity.ts'</span>],
+  migrations: [<span class="str">'src/database/migrations/*.ts'</span>],
+})
+
+<span class="cm"># package.json scripts</span>
+<span class="str">"migration:generate"</span>: <span class="str">"typeorm-ts-node-commonjs migration:generate src/database/migrations/Init -d src/database/data-source.ts"</span>,
+<span class="str">"migration:run"</span>: <span class="str">"typeorm-ts-node-commonjs migration:run -d src/database/data-source.ts"</span>,
+<span class="str">"migration:revert"</span>: <span class="str">"typeorm-ts-node-commonjs migration:revert -d src/database/data-source.ts"</span>
+
+npm run migration:generate
+npm run migration:run
+<span class="cm"># commit ไฟล์ migration ทุกครั้ง เพื่อให้ทุก environment มี schema เดียวกัน</span></pre>
   </div>
 </section>
 

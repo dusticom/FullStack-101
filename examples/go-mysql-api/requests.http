@@ -1,0 +1,25 @@
+@baseUrl = http://localhost:8080
+
+### Health
+GET {{baseUrl}}/health
+
+### Create (change SKU before repeating)
+POST {{baseUrl}}/products
+Content-Type: application/json
+
+{"sku":"GO-BOOK-01","name":"หนังสือ Go","price_satang":25000}
+
+### List
+GET {{baseUrl}}/products?limit=20&offset=0
+
+### Get (replace 1 with the ID returned by Create)
+GET {{baseUrl}}/products/1
+
+### Replace all writable fields
+PUT {{baseUrl}}/products/1
+Content-Type: application/json
+
+{"sku":"GO-BOOK-01","name":"หนังสือ Go ฉบับปรับปรุง","price_satang":29000}
+
+### Delete
+DELETE {{baseUrl}}/products/1

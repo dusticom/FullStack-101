@@ -1,0 +1,4 @@
+.env
+go-mysql-api
+go-mysql-api.exe
+coverage.out

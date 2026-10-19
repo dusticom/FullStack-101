@@ -38,7 +38,9 @@ func TestMySQLCRUD(t *testing.T) {
 	request("GET", "/health", "", 200)
 	body := fmt.Sprintf(`{"sku":%q,"name":"หนังสือ Go","price_satang":25000}`, sku)
 	w := request("POST", "/products", body, 201)
-	var created struct{ Data Product `json:"data"` }
+	var created struct {
+		Data Product `json:"data"`
+	}
 	if err := json.Unmarshal(w.Body.Bytes(), &created); err != nil {
 		t.Fatal(err)
 	}

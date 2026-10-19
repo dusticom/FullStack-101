@@ -7,11 +7,11 @@ import (
 )
 
 type Product struct {
-	ID         int64     `json:"id"`
-	SKU        string    `json:"sku"`
-	Name       string    `json:"name"`
-	PriceSatang int64    `json:"price_satang"`
-	CreatedAt  time.Time `json:"created_at"`
+	ID          int64     `json:"id"`
+	SKU         string    `json:"sku"`
+	Name        string    `json:"name"`
+	PriceSatang int64     `json:"price_satang"`
+	CreatedAt   time.Time `json:"created_at"`
 }
 
 type ProductInput struct {

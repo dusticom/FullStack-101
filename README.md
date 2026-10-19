@@ -7,7 +7,7 @@
 | หมวด | บทเรียน |
 | --- | --- |
 | Frontend | CSS Styling, JavaScript ES6+, React, Next.js + Redux + TypeScript |
-| Backend | Express.js + TypeScript, NestJS, Laravel, Ruby on Rails |
+| Backend | Go (Golang) + MySQL, Express.js + TypeScript, NestJS, Laravel, Ruby on Rails |
 | Data | SQL Fundamentals, MySQL Database |
 | เครื่องมือและระบบ | Git Version Control, Linux Command Line, Docker |
 
@@ -15,7 +15,7 @@
 
 ## เริ่มใช้งาน
 
-โปรเจกต์นี้ไม่มีขั้นตอนติดตั้งแพ็กเกจหรือ build เนื่องจากเป็น Static HTML
+หน้าเว็บบทเรียนไม่มีขั้นตอนติดตั้งแพ็กเกจหรือ build เนื่องจากเป็น Static HTML ส่วนโปรเจกต์ API ประกอบบทเรียน Go มีขั้นตอนรันแยกใน [คู่มือตัวอย่าง](examples/go-mysql-api/README.md)
 
 1. Clone โปรเจกต์
 
@@ -43,6 +43,10 @@ python -m http.server 8000
 ├── docker-teaching.html
 ├── express-typescript-teaching.html
 ├── git-teaching.html
+├── golang-teaching.html                     # Go 24 บท ตั้งแต่ syntax ถึง API + MySQL
+├── examples/go-mysql-api/                   # โค้ด CRUD, Compose, schema และ tests
+├── examples/go-mysql-api.zip                # โค้ดตัวอย่างสำหรับดาวน์โหลด
+├── tools/build_go_lesson.py                 # สร้างหน้า Go และ zip ใหม่ (Python stdlib)
 ├── javascript-es6-teaching.html
 ├── laravel-teaching.html
 ├── linux-teaching.html
@@ -56,6 +60,8 @@ python -m http.server 8000
 ```
 
 ## การเพิ่มหรือแก้ไขบทเรียน
+
+บทเรียน [Go (Golang) + MySQL](golang-teaching.html) มี 24 บท พร้อมโค้ด CRUD ที่ใช้ `net/http` และ `database/sql`, Docker Compose สำหรับ MySQL 8.4, แบบฝึกหัด และ unit/integration tests อ่านหน้า HTML ได้ทันที หากแก้เนื้อหาบทเรียนหรือโค้ดตัวอย่าง ให้รัน `python tools/build_go_lesson.py` เพื่ออัปเดตหน้า HTML และ zip ที่ดาวน์โหลดให้ตรงกัน ไม่จำเป็นต้องรัน script เพื่อเปิดอ่านบทเรียน
 
 1. สร้างหรือแก้ไขไฟล์ `*-teaching.html` โดยระบุ `<meta charset="UTF-8">` เพื่อรองรับภาษาไทย
 2. เพิ่มการ์ดลิงก์ของบทเรียนใน `index.html`

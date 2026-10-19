@@ -27,7 +27,7 @@ func (f fakeStore) Create(_ context.Context, input ProductInput) (Product, error
 func TestInvalidRequestsNeverReachStore(t *testing.T) {
 	tests := []struct {
 		name, method, path, body, contentType string
-		want int
+		want                                  int
 	}{
 		{"bad id", "GET", "/products/abc", "", "", 400},
 		{"negative id", "GET", "/products/-1", "", "", 400},
@@ -80,7 +80,7 @@ func TestCreateFreeThaiProduct(t *testing.T) {
 
 func TestStoreErrors(t *testing.T) {
 	for _, tt := range []struct {
-		err error
+		err  error
 		want int
 	}{
 		{sql.ErrNoRows, 404},

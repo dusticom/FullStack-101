@@ -124,10 +124,10 @@ footer strong{color:#fff}
   <h1>⚡ Next.js + Redux + TypeScript</h1>
   <p>สื่อการสอนฉบับสมบูรณ์ — ตั้งแต่พื้นฐานถึง Production</p>
   <div class="badge-row">
-    <span class="badge">Next.js 14+</span>
+    <span class="badge">Next.js 16</span>
     <span class="badge">Redux Toolkit</span>
     <span class="badge">TypeScript 5</span>
-    <span class="badge">React 18</span>
+    <span class="badge">React 19</span>
     <span class="badge">App Router</span>
   </div>
 </div>
@@ -442,11 +442,12 @@ footer strong{color:#fff}
 
   <div class="callout info">
     <span class="icon">🏗️</span>
-    <div><strong>Next.js App Router (v13+)</strong> — ใช้โฟลเดอร์ <span class="inline-code">app/</span> แทน <span class="inline-code">pages/</span> รองรับ Server Components, Streaming และ Layouts ที่ซ้อนกันได้</div>
+    <div><strong>Next.js 16 App Router</strong> — ใช้โฟลเดอร์ <span class="inline-code">app/</span> รองรับ Server Components, Streaming และ Layouts ที่ซ้อนกันได้ โดย Pages Router ยังใช้งานได้</div>
   </div>
 
   <div class="card">
     <h3>🚀 สร้างโปรเจกต์</h3>
+    <p>ใช้ Node.js 20.9 ขึ้นไป ตัวอย่างนี้เลือก <span class="inline-code">src/</span> และ App Router; คำสั่ง <span class="inline-code">@latest</span> จะติดตั้งรุ่นล่าสุดที่มี ณ เวลาที่รัน</p>
 <pre><span class="cm"># สร้างโปรเจกต์ Next.js + TypeScript</span>
 npx create-next-app@latest my-app \
   --typescript \
@@ -454,6 +455,9 @@ npx create-next-app@latest my-app \
   --app \
   --src-dir \
   --import-alias <span class="str">"@/*"</span>
+cd my-app
+npm run dev
+<span class="cm"># เปิด http://localhost:3000</span>
 
 <span class="cm"># โครงสร้างไฟล์</span>
 my-app/
@@ -505,7 +509,9 @@ my-app/
   )
 }
 
-<span class="cm">// Client Component — ต้องใส่ "use client"</span>
+</pre>
+      <p>ตัวอย่างต่อไปอยู่คนละไฟล์ โดย directive ต้องอยู่ก่อน import:</p>
+<pre><span class="cm">// src/components/Counter.tsx</span>
 <span class="str">"use client"</span>
 
 <span class="imp">import</span> { useState } <span class="kw">from</span> <span class="str">'react'</span>
@@ -572,27 +578,26 @@ my-app/
     <div class="card">
       <h3>🔀 Dynamic Routes</h3>
 <pre><span class="cm">// app/blog/[slug]/page.tsx</span>
-<span class="kw">interface</span> <span class="type">PageProps</span> {
-  params: { slug: <span class="type">string</span> }
-  searchParams: { [key: <span class="type">string</span>]: <span class="type">string</span> | <span class="type">string</span>[] }
+<span class="kw">interface</span> <span class="type">BlogPageProps</span> {
+  params: <span class="type">Promise</span>&lt;{ slug: <span class="type">string</span> }&gt;
 }
 
-<span class="kw">export default function</span> <span class="fn">BlogPost</span>({ params }: <span class="type">PageProps</span>) {
-  <span class="kw">return</span> &lt;<span class="tag">h1</span>&gt;บทความ: {params.slug}&lt;/<span class="tag">h1</span>&gt;
+<span class="kw">export default async function</span> <span class="fn">BlogPost</span>({ params }: <span class="type">BlogPageProps</span>) {
+  <span class="kw">const</span> { slug } = <span class="kw">await</span> params
+  <span class="kw">return</span> &lt;<span class="tag">h1</span>&gt;บทความ: {slug}&lt;/<span class="tag">h1</span>&gt;
 }
 
-<span class="cm">// generateStaticParams — pre-render</span>
+<span class="cm">// เลือก slug ที่ต้องการ pre-render ตอน build</span>
 <span class="kw">export async function</span> <span class="fn">generateStaticParams</span>() {
-  <span class="kw">const</span> <span class="var">posts</span> = <span class="kw">await</span> <span class="fn">fetchPosts</span>()
-  <span class="kw">return</span> <span class="var">posts</span>.map((<span class="var">p</span>) => ({ slug: <span class="var">p</span>.slug }))
+  <span class="kw">return</span> [{ slug: <span class="str">'hello'</span> }, { slug: <span class="str">'nextjs'</span> }]
 }</pre>
     </div>
     <div class="card">
       <h3>🔗 Link และ Navigation</h3>
-<pre><span class="imp">import</span> <span class="type">Link</span> <span class="kw">from</span> <span class="str">'next/link'</span>
-<span class="imp">import</span> { useRouter, usePathname } <span class="kw">from</span> <span class="str">'next/navigation'</span>
+<pre><span class="str">"use client"</span>
 
-<span class="str">"use client"</span>
+<span class="imp">import</span> <span class="type">Link</span> <span class="kw">from</span> <span class="str">'next/link'</span>
+<span class="imp">import</span> { useRouter, usePathname } <span class="kw">from</span> <span class="str">'next/navigation'</span>
 
 <span class="kw">export default function</span> <span class="fn">Nav</span>() {
   <span class="kw">const</span> <span class="var">router</span> = <span class="fn">useRouter</span>()
@@ -621,7 +626,7 @@ my-app/
       <tr><td><span class="inline-code">error.tsx</span></td><td>Error UI — Client Component เท่านั้น</td></tr>
       <tr><td><span class="inline-code">not-found.tsx</span></td><td>404 Page</td></tr>
       <tr><td><span class="inline-code">route.ts</span></td><td>API Endpoint (แทน pages/api)</td></tr>
-      <tr><td><span class="inline-code">middleware.ts</span></td><td>รันก่อน request ทุกอัน</td></tr>
+      <tr><td><span class="inline-code">proxy.ts</span></td><td>รันก่อน request ที่ตรงเงื่อนไขสำหรับ redirect หรือ rewrite (ชื่อเดิม middleware.ts ถูกเลิกแนะนำ)</td></tr>
     </table>
   </div>
 
@@ -644,11 +649,13 @@ my-app/
 <span class="cm">// app/api/users/[id]/route.ts — Dynamic API</span>
 <span class="kw">export async function</span> <span class="fn">DELETE</span>(
   <span class="var">req</span>: <span class="type">NextRequest</span>,
-  { params }: { params: { id: <span class="type">string</span> } }
+  { params }: { params: <span class="type">Promise</span>&lt;{ id: <span class="type">string</span> }&gt; }
 ) {
-  <span class="kw">await</span> <span class="fn">db</span>.user.delete({ where: { id: +<span class="var">params</span>.id } })
+  <span class="kw">const</span> { id } = <span class="kw">await</span> params
+  <span class="kw">await</span> <span class="fn">db</span>.user.delete({ where: { id: +id } })
   <span class="kw">return</span> <span class="type">NextResponse</span>.json({ success: <span class="kw">true</span> })
 }</pre>
+    <p>ตัวอย่างนี้สมมติว่ามี <span class="inline-code">db</span> และโมเดลผู้ใช้แล้ว ในแอปจริงต้องตรวจสอบ input และสิทธิ์ก่อนแก้ไขข้อมูล</p>
   </div>
 </section>
 
@@ -685,22 +692,12 @@ my-app/
   id: <span class="type">number</span>; title: <span class="type">string</span>; price: <span class="type">number</span>
 }
 
-<span class="cm">// SSG: build time (default)</span>
+<span class="cm">// ระบุ cache ชัดเจน; route อาจถูก pre-render ตอน build</span>
 <span class="kw">async function</span> <span class="fn">getProducts</span>(): <span class="type">Promise</span>&lt;<span class="type">Product</span>[]&gt; {
-  <span class="kw">const</span> <span class="var">res</span> = <span class="kw">await</span> fetch(<span class="str">'https://api.example.com/products'</span>)
+  <span class="kw">const</span> <span class="var">res</span> = <span class="kw">await</span> fetch(<span class="str">'https://api.example.com/products'</span>, { cache: <span class="str">'force-cache'</span> })
   <span class="kw">if</span> (!<span class="var">res</span>.ok) <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="str">'Failed'</span>)
   <span class="kw">return</span> <span class="var">res</span>.json()
 }
-
-<span class="cm">// ISR: revalidate ทุก 60 วินาที</span>
-<span class="kw">const</span> <span class="var">res</span> = <span class="kw">await</span> fetch(<span class="str">'...'</span>, {
-  next: { revalidate: <span class="num">60</span> }
-})
-
-<span class="cm">// SSR: ทุก request</span>
-<span class="kw">const</span> <span class="var">res</span> = <span class="kw">await</span> fetch(<span class="str">'...'</span>, {
-  cache: <span class="str">'no-store'</span>
-})
 
 <span class="kw">export default async function</span> <span class="fn">ProductsPage</span>() {
   <span class="kw">const</span> <span class="var">products</span> = <span class="kw">await</span> <span class="fn">getProducts</span>()
@@ -710,6 +707,11 @@ my-app/
     &lt;/<span class="tag">ul</span>&gt;
   )
 }</pre>
+      <p><span class="inline-code">api.example.com</span> เป็น URL ตัวอย่าง ให้แทนด้วย API จริง ค่าเริ่มต้นของ fetch ไม่ได้ cache ใน Data Cache แต่ route ที่เป็น static อาจถูก pre-render ตอน build ได้</p>
+<pre><span class="cm">// ทางเลือกแทน fetch ใน getProducts (เลือกหนึ่งแบบ)</span>
+fetch(<span class="str">'https://api.example.com/products'</span>, { next: { revalidate: <span class="num">60</span> } }) <span class="cm">// cache และตรวจสอบข้อมูลใหม่หลัง 60 วินาที</span>
+fetch(<span class="str">'https://api.example.com/products'</span>, { cache: <span class="str">'no-store'</span> }) <span class="cm">// ดึงข้อมูลใหม่เมื่อมี request</span></pre>
+      <p>ตัวอย่างนี้ใช้การตั้งค่าแบบปกติของ App Router หากเปิด <span class="inline-code">cacheComponents</span> ให้ศึกษาวิธีใช้ <span class="inline-code">use cache</span> และ Suspense เพิ่มเติม</p>
     </div>
     <div class="card">
       <h3>💻 Client-side Fetch</h3>
@@ -801,7 +803,7 @@ my-app/
   <div class="card">
     <h3>📦 ติดตั้ง</h3>
 <pre>npm install @reduxjs/toolkit react-redux
-npm install --save-dev @types/react-redux</pre>
+<span class="cm"># react-redux มี TypeScript types ในตัว</span></pre>
   </div>
 
   <div class="card">
@@ -859,7 +861,7 @@ npm install --save-dev @types/react-redux</pre>
 <span class="imp">import</span> <span class="var">cartReducer</span> <span class="kw">from</span> <span class="str">'./features/cartSlice'</span>
 <span class="imp">import</span> <span class="var">userReducer</span> <span class="kw">from</span> <span class="str">'./features/userSlice'</span>
 
-<span class="kw">export const</span> <span class="var">store</span> = <span class="fn">configureStore</span>({
+<span class="kw">export const</span> <span class="fn">makeStore</span> = () => <span class="fn">configureStore</span>({
   reducer: {
     counter: <span class="var">counterReducer</span>,
     cart: <span class="var">cartReducer</span>,
@@ -868,8 +870,9 @@ npm install --save-dev @types/react-redux</pre>
 })
 
 <span class="cm">// TypeScript types สำหรับ Store</span>
-<span class="kw">export type</span> <span class="type">RootState</span> = ReturnType&lt;<span class="kw">typeof</span> <span class="var">store</span>.getState&gt;
-<span class="kw">export type</span> <span class="type">AppDispatch</span> = <span class="kw">typeof</span> <span class="var">store</span>.dispatch
+<span class="kw">export type</span> <span class="type">AppStore</span> = ReturnType&lt;<span class="kw">typeof</span> <span class="fn">makeStore</span>&gt;
+<span class="kw">export type</span> <span class="type">RootState</span> = ReturnType&lt;<span class="type">AppStore</span>[<span class="str">'getState'</span>]&gt;
+<span class="kw">export type</span> <span class="type">AppDispatch</span> = <span class="type">AppStore</span>[<span class="str">'dispatch'</span>]
 
 <span class="cm">// Typed hooks — ใช้แทน useSelector/useDispatch ทั่วไป</span>
 <span class="kw">export const</span> useAppDispatch = () => useDispatch&lt;<span class="type">AppDispatch</span>&gt;()
@@ -975,7 +978,7 @@ npm install --save-dev @types/react-redux</pre>
 
   <div class="callout warn">
     <span class="icon">⚠️</span>
-    <div>Next.js App Router ใช้ Server Components เป็น default — <strong>Redux Provider ต้องเป็น Client Component</strong> และ wrap ที่ layout</div>
+    <div>Next.js App Router ใช้ Server Components เป็น default — <strong>Redux Provider ต้องเป็น Client Component</strong> และ wrap ที่ layout โดยสร้าง store ผ่าน factory แยกแต่ละ request เพื่อไม่ให้ state รั่วระหว่างผู้ใช้</div>
   </div>
 
   <div class="card">
@@ -985,13 +988,17 @@ npm install --save-dev @types/react-redux</pre>
 
 <span class="imp">import</span> { <span class="type">ReactNode</span>, useRef } <span class="kw">from</span> <span class="str">'react'</span>
 <span class="imp">import</span> { <span class="type">Provider</span> } <span class="kw">from</span> <span class="str">'react-redux'</span>
-<span class="imp">import</span> { store } <span class="kw">from</span> <span class="str">'./index'</span>
+<span class="imp">import</span> { makeStore } <span class="kw">from</span> <span class="str">'./index'</span>
+<span class="imp">import</span> <span class="kw">type</span> { AppStore } <span class="kw">from</span> <span class="str">'./index'</span>
 
 <span class="kw">export default function</span> <span class="fn">StoreProvider</span>({ children }: { children: <span class="type">ReactNode</span> }) {
-  <span class="kw">return</span> &lt;<span class="type">Provider</span> store={store}&gt;{children}&lt;/<span class="type">Provider</span>&gt;
+  <span class="kw">const</span> storeRef = useRef&lt;AppStore | <span class="kw">null</span>&gt;(<span class="kw">null</span>)
+  <span class="kw">if</span> (!storeRef.current) storeRef.current = makeStore()
+  <span class="kw">return</span> &lt;<span class="type">Provider</span> store={storeRef.current}&gt;{children}&lt;/<span class="type">Provider</span>&gt;
 }
 
 <span class="cm">// src/app/layout.tsx</span>
+<span class="imp">import</span> <span class="kw">type</span> { ReactNode } <span class="kw">from</span> <span class="str">'react'</span>
 <span class="imp">import</span> <span class="var">StoreProvider</span> <span class="kw">from</span> <span class="str">'@/store/StoreProvider'</span>
 
 <span class="kw">export default function</span> <span class="fn">RootLayout</span>({ children }: { children: <span class="type">ReactNode</span> }) {
@@ -1243,7 +1250,8 @@ npm install --save-dev @types/react-redux</pre>
 
 <footer>
   <strong>สื่อการสอน Next.js + Redux Toolkit + TypeScript</strong><br>
-  ครอบคลุม TypeScript Types · React Components · Next.js App Router · Redux Toolkit · RTK Query · Best Practices
+  ครอบคลุม TypeScript Types · React Components · Next.js 16 App Router · Redux Toolkit · RTK Query · Best Practices<br>
+  อ้างอิง: <a href="https://nextjs.org/docs/app">Next.js App Router</a> · <a href="https://nextjs.org/docs/app/guides/upgrading/version-16">อัปเกรดเป็น Next.js 16</a> · <a href="https://redux.js.org/usage/nextjs">Redux กับ Next.js</a>
 </footer>
 
 <script>

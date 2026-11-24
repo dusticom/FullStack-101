@@ -2,6 +2,7 @@
 from pathlib import Path
 from html import escape
 import textwrap
+import re
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -9,9 +10,49 @@ EXAMPLE = ROOT / 'examples' / 'go-mysql-api'
 chapters = []
 
 
+# Highlight at build time so the lesson remains usable without a network or JS.
+TOKEN = re.compile(r'''(?P<comment>//[^\n]*|/\*[\s\S]*?\*/|\#[^\n]*|--[^\n]*)|(?P<string>"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|`[^`]*`)|(?P<number>\b\d+(?:\.\d+)?\b)|(?P<word>\b[A-Za-z_][A-Za-z_0-9]*\b)''')
+GO_WORDS = set('break case chan const continue default defer else fallthrough for func go goto if import interface map package range return select struct switch type var'.split())
+GO_TYPES = set('bool byte complex64 complex128 error float32 float64 int int8 int16 int32 int64 rune string uint uint8 uint16 uint32 uint64 uintptr any comparable'.split())
+SQL_WORDS = set('SELECT FROM WHERE INSERT INTO VALUES UPDATE SET DELETE CREATE TABLE PRIMARY KEY NOT NULL DEFAULT UNIQUE CHECK INDEX AUTO_INCREMENT ENGINE COLLATE AS AND OR LIMIT ORDER BY JOIN REFERENCES'.split())
+SHELL_WORDS = set('go docker curl curl.exe mysql cd mkdir cp export echo Copy-Item ConvertTo-Json Invoke-RestMethod'.split())
+
+
+def highlight(source, label):
+    lower = label.lower()
+    language = ('sql' if 'sql •' in lower or lower.startswith('schema.sql') else
+                'json' if 'json request' in lower or 'response •' in lower else
+                'shell' if any(x in lower for x in ('terminal', 'powershell', 'bash', 'macos / linux', 'mysql client')) else
+                'plain' if any(x in lower for x in ('โครงสร้าง', 'รูปแบบ dsn')) else 'go')
+    if language == 'plain':
+        return escape(source)
+    parts = []
+    last = 0
+    for match in TOKEN.finditer(source):
+        parts.append(escape(source[last:match.start()]))
+        value = match.group()
+        kind = match.lastgroup
+        if kind == 'comment' and ((value.startswith('#') and language not in ('shell',)) or (value.startswith('--') and language != 'sql') or (value.startswith('/') and language not in ('go',))):
+            kind = None
+        elif kind == 'word':
+            if value in ('true', 'false', 'nil', 'null', 'iota'):
+                kind = 'keyword'
+            elif (language == 'go' and value in GO_WORDS) or (language == 'sql' and value.upper() in SQL_WORDS) or (language == 'shell' and value in SHELL_WORDS):
+                kind = 'keyword'
+            elif language == 'go' and value in GO_TYPES:
+                kind = 'type'
+            else:
+                kind = None
+        text = escape(value)
+        parts.append(f'<span class="syntax-{kind}">{text}</span>' if kind else text)
+        last = match.end()
+    parts.append(escape(source[last:]))
+    return ''.join(parts)
+
+
 def code(source, label='Go'):
     source = textwrap.dedent(source).strip('\n')
-    return f'<div class="code"><div class="code-top"><span>{escape(label)}</span><button class="copy" type="button">คัดลอก</button></div><pre><code>{escape(source)}</code></pre></div>'
+    return f'<div class="code"><div class="code-top"><span>{escape(label)}</span><button class="copy" type="button">คัดลอก</button></div><pre><code>{highlight(source, label)}</code></pre></div>'
 
 
 def card(title, body):
@@ -704,6 +745,11 @@ output = f'''<!DOCTYPE html>
   .code{{background:#0d1117;border-color:#30363d}}
   .code-top{{background:#161b22;color:#aab4bf}}
   .copy{{background:#21262d;border-color:#484f58;color:#e6edf3}}
+  .syntax-keyword{{color:#ff7b72}}
+  .syntax-type{{color:#ffa657}}
+  .syntax-string{{color:#a5d6ff}}
+  .syntax-number{{color:#79c0ff}}
+  .syntax-comment{{color:#8b949e;font-style:italic}}
   p code,li code,td code{{color:#79c0ff;background:#21262d}}
   .table-wrap,details{{border-color:#30363d}}
   th{{background:#21262d;color:#e6edf3}}

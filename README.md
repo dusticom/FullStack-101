@@ -8,7 +8,7 @@
 | --- | --- |
 | Frontend | CSS Styling, JavaScript ES6+, React, Next.js + Redux + TypeScript |
 | Backend | Go (Golang) + MySQL, Express.js + TypeScript, NestJS, Laravel, Ruby on Rails |
-| Data | SQL Fundamentals, MySQL Database |
+| Data | SQL Fundamentals, MySQL Database, PostgreSQL Database |
 | เครื่องมือและระบบ | Git Version Control, Linux Command Line, Docker |
 
 หน้าเริ่มต้นคือ [`index.html`](index.html) ซึ่งเชื่อมไปยังบทเรียนทั้งหมด
@@ -51,6 +51,7 @@ python -m http.server 8000
 ├── laravel-teaching.html
 ├── linux-teaching.html
 ├── mysql-teaching.html
+├── postgresql-teaching.html
 ├── nestjs-teaching.html
 ├── nextjs-redux-typescript-teaching.html
 ├── react-teaching.html

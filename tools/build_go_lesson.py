@@ -645,7 +645,7 @@ document.getElementById('print').addEventListener('click', () => {
   window.print();
 });
 const track = document.querySelector('.reading-track');
-const links = [...document.querySelectorAll('.toc nav a')];
+const links = [...document.querySelectorAll('.toc a')];
 const sections = [...document.querySelectorAll('main section')];
 function updateReading() {
   const max = document.documentElement.scrollHeight - window.innerHeight;
@@ -674,14 +674,58 @@ output = f'''<!DOCTYPE html>
 <html lang="th"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="สื่อการสอน Go ภาษาไทยอย่างละเอียด ตั้งแต่ syntax, struct, concurrency, testing จนถึง REST API เชื่อม MySQL พร้อมโปรเจกต์ CRUD และ Docker Compose">
 <title>Go (Golang) ตั้งแต่ Syntax ถึง REST API + MySQL | FullStack-101</title>
-<style>{css}</style></head><body>
+<style>{css}
+/* Match the dark lesson pages while keeping Go's cyan accent. */
+@media screen {{
+  body{{background:#0d1117;color:#c9d1d9}}
+  a{{color:#79dceb}}
+  .skip{{background:#161b22;color:#e6edf3}}
+  .hero{{text-align:center;background:linear-gradient(135deg,#0d1117,#061c2e 60%,#00232e);border-bottom:2px solid #61dafb22;padding:68px 24px 52px}}
+  .hero p{{margin:0 auto;color:#aab4bf}}
+  .hero h1{{color:#fff;letter-spacing:-1px}}
+  .hero h1 span{{color:#61dafb}}
+  .badges,.hero-links{{justify-content:center}}
+  .badges span{{background:#61dafb19;border-color:#61dafb4d;color:#79dceb;font-weight:700}}
+  .toolbar{{display:block;background:#161b22;border-color:#30363d;padding:0;box-shadow:none}}
+  .toolbar-inner{{display:flex;align-items:center;overflow-x:auto;white-space:nowrap;padding:0 10px}}
+  .toolbar a,.toc a{{display:inline-block;flex:none;padding:11px 12px;color:#aab4bf;border:0;border-bottom:2px solid transparent;text-decoration:none;font-size:.79rem;font-weight:600}}
+  .toolbar a:hover,.toolbar a.active{{color:#61dafb;background:transparent;border-color:#61dafb}}
+  .toolbar button{{flex:none;margin:0 10px;background:#21262d;border-color:#484f58;color:#e6edf3}}
+  .toc{{display:contents}}
+  .toc nav{{display:flex}}
+  .layout{{display:block;max-width:1150px;padding:40px 20px 64px}}
+  .chapter-heading{{align-items:center;background:linear-gradient(135deg,#001e2e,#003a52);border:1px solid #61dafb33;border-radius:12px;padding:22px 28px}}
+  .chapter-num{{font:900 3rem/1 monospace;color:#fff;opacity:.25;min-width:60px}}
+  .chapter-heading h2{{color:#fff;font-size:1.38rem}}
+  .chapter-heading p{{color:#aab4bf}}
+  .card{{background:#1c2128;border-color:#30363d;box-shadow:0 4px 20px #0005}}
+  .card h3{{color:#e6edf3}}
+  .note{{background:#61dafb14;color:#a5f3fc;border-color:#61dafb}}
+  .code{{background:#0d1117;border-color:#30363d}}
+  .code-top{{background:#161b22;color:#aab4bf}}
+  .copy{{background:#21262d;border-color:#484f58;color:#e6edf3}}
+  p code,li code,td code{{color:#79c0ff;background:#21262d}}
+  .table-wrap,details{{border-color:#30363d}}
+  th{{background:#21262d;color:#e6edf3}}
+  td,th{{border-color:#30363d}}
+  tbody tr:nth-child(even){{background:#161b22}}
+  summary{{color:#79dceb}}
+  .flow span{{background:#161b22;border-color:#30363d}}
+  .flow b{{color:#79dceb}}
+  .download{{background:#087e98;color:white}}
+  .sources{{border-color:#30363d}}
+  .copy-status{{color:#aab4bf}}
+  footer{{background:#161b22;border-top:1px solid #30363d}}
+  @media(max-width:540px){{.hero{{padding:40px 18px}}.layout{{padding:24px 14px}}.chapter-heading{{padding:18px 16px}}.chapter-num{{font-size:2.3rem;min-width:45px}}}}
+}}
+</style></head><body>
 <a class="skip" href="#content">ข้ามไปเนื้อหาบทเรียน</a>
 <header class="hero"><div class="eyebrow">FULLSTACK-101 / BACKEND LEARNING PATH</div><h1>Go จากพื้นฐาน<br>สู่ <span>API + MySQL</span></h1>
 <p>สื่อการสอนภาษาไทยแบบลงมือทำ ตั้งแต่ syntax จนถึง REST API ที่เก็บข้อมูลจริง พร้อมคำอธิบาย โค้ดครบชุด แบบฝึกหัด และการทดสอบ</p>
 <div class="badges"><span>24 บทเรียน</span><span>Go 1.26+</span><span>net/http</span><span>database/sql</span><span>MySQL 8.4</span><span>CRUD Workshop</span></div>
 <div class="hero-links"><a href="#roadmap">เริ่มเส้นทางการเรียน →</a><a href="examples/go-mysql-api.zip" download>ดาวน์โหลดโค้ดตัวอย่าง ↓</a></div></header>
-<div class="toolbar"><a href="index.html">← ศูนย์รวมบทเรียน</a><a href="#run">ไป Workshop</a><button id="print" type="button">พิมพ์ / บันทึก PDF</button><div class="reading-track" aria-hidden="true"></div></div>
-<div class="layout"><aside class="toc"><h2>สารบัญบทเรียน</h2><nav aria-label="สารบัญ Go">{toc}</nav><small>อ่านตามลำดับ หรือเลือกหัวข้อเพื่อทบทวน<br><a href="#sources">เอกสารอ้างอิง ↗</a></small></aside>
+<div class="toolbar"><div class="toolbar-inner"><a href="index.html">🏠 หน้าหลัก</a><div class="toc"><nav aria-label="สารบัญ Go">{toc}<a href="#sources">เอกสารอ้างอิง</a></nav></div><button id="print" type="button">พิมพ์ / บันทึก PDF</button></div><div class="reading-track" aria-hidden="true"></div></div>
+<div class="layout">
 <main id="content"><div id="copy-status" class="copy-status" role="status" aria-live="polite"></div>
 {''.join(body for _, _, body in chapters)}
 <section class="sources" id="sources" aria-labelledby="sources-title"><h2 id="sources-title">เอกสารอ้างอิงและอ่านต่อ</h2><p>ตัวอย่างและแบบฝึกหัดเขียนสำหรับคอร์สนี้ ตรวจพฤติกรรมภาษาและ API เทียบเอกสารทางการเมื่อ 19 ตุลาคม 2026 ตัวอย่าง pin driver v1.9.3 เพื่อให้ฝึกตามได้ ส่วน Go/MySQL image tag อาจได้รับ patch ใหม่</p><ul>{refs}</ul><p>แก้ไขเนื้อหาได้ที่ tools/build_go_lesson.py แล้วรัน python tools/build_go_lesson.py เพื่อสร้างหน้านี้และ zip ใหม่ โปรเจกต์ API อยู่ใน examples/go-mysql-api</p></section>

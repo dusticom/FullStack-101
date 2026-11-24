@@ -42,7 +42,7 @@
   .chapter-header h2 { font-size: 1.4rem; color: var(--mysql-orange); }
   .chapter-header p { color: var(--muted); margin-top: .3rem; font-size: .9rem; }
 
-  .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; margin-bottom: 1rem; }
+  .card { min-width: 0; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; margin-bottom: 1rem; }
   .card h3 { color: var(--mysql-orange); margin-bottom: .6rem; font-size: 1rem; }
 
   .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
@@ -50,7 +50,7 @@
 
   .code-block { background: #0d1117; border: 1px solid var(--border); border-radius: 8px; margin: .8rem 0; overflow: hidden; }
   .code-header { background: #1c2128; padding: .4rem .8rem; font-size: 11px; color: var(--muted); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-  .code-body { padding: 1rem; overflow-x: auto; font-family: 'Consolas','Courier New',monospace; font-size: 13.5px; line-height: 1.8; }
+  .code-body { padding: 1rem; overflow-x: auto; white-space: pre; tab-size: 2; font-family: 'Consolas','Courier New',monospace; font-size: 13.5px; line-height: 1.8; }
   .kw { color: #ff7b72; }
   .fn { color: #d2a8ff; }
   .str { color: #a5d6ff; }
@@ -209,8 +209,7 @@
       <h3>ติดตั้งบน Ubuntu/Debian</h3>
       <div class="code-block">
         <div class="code-header"><span>bash</span></div>
-        <div class="code-body">
-<span class="cmt"># ติดตั้ง MySQL Server</span>
+        <div class="code-body"><span class="cmt"># ติดตั้ง MySQL Server</span>
 sudo apt update
 sudo apt install mysql-server -y
 
@@ -234,8 +233,7 @@ mysql -u root -p -h 127.0.0.1 -P 3306</div>
       <h3>ติดตั้งด้วย Docker</h3>
       <div class="code-block">
         <div class="code-header"><span>bash</span></div>
-        <div class="code-body">
-<span class="cmt"># รัน MySQL container</span>
+        <div class="code-body"><span class="cmt"># รัน MySQL container</span>
 docker run -d \
   --name mysql-dev \
   -e MYSQL_ROOT_PASSWORD=secret \
@@ -267,8 +265,7 @@ docker exec -it mysql-dev mysql -u root -p
     <h3>คำสั่งพื้นฐาน MySQL CLI</h3>
     <div class="code-block">
       <div class="code-header"><span>mysql></span></div>
-      <div class="code-body">
-<span class="cmt">-- ดูฐานข้อมูลทั้งหมด</span>
+      <div class="code-body"><span class="cmt">-- ดูฐานข้อมูลทั้งหมด</span>
 <span class="kw">SHOW DATABASES</span>;
 
 <span class="cmt">-- สร้างฐานข้อมูล</span>
@@ -363,8 +360,7 @@ docker exec -it mysql-dev mysql -u root -p
       </table>
     </div>
     <div class="code-block">
-      <div class="code-body">
-<span class="cmt">-- TIMESTAMP auto-update</span>
+      <div class="code-body"><span class="cmt">-- TIMESTAMP auto-update</span>
 <span class="kw">CREATE TABLE</span> <span class="tbl">posts</span> (
   <span class="tbl">id</span>         <span class="fn">INT</span> <span class="kw">PRIMARY KEY AUTO_INCREMENT</span>,
   <span class="tbl">title</span>      <span class="fn">VARCHAR</span>(<span class="num">255</span>),
@@ -382,8 +378,7 @@ docker exec -it mysql-dev mysql -u root -p
   <div class="card">
     <h3>JSON Type (MySQL 5.7+)</h3>
     <div class="code-block">
-      <div class="code-body">
-<span class="kw">CREATE TABLE</span> <span class="tbl">products</span> (
+      <div class="code-body"><span class="kw">CREATE TABLE</span> <span class="tbl">products</span> (
   <span class="tbl">id</span>       <span class="fn">INT</span> <span class="kw">PRIMARY KEY AUTO_INCREMENT</span>,
   <span class="tbl">name</span>     <span class="fn">VARCHAR</span>(<span class="num">200</span>),
   <span class="tbl">metadata</span> <span class="fn">JSON</span>
@@ -444,8 +439,7 @@ docker exec -it mysql-dev mysql -u root -p
     <h3>InnoDB Buffer Pool</h3>
     <p>หน่วยความจำหลักของ InnoDB ที่ cache ข้อมูลและ index ไว้ใน RAM — ยิ่งใหญ่ยิ่งเร็ว</p>
     <div class="code-block">
-      <div class="code-body">
-<span class="cmt">-- ดูขนาด Buffer Pool ปัจจุบัน</span>
+      <div class="code-body"><span class="cmt">-- ดูขนาด Buffer Pool ปัจจุบัน</span>
 <span class="kw">SHOW VARIABLES LIKE</span> <span class="str">'innodb_buffer_pool_size'</span>;
 
 <span class="cmt">-- ตั้งค่าใน my.cnf (แนะนำ 70-80% ของ RAM)</span>
@@ -469,8 +463,7 @@ innodb_buffer_pool_size = 4G   # สำหรับ 8GB RAM</span>
   <div class="card">
     <h3>AUTO_INCREMENT และ LAST_INSERT_ID()</h3>
     <div class="code-block">
-      <div class="code-body">
-<span class="kw">CREATE TABLE</span> <span class="tbl">users</span> (
+      <div class="code-body"><span class="kw">CREATE TABLE</span> <span class="tbl">users</span> (
   <span class="tbl">id</span>    <span class="fn">INT</span> <span class="kw">UNSIGNED NOT NULL AUTO_INCREMENT</span>,
   <span class="tbl">name</span>  <span class="fn">VARCHAR</span>(<span class="num">100</span>),
   <span class="kw">PRIMARY KEY</span> (<span class="tbl">id</span>)
@@ -489,8 +482,7 @@ innodb_buffer_pool_size = 4G   # สำหรับ 8GB RAM</span>
   <div class="card">
     <h3>ON DUPLICATE KEY UPDATE (Upsert)</h3>
     <div class="code-block">
-      <div class="code-body">
-<span class="cmt">-- ถ้า primary/unique key ซ้ำ → UPDATE แทน INSERT</span>
+      <div class="code-body"><span class="cmt">-- ถ้า primary/unique key ซ้ำ → UPDATE แทน INSERT</span>
 <span class="kw">INSERT INTO</span> <span class="tbl">page_views</span> (<span class="tbl">page_id</span>, <span class="tbl">views</span>)
 <span class="kw">VALUES</span> (<span class="num">42</span>, <span class="num">1</span>)
 <span class="kw">ON DUPLICATE KEY UPDATE</span>
@@ -508,8 +500,7 @@ innodb_buffer_pool_size = 4G   # สำหรับ 8GB RAM</span>
   <div class="card">
     <h3>Multi-table UPDATE และ DELETE</h3>
     <div class="code-block">
-      <div class="code-body">
-<span class="cmt">-- UPDATE หลายตารางพร้อมกัน</span>
+      <div class="code-body"><span class="cmt">-- UPDATE หลายตารางพร้อมกัน</span>
 <span class="kw">UPDATE</span> <span class="tbl">orders</span> <span class="tbl">o</span>
 <span class="kw">JOIN</span> <span class="tbl">customers</span> <span class="tbl">c</span> <span class="kw">ON</span> <span class="tbl">o</span>.<span class="tbl">customer_id</span> = <span class="tbl">c</span>.<span class="tbl">id</span>
 <span class="kw">SET</span>
@@ -557,8 +548,7 @@ innodb_buffer_pool_size = 4G   # สำหรับ 8GB RAM</span>
       </div>
     </div>
     <div class="code-block" style="margin-top:1rem">
-      <div class="code-body">
-<span class="cmt">-- หาลูกค้าที่ไม่มี order (Anti JOIN)</span>
+      <div class="code-body"><span class="cmt">-- หาลูกค้าที่ไม่มี order (Anti JOIN)</span>
 <span class="kw">SELECT</span> <span class="tbl">c</span>.*
 <span class="kw">FROM</span> <span class="tbl">customers</span> <span class="tbl">c</span>
 <span class="kw">LEFT JOIN</span> <span class="tbl">orders</span> <span class="tbl">o</span> <span class="kw">ON</span> <span class="tbl">c</span>.<span class="tbl">id</span> = <span class="tbl">o</span>.<span class="tbl">customer_id</span>
@@ -583,8 +573,7 @@ innodb_buffer_pool_size = 4G   # สำหรับ 8GB RAM</span>
     <div class="card">
       <h3>String Functions</h3>
       <div class="code-block">
-        <div class="code-body">
-<span class="fn">LENGTH</span>(<span class="str">'hello'</span>)          <span class="cmt">-- 5 (bytes)</span>
+        <div class="code-body"><span class="fn">LENGTH</span>(<span class="str">'hello'</span>)          <span class="cmt">-- 5 (bytes)</span>
 <span class="fn">CHAR_LENGTH</span>(<span class="str">'hello'</span>)    <span class="cmt">-- 5 (chars)</span>
 <span class="fn">UPPER</span>(<span class="str">'hello'</span>)           <span class="cmt">-- HELLO</span>
 <span class="fn">LOWER</span>(<span class="str">'HELLO'</span>)           <span class="cmt">-- hello</span>
@@ -609,8 +598,7 @@ innodb_buffer_pool_size = 4G   # สำหรับ 8GB RAM</span>
     <div class="card">
       <h3>Date/Time Functions</h3>
       <div class="code-block">
-        <div class="code-body">
-<span class="fn">NOW</span>()                    <span class="cmt">-- 2024-05-01 10:30:00</span>
+        <div class="code-body"><span class="fn">NOW</span>()                    <span class="cmt">-- 2024-05-01 10:30:00</span>
 <span class="fn">CURDATE</span>()               <span class="cmt">-- 2024-05-01</span>
 <span class="fn">CURTIME</span>()               <span class="cmt">-- 10:30:00</span>
 <span class="fn">YEAR</span>(<span class="fn">NOW</span>())             <span class="cmt">-- 2024</span>
@@ -637,8 +625,7 @@ innodb_buffer_pool_size = 4G   # สำหรับ 8GB RAM</span>
     <div class="card">
       <h3>Math Functions</h3>
       <div class="code-block">
-        <div class="code-body">
-<span class="fn">ABS</span>(<span class="op">-</span><span class="num">5</span>)           <span class="cmt">-- 5</span>
+        <div class="code-body"><span class="fn">ABS</span>(<span class="op">-</span><span class="num">5</span>)           <span class="cmt">-- 5</span>
 <span class="fn">CEIL</span>(<span class="num">4.1</span>)          <span class="cmt">-- 5</span>
 <span class="fn">FLOOR</span>(<span class="num">4.9</span>)         <span class="cmt">-- 4</span>
 <span class="fn">ROUND</span>(<span class="num">4.567</span>,<span class="num">2</span>)     <span class="cmt">-- 4.57</span>
@@ -656,8 +643,7 @@ innodb_buffer_pool_size = 4G   # สำหรับ 8GB RAM</span>
     <div class="card">
       <h3>GROUP_CONCAT</h3>
       <div class="code-block">
-        <div class="code-body">
-<span class="cmt">-- รวมค่าในกลุ่มเป็น string เดียว</span>
+        <div class="code-body"><span class="cmt">-- รวมค่าในกลุ่มเป็น string เดียว</span>
 <span class="kw">SELECT</span>
   <span class="tbl">customer_id</span>,
   <span class="fn">GROUP_CONCAT</span>(
@@ -704,8 +690,7 @@ innodb_buffer_pool_size = 4G   # สำหรับ 8GB RAM</span>
   <div class="card">
     <h3>EXPLAIN — วิเคราะห์ Query Plan</h3>
     <div class="code-block">
-      <div class="code-body">
-<span class="kw">EXPLAIN SELECT</span> *
+      <div class="code-body"><span class="kw">EXPLAIN SELECT</span> *
 <span class="kw">FROM</span> <span class="tbl">orders</span> <span class="tbl">o</span>
 <span class="kw">JOIN</span> <span class="tbl">customers</span> <span class="tbl">c</span> <span class="kw">ON</span> <span class="tbl">o</span>.<span class="tbl">customer_id</span> = <span class="tbl">c</span>.<span class="tbl">id</span>
 <span class="kw">WHERE</span> <span class="tbl">o</span>.<span class="tbl">status</span> = <span class="str">'paid'</span>;
@@ -729,8 +714,7 @@ ALL(Full Scan) → index → range → ref → eq_ref → const/system
   <div class="card">
     <h3>Covering Index และ Composite Index</h3>
     <div class="code-block">
-      <div class="code-body">
-<span class="cmt">-- Composite Index: ลำดับ column สำคัญมาก!</span>
+      <div class="code-body"><span class="cmt">-- Composite Index: ลำดับ column สำคัญมาก!</span>
 <span class="cmt">-- Rule: (Equality → Range → Sort → Select)</span>
 <span class="kw">CREATE INDEX</span> <span class="tbl">idx_order_lookup</span>
   <span class="kw">ON</span> <span class="tbl">orders</span> (<span class="tbl">customer_id</span>, <span class="tbl">status</span>, <span class="tbl">order_date</span>);
@@ -754,8 +738,7 @@ ALL(Full Scan) → index → range → ref → eq_ref → const/system
   <div class="card">
     <h3>Full-text Search</h3>
     <div class="code-block">
-      <div class="code-body">
-<span class="kw">CREATE TABLE</span> <span class="tbl">articles</span> (
+      <div class="code-body"><span class="kw">CREATE TABLE</span> <span class="tbl">articles</span> (
   <span class="tbl">id</span>      <span class="fn">INT</span> <span class="kw">PRIMARY KEY AUTO_INCREMENT</span>,
   <span class="tbl">title</span>   <span class="fn">VARCHAR</span>(<span class="num">255</span>),
   <span class="tbl">content</span> <span class="fn">TEXT</span>,
@@ -798,8 +781,7 @@ ALL(Full Scan) → index → range → ref → eq_ref → const/system
   <div class="card">
     <h3>SELECT FOR UPDATE และ FOR SHARE</h3>
     <div class="code-block">
-      <div class="code-body">
-<span class="cmt">-- Lock แถวเพื่อ update (ป้องกัน race condition)</span>
+      <div class="code-body"><span class="cmt">-- Lock แถวเพื่อ update (ป้องกัน race condition)</span>
 <span class="kw">START TRANSACTION</span>;
 
 <span class="kw">SELECT</span> <span class="tbl">stock</span>
@@ -827,8 +809,7 @@ ALL(Full Scan) → index → range → ref → eq_ref → const/system
     <div class="compare">
       <div class="compare-box bad">
         <div class="compare-label">Deadlock เกิดขึ้น</div>
-        <div class="code-block"><div class="code-body">
-<span class="cmt">-- TX A:</span>
+        <div class="code-block"><div class="code-body"><span class="cmt">-- TX A:</span>
 <span class="kw">UPDATE</span> <span class="tbl">accounts</span> <span class="kw">SET</span>... <span class="kw">WHERE</span> id=<span class="num">1</span>;
 <span class="cmt">-- (รอ TX B ปล่อย lock id=2)</span>
 <span class="kw">UPDATE</span> <span class="tbl">accounts</span> <span class="kw">SET</span>... <span class="kw">WHERE</span> id=<span class="num">2</span>;
@@ -840,8 +821,7 @@ ALL(Full Scan) → index → range → ref → eq_ref → const/system
       </div>
       <div class="compare-box good">
         <div class="compare-label">แก้: Lock ตามลำดับเดียวกัน</div>
-        <div class="code-block"><div class="code-body">
-<span class="cmt">-- ทั้ง TX A และ TX B:</span>
+        <div class="code-block"><div class="code-body"><span class="cmt">-- ทั้ง TX A และ TX B:</span>
 <span class="cmt">-- lock id เล็กก่อนเสมอ</span>
 <span class="kw">UPDATE</span> <span class="tbl">accounts</span> <span class="kw">SET</span>...
 <span class="kw">WHERE</span> id = <span class="fn">LEAST</span>(<span class="num">1</span>,<span class="num">2</span>);
@@ -851,8 +831,7 @@ ALL(Full Scan) → index → range → ref → eq_ref → const/system
       </div>
     </div>
     <div class="code-block">
-      <div class="code-body">
-<span class="cmt">-- ดู deadlock ล่าสุด</span>
+      <div class="code-body"><span class="cmt">-- ดู deadlock ล่าสุด</span>
 <span class="kw">SHOW ENGINE INNODB STATUS</span>\G
 
 <span class="cmt">-- ตั้งค่า timeout (default 50 วินาที)</span>
@@ -871,8 +850,7 @@ ALL(Full Scan) → index → range → ref → eq_ref → const/system
   <div class="card">
     <h3>จัดการ Users</h3>
     <div class="code-block">
-      <div class="code-body">
-<span class="cmt">-- สร้าง User</span>
+      <div class="code-body"><span class="cmt">-- สร้าง User</span>
 <span class="kw">CREATE USER</span> <span class="str">'appuser'</span>@<span class="str">'localhost'</span>
   <span class="kw">IDENTIFIED BY</span> <span class="str">'StrongP@ssw0rd!'</span>;
 
@@ -896,8 +874,7 @@ ALL(Full Scan) → index → range → ref → eq_ref → const/system
   <div class="card">
     <h3>GRANT และ REVOKE</h3>
     <div class="code-block">
-      <div class="code-body">
-<span class="cmt">-- ให้ทุก permission บน database เดียว</span>
+      <div class="code-body"><span class="cmt">-- ให้ทุก permission บน database เดียว</span>
 <span class="kw">GRANT ALL PRIVILEGES ON</span> <span class="tbl">myapp</span>.* <span class="kw">TO</span> <span class="str">'appuser'</span>@<span class="str">'localhost'</span>;
 
 <span class="cmt">-- ให้แค่ SELECT</span>
@@ -933,8 +910,7 @@ ALL(Full Scan) → index → range → ref → eq_ref → const/system
   <div class="card">
     <h3>Triggers</h3>
     <div class="code-block">
-      <div class="code-body">
-<span class="cmt">-- Trigger: บันทึก log ทุกครั้งที่ราคาเปลี่ยน</span>
+      <div class="code-body"><span class="cmt">-- Trigger: บันทึก log ทุกครั้งที่ราคาเปลี่ยน</span>
 <span class="fn">DELIMITER</span> //
 <span class="kw">CREATE TRIGGER</span> <span class="tbl">trg_price_change</span>
 <span class="kw">AFTER UPDATE ON</span> <span class="tbl">products</span>
@@ -958,8 +934,7 @@ ALL(Full Scan) → index → range → ref → eq_ref → const/system
   <div class="card">
     <h3>Scheduled Events (MySQL Cron)</h3>
     <div class="code-block">
-      <div class="code-body">
-<span class="cmt">-- เปิด Event Scheduler</span>
+      <div class="code-body"><span class="cmt">-- เปิด Event Scheduler</span>
 <span class="kw">SET GLOBAL</span> event_scheduler = <span class="kw">ON</span>;
 
 <span class="cmt">-- Event: ลบ log เก่าทุกวัน</span>
@@ -983,8 +958,7 @@ ALL(Full Scan) → index → range → ref → eq_ref → const/system
   <div class="card">
     <h3>Table Partitioning</h3>
     <div class="code-block">
-      <div class="code-body">
-<span class="cmt">-- RANGE Partitioning (แบ่งตาม ปี)</span>
+      <div class="code-body"><span class="cmt">-- RANGE Partitioning (แบ่งตาม ปี)</span>
 <span class="kw">CREATE TABLE</span> <span class="tbl">sales</span> (
   <span class="tbl">id</span>         <span class="fn">INT</span>,
   <span class="tbl">sale_date</span>  <span class="fn">DATE</span>,
@@ -1017,8 +991,7 @@ ALL(Full Scan) → index → range → ref → eq_ref → const/system
       <h3>mysqldump — Backup</h3>
       <div class="code-block">
         <div class="code-header"><span>bash</span></div>
-        <div class="code-body">
-<span class="cmt"># Backup database เดียว</span>
+        <div class="code-body"><span class="cmt"># Backup database เดียว</span>
 mysqldump -u root -p myapp > myapp_backup.sql
 
 <span class="cmt"># Backup พร้อม create database statement</span>
@@ -1047,8 +1020,7 @@ gunzip < myapp_backup.sql.gz | mysql -u root -p myapp</div>
       <h3>Performance Tuning (my.cnf)</h3>
       <div class="code-block">
         <div class="code-header"><span>/etc/mysql/my.cnf</span></div>
-        <div class="code-body">
-<span class="val">[mysqld]
+        <div class="code-body"><span class="val">[mysqld]
 # Buffer Pool (70-80% ของ RAM)
 innodb_buffer_pool_size = 4G
 

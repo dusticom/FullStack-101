@@ -46,7 +46,7 @@
   .chapter-header p { color: var(--muted); margin-top: .3rem; font-size: .9rem; }
 
   /* CARD */
-  .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; margin-bottom: 1rem; }
+  .card { min-width: 0; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; margin-bottom: 1rem; }
   .card h3 { color: var(--accent2); margin-bottom: .6rem; font-size: 1rem; }
 
   /* GRID */
@@ -56,7 +56,7 @@
   /* CODE BLOCK */
   .code-block { background: #0d1117; border: 1px solid var(--border); border-radius: 8px; margin: .8rem 0; overflow: hidden; }
   .code-header { background: #1c2128; padding: .4rem .8rem; font-size: 11px; color: var(--muted); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-  .code-body { padding: 1rem; overflow-x: auto; font-family: 'Consolas', 'Courier New', monospace; font-size: 13.5px; line-height: 1.8; }
+  .code-body { padding: 1rem; overflow-x: auto; white-space: pre; tab-size: 2; font-family: 'Consolas', 'Courier New', monospace; font-size: 13.5px; line-height: 1.8; }
   .kw { color: #ff7b72; } /* keyword */
   .fn { color: #d2a8ff; } /* function/type */
   .str { color: #a5d6ff; } /* string */
@@ -213,8 +213,7 @@
     <h3>โครงสร้างฐานข้อมูลตัวอย่าง (ใช้ตลอดไฟล์นี้)</h3>
     <div class="code-block">
       <div class="code-header"><span>schema.sql</span></div>
-      <div class="code-body">
-<span class="cmt">-- ตาราง customers (ลูกค้า)</span>
+      <div class="code-body"><span class="cmt">-- ตาราง customers (ลูกค้า)</span>
 <span class="kw">CREATE TABLE</span> <span class="tbl">customers</span> (
   <span class="tbl">id</span>         <span class="fn">INT</span> <span class="kw">PRIMARY KEY AUTO_INCREMENT</span>,
   <span class="tbl">name</span>       <span class="fn">VARCHAR</span>(<span class="num">100</span>) <span class="kw">NOT NULL</span>,
@@ -267,8 +266,7 @@
     <h3>โครงสร้างคำสั่ง SELECT</h3>
     <div class="code-block">
       <div class="code-header"><span>syntax</span></div>
-      <div class="code-body">
-<span class="kw">SELECT</span>   <span class="cmt">-- 5. เลือก columns ที่ต้องการ</span>
+      <div class="code-body"><span class="kw">SELECT</span>   <span class="cmt">-- 5. เลือก columns ที่ต้องการ</span>
 <span class="kw">FROM</span>     <span class="cmt">-- 1. ระบุตาราง</span>
 <span class="kw">JOIN</span>     <span class="cmt">-- 2. เชื่อมตาราง</span>
 <span class="kw">WHERE</span>    <span class="cmt">-- 3. กรองแถว</span>
@@ -287,8 +285,7 @@
     <div class="card">
       <h3>SELECT ทั่วไป</h3>
       <div class="code-block">
-        <div class="code-body">
-<span class="cmt">-- ดูทุก column</span>
+        <div class="code-body"><span class="cmt">-- ดูทุก column</span>
 <span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">customers</span>;
 
 <span class="cmt">-- เลือก column ที่ต้องการ</span>
@@ -312,8 +309,7 @@
     <div class="card">
       <h3>ORDER BY, LIMIT, DISTINCT</h3>
       <div class="code-block">
-        <div class="code-body">
-<span class="cmt">-- เรียงจากน้อยไปมาก (default)</span>
+        <div class="code-body"><span class="cmt">-- เรียงจากน้อยไปมาก (default)</span>
 <span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">products</span>
 <span class="kw">ORDER BY</span> <span class="tbl">price</span> <span class="kw">ASC</span>;
 
@@ -368,8 +364,7 @@
     <div class="card">
       <h3>Comparison Operators</h3>
       <div class="code-block">
-        <div class="code-body">
-<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">products</span>
+        <div class="code-body"><span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">products</span>
 <span class="kw">WHERE</span> <span class="tbl">price</span> <span class="op">></span> <span class="num">100</span>;
 
 <span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">products</span>
@@ -386,8 +381,7 @@
     <div class="card">
       <h3>Logical Operators</h3>
       <div class="code-block">
-        <div class="code-body">
-<span class="cmt">-- AND ต้องเป็นจริงทั้งคู่</span>
+        <div class="code-body"><span class="cmt">-- AND ต้องเป็นจริงทั้งคู่</span>
 <span class="kw">WHERE</span> <span class="tbl">category</span> = <span class="str">'Electronics'</span>
   <span class="kw">AND</span> <span class="tbl">price</span> < <span class="num">5000</span>;
 
@@ -409,8 +403,7 @@
     <div class="card">
       <h3>BETWEEN, IN, LIKE</h3>
       <div class="code-block">
-        <div class="code-body">
-<span class="cmt">-- BETWEEN (inclusive)</span>
+        <div class="code-body"><span class="cmt">-- BETWEEN (inclusive)</span>
 <span class="kw">WHERE</span> <span class="tbl">price</span> <span class="kw">BETWEEN</span> <span class="num">100</span> <span class="kw">AND</span> <span class="num">500</span>;
 
 <span class="kw">WHERE</span> <span class="tbl">order_date</span> <span class="kw">BETWEEN</span>
@@ -431,8 +424,7 @@
     <div class="card">
       <h3>NULL Handling</h3>
       <div class="code-block">
-        <div class="code-body">
-<span class="cmt">-- ตรวจสอบ NULL ต้องใช้ IS NULL</span>
+        <div class="code-body"><span class="cmt">-- ตรวจสอบ NULL ต้องใช้ IS NULL</span>
 <span class="kw">WHERE</span> <span class="tbl">email</span> <span class="kw">IS NULL</span>;
 <span class="kw">WHERE</span> <span class="tbl">email</span> <span class="kw">IS NOT NULL</span>;
 
@@ -455,8 +447,7 @@
   <div class="card">
     <h3>CASE WHEN — เงื่อนไขใน SELECT</h3>
     <div class="code-block">
-      <div class="code-body">
-<span class="kw">SELECT</span>
+      <div class="code-body"><span class="kw">SELECT</span>
   <span class="tbl">name</span>,
   <span class="tbl">price</span>,
   <span class="kw">CASE</span>
@@ -500,8 +491,7 @@
     <div class="card">
       <h3>CREATE TABLE</h3>
       <div class="code-block">
-        <div class="code-body">
-<span class="kw">CREATE TABLE</span> <span class="tbl">employees</span> (
+        <div class="code-body"><span class="kw">CREATE TABLE</span> <span class="tbl">employees</span> (
   <span class="tbl">id</span>         <span class="fn">INT</span> <span class="kw">PRIMARY KEY AUTO_INCREMENT</span>,
   <span class="tbl">first_name</span> <span class="fn">VARCHAR</span>(<span class="num">60</span>) <span class="kw">NOT NULL</span>,
   <span class="tbl">last_name</span>  <span class="fn">VARCHAR</span>(<span class="num">60</span>) <span class="kw">NOT NULL</span>,
@@ -525,8 +515,7 @@
     <div class="card">
       <h3>ALTER TABLE</h3>
       <div class="code-block">
-        <div class="code-body">
-<span class="cmt">-- เพิ่ม column</span>
+        <div class="code-body"><span class="cmt">-- เพิ่ม column</span>
 <span class="kw">ALTER TABLE</span> <span class="tbl">customers</span>
 <span class="kw">ADD COLUMN</span> <span class="tbl">phone</span> <span class="fn">VARCHAR</span>(<span class="num">20</span>);
 
@@ -567,8 +556,7 @@
     <div class="card">
       <h3>INSERT</h3>
       <div class="code-block">
-        <div class="code-body">
-<span class="cmt">-- แทรกแถวเดียว</span>
+        <div class="code-body"><span class="cmt">-- แทรกแถวเดียว</span>
 <span class="kw">INSERT INTO</span> <span class="tbl">customers</span> (<span class="tbl">name</span>, <span class="tbl">email</span>, <span class="tbl">city</span>)
 <span class="kw">VALUES</span> (<span class="str">'สมชาย ใจดี'</span>, <span class="str">'somchai@email.com'</span>, <span class="str">'Bangkok'</span>);
 
@@ -588,8 +576,7 @@
     <div class="card">
       <h3>UPDATE และ DELETE</h3>
       <div class="code-block">
-        <div class="code-body">
-<span class="cmt">-- UPDATE แถวเดียว</span>
+        <div class="code-body"><span class="cmt">-- UPDATE แถวเดียว</span>
 <span class="kw">UPDATE</span> <span class="tbl">customers</span>
 <span class="kw">SET</span> <span class="tbl">city</span> = <span class="str">'Chiang Mai'</span>
 <span class="kw">WHERE</span> <span class="tbl">id</span> = <span class="num">5</span>;
@@ -612,8 +599,7 @@
   <div class="card">
     <h3>UPSERT — INSERT or UPDATE</h3>
     <div class="code-block">
-      <div class="code-body">
-<span class="cmt">-- MySQL: ON DUPLICATE KEY UPDATE</span>
+      <div class="code-body"><span class="cmt">-- MySQL: ON DUPLICATE KEY UPDATE</span>
 <span class="kw">INSERT INTO</span> <span class="tbl">product_stats</span> (<span class="tbl">product_id</span>, <span class="tbl">views</span>)
 <span class="kw">VALUES</span> (<span class="num">101</span>, <span class="num">1</span>)
 <span class="kw">ON DUPLICATE KEY UPDATE</span>
@@ -657,8 +643,7 @@
   <div class="card">
     <h3>INNER JOIN</h3>
     <div class="code-block">
-      <div class="code-body">
-<span class="cmt">-- ดูคำสั่งซื้อพร้อมชื่อลูกค้า</span>
+      <div class="code-body"><span class="cmt">-- ดูคำสั่งซื้อพร้อมชื่อลูกค้า</span>
 <span class="kw">SELECT</span>
   <span class="tbl">o</span>.<span class="tbl">id</span>         <span class="kw">AS</span> order_id,
   <span class="tbl">c</span>.<span class="tbl">name</span>      <span class="kw">AS</span> customer,
@@ -675,8 +660,7 @@
   <div class="card">
     <h3>LEFT JOIN — ค้นหาข้อมูลที่ขาดหาย</h3>
     <div class="code-block">
-      <div class="code-body">
-<span class="cmt">-- ลูกค้าทุกคน รวมถึงผู้ที่ยังไม่เคยสั่งซื้อ</span>
+      <div class="code-body"><span class="cmt">-- ลูกค้าทุกคน รวมถึงผู้ที่ยังไม่เคยสั่งซื้อ</span>
 <span class="kw">SELECT</span>
   <span class="tbl">c</span>.<span class="tbl">name</span>,
   <span class="fn">COUNT</span>(<span class="tbl">o</span>.<span class="tbl">id</span>) <span class="kw">AS</span> order_count
@@ -698,8 +682,7 @@
   <div class="card">
     <h3>Multi-table JOIN และ SELF JOIN</h3>
     <div class="code-block">
-      <div class="code-body">
-<span class="cmt">-- เชื่อม 3 ตาราง</span>
+      <div class="code-body"><span class="cmt">-- เชื่อม 3 ตาราง</span>
 <span class="kw">SELECT</span>
   <span class="tbl">c</span>.<span class="tbl">name</span>       <span class="kw">AS</span> customer,
   <span class="tbl">p</span>.<span class="tbl">name</span>       <span class="kw">AS</span> product,
@@ -761,8 +744,7 @@
   <div class="card">
     <h3>GROUP BY และ HAVING</h3>
     <div class="code-block">
-      <div class="code-body">
-<span class="cmt">-- ยอดขายรวมต่อ category</span>
+      <div class="code-body"><span class="cmt">-- ยอดขายรวมต่อ category</span>
 <span class="kw">SELECT</span>
   <span class="tbl">category</span>,
   <span class="fn">COUNT</span>(*) <span class="kw">AS</span> product_count,
@@ -794,8 +776,7 @@
   <div class="card">
     <h3>ROLLUP — รวมย่อย</h3>
     <div class="code-block">
-      <div class="code-body">
-<span class="cmt">-- สร้างรายงานพร้อม subtotal และ grand total</span>
+      <div class="code-body"><span class="cmt">-- สร้างรายงานพร้อม subtotal และ grand total</span>
 <span class="kw">SELECT</span>
   <span class="fn">COALESCE</span>(<span class="tbl">category</span>, <span class="str">'-- รวมทั้งหมด --'</span>) <span class="kw">AS</span> category,
   <span class="fn">SUM</span>(<span class="tbl">price</span>) <span class="kw">AS</span> total
@@ -816,8 +797,7 @@
     <div class="card">
       <h3>Subquery ใน WHERE</h3>
       <div class="code-block">
-        <div class="code-body">
-<span class="cmt">-- สินค้าที่ราคาสูงกว่าค่าเฉลี่ย</span>
+        <div class="code-body"><span class="cmt">-- สินค้าที่ราคาสูงกว่าค่าเฉลี่ย</span>
 <span class="kw">SELECT</span> <span class="tbl">name</span>, <span class="tbl">price</span>
 <span class="kw">FROM</span> <span class="tbl">products</span>
 <span class="kw">WHERE</span> <span class="tbl">price</span> > (
@@ -838,8 +818,7 @@
     <div class="card">
       <h3>EXISTS และ Correlated Subquery</h3>
       <div class="code-block">
-        <div class="code-body">
-<span class="cmt">-- EXISTS: ตรวจสอบว่ามีแถวอยู่หรือไม่</span>
+        <div class="code-body"><span class="cmt">-- EXISTS: ตรวจสอบว่ามีแถวอยู่หรือไม่</span>
 <span class="kw">SELECT</span> <span class="tbl">name</span> <span class="kw">FROM</span> <span class="tbl">customers</span> <span class="tbl">c</span>
 <span class="kw">WHERE EXISTS</span> (
   <span class="kw">SELECT</span> <span class="num">1</span> <span class="kw">FROM</span> <span class="tbl">orders</span> <span class="tbl">o</span>
@@ -864,8 +843,7 @@
   <div class="card">
     <h3>CTE (Common Table Expression) — WITH clause</h3>
     <div class="code-block">
-      <div class="code-body">
-<span class="cmt">-- CTE ทำให้ query อ่านง่ายขึ้น</span>
+      <div class="code-body"><span class="cmt">-- CTE ทำให้ query อ่านง่ายขึ้น</span>
 <span class="kw">WITH</span> <span class="tbl">top_customers</span> <span class="kw">AS</span> (
   <span class="kw">SELECT</span>
     <span class="tbl">customer_id</span>,
@@ -937,8 +915,7 @@
   <div class="card">
     <h3>Ranking Functions</h3>
     <div class="code-block">
-      <div class="code-body">
-<span class="kw">SELECT</span>
+      <div class="code-body"><span class="kw">SELECT</span>
   <span class="tbl">name</span>,
   <span class="tbl">salary</span>,
   <span class="tbl">dept</span>,
@@ -959,8 +936,7 @@
   <div class="card">
     <h3>LAG, LEAD — เปรียบเทียบกับแถวก่อน/หลัง</h3>
     <div class="code-block">
-      <div class="code-body">
-<span class="kw">SELECT</span>
+      <div class="code-body"><span class="kw">SELECT</span>
   <span class="tbl">order_date</span>,
   <span class="tbl">total</span>,
   <span class="cmt">-- ยอดคำสั่งซื้อก่อนหน้า</span>
@@ -980,8 +956,7 @@
   <div class="card">
     <h3>Running Total และ Moving Average</h3>
     <div class="code-block">
-      <div class="code-body">
-<span class="cmt">-- Cumulative Sum (Running Total)</span>
+      <div class="code-body"><span class="cmt">-- Cumulative Sum (Running Total)</span>
 <span class="kw">SELECT</span>
   <span class="tbl">order_date</span>,
   <span class="tbl">total</span>,
@@ -1038,8 +1013,7 @@
     <div class="card">
       <h3>สร้างและลบ Index</h3>
       <div class="code-block">
-        <div class="code-body">
-<span class="cmt">-- Single column index</span>
+        <div class="code-body"><span class="cmt">-- Single column index</span>
 <span class="kw">CREATE INDEX</span> <span class="tbl">idx_email</span>
   <span class="kw">ON</span> <span class="tbl">customers</span> (<span class="tbl">email</span>);
 
@@ -1063,8 +1037,7 @@
     <div class="card">
       <h3>EXPLAIN — วิเคราะห์ Query</h3>
       <div class="code-block">
-        <div class="code-body">
-<span class="cmt">-- ดูว่า MySQL ใช้ index หรือเปล่า</span>
+        <div class="code-body"><span class="cmt">-- ดูว่า MySQL ใช้ index หรือเปล่า</span>
 <span class="kw">EXPLAIN SELECT</span> * <span class="kw">FROM</span> <span class="tbl">orders</span>
 <span class="kw">WHERE</span> <span class="tbl">customer_id</span> = <span class="num">5</span>;
 
@@ -1129,8 +1102,7 @@
   <div class="card">
     <h3>ตัวอย่าง Transaction: โอนเงิน</h3>
     <div class="code-block">
-      <div class="code-body">
-<span class="cmt">-- เริ่ม transaction</span>
+      <div class="code-body"><span class="cmt">-- เริ่ม transaction</span>
 <span class="kw">START TRANSACTION</span>;  <span class="cmt">-- หรือ BEGIN</span>
 
 <span class="kw">UPDATE</span> <span class="tbl">accounts</span>
@@ -1214,8 +1186,7 @@
   <div class="card">
     <h3>VIEW — ตารางเสมือน</h3>
     <div class="code-block">
-      <div class="code-body">
-<span class="cmt">-- สร้าง View</span>
+      <div class="code-body"><span class="cmt">-- สร้าง View</span>
 <span class="kw">CREATE VIEW</span> <span class="tbl">v_customer_summary</span> <span class="kw">AS</span>
 <span class="kw">SELECT</span>
   <span class="tbl">c</span>.<span class="tbl">id</span>,
@@ -1242,8 +1213,7 @@
   <div class="card">
     <h3>Stored Procedure และ Function</h3>
     <div class="code-block">
-      <div class="code-body">
-<span class="cmt">-- Stored Procedure (MySQL)</span>
+      <div class="code-body"><span class="cmt">-- Stored Procedure (MySQL)</span>
 <span class="fn">DELIMITER</span> //
 
 <span class="kw">CREATE PROCEDURE</span> <span class="fn">GetCustomerOrders</span>(<span class="kw">IN</span> <span class="tbl">p_customer_id</span> <span class="fn">INT</span>)

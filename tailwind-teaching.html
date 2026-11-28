@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>เรียน Tailwind CSS v4 ตั้งแต่พื้นฐานถึงลงมือสร้างหน้าเว็บ</title>
+  <style>
+    :root { color-scheme: light; --ink:#10233b; --muted:#486176; --line:#d9e7eb; --accent:#087b91; --dark:#102b3a; --paper:#fff; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; scroll-padding-top:5rem; }
+    body { margin:0; font-family:system-ui,-apple-system,"Segoe UI",sans-serif; line-height:1.8; color:var(--ink); background:#f3f8f9; }
+    a { color:#08788c; } a:hover { color:#075263; } a:focus-visible, summary:focus-visible { outline:3px solid #f59e0b; outline-offset:3px; }
+    .hero { background:linear-gradient(120deg,#073449,#087e91); color:white; padding:4rem 1.25rem 3.5rem; }
+    .hero-inner,.wrap { max-width:1080px; margin:auto; } .hero a { color:#d5f8ff; } .eyebrow { font-weight:700; letter-spacing:.1em; font-size:.8rem; text-transform:uppercase; }
+    h1 { font-size:clamp(2.1rem,6vw,4rem); line-height:1.2; margin:.7rem 0; } .lead { max-width:760px; font-size:1.12rem; color:#d9f4f7; }
+    .tags { display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1.5rem; } .tag { border:1px solid #a9e6ee; border-radius:999px; padding:.2rem .8rem; font-size:.85rem; }
+    nav { background:#fff; border-bottom:1px solid var(--line); position:sticky; top:0; z-index:2; overflow-x:auto; }
+    nav div { max-width:1080px; margin:auto; display:flex; width:max-content; min-width:100%; padding:0 1rem; }
+    nav a { padding:.8rem .7rem; white-space:nowrap; text-decoration:none; font-weight:650; font-size:.88rem; }
+    .wrap { padding:1rem 1.25rem 4rem; } section { padding:2.2rem 0; border-bottom:1px solid var(--line); } h2 { font-size:clamp(1.5rem,3vw,2rem); line-height:1.35; margin:0 0 .5rem; } h3 { margin:1.6rem 0 .4rem; font-size:1.18rem; } p { margin:.6rem 0 1rem; } .sub { color:var(--muted); }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr)); gap:1rem; } .card, .note, details { background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:1.15rem; } .card h3 { margin:.1rem 0 .4rem; } .card p:last-child, .note p:last-child { margin-bottom:0; }
+    .note { border-left:4px solid #06a6b8; margin:1rem 0; } .warning { border-left-color:#f59e0b; background:#fffbeb; }
+    code { font-family:ui-monospace,SFMono-Regular,Consolas,monospace; font-size:.9em; background:#e5f2f4; border-radius:4px; padding:.1em .3em; overflow-wrap:anywhere; }
+    pre { background:#102b3a; color:#e9f5f5; padding:1.15rem; border-radius:10px; overflow-x:auto; line-height:1.65; tab-size:2; } pre code { color:inherit; background:none; padding:0; font-size:.88rem; overflow-wrap:normal; }
+    .table-wrap { overflow-x:auto; } table { width:100%; border-collapse:collapse; background:white; } th,td { text-align:left; padding:.7rem; border:1px solid var(--line); vertical-align:top; } th { background:#eaf5f6; }
+    .demo { padding:1.5rem; background:#e7f3f5; border:1px solid #c5e3e7; border-radius:12px; } .demo-card { max-width:22rem; padding:1.5rem; border-radius:1rem; background:white; box-shadow:0 10px 20px #1232; } .demo-card p { color:#475569; } .demo-btn { display:inline-block; padding:.5rem 1rem; border-radius:.5rem; background:#0e7490; color:white; font-weight:700; }
+    details { margin:.8rem 0; } summary { cursor:pointer; font-weight:700; color:#075d6c; } li { margin:.35rem 0; } footer { color:var(--muted); padding:2rem 0; } .small { font-size:.9rem; }
+    @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } }
+  </style>
+</head>
+<body>
+<header class="hero"><div class="hero-inner">
+  <a href="index.html">← กลับหน้ารวมบทเรียน</a>
+  <p class="eyebrow">Frontend learning guide · Tailwind CSS v4</p>
+  <h1>Tailwind CSS<br>เข้าใจหลักการ แล้วลงมือสร้าง</h1>
+  <p class="lead">ค่อย ๆ เรียนตั้งแต่การอ่าน utility class และติดตั้งโปรเจกต์ จนถึง responsive layout, state, dark mode และหน้าเว็บตัวอย่าง พร้อมแบบฝึกหัดและแนวเฉลย</p>
+  <div class="tags"><span class="tag">สำหรับผู้เริ่มต้น</span><span class="tag">ตัวอย่างพร้อมคำอธิบาย</span><span class="tag">อ่านได้โดยไม่ต้องติดตั้ง</span></div>
+</div></header>
+<nav aria-label="สารบัญบทเรียน"><div>
+  <a href="#intro">เริ่มต้น</a><a href="#setup">ติดตั้ง</a><a href="#utilities">Utilities</a><a href="#layout">Layout</a><a href="#responsive">Responsive</a><a href="#states">States</a><a href="#theme">Theme</a><a href="#project">โปรเจกต์</a><a href="#practice">แบบฝึกหัด</a><a href="#troubleshoot">แก้ปัญหา</a>
+</div></nav>
+<main class="wrap">
+<section id="intro">
+  <h2>1. Tailwind CSS คืออะไร?</h2>
+  <p>Tailwind CSS เป็นเครื่องมือสร้าง CSS แบบ <strong>utility-first</strong> แต่ละ class ใช้จัดการหน้าที่เล็ก ๆ เช่น ระยะห่าง สี หรือขนาดตัวอักษร เรานำหลาย class มาประกอบกันบน HTML เพื่อสร้างหน้าตาที่ต้องการ</p>
+  <div class="grid"><div class="card"><h3>CSS แบบเขียนเอง</h3><p>ตั้งชื่อ class เช่น <code>button-primary</code> แล้วเขียนกฎ CSS สำหรับ class นั้นแยกไว้</p></div><div class="card"><h3>Tailwind แบบ utility</h3><p>ประกอบ class เช่น <code>bg-cyan-700 text-white px-4 py-2</code> เพื่อกำหนดสีและระยะห่างโดยตรง</p></div></div>
+  <p>Tailwind ช่วยให้ใช้ชุดค่าที่สม่ำเสมอและปรับหน้าตาได้ใกล้กับโครงสร้าง HTML แต่ยังต้องเข้าใจ CSS เช่น box model, flex และ grid หากยังไม่คุ้น แนะนำอ่าน <a href="css-teaching.html">บทเรียน CSS</a> ควบคู่กัน</p>
+  <h3>อ่าน class ทีละชิ้น</h3>
+  <pre><code>&lt;button class="rounded-lg bg-cyan-700 px-4 py-2 text-white"&gt;
+  เริ่มเรียน
+&lt;/button&gt;</code></pre>
+  <p><code>rounded-lg</code> ทำมุมมน, <code>bg-cyan-700</code> กำหนดพื้นหลัง, <code>px-4</code> และ <code>py-2</code> เพิ่ม padding แนวนอนและแนวตั้ง ส่วน <code>text-white</code> กำหนดสีข้อความ</p>
+  <div class="note"><strong>Tailwind ทำงานอย่างไร:</strong> เครื่องมือจะสแกนไฟล์ต้นทางเพื่อหาชื่อ class แล้วสร้าง CSS สำหรับ class ที่พบ ตัวเบราว์เซอร์จึงได้รับ CSS ปกติ ไม่ได้แปลชื่อ class เอง</div>
+</section>
+<section id="setup">
+  <h2>2. เริ่มโปรเจกต์ด้วย Vite + Tailwind v4</h2>
+  <p>ตัวอย่างนี้ใช้ Vite แบบ <strong>Vanilla JavaScript</strong> เพื่อให้เห็นขั้นตอนชัดเจน ต้องติดตั้ง Node.js และ npm ที่รองรับ Vite รุ่นที่ใช้อยู่ก่อน ตรวจสอบได้ด้วย <code>node -v</code> และ <code>npm -v</code> จากนั้นรันคำสั่งใน terminal</p>
+  <pre><code>npm create vite@latest tailwind-demo -- --template vanilla
+cd tailwind-demo
+npm install
+npm install tailwindcss @tailwindcss/vite</code></pre>
+  <p>เพิ่มไฟล์ <code>vite.config.js</code> ที่รากโปรเจกต์ หากมีไฟล์ config อยู่แล้ว ให้เพิ่ม plugin ลงใน config เดิมแทนการลบค่าอื่น</p>
+  <pre><code>import { defineConfig } from 'vite'
+import tailwindcss from '@tailwindcss/vite'
+
+export default defineConfig({
+  plugins: [tailwindcss()],
+})</code></pre>
+  <p>แทนที่เนื้อหา <code>style.css</code> ในรากโปรเจกต์ด้วยคำสั่งนี้ และตรวจสอบว่า <code>main.js</code> ยังคงมี <code>import './style.css'</code> อยู่</p>
+  <pre><code>@import "tailwindcss";</code></pre>
+  <p>แทนที่เนื้อหา <code>index.html</code> ด้วยตัวอย่างด้านล่าง โดยคง script ที่โหลด <code>main.js</code> ไว้ เพื่อให้ CSS ถูกนำเข้า</p>
+  <pre><code>&lt;!doctype html&gt;
+&lt;html lang="th"&gt;
+  &lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;Tailwind Demo&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body class="bg-slate-100 p-8"&gt;
+    &lt;h1 class="text-3xl font-bold text-cyan-700"&gt;สวัสดี Tailwind!&lt;/h1&gt;
+    &lt;script type="module" src="/main.js"&gt;&lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+  <p>ไฟล์ <code>main.js</code> ที่ Vite สร้างมาอาจมีโค้ดตัวอย่างซึ่งอ้างถึง element ที่เราแทนที่ไปแล้ว ให้แทนที่เนื้อหาไฟล์ด้วยบรรทัดเดียวนี้:</p>
+  <pre><code>import './style.css'</code></pre>
+  <pre><code>npm run dev</code></pre>
+  <p>เปิด URL ที่ terminal แสดง ควรเห็นหัวข้อสีฟ้าเข้มบนพื้นหลังสีอ่อน เมื่อพร้อมสร้างไฟล์สำหรับเผยแพร่ให้ใช้ <code>npm run build</code> ผลลัพธ์อยู่ใน <code>dist/</code> และทดลอง build ในเครื่องด้วย <code>npm run preview</code></p>
+  <div class="note warning"><strong>ระวังเวอร์ชัน:</strong> บทเรียนนี้ใช้ v4 ซึ่งใช้ <code>@import "tailwindcss";</code> และ Vite plugin ตัวอย่างเก่าที่ใช้ <code>@tailwind base</code> หรือสร้าง config ด้วย <code>tailwindcss init</code> เป็นแนวทาง v3 อย่านำมาปะปนกันโดยไม่ตรวจเวอร์ชัน</div>
+</section>
+<section id="utilities">
+  <h2>3. รู้จัก utility ที่ใช้บ่อย</h2>
+  <p>ชื่อ class มักประกอบด้วยหมวดและค่า เช่น <code>p-4</code> หมายถึง padding รอบด้าน; <code>text-lg</code> หมายถึงขนาดข้อความ ส่วน <code>text-slate-700</code> หมายถึงสีข้อความ ความหมายจึงขึ้นอยู่กับชื่อค่าที่ตามมา</p>
+  <div class="table-wrap"><table><thead><tr><th>หมวด</th><th>ตัวอย่าง</th><th>ความหมาย</th></tr></thead><tbody>
+    <tr><td>ระยะห่าง</td><td><code>p-4</code>, <code>px-6</code>, <code>mt-4</code>, <code>gap-4</code></td><td>padding รอบด้าน, padding ซ้ายขวา, margin ด้านบน และช่องว่างระหว่างรายการ</td></tr>
+    <tr><td>ขนาด</td><td><code>w-full</code>, <code>max-w-md</code>, <code>h-12</code></td><td>กว้างเต็มพื้นที่พ่อ, จำกัดความกว้างสูงสุด, กำหนดความสูง</td></tr>
+    <tr><td>ตัวอักษร</td><td><code>text-xl</code>, <code>font-bold</code>, <code>text-center</code></td><td>ขนาดตัวอักษร, น้ำหนัก และการจัดแนว</td></tr>
+    <tr><td>สี</td><td><code>bg-white</code>, <code>text-slate-700</code>, <code>border-cyan-500</code></td><td>พื้นหลัง สีข้อความ และสีเส้นขอบ</td></tr>
+    <tr><td>รูปทรง</td><td><code>border</code>, <code>rounded-xl</code>, <code>shadow-md</code></td><td>เส้นขอบ มุมมน และเงา</td></tr>
+  </tbody></table></div>
+  <p>ค่า spacing เริ่มต้นอิงหน่วย <code>0.25rem</code> เช่น <code>p-4</code> เท่ากับ <code>1rem</code> (โดยทั่วไป 16px เมื่อขนาดตัวอักษรรากเป็น 16px) ค่าของ theme ปรับได้ จึงไม่ควรจำว่าเลขทุกตัวเป็น pixel เสมอไป</p>
+  <h3>ตัวอย่างการ์ด</h3><div class="demo"><div class="demo-card"><strong>เริ่มต้นกับ Tailwind</strong><p>ประกอบ utility ทีละส่วน แล้วสังเกตผลที่เปลี่ยนไป</p><span class="demo-btn">เริ่มเรียน</span></div></div>
+  <p class="small sub">ภาพตัวอย่างนี้จำลองด้วย CSS ในบทเรียน จึงเปิดอ่านได้โดยไม่ต้องเชื่อมต่อหรือ build โปรเจกต์</p>
+  <pre><code>&lt;article class="max-w-sm rounded-2xl bg-white p-6 shadow-lg"&gt;
+  &lt;h3 class="text-lg font-bold text-slate-900"&gt;เริ่มต้นกับ Tailwind&lt;/h3&gt;
+  &lt;p class="mt-2 text-slate-600"&gt;ประกอบ utility ทีละส่วน แล้วสังเกตผลที่เปลี่ยนไป&lt;/p&gt;
+  &lt;button class="mt-4 rounded-lg bg-cyan-700 px-4 py-2 font-bold text-white"&gt;
+    เริ่มเรียน
+  &lt;/button&gt;
+&lt;/article&gt;</code></pre>
+</section>
+<section id="layout">
+  <h2>4. จัด Layout ด้วย Flex และ Grid</h2>
+  <p><strong>Flexbox</strong> เหมาะกับการจัดรายการตามแนวหลักหนึ่งแนว เช่น เมนู ส่วน <strong>Grid</strong> เหมาะกับการกำหนดแถวและคอลัมน์ เช่น รายการการ์ด</p>
+  <h3>Flex: จัดหัวข้อกับปุ่มให้อยู่คนละด้าน</h3>
+  <pre><code>&lt;div class="flex items-center justify-between gap-4"&gt;
+  &lt;h2 class="text-xl font-bold"&gt;บทเรียนล่าสุด&lt;/h2&gt;
+  &lt;a href="#courses" class="text-cyan-700 underline"&gt;ดูทั้งหมด&lt;/a&gt;
+&lt;/div&gt;</code></pre>
+  <p><code>flex</code> เริ่มใช้ Flexbox; <code>items-center</code> จัดกึ่งกลางตามแนวขวาง; <code>justify-between</code> กระจายพื้นที่ระหว่างรายการ และ <code>gap-4</code> เว้นช่องว่างขั้นต่ำระหว่างรายการ</p>
+  <h3>Grid: เรียงการ์ด</h3>
+  <pre><code>&lt;div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3"&gt;
+  &lt;article class="rounded-xl bg-white p-6 shadow"&gt;บทที่ 1&lt;/article&gt;
+  &lt;article class="rounded-xl bg-white p-6 shadow"&gt;บทที่ 2&lt;/article&gt;
+  &lt;article class="rounded-xl bg-white p-6 shadow"&gt;บทที่ 3&lt;/article&gt;
+&lt;/div&gt;</code></pre>
+  <p>เริ่มต้นหนึ่งคอลัมน์ เมื่อหน้าจอถึง <code>md</code> จะมีสองคอลัมน์ และเมื่อถึง <code>lg</code> จะมีสามคอลัมน์</p>
+</section>
+<section id="responsive">
+  <h2>5. Responsive: เริ่มจากมือถือก่อน</h2>
+  <p>class ที่ไม่มี prefix ใช้ทุกขนาด ส่วน <code>md:</code> ทำงานเมื่อหน้าจอกว้างถึง breakpoint นั้น <strong>และกว้างกว่านั้น</strong> ไม่ได้หมายถึงเฉพาะแท็บเล็ต</p>
+  <div class="table-wrap"><table><thead><tr><th>Prefix</th><th>ความกว้างขั้นต่ำเริ่มต้น</th><th>โดยประมาณเมื่อ 1rem = 16px</th></tr></thead><tbody><tr><td><code>sm:</code></td><td>40rem</td><td>640px</td></tr><tr><td><code>md:</code></td><td>48rem</td><td>768px</td></tr><tr><td><code>lg:</code></td><td>64rem</td><td>1024px</td></tr><tr><td><code>xl:</code></td><td>80rem</td><td>1280px</td></tr><tr><td><code>2xl:</code></td><td>96rem</td><td>1536px</td></tr></tbody></table></div>
+  <pre><code>&lt;div class="flex flex-col gap-4 md:flex-row md:items-center"&gt;
+  &lt;h2 class="text-xl md:text-2xl"&gt;สวัสดี&lt;/h2&gt;
+  &lt;p&gt;มือถือเรียงลง จอที่กว้างตั้งแต่ md เรียงแนวนอน&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+  <p>เริ่มกำหนดหน้าตามือถือด้วย <code>flex-col</code> แล้วเพิ่ม <code>md:flex-row</code> สำหรับจอที่กว้างขึ้น ลองย่อและขยายหน้าต่างเบราว์เซอร์เพื่อดูจุดเปลี่ยน</p>
+</section>
+<section id="states">
+  <h2>6. สถานะผู้ใช้และ Dark mode</h2>
+  <p>เติม prefix เช่น <code>hover:</code>, <code>focus-visible:</code> หรือ <code>disabled:</code> เพื่อให้ utility ทำงานเมื่อ element อยู่ในสถานะนั้น</p>
+  <pre><code>&lt;button type="button" class="rounded-lg bg-cyan-700 px-4 py-2 text-white
+  hover:bg-cyan-800 focus-visible:outline-2 focus-visible:outline-offset-2
+  focus-visible:outline-cyan-700 disabled:cursor-not-allowed disabled:opacity-50"&gt;
+  บันทึก
+&lt;/button&gt;</code></pre>
+  <p><code>hover:</code> เปลี่ยนสีเมื่อชี้เมาส์ ส่วน <code>focus-visible:</code> ช่วยให้เห็นตำแหน่งเมื่อใช้คีย์บอร์ด และ <code>disabled:</code> ทำงานเมื่อปุ่มมี attribute <code>disabled</code> จริง ไม่ได้ปิดปุ่มให้เอง</p>
+  <h3>Dark mode</h3>
+  <pre><code>&lt;div class="bg-white p-6 text-slate-900 dark:bg-slate-900 dark:text-white"&gt;
+  เนื้อหาที่ปรับสีตามโหมดของระบบ
+&lt;/div&gt;</code></pre>
+  <p>ค่าเริ่มต้นของ <code>dark:</code> อิงการตั้งค่าสีของระบบผ่าน <code>prefers-color-scheme</code> ถ้าต้องการปุ่มสลับเอง ต้องปรับ dark variant และเขียนโค้ดจัดการสถานะเพิ่มเติมตาม <a href="https://tailwindcss.com/docs/dark-mode">เอกสาร Dark mode</a></p>
+  <div class="note">สีและเอฟเฟกต์ไม่ควรเป็นสัญญาณเดียวที่บอกสถานะ ใช้ข้อความหรือสัญลักษณ์ประกอบ ตรวจสอบความคมชัดของสี และลองใช้งานด้วยคีย์บอร์ดเสมอ</div>
+</section>
+<section id="theme">
+  <h2>7. ปรับ Theme และใช้ค่าที่กำหนดเอง</h2>
+  <p>ใน v4 สามารถเพิ่ม design token ใน CSS ด้วย <code>@theme</code> ตัวอย่างนี้สร้างสีชื่อ <code>brand</code> ทำให้ใช้ utility อย่าง <code>bg-brand</code> และ <code>text-brand</code> ได้</p>
+  <pre><code>/* style.css */
+@import "tailwindcss";
+
+@theme {
+  --color-brand: #0e7490;
+}</code></pre>
+  <pre><code>&lt;button class="rounded-lg bg-brand px-4 py-2 text-white"&gt;เริ่มต้น&lt;/button&gt;</code></pre>
+  <p>หากต้องใช้ค่าพิเศษเพียงจุดเดียว ใช้ arbitrary value เช่น <code>max-w-[42rem]</code> หรือ <code>bg-[#0e7490]</code> ได้ แต่ค่าที่ใช้ซ้ำหลายที่ควรตั้งเป็น theme เพื่อแก้ไขและดูแลได้ง่าย</p>
+  <h3>React และชื่อ class ที่เปลี่ยนตามข้อมูล</h3>
+  <p>ใน JSX ใช้ <code>className</code> แทน <code>class</code> และระบุชื่อ class ให้ครบใน source เพราะ Tailwind สแกนเป็นข้อความ ไม่สามารถคาดเดาชื่อที่ประกอบขึ้นระหว่างรันได้</p>
+  <pre><code>// ไม่ควร: Tailwind อาจไม่พบ class ที่ประกอบขึ้นภายหลัง
+const className = `bg-${color}-600`
+
+// ควร: ระบุชื่อ class ทั้งหมดให้สแกนพบ
+const colors = { primary: 'bg-cyan-700', danger: 'bg-red-700' }
+&lt;button className={`${colors.primary} rounded-lg px-4 py-2 text-white`}&gt;
+  บันทึก
+&lt;/button&gt;</code></pre>
+</section>
+<section id="project">
+  <h2>8. ลงมือสร้างหน้ารายการคอร์ส</h2>
+  <p>ใช้โปรเจกต์จากบทที่ 2 แทนที่ <code>index.html</code> ด้วยโค้ดด้านล่าง แล้วรัน <code>npm run dev</code> การ์ดจะเรียงหนึ่งคอลัมน์บนมือถือและสามคอลัมน์ตั้งแต่ <code>md</code> ขึ้นไป ลองเปลี่ยนสีและย่อหน้าจอเพื่อสังเกตผล</p>
+  <pre><code>&lt;!doctype html&gt;
+&lt;html lang="th"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;คอร์สสำหรับนักพัฒนา&lt;/title&gt;
+&lt;/head&gt;
+&lt;body class="min-h-screen bg-slate-100 text-slate-900"&gt;
+  &lt;header class="bg-cyan-800 text-white"&gt;
+    &lt;div class="mx-auto max-w-5xl px-6 py-10"&gt;
+      &lt;p class="font-semibold text-cyan-100"&gt;LEARNING HUB&lt;/p&gt;
+      &lt;h1 class="mt-2 text-3xl font-bold md:text-4xl"&gt;เริ่มเรียนเขียนเว็บ&lt;/h1&gt;
+      &lt;p class="mt-3 text-cyan-50"&gt;เลือกหัวข้อที่สนใจ แล้วค่อย ๆ ฝึกไปด้วยกัน&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/header&gt;
+  &lt;main id="courses" class="mx-auto max-w-5xl px-6 py-10"&gt;
+    &lt;h2 class="text-2xl font-bold"&gt;คอร์สแนะนำ&lt;/h2&gt;
+    &lt;div class="mt-6 grid gap-4 md:grid-cols-3"&gt;
+      &lt;article class="rounded-xl bg-white p-6 shadow-sm"&gt;
+        &lt;h3 class="text-lg font-bold"&gt;HTML&lt;/h3&gt;
+        &lt;p class="mt-2 text-slate-600"&gt;เรียนรู้โครงสร้างของหน้าเว็บ&lt;/p&gt;
+      &lt;/article&gt;
+      &lt;article class="rounded-xl bg-white p-6 shadow-sm"&gt;
+        &lt;h3 class="text-lg font-bold"&gt;CSS&lt;/h3&gt;
+        &lt;p class="mt-2 text-slate-600"&gt;จัดรูปแบบและ layout ให้สวยงาม&lt;/p&gt;
+      &lt;/article&gt;
+      &lt;article class="rounded-xl bg-white p-6 shadow-sm"&gt;
+        &lt;h3 class="text-lg font-bold"&gt;Tailwind CSS&lt;/h3&gt;
+        &lt;p class="mt-2 text-slate-600"&gt;สร้างหน้าตาด้วย utility classes&lt;/p&gt;
+      &lt;/article&gt;
+    &lt;/div&gt;
+  &lt;/main&gt;
+  &lt;script type="module" src="/main.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+  <p><code>mx-auto max-w-5xl</code> จำกัดความกว้างและจัดกึ่งกลาง, <code>px-6</code> กันเนื้อหาชิดขอบ ส่วน <code>grid gap-4 md:grid-cols-3</code> สร้าง grid ที่มีช่องว่างและเปลี่ยนเป็นสามคอลัมน์เมื่อจอกว้างพอ</p>
+</section>
+<section id="practice">
+  <h2>9. แบบฝึกหัด</h2>
+  <ol><li>สร้างปุ่มพื้นหลังสีฟ้า ข้อความสีขาว มีมุมมนและเปลี่ยนสีเมื่อชี้เมาส์ เพิ่มเส้นแสดง focus สำหรับคีย์บอร์ด</li><li>สร้างรายการการ์ดสี่ใบ ให้มือถือมีหนึ่งคอลัมน์ ตั้งแต่ <code>sm</code> มีสอง และตั้งแต่ <code>lg</code> มีสี่คอลัมน์</li><li>ต่อยอดโปรเจกต์คอร์ส: เพิ่มการ์ดใหม่ ปรับพื้นที่ด้านใน และทำให้สีพื้นหลังกับข้อความรองรับ dark mode</li></ol>
+  <details><summary>ดูแนวเฉลยข้อ 1</summary><pre><code>&lt;button class="rounded-lg bg-cyan-700 px-4 py-2 text-white
+  hover:bg-cyan-800 focus-visible:outline-2 focus-visible:outline-offset-2
+  focus-visible:outline-cyan-700"&gt;เริ่มเรียน&lt;/button&gt;</code></pre></details>
+  <details><summary>ดูแนวเฉลยข้อ 2</summary><pre><code>&lt;div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"&gt;
+  &lt;article class="rounded-lg bg-white p-4 shadow"&gt;หนึ่ง&lt;/article&gt;
+  &lt;article class="rounded-lg bg-white p-4 shadow"&gt;สอง&lt;/article&gt;
+  &lt;article class="rounded-lg bg-white p-4 shadow"&gt;สาม&lt;/article&gt;
+  &lt;article class="rounded-lg bg-white p-4 shadow"&gt;สี่&lt;/article&gt;
+&lt;/div&gt;</code></pre></details>
+  <details><summary>ดูแนวทางข้อ 3</summary><p>เพิ่ม <code>article</code> ใน grid แล้วเปลี่ยน <code>p-6</code> เป็นค่าที่ต้องการ จากนั้นเพิ่ม <code>dark:bg-slate-900 dark:text-white</code> ที่ body และปรับสีการ์ดกับข้อความภายในการ์ดให้เหมาะกับทั้งสองโหมด ทดสอบโดยเปลี่ยนการตั้งค่าธีมของระบบ</p></details>
+</section>
+<section id="troubleshoot">
+  <h2>10. ปัญหาที่พบบ่อยและแนวทางต่อยอด</h2>
+  <div class="grid"><div class="card"><h3>class ไม่แสดงผล</h3><p>ตรวจว่ารัน dev server แล้ว มี plugin ใน Vite config และ <code>main.js</code> import ไฟล์ CSS ที่มี <code>@import "tailwindcss";</code> รวมถึงไฟล์ที่ใช้ class อยู่ในพื้นที่ที่ Tailwind สแกน</p></div><div class="card"><h3>สร้างชื่อ class จากตัวแปรแล้วไม่ทำงาน</h3><p>เขียนชื่อเต็มแต่ละทางเลือกใน source เช่น <code>bg-red-700</code> และ <code>bg-cyan-700</code> แล้วเลือกจาก object แทนการต่อสตริง</p></div><div class="card"><h3>Responsive ไม่เปลี่ยน</h3><p>ตรวจ viewport meta tag และความกว้างจริงของหน้าต่าง จำว่า <code>md:</code> เริ่มที่ 48rem ไม่ใช่กฎสำหรับจอเล็กกว่า</p></div><div class="card"><h3>สไตล์ชนกัน</h3><p>ตรวจ CSS ที่สร้างและกฎที่มีผลใน DevTools อย่าสมมติว่า class ที่เขียนท้ายสุดใน HTML จะชนะเสมอ เพราะลำดับ CSS และ specificity มีผล</p></div></div>
+  <h3>แนวทางเขียนให้ดูแลง่าย</h3><p>เริ่มด้วย HTML ที่สื่อความหมาย ใช้ utility ที่จำเป็นและจัดกลุ่มให้อ่านง่าย เมื่อรูปแบบซ้ำหลายจุดให้พิจารณาสร้าง component ของ framework หรือ class ที่ใช้ร่วมกัน ทดสอบหน้าจอหลายขนาดและสถานะ focus อยู่เสมอ</p>
+  <h3>อ่านเพิ่มเติมจากเอกสารทางการ</h3><ul><li><a href="https://tailwindcss.com/docs/installation/using-vite">ติดตั้ง Tailwind CSS กับ Vite</a></li><li><a href="https://tailwindcss.com/docs/styling-with-utility-classes">Styling with utility classes</a></li><li><a href="https://tailwindcss.com/docs/responsive-design">Responsive design และ breakpoints</a></li><li><a href="https://tailwindcss.com/docs/detecting-classes-in-source-files">การตรวจจับ class ในไฟล์ต้นทาง</a></li><li><a href="https://tailwindcss.com/docs/theme">Theme variables</a></li></ul>
+</section>
+<footer><a href="index.html">← กลับหน้ารวมบทเรียน</a> · เริ่มจากตัวอย่างเล็ก ๆ และลองปรับทีละ class เพื่อเข้าใจผลลัพธ์</footer>
+</main>
+</body>
+</html>

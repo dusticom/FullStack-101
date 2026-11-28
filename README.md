@@ -6,7 +6,7 @@
 
 | หมวด | บทเรียน |
 | --- | --- |
-| Frontend | CSS Styling, JavaScript ES6+, React, Next.js + Redux + TypeScript |
+| Frontend | CSS Styling, Tailwind CSS, JavaScript ES6+, React, Next.js + Redux + TypeScript |
 | Backend | Go (Golang) + MySQL, Express.js + TypeScript, NestJS, Laravel, Ruby on Rails |
 | Data | SQL Fundamentals, MySQL Database, PostgreSQL Database |
 | เครื่องมือและระบบ | Git Version Control, Linux Command Line, Docker |
@@ -40,6 +40,7 @@ python -m http.server 8000
 .
 ├── index.html                              # หน้ารวมบทเรียน
 ├── css-teaching.html
+├── tailwind-teaching.html                  # Tailwind CSS v4 พร้อมตัวอย่างและแบบฝึกหัด
 ├── docker-teaching.html
 ├── express-typescript-teaching.html
 ├── git-teaching.html

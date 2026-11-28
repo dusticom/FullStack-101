@@ -22,6 +22,13 @@
     .note { border-left:4px solid #06a6b8; margin:1rem 0; } .warning { border-left-color:#f59e0b; background:#fffbeb; }
     code { font-family:ui-monospace,SFMono-Regular,Consolas,monospace; font-size:.9em; background:#e5f2f4; border-radius:4px; padding:.1em .3em; overflow-wrap:anywhere; }
     pre { background:#102b3a; color:#e9f5f5; padding:1.15rem; border-radius:10px; overflow-x:auto; line-height:1.65; tab-size:2; } pre code { color:inherit; background:none; padding:0; font-size:.88rem; overflow-wrap:normal; }
+    /* Syntax colors for the lesson's code examples. */
+    .syntax-comment { color:#a7b8c6; font-style:italic; }
+    .syntax-keyword { color:#d8b4fe; }
+    .syntax-string { color:#a7f3d0; }
+    .syntax-tag { color:#fda4af; }
+    .syntax-attribute { color:#7dd3fc; }
+    .syntax-number { color:#fcd34d; }
     .table-wrap { overflow-x:auto; } table { width:100%; border-collapse:collapse; background:white; } th,td { text-align:left; padding:.7rem; border:1px solid var(--line); vertical-align:top; } th { background:#eaf5f6; }
     .demo { padding:1.5rem; background:#e7f3f5; border:1px solid #c5e3e7; border-radius:12px; } .demo-card { max-width:22rem; padding:1.5rem; border-radius:1rem; background:white; box-shadow:0 10px 20px #1232; } .demo-card p { color:#475569; } .demo-btn { display:inline-block; padding:.5rem 1rem; border-radius:.5rem; background:#0e7490; color:white; font-weight:700; }
     details { margin:.8rem 0; } summary { cursor:pointer; font-weight:700; color:#075d6c; } li { margin:.35rem 0; } footer { color:var(--muted); padding:2rem 0; } .small { font-size:.9rem; }
@@ -46,44 +53,44 @@
   <div class="grid"><div class="card"><h3>CSS แบบเขียนเอง</h3><p>ตั้งชื่อ class เช่น <code>button-primary</code> แล้วเขียนกฎ CSS สำหรับ class นั้นแยกไว้</p></div><div class="card"><h3>Tailwind แบบ utility</h3><p>ประกอบ class เช่น <code>bg-cyan-700 text-white px-4 py-2</code> เพื่อกำหนดสีและระยะห่างโดยตรง</p></div></div>
   <p>Tailwind ช่วยให้ใช้ชุดค่าที่สม่ำเสมอและปรับหน้าตาได้ใกล้กับโครงสร้าง HTML แต่ยังต้องเข้าใจ CSS เช่น box model, flex และ grid หากยังไม่คุ้น แนะนำอ่าน <a href="css-teaching.html">บทเรียน CSS</a> ควบคู่กัน</p>
   <h3>อ่าน class ทีละชิ้น</h3>
-  <pre><code>&lt;button class="rounded-lg bg-cyan-700 px-4 py-2 text-white"&gt;
+  <pre><code><span class="syntax-tag">&lt;button</span> <span class="syntax-attribute">class</span>=<span class="syntax-string">"rounded-lg bg-cyan-700 px-4 py-2 text-white"</span>&gt;
   เริ่มเรียน
-&lt;/button&gt;</code></pre>
+<span class="syntax-tag">&lt;/button</span>&gt;</code></pre>
   <p><code>rounded-lg</code> ทำมุมมน, <code>bg-cyan-700</code> กำหนดพื้นหลัง, <code>px-4</code> และ <code>py-2</code> เพิ่ม padding แนวนอนและแนวตั้ง ส่วน <code>text-white</code> กำหนดสีข้อความ</p>
   <div class="note"><strong>Tailwind ทำงานอย่างไร:</strong> เครื่องมือจะสแกนไฟล์ต้นทางเพื่อหาชื่อ class แล้วสร้าง CSS สำหรับ class ที่พบ ตัวเบราว์เซอร์จึงได้รับ CSS ปกติ ไม่ได้แปลชื่อ class เอง</div>
 </section>
 <section id="setup">
   <h2>2. เริ่มโปรเจกต์ด้วย Vite + Tailwind v4</h2>
   <p>ตัวอย่างนี้ใช้ Vite แบบ <strong>Vanilla JavaScript</strong> เพื่อให้เห็นขั้นตอนชัดเจน ต้องติดตั้ง Node.js และ npm ที่รองรับ Vite รุ่นที่ใช้อยู่ก่อน ตรวจสอบได้ด้วย <code>node -v</code> และ <code>npm -v</code> จากนั้นรันคำสั่งใน terminal</p>
-  <pre><code>npm create vite@latest tailwind-demo -- --template vanilla
+  <pre><code><span class="syntax-keyword">npm</span> <span class="syntax-keyword">create</span> vite<span class="syntax-keyword">@latest</span> tailwind-demo -- <span class="syntax-attribute">--template</span> vanilla
 cd tailwind-demo
-npm install
-npm install tailwindcss @tailwindcss/vite</code></pre>
+<span class="syntax-keyword">npm</span> <span class="syntax-keyword">install</span>
+<span class="syntax-keyword">npm</span> <span class="syntax-keyword">install</span> tailwindcss <span class="syntax-keyword">@tailwindcss</span>/vite</code></pre>
   <p>เพิ่มไฟล์ <code>vite.config.js</code> ที่รากโปรเจกต์ หากมีไฟล์ config อยู่แล้ว ให้เพิ่ม plugin ลงใน config เดิมแทนการลบค่าอื่น</p>
-  <pre><code>import { defineConfig } from 'vite'
-import tailwindcss from '@tailwindcss/vite'
+  <pre><code><span class="syntax-keyword">import</span> { defineConfig } <span class="syntax-keyword">from</span> <span class="syntax-string">'vite'</span>
+<span class="syntax-keyword">import</span> tailwindcss <span class="syntax-keyword">from</span> <span class="syntax-string">'@tailwindcss/vite'</span>
 
-export default defineConfig({
-  plugins: [tailwindcss()],
+<span class="syntax-keyword">export</span> <span class="syntax-keyword">default</span> defineConfig({
+  <span class="syntax-attribute">plugins</span>: [tailwindcss()],
 })</code></pre>
   <p>แทนที่เนื้อหา <code>style.css</code> ในรากโปรเจกต์ด้วยคำสั่งนี้ และตรวจสอบว่า <code>main.js</code> ยังคงมี <code>import './style.css'</code> อยู่</p>
-  <pre><code>@import "tailwindcss";</code></pre>
+  <pre><code><span class="syntax-keyword">@import</span> <span class="syntax-string">"tailwindcss"</span>;</code></pre>
   <p>แทนที่เนื้อหา <code>index.html</code> ด้วยตัวอย่างด้านล่าง โดยคง script ที่โหลด <code>main.js</code> ไว้ เพื่อให้ CSS ถูกนำเข้า</p>
-  <pre><code>&lt;!doctype html&gt;
-&lt;html lang="th"&gt;
-  &lt;head&gt;
-    &lt;meta charset="UTF-8"&gt;
-    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
-    &lt;title&gt;Tailwind Demo&lt;/title&gt;
-  &lt;/head&gt;
-  &lt;body class="bg-slate-100 p-8"&gt;
-    &lt;h1 class="text-3xl font-bold text-cyan-700"&gt;สวัสดี Tailwind!&lt;/h1&gt;
-    &lt;script type="module" src="/main.js"&gt;&lt;/script&gt;
-  &lt;/body&gt;
-&lt;/html&gt;</code></pre>
+  <pre><code><span class="syntax-tag">&lt;!doctype</span> html&gt;
+<span class="syntax-tag">&lt;html</span> <span class="syntax-attribute">lang</span>=<span class="syntax-string">"th"</span>&gt;
+  <span class="syntax-tag">&lt;head</span>&gt;
+    <span class="syntax-tag">&lt;meta</span> <span class="syntax-attribute">charset</span>=<span class="syntax-string">"UTF-8"</span>&gt;
+    <span class="syntax-tag">&lt;meta</span> <span class="syntax-attribute">name</span>=<span class="syntax-string">"viewport"</span> <span class="syntax-attribute">content</span>=<span class="syntax-string">"width=device-width, initial-scale=1.0"</span>&gt;
+    <span class="syntax-tag">&lt;title</span>&gt;Tailwind Demo<span class="syntax-tag">&lt;/title</span>&gt;
+  <span class="syntax-tag">&lt;/head</span>&gt;
+  <span class="syntax-tag">&lt;body</span> <span class="syntax-attribute">class</span>=<span class="syntax-string">"bg-slate-100 p-8"</span>&gt;
+    <span class="syntax-tag">&lt;h1</span> <span class="syntax-attribute">class</span>=<span class="syntax-string">"text-3xl font-bold text-cyan-700"</span>&gt;สวัสดี Tailwind!<span class="syntax-tag">&lt;/h1</span>&gt;
+    <span class="syntax-tag">&lt;script</span> <span class="syntax-attribute">type</span>=<span class="syntax-string">"module"</span> <span class="syntax-attribute">src</span>=<span class="syntax-string">"/main.js"</span>&gt;<span class="syntax-tag">&lt;/script</span>&gt;
+  <span class="syntax-tag">&lt;/body</span>&gt;
+<span class="syntax-tag">&lt;/html</span>&gt;</code></pre>
   <p>ไฟล์ <code>main.js</code> ที่ Vite สร้างมาอาจมีโค้ดตัวอย่างซึ่งอ้างถึง element ที่เราแทนที่ไปแล้ว ให้แทนที่เนื้อหาไฟล์ด้วยบรรทัดเดียวนี้:</p>
-  <pre><code>import './style.css'</code></pre>
-  <pre><code>npm run dev</code></pre>
+  <pre><code><span class="syntax-keyword">import</span> <span class="syntax-string">'./style.css'</span></code></pre>
+  <pre><code><span class="syntax-keyword">npm</span> <span class="syntax-keyword">run</span> dev</code></pre>
   <p>เปิด URL ที่ terminal แสดง ควรเห็นหัวข้อสีฟ้าเข้มบนพื้นหลังสีอ่อน เมื่อพร้อมสร้างไฟล์สำหรับเผยแพร่ให้ใช้ <code>npm run build</code> ผลลัพธ์อยู่ใน <code>dist/</code> และทดลอง build ในเครื่องด้วย <code>npm run preview</code></p>
   <div class="note warning"><strong>ระวังเวอร์ชัน:</strong> บทเรียนนี้ใช้ v4 ซึ่งใช้ <code>@import "tailwindcss";</code> และ Vite plugin ตัวอย่างเก่าที่ใช้ <code>@tailwind base</code> หรือสร้าง config ด้วย <code>tailwindcss init</code> เป็นแนวทาง v3 อย่านำมาปะปนกันโดยไม่ตรวจเวอร์ชัน</div>
 </section>
@@ -100,131 +107,131 @@ export default defineConfig({
   <p>ค่า spacing เริ่มต้นอิงหน่วย <code>0.25rem</code> เช่น <code>p-4</code> เท่ากับ <code>1rem</code> (โดยทั่วไป 16px เมื่อขนาดตัวอักษรรากเป็น 16px) ค่าของ theme ปรับได้ จึงไม่ควรจำว่าเลขทุกตัวเป็น pixel เสมอไป</p>
   <h3>ตัวอย่างการ์ด</h3><div class="demo"><div class="demo-card"><strong>เริ่มต้นกับ Tailwind</strong><p>ประกอบ utility ทีละส่วน แล้วสังเกตผลที่เปลี่ยนไป</p><span class="demo-btn">เริ่มเรียน</span></div></div>
   <p class="small sub">ภาพตัวอย่างนี้จำลองด้วย CSS ในบทเรียน จึงเปิดอ่านได้โดยไม่ต้องเชื่อมต่อหรือ build โปรเจกต์</p>
-  <pre><code>&lt;article class="max-w-sm rounded-2xl bg-white p-6 shadow-lg"&gt;
-  &lt;h3 class="text-lg font-bold text-slate-900"&gt;เริ่มต้นกับ Tailwind&lt;/h3&gt;
-  &lt;p class="mt-2 text-slate-600"&gt;ประกอบ utility ทีละส่วน แล้วสังเกตผลที่เปลี่ยนไป&lt;/p&gt;
-  &lt;button class="mt-4 rounded-lg bg-cyan-700 px-4 py-2 font-bold text-white"&gt;
+  <pre><code><span class="syntax-tag">&lt;article</span> <span class="syntax-attribute">class</span>=<span class="syntax-string">"max-w-sm rounded-2xl bg-white p-6 shadow-lg"</span>&gt;
+  <span class="syntax-tag">&lt;h3</span> <span class="syntax-attribute">class</span>=<span class="syntax-string">"text-lg font-bold text-slate-900"</span>&gt;เริ่มต้นกับ Tailwind<span class="syntax-tag">&lt;/h3</span>&gt;
+  <span class="syntax-tag">&lt;p</span> <span class="syntax-attribute">class</span>=<span class="syntax-string">"mt-2 text-slate-600"</span>&gt;ประกอบ utility ทีละส่วน แล้วสังเกตผลที่เปลี่ยนไป<span class="syntax-tag">&lt;/p</span>&gt;
+  <span class="syntax-tag">&lt;button</span> <span class="syntax-attribute">class</span>=<span class="syntax-string">"mt-4 rounded-lg bg-cyan-700 px-4 py-2 font-bold text-white"</span>&gt;
     เริ่มเรียน
-  &lt;/button&gt;
-&lt;/article&gt;</code></pre>
+  <span class="syntax-tag">&lt;/button</span>&gt;
+<span class="syntax-tag">&lt;/article</span>&gt;</code></pre>
 </section>
 <section id="layout">
   <h2>4. จัด Layout ด้วย Flex และ Grid</h2>
   <p><strong>Flexbox</strong> เหมาะกับการจัดรายการตามแนวหลักหนึ่งแนว เช่น เมนู ส่วน <strong>Grid</strong> เหมาะกับการกำหนดแถวและคอลัมน์ เช่น รายการการ์ด</p>
   <h3>Flex: จัดหัวข้อกับปุ่มให้อยู่คนละด้าน</h3>
-  <pre><code>&lt;div class="flex items-center justify-between gap-4"&gt;
-  &lt;h2 class="text-xl font-bold"&gt;บทเรียนล่าสุด&lt;/h2&gt;
-  &lt;a href="#courses" class="text-cyan-700 underline"&gt;ดูทั้งหมด&lt;/a&gt;
-&lt;/div&gt;</code></pre>
+  <pre><code><span class="syntax-tag">&lt;div</span> <span class="syntax-attribute">class</span>=<span class="syntax-string">"flex items-center justify-between gap-4"</span>&gt;
+  <span class="syntax-tag">&lt;h2</span> <span class="syntax-attribute">class</span>=<span class="syntax-string">"text-xl font-bold"</span>&gt;บทเรียนล่าสุด<span class="syntax-tag">&lt;/h2</span>&gt;
+  <span class="syntax-tag">&lt;a</span> <span class="syntax-attribute">href</span>=<span class="syntax-string">"#courses"</span> <span class="syntax-attribute">class</span>=<span class="syntax-string">"text-cyan-700 underline"</span>&gt;ดูทั้งหมด<span class="syntax-tag">&lt;/a</span>&gt;
+<span class="syntax-tag">&lt;/div</span>&gt;</code></pre>
   <p><code>flex</code> เริ่มใช้ Flexbox; <code>items-center</code> จัดกึ่งกลางตามแนวขวาง; <code>justify-between</code> กระจายพื้นที่ระหว่างรายการ และ <code>gap-4</code> เว้นช่องว่างขั้นต่ำระหว่างรายการ</p>
   <h3>Grid: เรียงการ์ด</h3>
-  <pre><code>&lt;div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3"&gt;
-  &lt;article class="rounded-xl bg-white p-6 shadow"&gt;บทที่ 1&lt;/article&gt;
-  &lt;article class="rounded-xl bg-white p-6 shadow"&gt;บทที่ 2&lt;/article&gt;
-  &lt;article class="rounded-xl bg-white p-6 shadow"&gt;บทที่ 3&lt;/article&gt;
-&lt;/div&gt;</code></pre>
+  <pre><code><span class="syntax-tag">&lt;div</span> <span class="syntax-attribute">class</span>=<span class="syntax-string">"grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3"</span>&gt;
+  <span class="syntax-tag">&lt;article</span> <span class="syntax-attribute">class</span>=<span class="syntax-string">"rounded-xl bg-white p-6 shadow"</span>&gt;บทที่ <span class="syntax-number">1</span><span class="syntax-tag">&lt;/article</span>&gt;
+  <span class="syntax-tag">&lt;article</span> <span class="syntax-attribute">class</span>=<span class="syntax-string">"rounded-xl bg-white p-6 shadow"</span>&gt;บทที่ <span class="syntax-number">2</span><span class="syntax-tag">&lt;/article</span>&gt;
+  <span class="syntax-tag">&lt;article</span> <span class="syntax-attribute">class</span>=<span class="syntax-string">"rounded-xl bg-white p-6 shadow"</span>&gt;บทที่ <span class="syntax-number">3</span><span class="syntax-tag">&lt;/article</span>&gt;
+<span class="syntax-tag">&lt;/div</span>&gt;</code></pre>
   <p>เริ่มต้นหนึ่งคอลัมน์ เมื่อหน้าจอถึง <code>md</code> จะมีสองคอลัมน์ และเมื่อถึง <code>lg</code> จะมีสามคอลัมน์</p>
 </section>
 <section id="responsive">
   <h2>5. Responsive: เริ่มจากมือถือก่อน</h2>
   <p>class ที่ไม่มี prefix ใช้ทุกขนาด ส่วน <code>md:</code> ทำงานเมื่อหน้าจอกว้างถึง breakpoint นั้น <strong>และกว้างกว่านั้น</strong> ไม่ได้หมายถึงเฉพาะแท็บเล็ต</p>
   <div class="table-wrap"><table><thead><tr><th>Prefix</th><th>ความกว้างขั้นต่ำเริ่มต้น</th><th>โดยประมาณเมื่อ 1rem = 16px</th></tr></thead><tbody><tr><td><code>sm:</code></td><td>40rem</td><td>640px</td></tr><tr><td><code>md:</code></td><td>48rem</td><td>768px</td></tr><tr><td><code>lg:</code></td><td>64rem</td><td>1024px</td></tr><tr><td><code>xl:</code></td><td>80rem</td><td>1280px</td></tr><tr><td><code>2xl:</code></td><td>96rem</td><td>1536px</td></tr></tbody></table></div>
-  <pre><code>&lt;div class="flex flex-col gap-4 md:flex-row md:items-center"&gt;
-  &lt;h2 class="text-xl md:text-2xl"&gt;สวัสดี&lt;/h2&gt;
-  &lt;p&gt;มือถือเรียงลง จอที่กว้างตั้งแต่ md เรียงแนวนอน&lt;/p&gt;
-&lt;/div&gt;</code></pre>
+  <pre><code><span class="syntax-tag">&lt;div</span> <span class="syntax-attribute">class</span>=<span class="syntax-string">"flex flex-col gap-4 md:flex-row md:items-center"</span>&gt;
+  <span class="syntax-tag">&lt;h2</span> <span class="syntax-attribute">class</span>=<span class="syntax-string">"text-xl md:text-2xl"</span>&gt;สวัสดี<span class="syntax-tag">&lt;/h2</span>&gt;
+  <span class="syntax-tag">&lt;p</span>&gt;มือถือเรียงลง จอที่กว้างตั้งแต่ md เรียงแนวนอน<span class="syntax-tag">&lt;/p</span>&gt;
+<span class="syntax-tag">&lt;/div</span>&gt;</code></pre>
   <p>เริ่มกำหนดหน้าตามือถือด้วย <code>flex-col</code> แล้วเพิ่ม <code>md:flex-row</code> สำหรับจอที่กว้างขึ้น ลองย่อและขยายหน้าต่างเบราว์เซอร์เพื่อดูจุดเปลี่ยน</p>
 </section>
 <section id="states">
   <h2>6. สถานะผู้ใช้และ Dark mode</h2>
   <p>เติม prefix เช่น <code>hover:</code>, <code>focus-visible:</code> หรือ <code>disabled:</code> เพื่อให้ utility ทำงานเมื่อ element อยู่ในสถานะนั้น</p>
-  <pre><code>&lt;button type="button" class="rounded-lg bg-cyan-700 px-4 py-2 text-white
+  <pre><code><span class="syntax-tag">&lt;button</span> <span class="syntax-attribute">type</span>=<span class="syntax-string">"button"</span> <span class="syntax-attribute">class</span>=<span class="syntax-string">"rounded-lg bg-cyan-700 px-4 py-2 text-white
   hover:bg-cyan-800 focus-visible:outline-2 focus-visible:outline-offset-2
-  focus-visible:outline-cyan-700 disabled:cursor-not-allowed disabled:opacity-50"&gt;
+  focus-visible:outline-cyan-700 disabled:cursor-not-allowed disabled:opacity-50"</span>&gt;
   บันทึก
-&lt;/button&gt;</code></pre>
+<span class="syntax-tag">&lt;/button</span>&gt;</code></pre>
   <p><code>hover:</code> เปลี่ยนสีเมื่อชี้เมาส์ ส่วน <code>focus-visible:</code> ช่วยให้เห็นตำแหน่งเมื่อใช้คีย์บอร์ด และ <code>disabled:</code> ทำงานเมื่อปุ่มมี attribute <code>disabled</code> จริง ไม่ได้ปิดปุ่มให้เอง</p>
   <h3>Dark mode</h3>
-  <pre><code>&lt;div class="bg-white p-6 text-slate-900 dark:bg-slate-900 dark:text-white"&gt;
+  <pre><code><span class="syntax-tag">&lt;div</span> <span class="syntax-attribute">class</span>=<span class="syntax-string">"bg-white p-6 text-slate-900 dark:bg-slate-900 dark:text-white"</span>&gt;
   เนื้อหาที่ปรับสีตามโหมดของระบบ
-&lt;/div&gt;</code></pre>
+<span class="syntax-tag">&lt;/div</span>&gt;</code></pre>
   <p>ค่าเริ่มต้นของ <code>dark:</code> อิงการตั้งค่าสีของระบบผ่าน <code>prefers-color-scheme</code> ถ้าต้องการปุ่มสลับเอง ต้องปรับ dark variant และเขียนโค้ดจัดการสถานะเพิ่มเติมตาม <a href="https://tailwindcss.com/docs/dark-mode">เอกสาร Dark mode</a></p>
   <div class="note">สีและเอฟเฟกต์ไม่ควรเป็นสัญญาณเดียวที่บอกสถานะ ใช้ข้อความหรือสัญลักษณ์ประกอบ ตรวจสอบความคมชัดของสี และลองใช้งานด้วยคีย์บอร์ดเสมอ</div>
 </section>
 <section id="theme">
   <h2>7. ปรับ Theme และใช้ค่าที่กำหนดเอง</h2>
   <p>ใน v4 สามารถเพิ่ม design token ใน CSS ด้วย <code>@theme</code> ตัวอย่างนี้สร้างสีชื่อ <code>brand</code> ทำให้ใช้ utility อย่าง <code>bg-brand</code> และ <code>text-brand</code> ได้</p>
-  <pre><code>/* style.css */
-@import "tailwindcss";
+  <pre><code><span class="syntax-comment">/* style.css */</span>
+<span class="syntax-keyword">@import</span> <span class="syntax-string">"tailwindcss"</span>;
 
-@theme {
-  --color-brand: #0e7490;
+<span class="syntax-keyword">@theme</span> {
+  <span class="syntax-attribute">--color-brand</span>: <span class="syntax-number">#0e7490</span>;
 }</code></pre>
-  <pre><code>&lt;button class="rounded-lg bg-brand px-4 py-2 text-white"&gt;เริ่มต้น&lt;/button&gt;</code></pre>
+  <pre><code><span class="syntax-tag">&lt;button</span> <span class="syntax-attribute">class</span>=<span class="syntax-string">"rounded-lg bg-brand px-4 py-2 text-white"</span>&gt;เริ่มต้น<span class="syntax-tag">&lt;/button</span>&gt;</code></pre>
   <p>หากต้องใช้ค่าพิเศษเพียงจุดเดียว ใช้ arbitrary value เช่น <code>max-w-[42rem]</code> หรือ <code>bg-[#0e7490]</code> ได้ แต่ค่าที่ใช้ซ้ำหลายที่ควรตั้งเป็น theme เพื่อแก้ไขและดูแลได้ง่าย</p>
   <h3>React และชื่อ class ที่เปลี่ยนตามข้อมูล</h3>
   <p>ใน JSX ใช้ <code>className</code> แทน <code>class</code> และระบุชื่อ class ให้ครบใน source เพราะ Tailwind สแกนเป็นข้อความ ไม่สามารถคาดเดาชื่อที่ประกอบขึ้นระหว่างรันได้</p>
-  <pre><code>// ไม่ควร: Tailwind อาจไม่พบ class ที่ประกอบขึ้นภายหลัง
-const className = `bg-${color}-600`
+  <pre><code><span class="syntax-comment">// ไม่ควร: Tailwind อาจไม่พบ class ที่ประกอบขึ้นภายหลัง</span>
+<span class="syntax-keyword">const</span> <span class="syntax-attribute">className</span> = <span class="syntax-string">`bg-${color}-600`</span>
 
-// ควร: ระบุชื่อ class ทั้งหมดให้สแกนพบ
-const colors = { primary: 'bg-cyan-700', danger: 'bg-red-700' }
-&lt;button className={`${colors.primary} rounded-lg px-4 py-2 text-white`}&gt;
+<span class="syntax-comment">// ควร: ระบุชื่อ class ทั้งหมดให้สแกนพบ</span>
+<span class="syntax-keyword">const</span> <span class="syntax-attribute">colors</span> = { <span class="syntax-attribute">primary</span>: <span class="syntax-string">'bg-cyan-700'</span>, <span class="syntax-attribute">danger</span>: <span class="syntax-string">'bg-red-700'</span> }
+<span class="syntax-tag">&lt;button</span> <span class="syntax-attribute">className</span>={<span class="syntax-string">`${colors.primary} rounded-lg px-4 py-2 text-white`</span>}&gt;
   บันทึก
-&lt;/button&gt;</code></pre>
+<span class="syntax-tag">&lt;/button</span>&gt;</code></pre>
 </section>
 <section id="project">
   <h2>8. ลงมือสร้างหน้ารายการคอร์ส</h2>
   <p>ใช้โปรเจกต์จากบทที่ 2 แทนที่ <code>index.html</code> ด้วยโค้ดด้านล่าง แล้วรัน <code>npm run dev</code> การ์ดจะเรียงหนึ่งคอลัมน์บนมือถือและสามคอลัมน์ตั้งแต่ <code>md</code> ขึ้นไป ลองเปลี่ยนสีและย่อหน้าจอเพื่อสังเกตผล</p>
-  <pre><code>&lt;!doctype html&gt;
-&lt;html lang="th"&gt;
-&lt;head&gt;
-  &lt;meta charset="UTF-8"&gt;
-  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
-  &lt;title&gt;คอร์สสำหรับนักพัฒนา&lt;/title&gt;
-&lt;/head&gt;
-&lt;body class="min-h-screen bg-slate-100 text-slate-900"&gt;
-  &lt;header class="bg-cyan-800 text-white"&gt;
-    &lt;div class="mx-auto max-w-5xl px-6 py-10"&gt;
-      &lt;p class="font-semibold text-cyan-100"&gt;LEARNING HUB&lt;/p&gt;
-      &lt;h1 class="mt-2 text-3xl font-bold md:text-4xl"&gt;เริ่มเรียนเขียนเว็บ&lt;/h1&gt;
-      &lt;p class="mt-3 text-cyan-50"&gt;เลือกหัวข้อที่สนใจ แล้วค่อย ๆ ฝึกไปด้วยกัน&lt;/p&gt;
-    &lt;/div&gt;
-  &lt;/header&gt;
-  &lt;main id="courses" class="mx-auto max-w-5xl px-6 py-10"&gt;
-    &lt;h2 class="text-2xl font-bold"&gt;คอร์สแนะนำ&lt;/h2&gt;
-    &lt;div class="mt-6 grid gap-4 md:grid-cols-3"&gt;
-      &lt;article class="rounded-xl bg-white p-6 shadow-sm"&gt;
-        &lt;h3 class="text-lg font-bold"&gt;HTML&lt;/h3&gt;
-        &lt;p class="mt-2 text-slate-600"&gt;เรียนรู้โครงสร้างของหน้าเว็บ&lt;/p&gt;
-      &lt;/article&gt;
-      &lt;article class="rounded-xl bg-white p-6 shadow-sm"&gt;
-        &lt;h3 class="text-lg font-bold"&gt;CSS&lt;/h3&gt;
-        &lt;p class="mt-2 text-slate-600"&gt;จัดรูปแบบและ layout ให้สวยงาม&lt;/p&gt;
-      &lt;/article&gt;
-      &lt;article class="rounded-xl bg-white p-6 shadow-sm"&gt;
-        &lt;h3 class="text-lg font-bold"&gt;Tailwind CSS&lt;/h3&gt;
-        &lt;p class="mt-2 text-slate-600"&gt;สร้างหน้าตาด้วย utility classes&lt;/p&gt;
-      &lt;/article&gt;
-    &lt;/div&gt;
-  &lt;/main&gt;
-  &lt;script type="module" src="/main.js"&gt;&lt;/script&gt;
-&lt;/body&gt;
-&lt;/html&gt;</code></pre>
+  <pre><code><span class="syntax-tag">&lt;!doctype</span> html&gt;
+<span class="syntax-tag">&lt;html</span> <span class="syntax-attribute">lang</span>=<span class="syntax-string">"th"</span>&gt;
+<span class="syntax-tag">&lt;head</span>&gt;
+  <span class="syntax-tag">&lt;meta</span> <span class="syntax-attribute">charset</span>=<span class="syntax-string">"UTF-8"</span>&gt;
+  <span class="syntax-tag">&lt;meta</span> <span class="syntax-attribute">name</span>=<span class="syntax-string">"viewport"</span> <span class="syntax-attribute">content</span>=<span class="syntax-string">"width=device-width, initial-scale=1.0"</span>&gt;
+  <span class="syntax-tag">&lt;title</span>&gt;คอร์สสำหรับนักพัฒนา<span class="syntax-tag">&lt;/title</span>&gt;
+<span class="syntax-tag">&lt;/head</span>&gt;
+<span class="syntax-tag">&lt;body</span> <span class="syntax-attribute">class</span>=<span class="syntax-string">"min-h-screen bg-slate-100 text-slate-900"</span>&gt;
+  <span class="syntax-tag">&lt;header</span> <span class="syntax-attribute">class</span>=<span class="syntax-string">"bg-cyan-800 text-white"</span>&gt;
+    <span class="syntax-tag">&lt;div</span> <span class="syntax-attribute">class</span>=<span class="syntax-string">"mx-auto max-w-5xl px-6 py-10"</span>&gt;
+      <span class="syntax-tag">&lt;p</span> <span class="syntax-attribute">class</span>=<span class="syntax-string">"font-semibold text-cyan-100"</span>&gt;LEARNING HUB<span class="syntax-tag">&lt;/p</span>&gt;
+      <span class="syntax-tag">&lt;h1</span> <span class="syntax-attribute">class</span>=<span class="syntax-string">"mt-2 text-3xl font-bold md:text-4xl"</span>&gt;เริ่มเรียนเขียนเว็บ<span class="syntax-tag">&lt;/h1</span>&gt;
+      <span class="syntax-tag">&lt;p</span> <span class="syntax-attribute">class</span>=<span class="syntax-string">"mt-3 text-cyan-50"</span>&gt;เลือกหัวข้อที่สนใจ แล้วค่อย ๆ ฝึกไปด้วยกัน<span class="syntax-tag">&lt;/p</span>&gt;
+    <span class="syntax-tag">&lt;/div</span>&gt;
+  <span class="syntax-tag">&lt;/header</span>&gt;
+  <span class="syntax-tag">&lt;main</span> <span class="syntax-attribute">id</span>=<span class="syntax-string">"courses"</span> <span class="syntax-attribute">class</span>=<span class="syntax-string">"mx-auto max-w-5xl px-6 py-10"</span>&gt;
+    <span class="syntax-tag">&lt;h2</span> <span class="syntax-attribute">class</span>=<span class="syntax-string">"text-2xl font-bold"</span>&gt;คอร์สแนะนำ<span class="syntax-tag">&lt;/h2</span>&gt;
+    <span class="syntax-tag">&lt;div</span> <span class="syntax-attribute">class</span>=<span class="syntax-string">"mt-6 grid gap-4 md:grid-cols-3"</span>&gt;
+      <span class="syntax-tag">&lt;article</span> <span class="syntax-attribute">class</span>=<span class="syntax-string">"rounded-xl bg-white p-6 shadow-sm"</span>&gt;
+        <span class="syntax-tag">&lt;h3</span> <span class="syntax-attribute">class</span>=<span class="syntax-string">"text-lg font-bold"</span>&gt;HTML<span class="syntax-tag">&lt;/h3</span>&gt;
+        <span class="syntax-tag">&lt;p</span> <span class="syntax-attribute">class</span>=<span class="syntax-string">"mt-2 text-slate-600"</span>&gt;เรียนรู้โครงสร้างของหน้าเว็บ<span class="syntax-tag">&lt;/p</span>&gt;
+      <span class="syntax-tag">&lt;/article</span>&gt;
+      <span class="syntax-tag">&lt;article</span> <span class="syntax-attribute">class</span>=<span class="syntax-string">"rounded-xl bg-white p-6 shadow-sm"</span>&gt;
+        <span class="syntax-tag">&lt;h3</span> <span class="syntax-attribute">class</span>=<span class="syntax-string">"text-lg font-bold"</span>&gt;CSS<span class="syntax-tag">&lt;/h3</span>&gt;
+        <span class="syntax-tag">&lt;p</span> <span class="syntax-attribute">class</span>=<span class="syntax-string">"mt-2 text-slate-600"</span>&gt;จัดรูปแบบและ layout ให้สวยงาม<span class="syntax-tag">&lt;/p</span>&gt;
+      <span class="syntax-tag">&lt;/article</span>&gt;
+      <span class="syntax-tag">&lt;article</span> <span class="syntax-attribute">class</span>=<span class="syntax-string">"rounded-xl bg-white p-6 shadow-sm"</span>&gt;
+        <span class="syntax-tag">&lt;h3</span> <span class="syntax-attribute">class</span>=<span class="syntax-string">"text-lg font-bold"</span>&gt;Tailwind CSS<span class="syntax-tag">&lt;/h3</span>&gt;
+        <span class="syntax-tag">&lt;p</span> <span class="syntax-attribute">class</span>=<span class="syntax-string">"mt-2 text-slate-600"</span>&gt;สร้างหน้าตาด้วย utility classes<span class="syntax-tag">&lt;/p</span>&gt;
+      <span class="syntax-tag">&lt;/article</span>&gt;
+    <span class="syntax-tag">&lt;/div</span>&gt;
+  <span class="syntax-tag">&lt;/main</span>&gt;
+  <span class="syntax-tag">&lt;script</span> <span class="syntax-attribute">type</span>=<span class="syntax-string">"module"</span> <span class="syntax-attribute">src</span>=<span class="syntax-string">"/main.js"</span>&gt;<span class="syntax-tag">&lt;/script</span>&gt;
+<span class="syntax-tag">&lt;/body</span>&gt;
+<span class="syntax-tag">&lt;/html</span>&gt;</code></pre>
   <p><code>mx-auto max-w-5xl</code> จำกัดความกว้างและจัดกึ่งกลาง, <code>px-6</code> กันเนื้อหาชิดขอบ ส่วน <code>grid gap-4 md:grid-cols-3</code> สร้าง grid ที่มีช่องว่างและเปลี่ยนเป็นสามคอลัมน์เมื่อจอกว้างพอ</p>
 </section>
 <section id="practice">
   <h2>9. แบบฝึกหัด</h2>
   <ol><li>สร้างปุ่มพื้นหลังสีฟ้า ข้อความสีขาว มีมุมมนและเปลี่ยนสีเมื่อชี้เมาส์ เพิ่มเส้นแสดง focus สำหรับคีย์บอร์ด</li><li>สร้างรายการการ์ดสี่ใบ ให้มือถือมีหนึ่งคอลัมน์ ตั้งแต่ <code>sm</code> มีสอง และตั้งแต่ <code>lg</code> มีสี่คอลัมน์</li><li>ต่อยอดโปรเจกต์คอร์ส: เพิ่มการ์ดใหม่ ปรับพื้นที่ด้านใน และทำให้สีพื้นหลังกับข้อความรองรับ dark mode</li></ol>
-  <details><summary>ดูแนวเฉลยข้อ 1</summary><pre><code>&lt;button class="rounded-lg bg-cyan-700 px-4 py-2 text-white
+  <details><summary>ดูแนวเฉลยข้อ 1</summary><pre><code><span class="syntax-tag">&lt;button</span> <span class="syntax-attribute">class</span>=<span class="syntax-string">"rounded-lg bg-cyan-700 px-4 py-2 text-white
   hover:bg-cyan-800 focus-visible:outline-2 focus-visible:outline-offset-2
-  focus-visible:outline-cyan-700"&gt;เริ่มเรียน&lt;/button&gt;</code></pre></details>
-  <details><summary>ดูแนวเฉลยข้อ 2</summary><pre><code>&lt;div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"&gt;
-  &lt;article class="rounded-lg bg-white p-4 shadow"&gt;หนึ่ง&lt;/article&gt;
-  &lt;article class="rounded-lg bg-white p-4 shadow"&gt;สอง&lt;/article&gt;
-  &lt;article class="rounded-lg bg-white p-4 shadow"&gt;สาม&lt;/article&gt;
-  &lt;article class="rounded-lg bg-white p-4 shadow"&gt;สี่&lt;/article&gt;
-&lt;/div&gt;</code></pre></details>
+  focus-visible:outline-cyan-700"</span>&gt;เริ่มเรียน<span class="syntax-tag">&lt;/button</span>&gt;</code></pre></details>
+  <details><summary>ดูแนวเฉลยข้อ 2</summary><pre><code><span class="syntax-tag">&lt;div</span> <span class="syntax-attribute">class</span>=<span class="syntax-string">"grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"</span>&gt;
+  <span class="syntax-tag">&lt;article</span> <span class="syntax-attribute">class</span>=<span class="syntax-string">"rounded-lg bg-white p-4 shadow"</span>&gt;หนึ่ง<span class="syntax-tag">&lt;/article</span>&gt;
+  <span class="syntax-tag">&lt;article</span> <span class="syntax-attribute">class</span>=<span class="syntax-string">"rounded-lg bg-white p-4 shadow"</span>&gt;สอง<span class="syntax-tag">&lt;/article</span>&gt;
+  <span class="syntax-tag">&lt;article</span> <span class="syntax-attribute">class</span>=<span class="syntax-string">"rounded-lg bg-white p-4 shadow"</span>&gt;สาม<span class="syntax-tag">&lt;/article</span>&gt;
+  <span class="syntax-tag">&lt;article</span> <span class="syntax-attribute">class</span>=<span class="syntax-string">"rounded-lg bg-white p-4 shadow"</span>&gt;สี่<span class="syntax-tag">&lt;/article</span>&gt;
+<span class="syntax-tag">&lt;/div</span>&gt;</code></pre></details>
   <details><summary>ดูแนวทางข้อ 3</summary><p>เพิ่ม <code>article</code> ใน grid แล้วเปลี่ยน <code>p-6</code> เป็นค่าที่ต้องการ จากนั้นเพิ่ม <code>dark:bg-slate-900 dark:text-white</code> ที่ body และปรับสีการ์ดกับข้อความภายในการ์ดให้เหมาะกับทั้งสองโหมด ทดสอบโดยเปลี่ยนการตั้งค่าธีมของระบบ</p></details>
 </section>
 <section id="troubleshoot">

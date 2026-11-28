@@ -1262,164 +1262,164 @@ fetch(<span class="str">'https://api.example.com/products'</span>, { cache: <spa
 </table>
 </div>
 <div class="card"><h3>1. Global CSS — ใช้ร่วมกันทั้งแอป</h3>
-<p>ใส่กฎพื้นฐานและ CSS variables ไว้ใน <span class="inline-code">globals.css</span> แล้ว import ใน root layout ซึ่งครอบทุกหน้า กฎเหล่านี้เป็น global จึงควรตั้งชื่อให้ชัดเจน</p><pre>/* src/app/globals.css */
-:root { --brand: #2563eb; --surface: #f3f4f6; }
-* { box-sizing: border-box; }
-body { margin: 0; font-family: sans-serif; background: var(--surface); }
-a { color: var(--brand); }
-.site-title { color: var(--brand); }</pre><pre>// src/app/layout.tsx
-import './globals.css'
-import type { ReactNode } from 'react'
+<p>ใส่กฎพื้นฐานและ CSS variables ไว้ใน <span class="inline-code">globals.css</span> แล้ว import ใน root layout ซึ่งครอบทุกหน้า กฎเหล่านี้เป็น global จึงควรตั้งชื่อให้ชัดเจน</p><pre><span class="cm">/* src/app/globals.css */</span>
+:root { <span class="type">--brand</span>: <span class="num">#2563eb</span>; <span class="type">--surface</span>: <span class="num">#f3f4f6</span>; }
+* { <span class="attr">box-sizing</span>: border-box; }
+body { <span class="attr">margin</span>: <span class="num">0</span>; <span class="attr">font-family</span>: sans-serif; <span class="attr">background</span>: var(<span class="type">--surface</span>); }
+a { <span class="attr">color</span>: var(<span class="type">--brand</span>); }
+.site-title { <span class="attr">color</span>: var(<span class="type">--brand</span>); }</pre><pre><span class="cm">// src/app/layout.tsx</span>
+<span class="kw">import</span> <span class="str">'./globals.css'</span>
+<span class="kw">import</span> <span class="kw">type</span> { <span class="type">ReactNode</span> } <span class="kw">from</span> <span class="str">'react'</span>
 
-export default function RootLayout({ children }: { children: ReactNode }) {
-  return &lt;html lang="th"&gt;&lt;body&gt;{children}&lt;/body&gt;&lt;/html&gt;
-}</pre><pre>// src/app/page.tsx
-export default function Home() {
-  return &lt;h1 className="site-title"&gt;สวัสดี Next.js&lt;/h1&gt;
+<span class="kw">export</span> <span class="kw">default</span> <span class="kw">function</span> RootLayout({ children }: { <span class="attr">children</span>: <span class="type">ReactNode</span> }) {
+  <span class="kw">return</span> <span class="tag">&lt;html</span> lang=<span class="str">"th"</span>&gt;<span class="tag">&lt;body</span>&gt;{children}<span class="tag">&lt;/body</span>&gt;<span class="tag">&lt;/html</span>&gt;
+}</pre><pre><span class="cm">// src/app/page.tsx</span>
+<span class="kw">export</span> <span class="kw">default</span> <span class="kw">function</span> Home() {
+  <span class="kw">return</span> <span class="tag">&lt;h1</span> className=<span class="str">"site-title"</span>&gt;สวัสดี Next.js<span class="tag">&lt;/h1</span>&gt;
 }</pre><p>สำหรับ Pages Router ให้นำเข้า global CSS ใน <span class="inline-code">pages/_app.tsx</span> แทน หากเปิด Tailwind อยู่ ให้คง <span class="inline-code">@import "tailwindcss";</span> ในไฟล์ global ด้วย</p>
 </div>
 <div class="card"><h3>2. CSS Modules — แยก style ราย component</h3>
-<p>ตั้งชื่อไฟล์ลงท้าย <span class="inline-code">.module.css</span> แล้ว import เป็น object Next.js จะสร้างชื่อ class เฉพาะ ช่วยลดปัญหาชื่อชนกัน ใช้ได้ทั้ง Server และ Client Components</p><pre>/* src/components/Card.module.css */
-.card { padding: 24px; border-radius: 12px; background: white; }
-.title { color: #1d4ed8; }
-.card:hover { box-shadow: 0 4px 16px #0002; }
-@media (max-width: 600px) { .card { padding: 16px; } }</pre><pre>// src/components/Card.tsx
-import styles from './Card.module.css'
+<p>ตั้งชื่อไฟล์ลงท้าย <span class="inline-code">.module.css</span> แล้ว import เป็น object Next.js จะสร้างชื่อ class เฉพาะ ช่วยลดปัญหาชื่อชนกัน ใช้ได้ทั้ง Server และ Client Components</p><pre><span class="cm">/* src/components/Card.module.css */</span>
+.card { <span class="attr">padding</span>: <span class="num">24px</span>; <span class="attr">border-radius</span>: <span class="num">12px</span>; <span class="attr">background</span>: white; }
+.title { <span class="attr">color</span>: <span class="num">#1d4ed8</span>; }
+.<span class="attr">card</span>:hover { <span class="attr">box-shadow</span>: <span class="num">0</span> <span class="num">4px</span> <span class="num">16px</span> <span class="num">#0002</span>; }
+<span class="kw">@media</span> (<span class="attr">max-width</span>: <span class="num">600px</span>) { .card { <span class="attr">padding</span>: <span class="num">16px</span>; } }</pre><pre><span class="cm">// src/components/Card.tsx</span>
+<span class="kw">import</span> styles <span class="kw">from</span> <span class="str">'./Card.module.css'</span>
 
-export default function Card({ title }: { title: string }) {
-  return &lt;article className={styles.card}&gt;
-    &lt;h2 className={styles.title}&gt;{title}&lt;/h2&gt;
-  &lt;/article&gt;
-}</pre><pre>// src/app/page.tsx
-import Card from '@/components/Card'
-export default function Home() {
-  return &lt;Card title="เรียนรู้ CSS Modules" /&gt;
+<span class="kw">export</span> <span class="kw">default</span> <span class="kw">function</span> Card({ title }: { <span class="attr">title</span>: <span class="type">string</span> }) {
+  <span class="kw">return</span> <span class="tag">&lt;article</span> className={styles.card}&gt;
+    <span class="tag">&lt;h2</span> className={styles.title}&gt;{title}<span class="tag">&lt;/h2</span>&gt;
+  <span class="tag">&lt;/article</span>&gt;
+}</pre><pre><span class="cm">// src/app/page.tsx</span>
+<span class="kw">import</span> Card <span class="kw">from</span> <span class="str">'@/components/Card'</span>
+<span class="kw">export</span> <span class="kw">default</span> <span class="kw">function</span> Home() {
+  <span class="kw">return</span> <span class="tag">&lt;Card</span> title=<span class="str">"เรียนรู้ CSS Modules"</span> /&gt;
 }</pre><p>CSS Modules จำกัดชื่อ class ไม่ได้แยก DOM หรือป้องกันการสืบทอด CSS ทั้งหมด</p>
 </div>
 <div class="card"><h3>3. Inline style และ class แบบมีเงื่อนไข</h3>
-<p>ใช้ object กับ <span class="inline-code">style</span>: ชื่อ property เป็น camelCase เช่น <span class="inline-code">backgroundColor</span> และตัวเลขส่วนใหญ่มีหน่วย px โดยอัตโนมัติ เหมาะกับค่าที่ได้จากข้อมูล</p><pre>// src/components/Progress.tsx
-export default function Progress({ value }: { value: number }) {
-  const percent = Math.max(0, Math.min(100, value))
-  return &lt;div role="progressbar" aria-label="ความคืบหน้า"
-    aria-valuenow={percent} aria-valuemin={0} aria-valuemax={100}&gt;
-    &lt;div style={{ width: `${percent}%`, backgroundColor: '#2563eb', height: 12 }} /&gt;
-  &lt;/div&gt;
-}</pre><pre>// เลือก class ตาม props (ใช้ร่วมกับ CSS Modules ได้)
-import styles from './Button.module.css'
-export function Button({ primary }: { primary: boolean }) {
-  const className = `${styles.button} ${primary ? styles.primary : ''}`
-  return &lt;button className={className}&gt;บันทึก&lt;/button&gt;
-}</pre><pre>/* src/components/Button.module.css */
-.button { padding: 8px 16px; border: 1px solid #555; }
-.primary { background: #2563eb; color: white; }</pre><p>สำหรับ hover, focus และ responsive ให้ใช้ CSS หรือ utility classes ควบคู่กัน; ถ้าต้องตอบสนองต่อ state หรือ event ให้ประกาศ <span class="inline-code">'use client'</span> ในไฟล์ component นั้น</p>
+<p>ใช้ object กับ <span class="inline-code">style</span>: ชื่อ property เป็น camelCase เช่น <span class="inline-code">backgroundColor</span> และตัวเลขส่วนใหญ่มีหน่วย px โดยอัตโนมัติ เหมาะกับค่าที่ได้จากข้อมูล</p><pre><span class="cm">// src/components/Progress.tsx</span>
+<span class="kw">export</span> <span class="kw">default</span> <span class="kw">function</span> Progress({ value }: { <span class="attr">value</span>: <span class="type">number</span> }) {
+  <span class="kw">const</span> percent = Math.max(<span class="num">0</span>, Math.min(<span class="num">100</span>, value))
+  <span class="kw">return</span> <span class="tag">&lt;div</span> role=<span class="str">"progressbar"</span> aria-label=<span class="str">"ความคืบหน้า"</span>
+    aria-valuenow={percent} aria-valuemin={<span class="num">0</span>} aria-valuemax={<span class="num">100</span>}&gt;
+    <span class="tag">&lt;div</span> style={{ <span class="attr">width</span>: <span class="str">`${percent}%`</span>, <span class="attr">backgroundColor</span>: <span class="str">'#2563eb'</span>, <span class="attr">height</span>: <span class="num">12</span> }} /&gt;
+  <span class="tag">&lt;/div</span>&gt;
+}</pre><pre><span class="cm">// เลือก class ตาม props (ใช้ร่วมกับ CSS Modules ได้)</span>
+<span class="kw">import</span> styles <span class="kw">from</span> <span class="str">'./Button.module.css'</span>
+<span class="kw">export</span> <span class="kw">function</span> Button({ primary }: { <span class="attr">primary</span>: <span class="type">boolean</span> }) {
+  <span class="kw">const</span> className = <span class="str">`${styles.button} ${primary ? styles.primary : ''}`</span>
+  <span class="kw">return</span> <span class="tag">&lt;button</span> className={className}&gt;บันทึก<span class="tag">&lt;/button</span>&gt;
+}</pre><pre><span class="cm">/* src/components/Button.module.css */</span>
+.button { <span class="attr">padding</span>: <span class="num">8px</span> <span class="num">16px</span>; <span class="attr">border</span>: <span class="num">1px</span> solid <span class="num">#555</span>; }
+.primary { <span class="attr">background</span>: <span class="num">#2563eb</span>; <span class="attr">color</span>: white; }</pre><p>สำหรับ hover, focus และ responsive ให้ใช้ CSS หรือ utility classes ควบคู่กัน; ถ้าต้องตอบสนองต่อ state หรือ event ให้ประกาศ <span class="inline-code">'use client'</span> ในไฟล์ component นั้น</p>
 </div>
 <div class="card"><h3>4. Tailwind CSS — utility classes</h3>
-<p>หากสร้างโปรเจกต์ด้วย <span class="inline-code">--tailwind</span> แล้วข้ามขั้นติดตั้งได้ ตัวอย่างนี้ใช้ Tailwind CSS v4; ในโปรเจกต์ที่ยังไม่มี ให้ตั้งค่าดังนี้</p><pre>npm install -D tailwindcss @tailwindcss/postcss postcss</pre><pre>// postcss.config.mjs
-export default { plugins: { '@tailwindcss/postcss': {} } }</pre><pre>/* src/app/globals.css */
-@import "tailwindcss";</pre><p>ตรวจสอบว่า root layout import <span class="inline-code">./globals.css</span> แล้ว จากนั้นใช้ utility classes ใน JSX ได้ทั้ง Server และ Client Components</p><pre>// src/app/page.tsx
-export default function Home() {
-  return &lt;main className="mx-auto max-w-xl p-6"&gt;
-    &lt;h1 className="text-3xl font-bold text-blue-700"&gt;สวัสดี Tailwind&lt;/h1&gt;
-    &lt;p className="mt-2 text-gray-600"&gt;ปรับหน้าจอและสถานะด้วย utility&lt;/p&gt;
-    &lt;button className="mt-4 rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 sm:px-6"&gt;
+<p>หากสร้างโปรเจกต์ด้วย <span class="inline-code">--tailwind</span> แล้วข้ามขั้นติดตั้งได้ ตัวอย่างนี้ใช้ Tailwind CSS v4; ในโปรเจกต์ที่ยังไม่มี ให้ตั้งค่าดังนี้</p><pre><span class="kw">npm</span> <span class="kw">install</span> -D tailwindcss <span class="kw">@tailwindcss</span>/postcss postcss</pre><pre><span class="cm">// postcss.config.mjs</span>
+<span class="kw">export</span> <span class="kw">default</span> { <span class="attr">plugins</span>: { <span class="str">'@tailwindcss/postcss'</span>: {} } }</pre><pre><span class="cm">/* src/app/globals.css */</span>
+<span class="kw">@import</span> <span class="str">"tailwindcss"</span>;</pre><p>ตรวจสอบว่า root layout import <span class="inline-code">./globals.css</span> แล้ว จากนั้นใช้ utility classes ใน JSX ได้ทั้ง Server และ Client Components</p><pre><span class="cm">// src/app/page.tsx</span>
+<span class="kw">export</span> <span class="kw">default</span> <span class="kw">function</span> Home() {
+  <span class="kw">return</span> <span class="tag">&lt;main</span> className=<span class="str">"mx-auto max-w-xl p-6"</span>&gt;
+    <span class="tag">&lt;h1</span> className=<span class="str">"text-3xl font-bold text-blue-700"</span>&gt;สวัสดี Tailwind<span class="tag">&lt;/h1</span>&gt;
+    <span class="tag">&lt;p</span> className=<span class="str">"mt-2 text-gray-600"</span>&gt;ปรับหน้าจอและสถานะด้วย utility<span class="tag">&lt;/p</span>&gt;
+    <span class="tag">&lt;button</span> className=<span class="str">"mt-4 rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 sm:px-6"</span>&gt;
       เริ่มเรียน
-    &lt;/button&gt;
-  &lt;/main&gt;
+    <span class="tag">&lt;/button</span>&gt;
+  <span class="tag">&lt;/main</span>&gt;
 }</pre><p><span class="inline-code">hover:</span> ใช้กับสถานะเมาส์ และ <span class="inline-code">sm:</span> เริ่มทำงานที่ breakpoint ขนาดเล็กขึ้นไป เขียนชื่อ class แบบเต็ม เช่น <span class="inline-code">active ? 'bg-blue-600' : 'bg-gray-600'</span> เพื่อให้ Tailwind ตรวจพบ อย่าสร้างชื่อแบบ <span class="inline-code">`bg-${color}-600`</span></p>
 </div>
 <div class="card"><h3>5. Sass / SCSS — CSS ที่มีตัวแปรและ nesting</h3>
-<p>ติดตั้ง Sass ก่อน แล้วใช้ <span class="inline-code">.scss</span> สำหรับ global หรือ <span class="inline-code">.module.scss</span> สำหรับ component; ตัวแปร Sass ถูกแทนค่าตอน build ส่วน CSS variables เปลี่ยนค่าใน browser ได้</p><pre>npm install -D sass</pre><pre>/* src/components/Notice.module.scss */
-$accent: #047857;
+<p>ติดตั้ง Sass ก่อน แล้วใช้ <span class="inline-code">.scss</span> สำหรับ global หรือ <span class="inline-code">.module.scss</span> สำหรับ component; ตัวแปร Sass ถูกแทนค่าตอน build ส่วน CSS variables เปลี่ยนค่าใน browser ได้</p><pre><span class="kw">npm</span> <span class="kw">install</span> -D sass</pre><pre><span class="cm">/* src/components/Notice.module.scss */</span>
+<span class="type">$accent</span>: <span class="num">#047857</span>;
 .notice {
-  border-left: 4px solid $accent;
-  padding: 1rem;
-  h2 { color: $accent; }
-  &amp;:hover { background: #ecfdf5; }
-}</pre><pre>// src/components/Notice.tsx
-import styles from './Notice.module.scss'
-export default function Notice() {
-  return &lt;div className={styles.notice}&gt;&lt;h2&gt;บันทึกสำเร็จ&lt;/h2&gt;&lt;/div&gt;
+  <span class="attr">border-left</span>: <span class="num">4px</span> solid <span class="type">$accent</span>;
+  <span class="attr">padding</span>: <span class="num">1rem</span>;
+  h2 { <span class="attr">color</span>: <span class="type">$accent</span>; }
+  &amp;:hover { <span class="attr">background</span>: <span class="num">#ecfdf5</span>; }
+}</pre><pre><span class="cm">// src/components/Notice.tsx</span>
+<span class="kw">import</span> styles <span class="kw">from</span> <span class="str">'./Notice.module.scss'</span>
+<span class="kw">export</span> <span class="kw">default</span> <span class="kw">function</span> Notice() {
+  <span class="kw">return</span> <span class="tag">&lt;div</span> className={styles.notice}&gt;<span class="tag">&lt;h2</span>&gt;บันทึกสำเร็จ<span class="tag">&lt;/h2</span>&gt;<span class="tag">&lt;/div</span>&gt;
 }</pre>
 </div>
 <div class="card"><h3>6. CSS จากแพ็กเกจภายนอก</h3>
-<p>ตัวอย่างนำ CSS ของ Bootstrap มาใช้ใน App Router โดยโหลด CSS อย่างเดียว ส่วน JavaScript ที่เพิ่มพฤติกรรมของ Bootstrap ต้องตั้งค่าแยกตามเอกสารของแพ็กเกจ</p><pre>npm install bootstrap</pre><pre>// src/app/layout.tsx
-import 'bootstrap/dist/css/bootstrap.min.css'
-import './globals.css' // กฎของเรา: ตรวจสอบลำดับและ specificity
-import type { ReactNode } from 'react'
-export default function RootLayout({ children }: { children: ReactNode }) {
-  return &lt;html lang="th"&gt;&lt;body&gt;{children}&lt;/body&gt;&lt;/html&gt;
-}</pre><pre>// ใช้ใน component
-export default function Home() {
-  return &lt;button className="btn btn-primary"&gt;บันทึก&lt;/button&gt;
+<p>ตัวอย่างนำ CSS ของ Bootstrap มาใช้ใน App Router โดยโหลด CSS อย่างเดียว ส่วน JavaScript ที่เพิ่มพฤติกรรมของ Bootstrap ต้องตั้งค่าแยกตามเอกสารของแพ็กเกจ</p><pre><span class="kw">npm</span> <span class="kw">install</span> bootstrap</pre><pre><span class="cm">// src/app/layout.tsx</span>
+<span class="kw">import</span> <span class="str">'bootstrap/dist/css/bootstrap.min.css'</span>
+<span class="kw">import</span> <span class="str">'./globals.css'</span> <span class="cm">// กฎของเรา: ตรวจสอบลำดับและ specificity</span>
+<span class="kw">import</span> <span class="kw">type</span> { <span class="type">ReactNode</span> } <span class="kw">from</span> <span class="str">'react'</span>
+<span class="kw">export</span> <span class="kw">default</span> <span class="kw">function</span> RootLayout({ children }: { <span class="attr">children</span>: <span class="type">ReactNode</span> }) {
+  <span class="kw">return</span> <span class="tag">&lt;html</span> lang=<span class="str">"th"</span>&gt;<span class="tag">&lt;body</span>&gt;{children}<span class="tag">&lt;/body</span>&gt;<span class="tag">&lt;/html</span>&gt;
+}</pre><pre><span class="cm">// ใช้ใน component</span>
+<span class="kw">export</span> <span class="kw">default</span> <span class="kw">function</span> Home() {
+  <span class="kw">return</span> <span class="tag">&lt;button</span> className=<span class="str">"btn btn-primary"</span>&gt;บันทึก<span class="tag">&lt;/button</span>&gt;
 }</pre><p>CSS ของแพ็กเกจอาจกระทบทั้งเว็บ และอาจชนกับ reset หรือ CSS ของ Tailwind ควรตรวจผลใน production build ด้วย</p>
 </div>
 <div class="card"><h3>7. CSS-in-JS — styled-components</h3>
-<p>ตัวอย่างใช้ styled-components v6 ใน Client Component พร้อม registry สำหรับ SSR และ streaming โดยให้รวมการตั้งค่านี้กับไฟล์เดิมของโปรเจกต์</p><pre>npm install styled-components</pre><pre>// next.config.ts
-import type { NextConfig } from 'next'
-const nextConfig: NextConfig = { compiler: { styledComponents: true } }
-export default nextConfig</pre><pre>// src/lib/StyledComponentsRegistry.tsx
-'use client'
-import { useState, type ReactNode } from 'react'
-import { useServerInsertedHTML } from 'next/navigation'
-import { ServerStyleSheet, StyleSheetManager } from 'styled-components'
+<p>ตัวอย่างใช้ styled-components v6 ใน Client Component พร้อม registry สำหรับ SSR และ streaming โดยให้รวมการตั้งค่านี้กับไฟล์เดิมของโปรเจกต์</p><pre><span class="kw">npm</span> <span class="kw">install</span> styled-components</pre><pre><span class="cm">// next.config.ts</span>
+<span class="kw">import</span> <span class="kw">type</span> { <span class="type">NextConfig</span> } <span class="kw">from</span> <span class="str">'next'</span>
+<span class="kw">const</span> <span class="attr">nextConfig</span>: <span class="type">NextConfig</span> = { <span class="attr">compiler</span>: { <span class="attr">styledComponents</span>: <span class="kw">true</span> } }
+<span class="kw">export</span> <span class="kw">default</span> nextConfig</pre><pre><span class="cm">// src/lib/StyledComponentsRegistry.tsx</span>
+<span class="str">'use client'</span>
+<span class="kw">import</span> { useState, <span class="kw">type</span> <span class="type">ReactNode</span> } <span class="kw">from</span> <span class="str">'react'</span>
+<span class="kw">import</span> { useServerInsertedHTML } <span class="kw">from</span> <span class="str">'next/navigation'</span>
+<span class="kw">import</span> { ServerStyleSheet, StyleSheetManager } <span class="kw">from</span> <span class="str">'styled-components'</span>
 
-export default function StyledComponentsRegistry({ children }: { children: ReactNode }) {
-  const [sheet] = useState(() =&gt; new ServerStyleSheet())
+<span class="kw">export</span> <span class="kw">default</span> <span class="kw">function</span> StyledComponentsRegistry({ children }: { <span class="attr">children</span>: <span class="type">ReactNode</span> }) {
+  <span class="kw">const</span> [sheet] = useState(() =&gt; <span class="kw">new</span> ServerStyleSheet())
   useServerInsertedHTML(() =&gt; {
-    const styles = sheet.getStyleElement()
+    <span class="kw">const</span> styles = sheet.getStyleElement()
     sheet.instance.clearTag()
-    return &lt;&gt;{styles}&lt;/&gt;
+    <span class="kw">return</span> &lt;&gt;{styles}&lt;/&gt;
   })
-  if (typeof window !== 'undefined') return &lt;&gt;{children}&lt;/&gt;
-  return &lt;StyleSheetManager sheet={sheet.instance}&gt;{children}&lt;/StyleSheetManager&gt;
-}</pre><pre>// src/app/layout.tsx
-import './globals.css'
-import type { ReactNode } from 'react'
-import StyledComponentsRegistry from '@/lib/StyledComponentsRegistry'
-export default function RootLayout({ children }: { children: ReactNode }) {
-  return &lt;html lang="th"&gt;&lt;body&gt;
-    &lt;StyledComponentsRegistry&gt;{children}&lt;/StyledComponentsRegistry&gt;
-  &lt;/body&gt;&lt;/html&gt;
-}</pre><pre>// src/components/SaveButton.tsx
-'use client'
-import styled from 'styled-components'
-const Button = styled.button`
+  <span class="kw">if</span> (<span class="kw">typeof</span> window !== <span class="str">'undefined'</span>) <span class="kw">return</span> &lt;&gt;{children}&lt;/&gt;
+  <span class="kw">return</span> <span class="tag">&lt;StyleSheetManager</span> sheet={sheet.instance}&gt;{children}<span class="tag">&lt;/StyleSheetManager</span>&gt;
+}</pre><pre><span class="cm">// src/app/layout.tsx</span>
+<span class="kw">import</span> <span class="str">'./globals.css'</span>
+<span class="kw">import</span> <span class="kw">type</span> { <span class="type">ReactNode</span> } <span class="kw">from</span> <span class="str">'react'</span>
+<span class="kw">import</span> StyledComponentsRegistry <span class="kw">from</span> <span class="str">'@/lib/StyledComponentsRegistry'</span>
+<span class="kw">export</span> <span class="kw">default</span> <span class="kw">function</span> RootLayout({ children }: { <span class="attr">children</span>: <span class="type">ReactNode</span> }) {
+  <span class="kw">return</span> <span class="tag">&lt;html</span> lang=<span class="str">"th"</span>&gt;<span class="tag">&lt;body</span>&gt;
+    <span class="tag">&lt;StyledComponentsRegistry</span>&gt;{children}<span class="tag">&lt;/StyledComponentsRegistry</span>&gt;
+  <span class="tag">&lt;/body</span>&gt;<span class="tag">&lt;/html</span>&gt;
+}</pre><pre><span class="cm">// src/components/SaveButton.tsx</span>
+<span class="str">'use client'</span>
+<span class="kw">import</span> styled <span class="kw">from</span> <span class="str">'styled-components'</span>
+<span class="kw">const</span> Button = styled.button<span class="str">`
   padding: 0.5rem 1rem;
   color: white;
   background: #2563eb;
   &amp;:hover { background: #1d4ed8; }
-`
-export default function SaveButton() { return &lt;Button&gt;บันทึก&lt;/Button&gt; }</pre><h4>อีกทางเลือก: styled-jsx</h4>
+`</span>
+<span class="kw">export</span> <span class="kw">default</span> <span class="kw">function</span> SaveButton() { <span class="kw">return</span> <span class="tag">&lt;Button</span>&gt;บันทึก<span class="tag">&lt;/Button</span>&gt; }</pre><h4>อีกทางเลือก: styled-jsx</h4>
 <p>ตั้ง <span class="inline-code">StyledJsxRegistry</span> และครอบ root layout ตาม <a href="https://nextjs.org/docs/app/guides/css-in-js">คู่มือ CSS-in-JS</a> ก่อนใช้งาน จากนั้นประกาศ style ใน Client Component ดังนี้:</p>
-<pre>// src/components/Badge.tsx
-'use client'
-export default function Badge() {
-  return &lt;&gt;
-    &lt;span className="badge"&gt;ใหม่&lt;/span&gt;
-    &lt;style jsx&gt;{`
+<pre><span class="cm">// src/components/Badge.tsx</span>
+<span class="str">'use client'</span>
+<span class="kw">export</span> <span class="kw">default</span> <span class="kw">function</span> Badge() {
+  <span class="kw">return</span> &lt;&gt;
+    <span class="tag">&lt;span</span> className=<span class="str">"badge"</span>&gt;ใหม่<span class="tag">&lt;/span</span>&gt;
+    <span class="tag">&lt;style</span> jsx&gt;{<span class="str">`
       .badge { padding: 4px 8px; color: white; background: #047857; }
-    `}&lt;/style&gt;
+    `</span>}<span class="tag">&lt;/style</span>&gt;
   &lt;/&gt;
 }</pre>
 <p>style ในตัวอย่างจำกัดขอบเขตอยู่ใน component ส่วน Emotion และ UI libraries ให้ตรวจสอบการรองรับเวอร์ชันและคู่มือ App Router ของไลบรารีก่อนใช้</p>
 </div>
 <div class="card"><h3>8. ฟอนต์, responsive และธีม</h3>
-<p><span class="inline-code">next/font</span> ช่วยจัดการฟอนต์และใช้ร่วมกับวิธีจัด style ข้างต้นได้ ตัวอย่างใช้ฟอนต์ที่รองรับภาษาไทย</p><pre>// src/app/layout.tsx
-import './globals.css'
-import { Noto_Sans_Thai } from 'next/font/google'
-import type { ReactNode } from 'react'
-const font = Noto_Sans_Thai({ subsets: ['thai', 'latin'] })
-export default function RootLayout({ children }: { children: ReactNode }) {
-  return &lt;html lang="th"&gt;&lt;body className={font.className}&gt;{children}&lt;/body&gt;&lt;/html&gt;
-}</pre><p>ตัวอย่างธีมตามการตั้งค่าระบบและ responsive CSS สามารถอยู่ใน global CSS หรือ CSS Module ได้</p><pre>/* src/app/globals.css */
-:root { --bg: #fff; --text: #172033; }
-@media (prefers-color-scheme: dark) {
-  :root { --bg: #111827; --text: #f9fafb; }
+<p><span class="inline-code">next/font</span> ช่วยจัดการฟอนต์และใช้ร่วมกับวิธีจัด style ข้างต้นได้ ตัวอย่างใช้ฟอนต์ที่รองรับภาษาไทย</p><pre><span class="cm">// src/app/layout.tsx</span>
+<span class="kw">import</span> <span class="str">'./globals.css'</span>
+<span class="kw">import</span> { Noto_Sans_Thai } <span class="kw">from</span> <span class="str">'next/font/google'</span>
+<span class="kw">import</span> <span class="kw">type</span> { <span class="type">ReactNode</span> } <span class="kw">from</span> <span class="str">'react'</span>
+<span class="kw">const</span> font = Noto_Sans_Thai({ <span class="attr">subsets</span>: [<span class="str">'thai'</span>, <span class="str">'latin'</span>] })
+<span class="kw">export</span> <span class="kw">default</span> <span class="kw">function</span> RootLayout({ children }: { <span class="attr">children</span>: <span class="type">ReactNode</span> }) {
+  <span class="kw">return</span> <span class="tag">&lt;html</span> lang=<span class="str">"th"</span>&gt;<span class="tag">&lt;body</span> className={font.className}&gt;{children}<span class="tag">&lt;/body</span>&gt;<span class="tag">&lt;/html</span>&gt;
+}</pre><p>ตัวอย่างธีมตามการตั้งค่าระบบและ responsive CSS สามารถอยู่ใน global CSS หรือ CSS Module ได้</p><pre><span class="cm">/* src/app/globals.css */</span>
+:root { <span class="type">--bg</span>: <span class="num">#fff</span>; <span class="type">--text</span>: <span class="num">#172033</span>; }
+<span class="kw">@media</span> (<span class="attr">prefers-color-scheme</span>: dark) {
+  :root { <span class="type">--bg</span>: <span class="num">#111827</span>; <span class="type">--text</span>: <span class="num">#f9fafb</span>; }
 }
-body { background: var(--bg); color: var(--text); }
-.container { width: min(100% - 2rem, 72rem); margin-inline: auto; }
-@media (min-width: 768px) { .container { padding-inline: 1rem; } }
-:focus-visible { outline: 3px solid #2563eb; outline-offset: 3px; }</pre><p>การเปลี่ยนธีมด้วยปุ่มต้องจัดการ state เพิ่มเติม; ตรวจสีและ focus ให้มองเห็นได้ทั้งสองธีม และรัน <span class="inline-code">npm run build</span> เพื่อตรวจลำดับ CSS ใน production</p>
+body { <span class="attr">background</span>: var(<span class="type">--bg</span>); <span class="attr">color</span>: var(<span class="type">--text</span>); }
+.container { <span class="attr">width</span>: min(<span class="num">100</span>% - <span class="num">2rem</span>, <span class="num">72rem</span>); <span class="attr">margin-inline</span>: auto; }
+<span class="kw">@media</span> (<span class="attr">min-width</span>: <span class="num">768px</span>) { .container { <span class="attr">padding-inline</span>: <span class="num">1rem</span>; } }
+:focus-visible { <span class="attr">outline</span>: <span class="num">3px</span> solid <span class="num">#2563eb</span>; <span class="attr">outline-offset</span>: <span class="num">3px</span>; }</pre><p>การเปลี่ยนธีมด้วยปุ่มต้องจัดการ state เพิ่มเติม; ตรวจสีและ focus ให้มองเห็นได้ทั้งสองธีม และรัน <span class="inline-code">npm run build</span> เพื่อตรวจลำดับ CSS ใน production</p>
 </div>
 <div class="card"><h3>📝 แบบฝึกหัด</h3>
 <ol><li>สร้างหน้าโปรไฟล์ที่ใช้ global CSS กำหนดสีพื้นฐานและ CSS Module สำหรับการ์ด</li><li>ทำปุ่มสองสถานะด้วย conditional class แล้วเพิ่ม hover และ focus-visible</li><li>สร้างการ์ดเดียวกันด้วย Tailwind จากนั้นปรับให้แสดงผลได้ทั้งมือถือและเดสก์ท็อป</li><li>เพิ่ม SCSS variable หรือธีมตามระบบ แล้วตรวจหน้าด้วย <span class="inline-code">npm run build</span></li></ol><p>อ่านเพิ่มเติม: <a href="https://nextjs.org/docs/app/getting-started/css">CSS ใน App Router</a> · <a href="https://nextjs.org/docs/app/guides/sass">Sass</a> · <a href="https://nextjs.org/docs/app/guides/css-in-js">CSS-in-JS</a> · <a href="https://nextjs.org/docs/app/getting-started/fonts">Fonts</a></p>
